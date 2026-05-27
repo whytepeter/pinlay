@@ -1,0 +1,827 @@
+{
+  "version": 1,
+  "bugs": [
+    {
+      "id": "bug-001",
+      "timestamp": "2026-05-24T00:00:00Z",
+      "error_message": "User: 'you are supposed to install shadcn and work with tailwind v4 and not regular css'",
+      "file": "packages/design/src/components/*.vue",
+      "root_cause": "Built the design package as hand-written Vue SFCs with scoped CSS instead of using shadcn-vue + Tailwind v4 utility classes.",
+      "fix": "Rework packages/design to use shadcn-vue primitives and Tailwind v4 utilities; remove bespoke scoped CSS components.",
+      "tags": [
+        "shadcn",
+        "tailwind-v4",
+        "design-system",
+        "vue",
+        "rework"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-24T00:00:00Z"
+    },
+    {
+      "id": "bug-002",
+      "timestamp": "2026-05-25T08:34:11.226Z",
+      "error_message": "Incorrect value in code",
+      "file": "packages/design/package.json",
+      "root_cause": "Had \"class-variance-authority\"",
+      "fix": "Changed to \"@pinlayer/shared\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T08:34:11.226Z"
+    },
+    {
+      "id": "bug-003",
+      "timestamp": "2026-05-25T08:47:56.794Z",
+      "error_message": "Missing import: tw-animate-css",
+      "file": "apps/app/src/assets/main.css",
+      "root_cause": "Module(s) not imported: tw-animate-css",
+      "fix": "Added import(s) for tw-animate-css",
+      "tags": [
+        "auto-detected",
+        "missing-import",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T08:47:56.794Z"
+    },
+    {
+      "id": "bug-004",
+      "timestamp": "2026-05-25T08:48:08.771Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/package.json",
+      "root_cause": "Had \"typescript\"",
+      "fix": "Changed to \"tw-animate-css\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T08:48:08.771Z"
+    },
+    {
+      "id": "bug-005",
+      "timestamp": "2026-05-25T08:50:00.000Z",
+      "error_message": "shadcn-vue components rendered as unstyled plain text (no button/card/badge styling) in the app",
+      "file": "apps/app/src/assets/main.css",
+      "root_cause": "Tailwind v4 auto-content-detection ignores node_modules, so utility classes used INSIDE the @pinlayer/design workspace package (resolved via a node_modules symlink) were never generated.",
+      "fix": "Added `@source \"../../../../packages/design/src\";` to apps/app/src/assets/main.css so Tailwind scans the design package source. CSS output grew ~11kB → ~40kB.",
+      "tags": [
+        "tailwind-v4",
+        "monorepo",
+        "shadcn",
+        "@source",
+        "content-detection"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T08:50:00.000Z"
+    },
+    {
+      "id": "bug-006",
+      "timestamp": "2026-05-25T08:50:30.000Z",
+      "error_message": "Generated shadcn-vue components import icons from '@lucide/vue' (not installed)",
+      "file": "packages/design/src/components/ui/**",
+      "root_cause": "The latest shadcn-vue registry emits `import { X } from \"@lucide/vue\"`, but the project uses `lucide-vue-next` (per the user's Icon.vue).",
+      "fix": "Repointed all `@lucide/vue` imports to `lucide-vue-next` (same icon export names) across the generated ui components.",
+      "tags": [
+        "shadcn",
+        "lucide",
+        "icons",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T08:50:30.000Z"
+    },
+    {
+      "id": "bug-007",
+      "timestamp": "2026-05-25T08:46:00.000Z",
+      "error_message": "shadcn-vue CLI: Invalid components.json — Unrecognized key 'tsx'",
+      "file": "packages/design/components.json",
+      "root_cause": "components.json contained a `tsx` key not in the shadcn-vue schema.",
+      "fix": "Removed the `tsx` key. Also added tsconfig paths `@pinlayer/design/* -> ./src/*` so the CLI resolves aliases in the package.",
+      "tags": [
+        "shadcn",
+        "cli",
+        "components.json",
+        "monorepo"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T08:46:00.000Z"
+    },
+    {
+      "id": "bug-008",
+      "timestamp": "2026-05-25T09:00:01.188Z",
+      "error_message": "Incorrect value in code",
+      "file": "packages/design/src/index.ts",
+      "root_cause": "Had \"./components/ui/select\"",
+      "fix": "Changed to \"./components/ui/popover\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T09:00:01.188Z"
+    },
+    {
+      "id": "bug-009",
+      "timestamp": "2026-05-25T09:15:10.006Z",
+      "error_message": "CSS fix: name",
+      "file": "apps/app/src/features/integrations/IntegrationsPage.vue",
+      "root_cause": "name: \"Notion\", icon: \"notebook\", connected: false → \"Notion\", icon: \"file-text\", connected: false",
+      "fix": "Changed name: \"Notion\", icon: \"notebook\", connected: false → \"Notion\", icon: \"file-text\", connected: false",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T09:15:10.006Z"
+    },
+    {
+      "id": "bug-010",
+      "timestamp": "2026-05-25T09:22:43.135Z",
+      "error_message": "Significant refactor of ",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 6→6 lines (6 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T09:22:43.135Z"
+    },
+    {
+      "id": "bug-011",
+      "timestamp": "2026-05-25T09:27:33.491Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
+      "root_cause": "Had \"flex size-8 shrink-0 items-center justify-center ",
+      "fix": "Changed to \"flex size-8 shrink-0 items-center justify-center ",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 4,
+      "last_seen": "2026-05-25T09:27:36.833Z"
+    },
+    {
+      "id": "bug-012",
+      "timestamp": "2026-05-25T09:30:12.822Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 17→29 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T09:30:12.822Z"
+    },
+    {
+      "id": "bug-013",
+      "timestamp": "2026-05-25T09:49:35.977Z",
+      "error_message": "Wrong reference: 1a1330 should be ffffff",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "Used \"1a1330\" instead of \"ffffff\"",
+      "fix": "Changed 1a1330 → ffffff",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-25T09:52:52.924Z"
+    },
+    {
+      "id": "bug-014",
+      "timestamp": "2026-05-25T09:51:51.362Z",
+      "error_message": "CSS fix: Icon",
+      "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
+      "root_cause": "Icon: name=\"item.icon\" :size=\"18\" class=\"shrink-0\" /> → name=\"item.icon\"",
+      "fix": "Changed Icon: name=\"item.icon\" :size=\"18\" class=\"shrink-0\" /> → name=\"item.icon\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T09:51:51.362Z"
+    },
+    {
+      "id": "bug-015",
+      "timestamp": "2026-05-25T09:52:16.602Z",
+      "error_message": "CSS fix: --sidebar, --sidebar-accent",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "--sidebar: #f4f4f5 → #fafafa; --sidebar-accent: #e7e7ea → #ececee",
+      "fix": "Changed --sidebar: #f4f4f5 → #fafafa; --sidebar-accent: #e7e7ea → #ececee",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T09:52:16.602Z"
+    },
+    {
+      "id": "bug-016",
+      "timestamp": "2026-05-25T09:59:41.961Z",
+      "error_message": "CSS fix: --sidebar, --sidebar-accent",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "--sidebar: #fafafa → #ffffff; --sidebar-accent: #ececee → #f4f4f5",
+      "fix": "Changed --sidebar: #fafafa → #ffffff; --sidebar-accent: #ececee → #f4f4f5",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T09:59:41.961Z"
+    },
+    {
+      "id": "bug-017",
+      "timestamp": "2026-05-25T09:59:58.166Z",
+      "error_message": "Wrong reference: 09090b should be 18181b",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "Used \"09090b\" instead of \"18181b\"",
+      "fix": "Changed 09090b → 18181b",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T09:59:58.166Z"
+    },
+    {
+      "id": "bug-018",
+      "timestamp": "2026-05-25T10:08:05.591Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
+      "root_cause": "Had 'bg-primary-soft font-medium text-foreground'",
+      "fix": "Changed to 'bg-primary-soft font-medium text-primary'",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-25T10:08:31.692Z"
+    },
+    {
+      "id": "bug-019",
+      "timestamp": "2026-05-25T18:51:22.214Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/app/src/features/pinboards/components/SessionFilters.vue",
+      "root_cause": "13 lines replaced/restructured",
+      "fix": "Rewrote 18→14 lines (13 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T18:51:22.214Z"
+    },
+    {
+      "id": "bug-020",
+      "timestamp": "2026-05-25T18:57:13.213Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/features/pinboards/components/SessionFilters.vue",
+      "root_cause": "Had \"gap-1.5 text-xs data-[state=active]:bg-primary-so",
+      "fix": "Changed to \"gap-1.5 text-xs data-[state=active]:bg-primary da",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T18:57:13.213Z"
+    },
+    {
+      "id": "bug-021",
+      "timestamp": "2026-05-25T19:01:14.614Z",
+      "error_message": "Incorrect value in code",
+      "file": "packages/design/src/components/ui/button/index.ts",
+      "root_cause": "Had \"border bg-background shadow-xs hover:bg-accent ho",
+      "fix": "Changed to \"border bg-background hover:bg-accent hover:text-a",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T19:01:14.614Z"
+    },
+    {
+      "id": "bug-022",
+      "timestamp": "2026-05-25T19:06:43.148Z",
+      "error_message": "CSS fix: dark",
+      "file": "packages/design/src/components/ui/tabs/TabsTrigger.vue",
+      "root_cause": "dark: data-[state=active]:text-foreground focus-visible:border-ring → data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground focus-visible:border-ring",
+      "fix": "Changed dark: data-[state=active]:text-foreground focus-visible:border-ring → data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground focus-visible:border-ring",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 3,
+      "last_seen": "2026-05-25T19:06:45.361Z"
+    },
+    {
+      "id": "bug-023",
+      "timestamp": "2026-05-25T19:32:52.041Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/app/src/shared/lib/data.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T19:32:52.041Z"
+    },
+    {
+      "id": "bug-024",
+      "timestamp": "2026-05-25T19:51:31.221Z",
+      "error_message": "CSS fix: --border, --input, --sidebar-accent",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "--border: #e4e4e7 → #e6dfbe; --input: #e4e4e7 → #e6dfbe; --sidebar-accent: #f4f4f5 → #f3eed5",
+      "fix": "Changed --border: #e4e4e7 → #e6dfbe; --input: #e4e4e7 → #e6dfbe; --sidebar-accent: #f4f4f5 → #f3eed5",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T19:51:31.221Z"
+    },
+    {
+      "id": "bug-025",
+      "timestamp": "2026-05-25T20:12:09.809Z",
+      "error_message": "CSS fix: --border, --input, --sidebar-accent",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "--border: #e6dfbe → #e7e1d4; --input: #e6dfbe → #e7e1d4; --sidebar-accent: #f3eed5 → #f1ece2",
+      "fix": "Changed --border: #e6dfbe → #e7e1d4; --input: #e6dfbe → #e7e1d4; --sidebar-accent: #f3eed5 → #f1ece2",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T20:12:09.809Z"
+    },
+    {
+      "id": "bug-026",
+      "timestamp": "2026-05-25T20:23:52.480Z",
+      "error_message": "CSS fix: --border, --input, --sidebar-accent",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "--border: #e7e1d4 → #e4e4e7; --input: #e7e1d4 → #e4e4e7; --sidebar-accent: #f1ece2 → #f4f4f5",
+      "fix": "Changed --border: #e7e1d4 → #e4e4e7; --input: #e7e1d4 → #e4e4e7; --sidebar-accent: #f1ece2 → #f4f4f5",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T20:23:52.480Z"
+    },
+    {
+      "id": "bug-027",
+      "timestamp": "2026-05-25T20:38:38.426Z",
+      "error_message": "Significant refactor of ",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 7→9 lines (6 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T20:38:38.426Z"
+    },
+    {
+      "id": "bug-028",
+      "timestamp": "2026-05-25T20:52:30.713Z",
+      "error_message": "Significant refactor of ",
+      "file": "packages/design/src/components/ui/button/index.ts",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 4→4 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T20:52:30.713Z"
+    },
+    {
+      "id": "bug-029",
+      "timestamp": "2026-05-25T20:52:31.516Z",
+      "error_message": "Incorrect value in code",
+      "file": "packages/design/src/components/ui/button/index.ts",
+      "root_cause": "Had \"bg-secondary text-secondary-foreground hover:bg-s",
+      "fix": "Changed to \"bg-secondary text-secondary-foreground border bor",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T20:52:31.516Z"
+    },
+    {
+      "id": "bug-030",
+      "timestamp": "2026-05-25T20:53:04.498Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/shared/components/UserAvatar.vue",
+      "root_cause": "Had \"border border-border/40\"",
+      "fix": "Changed to \"border\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T20:53:04.498Z"
+    },
+    {
+      "id": "bug-031",
+      "timestamp": "2026-05-25T20:59:13.756Z",
+      "error_message": "CSS fix: dark",
+      "file": "packages/design/src/components/ui/tabs/TabsTrigger.vue",
+      "root_cause": "dark: data-[state=active]:border-transparent text-foreground → data-[state=active]:border-[color-mix(in_oklab,var(--primary)_85%,#000)] text-foreground",
+      "fix": "Changed dark: data-[state=active]:border-transparent text-foreground → data-[state=active]:border-[color-mix(in_oklab,var(--primary)_85%,#000)] text-foreground",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T20:59:13.756Z"
+    },
+    {
+      "id": "bug-032",
+      "timestamp": "2026-05-25T21:00:12.005Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/shared/components/UserAvatar.vue",
+      "root_cause": "Had `oklch(0.34 0.12 ${props.hue})`",
+      "fix": "Changed to `oklch(0.4 0.13 ${props.hue})`",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T21:00:12.005Z"
+    },
+    {
+      "id": "bug-033",
+      "timestamp": "2026-05-25T21:37:09.902Z",
+      "error_message": "CSS fix: md",
+      "file": "apps/app/src/features/issue/IssuePage.vue",
+      "root_cause": "md: hidden\"> → hidden\" title=\"More\">",
+      "fix": "Changed md: hidden\"> → hidden\" title=\"More\">",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T21:37:09.902Z"
+    },
+    {
+      "id": "bug-034",
+      "timestamp": "2026-05-25T21:39:26.095Z",
+      "error_message": "CSS fix: left, top, height",
+      "file": "apps/app/src/features/issue/components/ScreenshotViewer.vue",
+      "root_cause": "left: 56% → 54%; top: 58% → 53%; height: 16%\" → 20%\"",
+      "fix": "Changed left: 56% → 54%; top: 58% → 53%; height: 16%\" → 20%\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T21:39:26.095Z"
+    },
+    {
+      "id": "bug-035",
+      "timestamp": "2026-05-25T21:46:47.776Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/shared/components/PinPill.vue",
+      "root_cause": "Had \"mono inline-flex items-center justify-center roun",
+      "fix": "Changed to \"mono inline-flex items-center justify-center roun",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-25T21:46:47.776Z"
+    },
+    {
+      "id": "bug-036",
+      "timestamp": "2026-05-26T09:01:26.640Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
+      "root_cause": "No early return/throw for edge case: to === \"/\"",
+      "fix": "Added guard clause: if (to === \"/\")",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T09:01:26.640Z"
+    },
+    {
+      "id": "bug-037",
+      "timestamp": "2026-05-26T09:41:34.230Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/app/src/features/issue/IssuePage.vue",
+      "root_cause": "26 lines replaced/restructured",
+      "fix": "Rewrote 27→7 lines (26 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T09:41:34.230Z"
+    },
+    {
+      "id": "bug-038",
+      "timestamp": "2026-05-26T10:27:23.866Z",
+      "error_message": "Incorrect value in code",
+      "file": "packages/design/src/components/ui/dialog/DialogScrollContent.vue",
+      "root_cause": "Had \"fixed inset-0 z-50 grid place-items-center overfl",
+      "fix": "Changed to \"fixed inset-0 z-50 grid place-items-center overfl",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T10:27:23.866Z"
+    },
+    {
+      "id": "bug-039",
+      "timestamp": "2026-05-26T10:36:16.164Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/app/src/features/settings/composables/useSettings.ts",
+      "root_cause": "5 lines replaced/restructured",
+      "fix": "Rewrote 5→13 lines (5 removed) | Also: newComment: true,; pinAssigned: true,",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-26T10:36:25.105Z"
+    },
+    {
+      "id": "bug-040",
+      "timestamp": "2026-05-26T14:30:19.029Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/shared/components/PageHeader.vue",
+      "root_cause": "Had \"flex items-end justify-between gap-4 border-b bor",
+      "fix": "Changed to \"flex items-end justify-between gap-4 border-b bor",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T14:30:19.029Z"
+    },
+    {
+      "id": "bug-041",
+      "timestamp": "2026-05-26T14:30:33.083Z",
+      "error_message": "Wrong reference: 1fr_80px_80px should be 1fr_56px_56px",
+      "file": "apps/app/src/features/settings/components/NotificationsSection.vue",
+      "root_cause": "Used \"1fr_80px_80px\" instead of \"1fr_56px_56px\"",
+      "fix": "Changed 1fr_80px_80px → 1fr_56px_56px",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T14:30:33.083Z"
+    },
+    {
+      "id": "bug-042",
+      "timestamp": "2026-05-26T15:05:03.845Z",
+      "error_message": "Incorrect value in code",
+      "file": "packages/design/src/components/ui/input/Input.vue",
+      "root_cause": "Had 'focus-visible:border-ring focus-visible:ring-ring",
+      "fix": "Changed to 'focus-visible:border-ring'",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T15:05:03.845Z"
+    },
+    {
+      "id": "bug-043",
+      "timestamp": "2026-05-26T15:05:25.121Z",
+      "error_message": "CSS fix: --primary, --primary-foreground",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "--primary: #3fcf8e → #7c3aed; --primary-foreground: #04231a → #ffffff",
+      "fix": "Changed --primary: #3fcf8e → #7c3aed; --primary-foreground: #04231a → #ffffff",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 3,
+      "last_seen": "2026-05-26T15:10:22.808Z"
+    },
+    {
+      "id": "bug-044",
+      "timestamp": "2026-05-26T15:05:35.062Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/features/settings/SettingsPage.vue",
+      "root_cause": "Had \"mx-auto w-full max-w-2xl\"",
+      "fix": "Changed to \"mx-auto w-full max-w-2xl md:mx-0\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T15:05:35.062Z"
+    },
+    {
+      "id": "bug-045",
+      "timestamp": "2026-05-26T15:09:25.448Z",
+      "error_message": "Significant refactor of ",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 9→5 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T15:09:25.448Z"
+    },
+    {
+      "id": "bug-046",
+      "timestamp": "2026-05-26T15:14:33.223Z",
+      "error_message": "Wrong reference: _90 should be _95",
+      "file": "packages/design/src/components/ui/tabs/TabsTrigger.vue",
+      "root_cause": "Used \"_90\" instead of \"_95\"",
+      "fix": "Changed _90 → _95",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T15:14:33.223Z"
+    },
+    {
+      "id": "bug-047",
+      "timestamp": "2026-05-26T15:44:37.855Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
+      "root_cause": "Had 'font-medium text-primary-foreground dark:text-whi",
+      "fix": "Changed to 'font-medium text-foreground'",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T15:44:37.855Z"
+    },
+    {
+      "id": "bug-048",
+      "timestamp": "2026-05-26T15:56:35.977Z",
+      "error_message": "CSS fix: grid-template-columns",
+      "file": "apps/app/src/features/pinboards/PinboardsPage.vue",
+      "root_cause": "grid-template-columns: repeat(auto-fill,minmax(360px,1fr))]\" → repeat(auto-fill,minmax(min(360px,100%),1fr))]\"",
+      "fix": "Changed grid-template-columns: repeat(auto-fill,minmax(360px,1fr))]\" → repeat(auto-fill,minmax(min(360px,100%),1fr))]\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T15:56:35.977Z"
+    },
+    {
+      "id": "bug-049",
+      "timestamp": "2026-05-26T16:02:05.544Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/features/pinboards/components/SessionCard.vue",
+      "root_cause": "Had \"group relative flex flex-col overflow-hidden roun",
+      "fix": "Changed to \"group relative flex flex-col overflow-hidden roun",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-26T16:04:43.645Z"
+    },
+    {
+      "id": "bug-050",
+      "timestamp": "2026-05-26T16:12:01.075Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/app/src/features/pinboards/components/SessionCard.vue",
+      "root_cause": "Had \"group relative flex flex-col overflow-hidden roun",
+      "fix": "Changed to \"group relative flex flex-col overflow-hidden roun",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T16:12:01.075Z"
+    },
+    {
+      "id": "bug-051",
+      "timestamp": "2026-05-26T16:42:15.805Z",
+      "error_message": "CSS fix: v-model, hover",
+      "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
+      "root_cause": "v-model: open=\"userMenuOpen\"> → open=\"helpMenuOpen\">; hover: bg-sidebar-accent\" → bg-sidebar-accent hover:text-foreground\"",
+      "fix": "Changed v-model: open=\"userMenuOpen\"> → open=\"helpMenuOpen\">; hover: bg-sidebar-accent\" → bg-sidebar-accent hover:text-foreground\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-26T16:42:15.805Z"
+    }
+  ]
+}

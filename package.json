@@ -1,0 +1,20 @@
+{
+  "name": "pinlayer",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.12.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev:app": "pnpm --filter @pinlayer/app dev",
+    "dev:api": "pnpm --filter @pinlayer/api dev",
+    "dev:ext": "pnpm --filter @pinlayer/extension dev",
+    "build:app": "pnpm --filter @pinlayer/app build",
+    "build:api": "pnpm --filter @pinlayer/api build",
+    "build:ext": "pnpm --filter @pinlayer/extension build",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

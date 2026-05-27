@@ -1,0 +1,18 @@
+{
+  "session_id": "session-2026-05-26-2100",
+  "started": "2026-05-26T20:00:50.074Z",
+  "files_read": {
+    "/Users/apple/Documents/code/pinlayer/apps/app/src/features/workspace-shell/components/AppSidebar.vue": {
+      "count": 1,
+      "tokens": 1965,
+      "first_read": "2026-05-26T20:01:28.031Z"
+    }
+  },
+  "files_written": [],
+  "edit_counts": {},
+  "anatomy_hits": 1,
+  "anatomy_misses": 0,
+  "repeated_reads_warned": 0,
+  "cerebrum_warnings": 0,
+  "stop_count": 0
+}

@@ -1,0 +1,228 @@
+/*
+ * @pinlayer/design — design tokens (framework-agnostic).
+ *
+ * Two layers:
+ *   1. pinLayer primitives (--bg-*, --text-*, --sev-*, brand, etc.)
+ *   2. shadcn-vue semantic vars (--background, --foreground, --primary, …)
+ *      mapped onto the primitives so shadcn-vue components theme automatically.
+ *
+ * Light is the default; dark is opt-in via [data-theme="dark"]. Neutrals are
+ * cool (zinc). Brand accent is violet (#7044C9) and maps to shadcn's --primary
+ * (NOT --accent, which shadcn uses for the subtle hover surface). Override the
+ * --primary* group to reskin the accent.
+ */
+
+:root,
+[data-theme="light"] {
+  /* pinLayer surfaces — zinc */
+  --bg-0: #fafafa;
+  --bg-1: #ffffff;
+  --bg-2: #f4f4f5;
+  --bg-3: #e4e4e7;
+  --bg-elev: #ffffff;
+
+  /* pinLayer borders */
+  --border-strong: #d4d4d8;
+  --border-soft: #f4f4f5;
+
+  /* pinLayer text — zinc */
+  --text-0: #09090b;
+  --text-1: #27272a;
+  --text-2: #71717a;
+  --text-3: #a1a1aa;
+  --text-4: #d4d4d8;
+
+  --status-open: #71717a;
+  --shadow-pop: 0 24px 48px -12px rgba(9, 9, 11, 0.18),
+    0 2px 6px rgba(9, 9, 11, 0.06);
+
+  /* ── shadcn semantic layer (references the primitives above) ── */
+  --background: var(--bg-0);
+  --foreground: var(--text-0);
+  --card: var(--bg-1);
+  --card-foreground: var(--text-0);
+  --popover: var(--bg-elev);
+  --popover-foreground: var(--text-0);
+  --secondary: var(--bg-2);
+  --secondary-foreground: var(--text-1);
+  --muted: var(--bg-2);
+  --muted-foreground: var(--text-2);
+  --accent: var(--bg-2);
+  --accent-foreground: var(--text-0);
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --sidebar: #ffffff;
+  --sidebar-accent: #f4f4f5;
+}
+
+[data-theme="dark"] {
+  --bg-0: #09090b;
+  --bg-1: #18181b;
+  --bg-2: #27272a;
+  --bg-3: #3f3f46;
+  --bg-elev: #18181b;
+
+  --border-strong: #3f3f46;
+  --border-soft: #18181d;
+
+  --text-0: #fafafa;
+  --text-1: #e4e4e7;
+  --text-2: #a1a1aa;
+  --text-3: #71717a;
+  --text-4: #3f3f46;
+
+  --status-open: #a1a1aa;
+  --shadow-pop: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+
+  --border: #27272a;
+  --input: #27272a;
+  --sidebar: #18181b;
+  --sidebar-accent: #27272a;
+}
+
+:root {
+  /* Brand accent — violet (maps to shadcn --primary).
+     hover/soft/glow are DERIVED from --primary via color-mix, so swapping the
+     accent is a one-line change. Only --primary[-foreground] are set by hand. */
+  --primary: #7c3aed;
+  --primary-foreground: #ffffff;
+  --primary-hover: color-mix(in oklab, var(--primary) 86%, #000);
+  --primary-soft: color-mix(in oklab, var(--primary) 15%, transparent);
+  --primary-glow: color-mix(in oklab, var(--primary) 30%, transparent);
+  --ring: var(--primary);
+
+  /* Severity */
+  --sev-critical: #ef4444;
+  --sev-high: #f97316;
+  --sev-medium: #eab308;
+  --sev-low: #3b82f6;
+
+  /* Status */
+  --status-progress: var(--primary);
+  --status-resolved: #10b981;
+  --status-stale: #f97316;
+
+  /* shadcn destructive maps to critical severity */
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  /* Type */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Radii — slightly rounder for a softer, friendlier UI */
+  --radius: 0.75rem;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+
+  /* Layout */
+  --sidebar-w: 224px;
+}
+
+/* Lighter accent in dark mode for contrast on dark surfaces.
+   Placed after :root so it wins by source order (same specificity).
+   hover/soft/glow continue to derive from --primary automatically. */
+[data-theme="dark"] {
+  --primary: #8b5cf6;
+}
+
+/* Accent palettes (Tweaks) — set data-accent on <html> to reskin the brand. */
+[data-accent="blue"] {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-soft: rgba(37, 99, 235, 0.12);
+  --primary-glow: rgba(37, 99, 235, 0.24);
+  --ring: #2563eb;
+}
+[data-accent="emerald"] {
+  --primary: #059669;
+  --primary-hover: #047857;
+  --primary-soft: rgba(5, 150, 105, 0.12);
+  --primary-glow: rgba(5, 150, 105, 0.24);
+  --ring: #059669;
+}
+[data-accent="rose"] {
+  --primary: #e11d48;
+  --primary-hover: #be123c;
+  --primary-soft: rgba(225, 29, 72, 0.12);
+  --primary-glow: rgba(225, 29, 72, 0.24);
+  --ring: #e11d48;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-feature-settings: "cv11", "ss01", "ss03";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "zero", "ss02";
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 10px;
+  border: 2px solid var(--bg-0);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-3);
+}
+.no-scrollbar::-webkit-scrollbar {
+  height: 0;
+  width: 0;
+}
+
+::selection {
+  background: var(--primary-glow);
+  color: var(--text-0);
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 6px 16px -4px var(--primary-glow),
+      0 0 0 3px color-mix(in oklab, var(--primary) 22%, transparent);
+  }
+  50% {
+    box-shadow: 0 6px 16px -4px var(--primary-glow),
+      0 0 0 7px color-mix(in oklab, var(--primary) 6%, transparent);
+  }
+}
+
+@media (max-width: 1100px) {
+  .hide-narrow {
+    display: none !important;
+  }
+}
+@media (max-width: 640px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}

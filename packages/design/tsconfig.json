@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "types": [],
+    "baseUrl": ".",
+    "paths": {
+      "@pinlayer/design/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}
