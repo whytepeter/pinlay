@@ -3,7 +3,7 @@ import type { DropdownMenuLabelProps } from "reka-ui"
 import type { HTMLAttributes } from "vue"
 import { reactiveOmit } from "@vueuse/core"
 import { DropdownMenuLabel, useForwardProps } from "reka-ui"
-import { cn } from '@pinlayer/design/lib/utils'
+import { cn } from '@pinlay/design/lib/utils'
 
 const props = defineProps<DropdownMenuLabelProps & { class?: HTMLAttributes["class"], inset?: boolean }>()
 

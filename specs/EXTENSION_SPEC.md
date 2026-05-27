@@ -15,7 +15,7 @@ DOM. Keep it fast, visual, precise, and privacy-safe.
 
 DevProbe's extension is the blueprint. It solved shadow-DOM mounting, element
 anchoring, the pin overlay, the composer, and screenshot markup already. **Copy the
-patterns, port the code to `@pinlayer/*`, and strip everything tied to screen
+patterns, port the code to `@pinlay/*`, and strip everything tied to screen
 recording / console / network.**
 
 Repo root: `/Users/apple/Documents/code/deveprobe-report/`
@@ -35,9 +35,9 @@ Repo root: `/Users/apple/Documents/code/deveprobe-report/`
 | WXT + Tailwind config | `apps/extension/{wxt.config.ts,tailwind.config.ts}` |
 | API client pattern | `apps/extension/src/lib/api.ts` |
 
-Also read DevProbe's `LIVE_ANNOTATION_SPEC.md` (repo root) — pinLayer's annotation
+Also read DevProbe's `LIVE_ANNOTATION_SPEC.md` (repo root) — pinlay's annotation
 behaviour is derived from it. **Drop** DevProbe's `capture/recording/*`,
-`capture-streams.ts`, `recording-*`, and the offscreen recording host — pinLayer
+`capture-streams.ts`, `recording-*`, and the offscreen recording host — pinlay
 does not record.
 
 ## 1. Surfaces & entry points

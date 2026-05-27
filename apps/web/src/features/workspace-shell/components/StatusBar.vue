@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import type { Role } from "@pinlayer/shared";
+import type { Role } from "@pinlay/shared";
 import {
   Button,
   Dialog,
@@ -20,7 +20,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@pinlayer/design";
+} from "@pinlay/design";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
 import { useShell } from "@/shared/composables/useShell";
 import { useTheme } from "@/shared/composables/useTheme";

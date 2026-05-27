@@ -1,7 +1,8 @@
 import { computed, ref } from "vue";
-import type { Severity, SeverityCounts } from "@pinlayer/shared";
+import type { Severity, SeverityCounts } from "@pinlay/shared";
 import { SESSIONS, statusCounts } from "@/shared/lib/data";
 import { SEVERITY_ORDER, topSeverity } from "@/shared/lib/severity";
+import { useBoards } from "@/shared/composables/useBoards";
 
 export type ViewMode = "grid" | "list";
 export type StatusFilter = "all" | "open" | "in_progress" | "resolved";
@@ -20,11 +21,17 @@ export function useSessions() {
   const sort = ref<SortMode>("recent");
   const view = ref<ViewMode>("grid");
 
+  const { activeBoardId } = useBoards();
+
   const counts = computed(() => statusCounts());
 
   const filtered = computed(() => {
     let list = SESSIONS.slice();
 
+    if (activeBoardId.value) {
+      const b = activeBoardId.value;
+      list = list.filter((s) => s.boardId === b);
+    }
     if (status.value !== "all") {
       list = list.filter((s) => s.status === status.value);
     }

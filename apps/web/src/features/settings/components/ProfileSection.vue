@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import { Button, Icon, Input } from "@pinlayer/design";
+import { Button, Icon, Input } from "@pinlay/design";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
 import { useSettings } from "../composables/useSettings";
 import SectionHeading from "./SectionHeading.vue";

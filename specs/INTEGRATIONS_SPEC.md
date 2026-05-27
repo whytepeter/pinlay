@@ -45,7 +45,7 @@ by category, a slide-over to configure.
   - severity → priority (e.g. critical→Urgent, high→High, medium→Medium, low→Low).
   - issue type → label/tag (visual_bug→`visual`, a11y→`accessibility`, …).
   - assignee → provider user (optional).
-- **Sync direction:** one-way (pinLayer → tool) `[MVP]` or two-way (mirror status &
+- **Sync direction:** one-way (pinlay → tool) `[MVP]` or two-way (mirror status &
   comments back) `[v1+]`.
 - **Attach:** include screenshot + anchor selector + page URL in the created issue.
 - **Last sync** info + count; **Test** button; **Disconnect** (red, bottom).
@@ -63,7 +63,7 @@ by category, a slide-over to configure.
 
 ## 6. Custom webhook `[v1]`
 
-A developer connector: configure a URL + secret; pinLayer POSTs every event
+A developer connector: configure a URL + secret; pinlay POSTs every event
 (`pin.created`, `pin.updated`, `session.submitted`, `pin.resolved`) as signed JSON.
 Shown as a card with a `{}` glyph and a payload preview.
 

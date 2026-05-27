@@ -4,7 +4,7 @@ import type { HTMLAttributes } from "vue"
 import { ChevronDown } from "lucide-vue-next"
 import { reactiveOmit } from "@vueuse/core"
 import { SelectIcon, SelectTrigger, useForwardProps } from "reka-ui"
-import { cn } from '@pinlayer/design/lib/utils'
+import { cn } from '@pinlay/design/lib/utils'
 
 const props = withDefaults(
   defineProps<SelectTriggerProps & { class?: HTMLAttributes["class"], size?: "sm" | "default" }>(),

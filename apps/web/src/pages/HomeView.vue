@@ -54,7 +54,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@pinlayer/design";
+} from "@pinlay/design";
 
 const theme = ref(document.documentElement.dataset.theme ?? "light");
 function toggleTheme() {
@@ -79,7 +79,7 @@ const sortBy = ref("severity");
       >
         <div class="flex items-center gap-2">
           <Icon name="map-pin" :size="20" class="text-primary" />
-          <span class="text-[15px] font-semibold tracking-tight">pinLayer</span>
+          <span class="text-[15px] font-semibold tracking-tight">pinlay</span>
           <Badge variant="secondary">component gallery</Badge>
         </div>
         <Button variant="ghost" size="icon" @click="toggleTheme">
@@ -91,7 +91,7 @@ const sortBy = ref("severity");
         <div class="flex flex-col gap-1">
           <h1 class="text-xl font-semibold tracking-tight">Components</h1>
           <p class="text-sm text-muted-foreground">
-            Every @pinlayer/design primitive — shadcn-vue + Tailwind v4 + lucide.
+            Every @pinlay/design primitive — shadcn-vue + Tailwind v4 + lucide.
           </p>
         </div>
 

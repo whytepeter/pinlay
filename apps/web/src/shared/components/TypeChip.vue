@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { PinType } from "@pinlayer/shared";
-import { Badge } from "@pinlayer/design";
+import type { PinType } from "@pinlay/shared";
+import { Badge } from "@pinlay/design";
 
 defineProps<{ type: PinType }>();
 </script>

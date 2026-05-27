@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { DisplayStatus } from "@pinlayer/shared";
+import type { DisplayStatus } from "@pinlay/shared";
 
 const props = defineProps<{ status: DisplayStatus; dotOnly?: boolean }>();
 

@@ -1,5 +1,5 @@
 {
-  "name": "pinlayer",
+  "name": "pinlay",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,12 +8,12 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev:app": "pnpm --filter @pinlayer/app dev",
-    "dev:api": "pnpm --filter @pinlayer/api dev",
-    "dev:ext": "pnpm --filter @pinlayer/extension dev",
-    "build:app": "pnpm --filter @pinlayer/app build",
-    "build:api": "pnpm --filter @pinlayer/api build",
-    "build:ext": "pnpm --filter @pinlayer/extension build",
+    "dev:web": "pnpm --filter @pinlay/web dev",
+    "dev:api": "pnpm --filter @pinlay/api dev",
+    "dev:ext": "pnpm --filter @pinlay/extension dev",
+    "build:web": "pnpm --filter @pinlay/web build",
+    "build:api": "pnpm --filter @pinlay/api build",
+    "build:ext": "pnpm --filter @pinlay/extension build",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck"
   }

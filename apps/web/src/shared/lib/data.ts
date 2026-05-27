@@ -7,7 +7,7 @@ import type {
   Status,
   SyncState,
   User,
-} from "@pinlayer/shared";
+} from "@pinlay/shared";
 
 /**
  * Mock-first seed data so the dashboard is fully buildable before the API
@@ -30,6 +30,7 @@ export function personById(id: string): User {
 
 export interface SessionListItem extends Session {
   integration?: { name: string; count: number; state: SyncState };
+  boardId?: string;
 }
 
 const min = (m: number) => new Date(Date.now() - m * 60_000).toISOString();
@@ -51,6 +52,7 @@ export const SESSIONS: SessionListItem[] = [
     createdAt: min(180),
     updatedAt: min(12),
     integration: { name: "Linear", count: 6, state: "ok" },
+    boardId: "checkout",
   },
   {
     id: "s_2",
@@ -68,6 +70,7 @@ export const SESSIONS: SessionListItem[] = [
     createdAt: min(600),
     updatedAt: min(48),
     integration: { name: "Jira", count: 3, state: "pending" },
+    boardId: "marketing",
   },
   {
     id: "s_3",
@@ -85,6 +88,7 @@ export const SESSIONS: SessionListItem[] = [
     createdAt: min(1500),
     updatedAt: min(160),
     integration: { name: "GitHub", count: 1, state: "failed" },
+    boardId: "mobile",
   },
   {
     id: "s_4",
@@ -102,6 +106,7 @@ export const SESSIONS: SessionListItem[] = [
     createdAt: min(4000),
     updatedAt: min(1440),
     integration: { name: "Linear", count: 4, state: "ok" },
+    boardId: "marketing",
   },
   {
     id: "s_5",
@@ -119,6 +124,7 @@ export const SESSIONS: SessionListItem[] = [
     createdAt: min(2600),
     updatedAt: min(310),
     integration: { name: "Linear", count: 5, state: "ok" },
+    boardId: "checkout",
   },
   {
     id: "s_6",
@@ -135,6 +141,7 @@ export const SESSIONS: SessionListItem[] = [
     severityCounts: { critical: 0, high: 0, medium: 1, low: 1 },
     createdAt: min(5200),
     updatedAt: min(2880),
+    boardId: "marketing",
   },
 ];
 

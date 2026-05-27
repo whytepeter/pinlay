@@ -9,7 +9,7 @@ import {
   SelectItemText,
   useForwardProps,
 } from "reka-ui"
-import { cn } from '@pinlayer/design/lib/utils'
+import { cn } from '@pinlay/design/lib/utils'
 
 const props = defineProps<SelectItemProps & { class?: HTMLAttributes["class"] }>()
 
@@ -32,7 +32,7 @@ const forwardedProps = useForwardProps(delegatedProps)
     <span class="absolute right-2 flex size-3.5 items-center justify-center">
       <SelectItemIndicator>
         <slot name="indicator-icon">
-          <Check class="size-4" />
+          <Check class="size-4 text-primary" />
         </slot>
       </SelectItemIndicator>
     </span>

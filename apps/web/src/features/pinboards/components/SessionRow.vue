@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { DisplayStatus } from "@pinlayer/shared";
-import { Icon } from "@pinlayer/design";
+import type { DisplayStatus } from "@pinlay/shared";
+import { Icon } from "@pinlay/design";
 import { personById, type SessionListItem } from "@/shared/lib/data";
 import { sevBg, topSeverity } from "@/shared/lib/severity";
 import Favicon from "@/shared/components/Favicon.vue";

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue"
 import { AvatarRoot } from "reka-ui"
-import { cn } from '@pinlayer/design/lib/utils'
+import { cn } from '@pinlay/design/lib/utils'
 
 const props = defineProps<{
   class?: HTMLAttributes["class"]

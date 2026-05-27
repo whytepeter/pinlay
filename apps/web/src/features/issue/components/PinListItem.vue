@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { Icon } from "@pinlayer/design";
+import { Icon } from "@pinlay/design";
 import { personById, type PinItem } from "@/shared/lib/data";
 import PinPill from "@/shared/components/PinPill.vue";
 import SeverityDot from "@/shared/components/SeverityDot.vue";

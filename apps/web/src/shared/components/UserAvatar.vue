@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { Avatar, AvatarFallback } from "@pinlayer/design";
+import { Avatar, AvatarFallback } from "@pinlay/design";
 
 const props = withDefaults(
   defineProps<{ name: string; hue?: number; size?: number }>(),

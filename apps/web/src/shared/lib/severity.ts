@@ -1,4 +1,4 @@
-import type { Severity, SeverityCounts } from "@pinlayer/shared";
+import type { Severity, SeverityCounts } from "@pinlay/shared";
 
 export const SEVERITY_ORDER: Severity[] = ["critical", "high", "medium", "low"];
 

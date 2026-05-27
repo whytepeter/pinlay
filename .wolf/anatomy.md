@@ -1,11 +1,12 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-26T16:54:33.283Z
-> Files: 97 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-27T15:55:46.921Z
+> Files: 105 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
-- `HANDOFF.md` — pinLayer — Handoff (~3384 tok)
+- `HANDOFF.md` — pinlay — Handoff (~3582 tok)
+- `package.json` — Node.js package manifest (~160 tok)
 
 ## ./ (root)
 
@@ -23,15 +24,16 @@
 ## Not yet created (future phases)
 
 
-## apps/app/
+## apps/web/
 
 - `package.json` — Node.js package manifest (~181 tok)
+- `package.json` — Node.js package manifest (~181 tok)
 
-## apps/app/ — `@pinlayer/app` (the dashboard)
+## apps/web/ — `@pinlay/app` (the dashboard)
 
 - `env.d.ts` — vite client + *.vue shim (~70 tok)
 - `index.html` — Geist fonts, data-theme="light", mounts /src/main.ts (~170 tok)
-- `package.json` — vue, vue-router, @pinlayer/{design,shared}; vite/tailwind v4 (~180 tok)
+- `package.json` — vue, vue-router, @pinlay/{design,shared}; vite/tailwind v4 (~180 tok)
 - `src/App.vue` — `<RouterView/>` (~20 tok)
 - `src/app/router.ts` — routes (currently `/` → HomeView) (~75 tok)
 - `src/assets/main.css` — `@import tailwindcss`; @theme inline maps tokens→utilities; dark custom-variant; base layer (~700 tok)
@@ -40,39 +42,39 @@
 - `tsconfig.json` — extends base; @/@ui paths; vite/client types (~90 tok)
 - `vite.config.ts` — vue + @tailwindcss/vite plugins; @/@ui aliases; /api proxy→:8787 (~170 tok)
 
-## apps/app/src/
+## apps/web/src/
 
 - `main.ts` (~81 tok)
 
-## apps/app/src/app/
+## apps/web/src/app/
 
 - `router.ts` — Exports router (~422 tok)
 
-## apps/app/src/assets/
+## apps/web/src/assets/
 
 - `main.css` — Styles: 8 rules, 45 vars (~869 tok)
 
-## apps/app/src/features/dashboard/
+## apps/web/src/features/dashboard/
 
 - `DashboardPage.vue` — Vue: setup (~187 tok)
 
-## apps/app/src/features/integrations/
+## apps/web/src/features/integrations/
 
 - `IntegrationsPage.vue` — Vue: setup (~843 tok)
 
-## apps/app/src/features/integrations/components/
+## apps/web/src/features/integrations/components/
 
 - `IntegrationCard.vue` — Vue: setup (~1655 tok)
 
-## apps/app/src/features/integrations/composables/
+## apps/web/src/features/integrations/composables/
 
 - `useIntegrations.ts` — Exports IntegrationCategory, IntegrationItem, useIntegrations (~852 tok)
 
-## apps/app/src/features/issue/
+## apps/web/src/features/issue/
 
 - `IssuePage.vue` — Vue: setup (~1247 tok)
 
-## apps/app/src/features/issue/components/
+## apps/web/src/features/issue/components/
 
 - `ActivityThread.vue` — Vue: setup (~674 tok)
 - `AnchorBlock.vue` — Vue: setup (~577 tok)
@@ -82,60 +84,62 @@
 - `ReplyBox.vue` — Vue: setup (~337 tok)
 - `ScreenshotViewer.vue` — Vue: setup (~647 tok)
 
-## apps/app/src/features/issue/composables/
+## apps/web/src/features/issue/composables/
 
 - `useIssue.ts` — Exports useIssue (~550 tok)
 
-## apps/app/src/features/pinboards/
+## apps/web/src/features/pinboards/
 
-- `PinboardsPage.vue` — Vue: setup (~460 tok)
+- `PinboardsPage.vue` — Vue: setup (~781 tok)
 
-## apps/app/src/features/pinboards/components/
+## apps/web/src/features/pinboards/components/
 
 - `EmptyState.vue` — Vue: setup (~220 tok)
 - `SessionCard.vue` — Vue: setup (~743 tok)
-- `SessionFilters.vue` — Vue: setup (~1173 tok)
+- `SessionFilters.vue` — Vue: setup (~1123 tok)
 - `SessionRow.vue` — Vue: setup (~601 tok)
 
-## apps/app/src/features/pinboards/composables/
+## apps/web/src/features/pinboards/composables/
 
-- `useSessions.ts` — Exports ViewMode, StatusFilter, SeverityFilter, SortMode, useSessions (~556 tok)
+- `useSessions.ts` — Exports ViewMode, StatusFilter, SeverityFilter, SortMode, useSessions (~621 tok)
 
-## apps/app/src/features/settings/
+## apps/web/src/features/settings/
 
-- `SettingsPage.vue` — Vue: setup (~712 tok)
+- `SettingsPage.vue` — Vue: setup (~800 tok)
 
-## apps/app/src/features/settings/components/
+## apps/web/src/features/settings/components/
 
+- `BillingSection.vue` — Vue: Free, setup (~1848 tok)
+- `BillingSection.vue` — Free/Pro plan-comparison cards + mock setPlan; reads workspace.plan from useSettings (~500 tok)
 - `DangerZoneSection.vue` — Vue: setup (~529 tok)
 - `FormField.vue` — Vue: setup (~178 tok)
 - `FormGroup.vue` — Vue component (~30 tok)
-- `MembersSection.vue` — Vue: setup (~1742 tok)
+- `MembersSection.vue` — Vue: setup (~2177 tok)
 - `NotificationsSection.vue` — Vue: setup (~479 tok)
 - `ProfileSection.vue` — Vue: setup (~518 tok)
 - `SectionHeading.vue` — Vue: setup (~91 tok)
 - `WorkspaceSection.vue` — Vue: setup (~832 tok)
 
-## apps/app/src/features/settings/composables/
+## apps/web/src/features/settings/composables/
 
-- `useSettings.ts` — Exports Member, WorkspaceState, NotificationKey, NotificationPrefs, useSettings (~664 tok)
+- `useSettings.ts` — Exports MemberStatus, Member, PlanId, WorkspaceState + 3 more (~978 tok)
 
-## apps/app/src/features/workspace-shell/
+## apps/web/src/features/workspace-shell/
 
 - `AppLayout.vue` — Vue: setup (~330 tok)
 
-## apps/app/src/features/workspace-shell/components/
+## apps/web/src/features/workspace-shell/components/
 
-- `AppSidebar.vue` — Hover-expand on desktop. Stays expanded while a menu is open (so clicking the (~1965 tok)
+- `AppSidebar.vue` — Hover-expand on desktop. Stays expanded while a menu is open (so clicking the (~2366 tok)
 - `StatusBar.vue` — Vue: setup (~1288 tok)
-- `WorkspaceSwitcher.vue` — Vue: Acme Inc, setup (~691 tok)
+- `WorkspaceSwitcher.vue` — Vue: Acme Inc, setup (~1145 tok)
 
-## apps/app/src/pages/
+## apps/web/src/pages/
 
 - `HomeView.vue` — Vue: setup (~3315 tok)
 - `PaletteView.vue` — Vue: Blue · Zinc, setup (~1515 tok)
 
-## apps/app/src/shared/components/
+## apps/web/src/shared/components/
 
 - `Favicon.vue` — Vue: setup (~164 tok)
 - `PageHeader.vue` — Vue: setup (~244 tok)
@@ -148,14 +152,15 @@
 - `TypeChip.vue` — Vue: setup (~82 tok)
 - `UserAvatar.vue` — Vue: setup (~245 tok)
 
-## apps/app/src/shared/composables/
+## apps/web/src/shared/composables/
 
+- `useBoards.ts` — Exports Board, BOARD_COLORS, useBoards (~619 tok)
 - `useShell.ts` — Mobile: off-canvas drawer open. (Desktop sidebar is hover-expand, no state.) (~114 tok)
 - `useTheme.ts` — The user's preference (light/dark/system); system follows the OS. (~404 tok)
 
-## apps/app/src/shared/lib/
+## apps/web/src/shared/lib/
 
-- `data.ts` — Mock-first seed data so the dashboard is fully buildable before the API (~2364 tok)
+- `data.ts` — Mock-first seed data so the dashboard is fully buildable before the API (~2413 tok)
 - `format.ts` — Compact relative time, e.g. "5m ago", "3h ago", "2d ago". (~198 tok)
 - `severity.ts` — The highest-priority severity present (drives the card's left bar). (~204 tok)
 
@@ -164,21 +169,21 @@
 - `components.json` (~125 tok)
 - `tsconfig.json` — TypeScript configuration (~62 tok)
 
-## packages/design/ — `@pinlayer/design` (shadcn-vue + Tailwind v4)
+## packages/design/ — `@pinlay/design` (shadcn-vue + Tailwind v4)
 
 - `components.json` — shadcn-vue config (new-york, lucide, aliases) (~130 tok)
-- `package.json` — reka-ui, cva, clsx, tailwind-merge, lucide-vue-next; @pinlayer/shared (~200 tok)
+- `package.json` — reka-ui, cva, clsx, tailwind-merge, lucide-vue-next; @pinlay/shared (~200 tok)
 - `src/icons/icon-paths.ts` — name→inner-SVG map (~1585 tok)
 - `src/icons/Icon.vue` — single `<Icon name size stroke>` wrapper + Brand mark (~330 tok)
-- `src/index.ts` — public barrel: Icon, shadcn primitives, pinLayer components, cn, severity helpers (~580 tok)
+- `src/index.ts` — public barrel: Icon, shadcn primitives, pinlay components, cn, severity helpers (~580 tok)
 - `src/lib/severity.ts` — topSeverity, severityColor, SEVERITY_ORDER (~185 tok)
 - `src/lib/utils.ts` — `cn()` (clsx + tailwind-merge) (~50 tok)
 - `src/shims-vue.d.ts` — *.vue module shim (~56 tok)
-- `src/tokens.css` — pinLayer primitives + shadcn semantic vars (light-first, amber→--primary); base resets, .mono, pulse-glow (~1400 tok)
+- `src/tokens.css` — pinlay primitives + shadcn semantic vars (light-first, amber→--primary); base resets, .mono, pulse-glow (~1400 tok)
 
 ## packages/design/src/
 
-- `index.ts` — Import "@pinlayer/design/tokens.css" once in the host app. Components are (~356 tok)
+- `index.ts` — Import "@pinlay/design/tokens.css" once in the host app. Components are (~356 tok)
 - `tokens.css` — Styles: 5 rules, 87 vars (~1579 tok)
 
 ## packages/design/src/components/ui/button/
@@ -196,11 +201,12 @@
 
 ## packages/design/src/components/ui/select/
 
+- `SelectItem.vue` — Vue: setup (~392 tok)
 - `SelectTrigger.vue` — Vue: setup (~457 tok)
 
 ## packages/design/src/components/ui/tabs/
 
-- `TabsList.vue` — Vue: setup (~678 tok)
+- `TabsList.vue` — Vue: setup (~826 tok)
 - `TabsTrigger.vue` — Vue: setup (~430 tok)
 
 ## packages/design/src/components/ui/textarea/
@@ -211,11 +217,16 @@
 
 - `color.ts` — Tiny color helpers for deriving shades in JS (charts, dynamic accents, etc.). (~461 tok)
 
-## packages/shared/ — `@pinlayer/shared` (types + schemas)
+## packages/shared/ — `@pinlay/shared` (types + schemas)
 
 - `src/enums.ts` — Severity, Status, DisplayStatus, PinType, SyncState, Role, IntegrationKind (zod) (~350 tok)
 - `src/index.ts` — barrel (~15 tok)
 - `src/schemas.ts` — zod schemas+types: Session, Pin, Anchor, SeverityCounts, User, Integration… (~1230 tok)
+
+## specs/
+
+- `GENERAL_SPEC.md` — General Spec (~1728 tok)
+- `WEB_APP_SPEC.md` — Web App Spec (`apps/web`) (~2449 tok)
 
 ## specs/ — source of truth (7 files)
 

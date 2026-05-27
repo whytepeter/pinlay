@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { DisplayStatus, Status } from "@pinlayer/shared";
+import type { DisplayStatus, Status } from "@pinlay/shared";
 import {
   Button,
   DropdownMenu,
@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Icon,
-} from "@pinlayer/design";
+} from "@pinlay/design";
 import { PEOPLE, personById, type PinItem } from "@/shared/lib/data";
 import { firstName } from "@/shared/lib/format";
 import PinPill from "@/shared/components/PinPill.vue";

@@ -2,9 +2,9 @@
 
 Hono on Cloudflare Workers. Neon Postgres + Drizzle ORM. R2 for media. Cloudflare
 Queues for async work. JWT auth. The API is the contract shared by `app` and
-`extension`; its request/response shapes and enums live in `@pinlayer/shared`.
+`extension`; its request/response shapes and enums live in `@pinlay/shared`.
 
-> The data model here is **purpose-built for pinLayer's UI** — it is not lifted
+> The data model here is **purpose-built for pinlay's UI** — it is not lifted
 > from DeveProbe and not the Claude Design mock. Key choice: the **Session is the
 > single unit** (card = thing you open = sync target). There is no separate "issue"
 > table.
@@ -19,9 +19,9 @@ Queues for async work. JWT auth. The API is the contract shared by `app` and
   fast list queries; recomputed on pin create/update/delete.
 - **Org-scoped everything.** Every row carries `orgId`; every handler verifies
   ownership.
-- **Shared schemas.** zod + TS types defined once in `@pinlayer/shared`. No drift.
+- **Shared schemas.** zod + TS types defined once in `@pinlay/shared`. No drift.
 
-## 2. Enums (`@pinlayer/shared`)
+## 2. Enums (`@pinlay/shared`)
 
 Deliberately small — only what the UI expresses.
 

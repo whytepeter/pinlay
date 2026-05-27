@@ -2,21 +2,21 @@
 @import "tw-animate-css";
 
 /*
- * Tailwind v4 auto-scans this app's source but NOT the @pinlayer/design package
+ * Tailwind v4 auto-scans this app's source but NOT the @pinlay/design package
  * (a workspace symlink under node_modules), so register its source explicitly —
  * otherwise utility classes used inside the shared components aren't generated.
  */
 @source "../../../../packages/design/src";
 
-/* pinLayer uses a data-theme attribute (not the .dark class) for theming. */
+/* pinlay uses a data-theme attribute (not the .dark class) for theming. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /*
- * Map the @pinlayer/design CSS variables into Tailwind's theme so utilities
+ * Map the @pinlay/design CSS variables into Tailwind's theme so utilities
  * (`bg-background`, `text-muted-foreground`, `bg-primary`, `border-border`,
  * `bg-sev-critical`, `text-text-2`, `font-mono`, …) resolve to the runtime
  * variables. Kept `inline` so theme + accent swap live. The variables live in
- * @pinlayer/design/tokens.css.
+ * @pinlay/design/tokens.css.
  */
 @theme inline {
   /* shadcn-vue semantic colors */
@@ -44,7 +44,7 @@
   --color-sidebar: var(--sidebar);
   --color-sidebar-accent: var(--sidebar-accent);
 
-  /* pinLayer primitives */
+  /* pinlay primitives */
   --color-bg-0: var(--bg-0);
   --color-bg-1: var(--bg-1);
   --color-bg-2: var(--bg-2);
@@ -62,7 +62,7 @@
   --color-sev-medium: var(--sev-medium);
   --color-sev-low: var(--sev-low);
 
-  /* radii (match pinLayer scale exactly) */
+  /* radii (match pinlay scale exactly) */
   --radius-sm: var(--r-sm);
   --radius-md: var(--r-md);
   --radius-lg: var(--r-lg);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { SeverityCounts } from "@pinlayer/shared";
+import type { SeverityCounts } from "@pinlay/shared";
 import { SEVERITY_ORDER, sevBg } from "@/shared/lib/severity";
 import SeverityDot from "./SeverityDot.vue";
 

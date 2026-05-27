@@ -2,8 +2,8 @@
 
 ## 1. Summary
 
-pinLayer turns scattered "this looks wrong" feedback into structured, anchored,
-route-able issues. A user opens any web page with the pinLayer extension, clicks
+pinlay turns scattered "this looks wrong" feedback into structured, anchored,
+route-able issues. A user opens any web page with the pinlay extension, clicks
 an element, writes a short note, and that note becomes a **pin** — attached to a
 real DOM element, carrying a severity, type, screenshot, and status. Pins from
 one sitting roll up into a **session**, and sessions surface in the web dashboard
@@ -17,7 +17,7 @@ lightweight annotation layer. Keep it fast and keep it simple.
 
 ## 2. Personas
 
-| Persona | Primary job | What they need from pinLayer |
+| Persona | Primary job | What they need from pinlay |
 |---|---|---|
 | Designer | Review implementation vs. design | Drop pins fast, attach screenshots, compare to Figma |
 | QA Engineer | Run structured passes | Create 10–20 pins per session without jank, track status |
@@ -30,7 +30,7 @@ lightweight annotation layer. Keep it fast and keep it simple.
 One repository, three deployables, shared packages. Mirrors DeveProbe.
 
 ```
-pinlayer/
+pinlay/
 ├── apps/
 │   ├── app/            # Web dashboard — Vue 3 + Vite (feature structure)
 │   └── extension/      # Browser extension — WXT + Vue 3
@@ -43,7 +43,7 @@ pinlayer/
 └── package.json
 ```
 
-- **`apps/app`** — the dashboard. Feature-based folders (see WEB_APP_SPEC). This is
+- **`apps/web`** — the dashboard. Feature-based folders (see WEB_APP_SPEC). This is
   the primary build target for the first milestone.
 - **`apps/extension`** — the capture surface (see EXTENSION_SPEC). Can be stubbed
   early; the dashboard is usable against seeded/mock data first.
@@ -53,8 +53,8 @@ pinlayer/
 - **`packages/design`** — CSS token file + reusable components. The single source
   of visual truth (see DESIGN_SYSTEM_SPEC).
 
-> **Naming:** packages are scoped `@pinlayer/*` (`@pinlayer/app`,
-> `@pinlayer/extension`, `@pinlayer/api`, `@pinlayer/shared`, `@pinlayer/design`).
+> **Naming:** packages are scoped `@pinlay/*` (`@pinlay/web`,
+> `@pinlay/extension`, `@pinlay/api`, `@pinlay/shared`, `@pinlay/design`).
 
 ## 4. Tech stack
 
@@ -62,7 +62,7 @@ pinlayer/
 |---|---|
 | Web framework | Vue 3 + Vite |
 | Styling | **Tailwind v4** (CSS-first config) + CSS variable tokens |
-| Components | Built from scratch into `@pinlayer/design` (no shadcn dependency) |
+| Components | Built from scratch into `@pinlay/design` (no shadcn dependency) |
 | Routing | Vue Router 4 (lazy routes + auth guard) |
 | Client state | Pinia (+ persistedstate for auth/prefs) |
 | Server state | @tanstack/vue-query |
@@ -105,7 +105,7 @@ pinlayer/
   activity thread, reply box, J/K navigation, resolve/status/assignee).
 - **Integrations hub** — grid of connectors with connected/not-connected states.
 - Light theme as default; theme + accent swap available but not prominent.
-- Wired to `@pinlayer/api` for sessions, pins, and auth.
+- Wired to `@pinlay/api` for sessions, pins, and auth.
 
 **`[v1]`:**
 
@@ -140,7 +140,7 @@ pinlayer/
 
 ## 9. Roadmap (phases)
 
-1. **Foundation** — monorepo, `@pinlayer/design` tokens + base components, app
+1. **Foundation** — monorepo, `@pinlay/design` tokens + base components, app
    shell, auth.
 2. **Triage** — Pinboards feed + Issue Detail, wired to API. (Core MVP value.)
 3. **Connect** — Integrations hub + sync pipeline.

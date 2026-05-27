@@ -11,7 +11,7 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-} from "@pinlayer/design";
+} from "@pinlay/design";
 import Favicon from "@/shared/components/Favicon.vue";
 import { useIssue } from "./composables/useIssue";
 import PinList from "./components/PinList.vue";

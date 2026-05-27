@@ -9,10 +9,10 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "@pinlayer/design/components",
-    "ui": "@pinlayer/design/components/ui",
-    "lib": "@pinlayer/design/lib",
-    "utils": "@pinlayer/design/lib/utils"
+    "components": "@pinlay/design/components",
+    "ui": "@pinlay/design/components/ui",
+    "lib": "@pinlay/design/lib",
+    "utils": "@pinlay/design/lib/utils"
   },
   "iconLibrary": "lucide"
 }

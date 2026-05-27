@@ -457,3 +457,146 @@
 
 | Time | Action | File(s) | Outcome | ~Tokens |
 |------|--------|---------|---------|--------|
+| 09:37 | Edited packages/design/src/components/ui/tabs/TabsList.vue | 10→10 lines | ~133 |
+| 09:38 | Edited apps/app/src/features/settings/SettingsPage.vue | 3→3 lines | ~69 |
+| 09:39 | Edited apps/app/src/features/pinboards/components/SessionFilters.vue | 9→12 lines | ~106 |
+| 09:48 | Tabs primitive: bg-muted container + bg-background indicator pill; Settings override with bg-transparent + [&>[aria-hidden]]:bg-muted; SessionFilters active count → primary via group-data-[state=active]:text-primary | packages/design/src/components/ui/tabs/TabsList.vue, apps/app/src/features/settings/SettingsPage.vue, apps/app/src/features/pinboards/components/SessionFilters.vue | verified light + dark, Settings transparent + indicator bg-muted, Pinboards count violet | ~120 |
+| 09:48 | Session end: 3 writes across 3 files (TabsList.vue, SettingsPage.vue, SessionFilters.vue) | 3 reads | ~4179 tok |
+| 09:49 | Edited packages/design/src/components/ui/tabs/TabsList.vue | CSS: dark, dark | ~61 |
+| 09:56 | Tabs indicator in dark mode: bg-background → dark:bg-bg-3 (zinc-700) so active tab is LIGHTER than container, not darker | packages/design/src/components/ui/tabs/TabsList.vue | verified dark: indicator rgb(63,63,70) on container rgb(39,39,42) | ~20 |
+| 09:57 | Session end: 4 writes across 3 files (TabsList.vue, SettingsPage.vue, SessionFilters.vue) | 3 reads | ~4245 tok |
+| 09:58 | Edited packages/design/src/components/ui/tabs/TabsList.vue | 10→10 lines | ~134 |
+| 10:00 | Tabs container restyled to match grid/list switcher: rounded-md border bg-card p-0.5 + bg-secondary indicator rounded-[5px]. Both light/dark resolve via tokens, no per-mode override needed | packages/design/src/components/ui/tabs/TabsList.vue | verified light + dark, matches the grid/list toggle exactly | ~30 |
+| 10:00 | Session end: 5 writes across 3 files (TabsList.vue, SettingsPage.vue, SessionFilters.vue) | 3 reads | ~4388 tok |
+| 10:02 | Edited packages/design/src/components/ui/tabs/TabsList.vue | CSS: top | ~252 |
+| 10:04 | Tabs sliding indicator: use getBoundingClientRect + clientTop/Left instead of offsetTop/Height to avoid sub-pixel rounding; indicator now lines up exactly with active trigger | packages/design/src/components/ui/tabs/TabsList.vue | verified: diffTop=0, diffBottom=0 | ~25 |
+| 10:04 | Session end: 6 writes across 3 files (TabsList.vue, SettingsPage.vue, SessionFilters.vue) | 3 reads | ~4658 tok |
+| 10:05 | Edited packages/design/src/components/ui/select/SelectItem.vue | "size-4" → "size-4 text-primary" | ~13 |
+| 10:06 | Edited apps/app/src/features/settings/composables/useSettings.ts | 3→7 lines | ~58 |
+| 10:06 | Edited apps/app/src/features/settings/composables/useSettings.ts | expanded (+15 lines) | ~139 |
+| 10:07 | Edited apps/app/src/features/settings/composables/useSettings.ts | added 1 condition(s) | ~258 |
+| 10:07 | Edited apps/app/src/features/settings/components/MembersSection.vue | added 3 condition(s) | ~108 |
+| 10:07 | Edited apps/app/src/features/settings/components/MembersSection.vue | CSS: dark | ~844 |
+| 10:14 | Select check icon → text-primary; Members now carry status (active/pending) + invitedAt; pending rows show amber chip + dim avatar + Resend/Revoke menu | packages/design/src/components/ui/select/SelectItem.vue, apps/app/src/features/settings/composables/useSettings.ts, apps/app/src/features/settings/components/MembersSection.vue | verified Members section shows pending alex row, Select check shows violet on active option | ~180 |
+| 10:15 | Session end: 12 writes across 6 files (TabsList.vue, SettingsPage.vue, SessionFilters.vue, SelectItem.vue, useSettings.ts) | 5 reads | ~6811 tok |
+| 10:16 | Edited apps/app/src/features/settings/components/MembersSection.vue | 7→7 lines | ~79 |
+| 10:16 | Session end: 13 writes across 6 files (TabsList.vue, SettingsPage.vue, SessionFilters.vue, SelectItem.vue, useSettings.ts) | 5 reads | ~6895 tok |
+| 10:38 | Created apps/app/src/shared/composables/useBoards.ts | — | ~496 |
+| 10:40 | Edited apps/app/src/shared/lib/data.ts | 3→4 lines | ~40 |
+| 10:41 | Edited apps/app/src/shared/lib/data.ts | 11→12 lines | ~97 |
+| 10:41 | Edited apps/app/src/shared/lib/data.ts | 2→3 lines | ~27 |
+| 10:41 | Edited apps/app/src/shared/lib/data.ts | 2→3 lines | ~26 |
+| 10:42 | Edited apps/app/src/shared/lib/data.ts | 2→3 lines | ~26 |
+| 10:42 | Edited apps/app/src/shared/lib/data.ts | 2→3 lines | ~26 |
+| 10:43 | Edited apps/app/src/shared/lib/data.ts | 4→5 lines | ~25 |
+| 10:43 | Edited apps/app/src/shared/composables/useBoards.ts | added 1 import(s) | ~35 |
+| 10:44 | Edited apps/app/src/shared/composables/useBoards.ts | added nullish coalescing | ~120 |
+| 10:44 | Edited apps/app/src/shared/composables/useBoards.ts | 8→9 lines | ~33 |
+| 10:45 | Edited apps/app/src/features/pinboards/composables/useSessions.ts | added 1 import(s) | ~84 |
+| 10:46 | Edited apps/app/src/features/pinboards/composables/useSessions.ts | added 1 condition(s) | ~186 |
+| 10:47 | Edited apps/app/src/features/workspace-shell/components/AppSidebar.vue | added 1 condition(s) | ~510 |
+| 10:48 | Edited apps/app/src/features/workspace-shell/components/AppSidebar.vue | added nullish coalescing | ~886 |
+| 10:49 | Edited apps/app/src/features/pinboards/PinboardsPage.vue | modified clearBoard() | ~498 |
+| 10:59 | Sidebar boards now functional: useBoards composable, RouterLink to /?board=<id> with active highlight + live counts, "+" opens New board Dialog with color picker; boardId added to mock sessions; useSessions filters by activeBoardId; PinboardsPage shows active board clear-chip | apps/app/src/shared/composables/useBoards.ts, apps/app/src/shared/lib/data.ts, apps/app/src/features/pinboards/composables/useSessions.ts, apps/app/src/features/pinboards/PinboardsPage.vue, apps/app/src/features/workspace-shell/components/AppSidebar.vue | verified /?board=checkout filters to 2 sessions, dialog renders with color picker | ~600 |
+| 11:00 | Session end: 29 writes across 11 files (TabsList.vue, SettingsPage.vue, SessionFilters.vue, SelectItem.vue, useSettings.ts) | 8 reads | ~13526 tok |
+| 11:02 | Edited apps/app/src/features/pinboards/PinboardsPage.vue | CSS: chip, sm | ~271 |
+
+## Session: 2026-05-27 11:26
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-27 13:03
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-27 13:03
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-27 14:18
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-27 14:18
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-27 14:51
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-27 14:51
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 14:53 | Edited apps/app/src/features/pinboards/PinboardsPage.vue | 4→4 lines | ~34 |
+| 15:03 | Move active-board chip out of PageHeader actions into a dedicated "Filtered by" strip — small rounded-full pill, no longer looks like a button next to Sync/New session | apps/app/src/features/pinboards/PinboardsPage.vue | verified /?board=mobile shows the pill chip cleanly above the filter bar | ~40 |
+| 15:04 | Session end: 1 writes across 1 files (PinboardsPage.vue) | 1 reads | ~819 tok |
+| 15:16 | Edited apps/web/package.json | inline fix | ~8 |
+| 15:16 | Edited package.json | 6→6 lines | ~93 |
+| 15:16 | Edited .claude/launch.json | 11→11 lines | ~57 |
+| 15:17 | Edited HANDOFF.md | inline fix | ~26 |
+| 15:17 | Edited HANDOFF.md | "@pinlayer/app" → "@pinlayer/web" | ~6 |
+| 15:18 | Edited HANDOFF.md | inline fix | ~3 |
+| 15:18 | Edited HANDOFF.md | inline fix | ~9 |
+| 15:19 | Edited HANDOFF.md | inline fix | ~17 |
+| 15:20 | Edited specs/GENERAL_SPEC.md | "apps/app" → "apps/web" | ~23 |
+| 15:21 | Edited specs/GENERAL_SPEC.md | 2→2 lines | ~40 |
+| 15:22 | Edited specs/WEB_APP_SPEC.md | "apps/app" → "apps/web" | ~8 |
+| 15:23 | Edited specs/WEB_APP_SPEC.md | inline fix | ~4 |
+| 15:28 | Renamed apps/app → apps/web (and @pinlayer/app → @pinlayer/web). Updated root scripts, app package.json, launch.json, HANDOFF, GENERAL_SPEC, WEB_APP_SPEC; pnpm install regenerated lockfile/symlinks; verified dev server starts under new name | apps/web/**, package.json, .claude/launch.json, HANDOFF.md, specs/GENERAL_SPEC.md, specs/WEB_APP_SPEC.md | dev server starts clean, app renders | ~140 |
+| 15:29 | Session end: 13 writes across 6 files (PinboardsPage.vue, package.json, launch.json, HANDOFF.md, GENERAL_SPEC.md) | 4 reads | ~1121 tok |
+| 15:48 | Edited package.json | inline fix | ~6 |
+| 15:57 | Edited HANDOFF.md | 19→22 lines | ~310 |
+| 15:58 | Edited HANDOFF.md | Settings() → script() | ~426 |
+
+## Session: 2026-05-27 16:19
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-27 16:19
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 16:28 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 5→6 lines | ~29 |
+| 16:28 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 6→5 lines | ~17 |
+| 16:28 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | reduced (-25 lines) | ~172 |
+| 16:28 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 6→3 lines | ~18 |
+| 16:30 | MVP-trim Help menu: kept bug report / support / docs / install browser extension; removed Security, System status, Pricing, Blog, Slack app, macOS app; collapsed Install submenu; dropped unused DropdownMenuSub* imports | AppSidebar.vue | verified in preview | ~120 |
+| 16:30 | Session end: 4 writes across 1 files (AppSidebar.vue) | 4 reads | ~6708 tok |
+| 16:31 | Edited apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | CSS: next | ~392 |
+| 16:31 | Edited apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | CSS: v-model | ~432 |
+| 16:55 | Wired "Create workspace" item in WorkspaceSwitcher: opens Dialog with single Name input, slug auto-derived, plan defaults to Free, appends + switches; combined dropdown+dialog open state so sidebar stays expanded | WorkspaceSwitcher.vue | verified in preview (Pinlay HQ created + selected) | ~280 |
+| 16:35 | Session end: 6 writes across 2 files (AppSidebar.vue, WorkspaceSwitcher.vue) | 8 reads | ~10143 tok |
+| 16:38 | Edited apps/web/src/features/settings/composables/useSettings.ts | 5→8 lines | ~46 |
+| 16:38 | Edited apps/web/src/features/settings/composables/useSettings.ts | 5→6 lines | ~38 |
+| 16:38 | Edited apps/web/src/features/settings/composables/useSettings.ts | modified revokeInvite() | ~52 |
+| 16:38 | Edited apps/web/src/features/settings/composables/useSettings.ts | 5→6 lines | ~21 |
+| 16:39 | Created apps/web/src/features/settings/components/BillingSection.vue | — | ~860 |
+| 16:39 | Edited apps/web/src/features/settings/SettingsPage.vue | 28→31 lines | ~281 |
+| 16:39 | Edited apps/web/src/features/settings/SettingsPage.vue | 5→6 lines | ~104 |
+| 16:40 | Edited apps/web/src/features/settings/components/BillingSection.vue | 4→3 lines | ~6 |
+| 16:45 | Added Billing tab to Settings (Plan card + Upgrade CTA scope): extended useSettings.workspace with `plan: "free" | "pro"` + setPlan, new BillingSection.vue (Free/Pro comparison cards, Current badge, mock upgrade/downgrade, Stripe footer line), wired into SettingsPage NAV with credit-card icon | useSettings.ts, BillingSection.vue (new), SettingsPage.vue | verified in preview (cards render, mock plan toggle works both directions) | ~480 |
+| 16:43 | Session end: 14 writes across 5 files (AppSidebar.vue, WorkspaceSwitcher.vue, useSettings.ts, BillingSection.vue, SettingsPage.vue) | 14 reads | ~14762 tok |
+| 16:45 | Edited apps/web/src/features/settings/components/BillingSection.vue | added 4 condition(s) | ~803 |
+| 16:46 | Edited apps/web/src/features/settings/components/BillingSection.vue | CSS: Icon, width | ~377 |
+| 17:05 | Billing v2: changed Pro price $19→$10; added "Current usage" block (4 metric cards: Boards/Pins per month/Integrations/Seats); Free shows current/limit + colored progress bar (primary <80%, amber 80-99%, destructive ≥100%, clamped to 100% width); Pro shows count only and adds "— this billing cycle" to the header; metrics wire to useBoards.boards.length, SESSIONS.pinCount sum, useIntegrations.connectedCount, useSettings.members.length | BillingSection.vue | verified on Free + Pro in preview | ~520 |
+| 16:48 | Session end: 16 writes across 5 files (AppSidebar.vue, WorkspaceSwitcher.vue, useSettings.ts, BillingSection.vue, SettingsPage.vue) | 15 reads | ~16874 tok |
+| 16:48 | Session end: 16 writes across 5 files (AppSidebar.vue, WorkspaceSwitcher.vue, useSettings.ts, BillingSection.vue, SettingsPage.vue) | 15 reads | ~16874 tok |
+| 16:51 | Edited apps/web/src/features/settings/composables/useSettings.ts | inline fix | ~11 |
+| 16:51 | Edited apps/web/src/features/settings/composables/useSettings.ts | "pro" → "team" | ~5 |
+| 16:51 | Edited apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | inline fix | ~14 |
+| 16:52 | Edited apps/web/src/features/settings/components/BillingSection.vue | CSS: month, day, year | ~807 |
+| 16:52 | Edited apps/web/src/features/settings/components/BillingSection.vue | "grid grid-cols-2 gap-3 md" → "grid grid-cols-1 gap-3 sm" | ~15 |
+| 16:52 | Edited apps/web/src/features/settings/components/BillingSection.vue | "pro" → "team" | ~9 |
+| 16:52 | Edited apps/web/src/features/settings/components/BillingSection.vue | expanded (+22 lines) | ~208 |
+| 17:25 | Billing v3 (realistic, jam.dev-simple): renamed plan "pro"→"team" across PlanId/PLANS/useSettings/WorkspaceSwitcher; Free is now capped but generous (500 pins/mo, 3 members, 2 integrations, 30-day history); Team is $10/user/mo unlimited; usage block dropped to 3 cards (Pins/Members/Integrations) — the actual upgrade gates; added Next-invoice card on Team (active seats × $10, first-of-next-month date) | useSettings.ts, BillingSection.vue, WorkspaceSwitcher.vue | verified both Free + Team states in preview | ~620 |
+| 16:55 | Session end: 23 writes across 5 files (AppSidebar.vue, WorkspaceSwitcher.vue, useSettings.ts, BillingSection.vue, SettingsPage.vue) | 15 reads | ~18811 tok |
+| 16:55 | Edited apps/web/src/features/settings/components/BillingSection.vue | 2→2 lines | ~15 |

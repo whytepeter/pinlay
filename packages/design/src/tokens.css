@@ -1,8 +1,8 @@
 /*
- * @pinlayer/design — design tokens (framework-agnostic).
+ * @pinlay/design — design tokens (framework-agnostic).
  *
  * Two layers:
- *   1. pinLayer primitives (--bg-*, --text-*, --sev-*, brand, etc.)
+ *   1. pinlay primitives (--bg-*, --text-*, --sev-*, brand, etc.)
  *   2. shadcn-vue semantic vars (--background, --foreground, --primary, …)
  *      mapped onto the primitives so shadcn-vue components theme automatically.
  *
@@ -14,18 +14,18 @@
 
 :root,
 [data-theme="light"] {
-  /* pinLayer surfaces — zinc */
+  /* pinlay surfaces — zinc */
   --bg-0: #fafafa;
   --bg-1: #ffffff;
   --bg-2: #f4f4f5;
   --bg-3: #e4e4e7;
   --bg-elev: #ffffff;
 
-  /* pinLayer borders */
+  /* pinlay borders */
   --border-strong: #d4d4d8;
   --border-soft: #f4f4f5;
 
-  /* pinLayer text — zinc */
+  /* pinlay text — zinc */
   --text-0: #09090b;
   --text-1: #27272a;
   --text-2: #71717a;

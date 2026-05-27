@@ -1,5 +1,5 @@
 import { computed, onMounted, onUnmounted, ref, watch, type Ref } from "vue";
-import type { Status } from "@pinlayer/shared";
+import type { Status } from "@pinlay/shared";
 import {
   getPins,
   SESSIONS,

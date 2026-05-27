@@ -1,6 +1,6 @@
-# pinLayer — Handoff
+# pinlay — Handoff
 
-> Read this first. It tells you what pinLayer is, what's built today, the
+> Read this first. It tells you what pinlay is, what's built today, the
 > conventions to follow, and what's next. Then read `specs/` (start with
 > `specs/README.md`) for the deeper product/architecture spec.
 
@@ -8,7 +8,7 @@ _Last updated: 2026-05-25_
 
 ---
 
-## 1. What pinLayer is
+## 1. What pinlay is
 
 A standalone, browser-first annotation product spun out of DevProbe's live-
 annotation feature. Users drop visual **pins** on live web pages (anchored to
@@ -24,30 +24,33 @@ layer. **Keep the UI simple.**
 ## 2. Repo at a glance
 
 ```
-pinlayer/
+pinlay/
 ├── apps/
-│   └── app/                         # @pinlayer/app — the dashboard (Vue 3 + Vite + Tailwind v4)
+│   ├── web/                         # @pinlay/web — the dashboard (Vue 3 + Vite + Tailwind v4) ✅
+│   ├── extension/                   # @pinlay/extension — browser capture surface (manifest v3) ⏳
+│   └── api/                         # @pinlay/api — Hono on CF Workers + Neon + Drizzle ⏳
 ├── packages/
-│   ├── design/                      # @pinlayer/design — shadcn-vue + Tailwind v4 primitives + tokens
-│   └── shared/                      # @pinlayer/shared — enums + zod schemas + TS types
-├── specs/                           # product/architecture source of truth (7 files)
+│   ├── design/                      # @pinlay/design — shadcn-vue + Tailwind v4 primitives + tokens ✅
+│   ├── shared/                      # @pinlay/shared — enums + zod schemas + TS types ✅
+│   └── inject/                      # @pinlay/inject — page-side runtime shared with extension ⏳
+├── specs/                           # product/architecture source of truth
 ├── HANDOFF.md                       # this file
 ├── pnpm-workspace.yaml
 ├── tsconfig.base.json
-└── package.json                     # workspace scripts: dev:app, build:app, typecheck, …
+└── package.json                     # workspace scripts: dev:web, build:web, typecheck, …
 ```
 
 **Stack:** pnpm monorepo · Vue 3 + Vite + Tailwind v4 · shadcn-vue (reka-ui) ·
 Geist / Geist Mono · zod. Node 20+, pnpm 10.
 
-**Not yet created** (future phases): `apps/extension/` (`@pinlayer/extension`)
-and `packages/api/` (`@pinlayer/api`).
+**Status legend:** ✅ built and shipping · ⏳ folder reserved, not yet scaffolded
+(empty `.gitkeep` placeholder; add `package.json` when work starts on it).
 
 ---
 
 ## 3. What's built today
 
-### `@pinlayer/shared`
+### `@pinlay/shared`
 
 Zod enums and schemas — the contract that the app and (future) API share.
 
@@ -57,7 +60,7 @@ Zod enums and schemas — the contract that the app and (future) API share.
   `Anchor`, `Comment`, `ActivityEvent`, `Integration`, `SyncRecord`,
   `SeverityCounts`.
 
-### `@pinlayer/design`
+### `@pinlay/design`
 
 shadcn-vue + Tailwind v4 component library installed via the shadcn CLI.
 
@@ -72,19 +75,19 @@ shadcn-vue + Tailwind v4 component library installed via the shadcn CLI.
   - Active `TabsTrigger` = solid `bg-primary` + `text-primary-foreground`, no shadow.
 - **Icon** (`src/components/Icon.vue`) — thin wrapper around `lucide-vue-next`
   resolving kebab `name` (`"chevron-down"` → `ChevronDown`).
-- **`tokens.css`** — pinLayer primitives (bg/text/border/severity/status,
+- **`tokens.css`** — pinlay primitives (bg/text/border/severity/status,
   fonts, radii, sidebar surface) + shadcn semantic vars mapped onto them. The
   brand accent is set ONCE as `--primary`; `--primary-hover/soft/glow` derive
   via `color-mix(in oklab, …)` so swapping the accent is a one-line change.
 - **`lib/`** — `cn()` (clsx + tailwind-merge) and a `color.ts` utility
   (`lighten`, `darken`, `mix`, `withAlpha`) for JS shade derivation.
 
-### `@pinlayer/app`
+### `@pinlay/web`
 
 Vue 3 + Vite + Tailwind v4. Light-first; dark + system supported.
 
 ```
-apps/app/src/
+apps/web/src/
 ├── main.ts                            # initTheme() → mount; imports main.css + tokens.css
 ├── App.vue                            # <RouterView/>
 ├── app/router.ts                      # routes (issue is a CHILD of AppLayout)
@@ -152,11 +155,11 @@ opens the session URL; View in {integration} is a placeholder.
   truly dynamic values (hue gradients, runtime colors) are fine.
 - **Customize design-system defaults IN the component**, not via repeated
   per-call-site class overrides. If you need a recurring style, bake it into
-  the component in `@pinlayer/design`.
+  the component in `@pinlay/design`.
 - **Domain components live in the app**, not the design package.
-  `@pinlayer/design` only holds reusable primitives + Icon + utilities.
+  `@pinlay/design` only holds reusable primitives + Icon + utilities.
   Domain pieces (StatusChip, SeverityHeatbar, PinPill, UserAvatar, etc.) live
-  in `apps/app/src/shared/components/`.
+  in `apps/web/src/shared/components/`.
 - **Tailwind v4 monorepo gotcha:** the app's `main.css` MUST include
   `@source "../../../../packages/design/src";` — Tailwind otherwise skips
   node_modules and won't generate classes used inside the package.
@@ -168,7 +171,7 @@ opens the session URL; View in {integration} is a placeholder.
   + the active Tabs trigger carry a 1px border in a slightly-deeper shade of
   their own bg (~85–92% via `color-mix`). If a de-shadowed component is
   border-less, add `border border-border`.
-- **Icons:** always `<Icon name="…">` from `@pinlayer/design`, kebab-case
+- **Icons:** always `<Icon name="…">` from `@pinlay/design`, kebab-case
   names. Don't import lucide directly outside the design package.
 - **Mock-first behind composables.** `useSessions`, `useIssue` hide the data
   source. When the API lands, swap inside the composable, not in components.
@@ -200,7 +203,7 @@ opens the session URL; View in {integration} is a placeholder.
   `color-mix(in oklab, …)` automatically. Accent history:
   amber → `#7044C9` → `#AB87FF` → `#8A84E2` → `#306D29` → `#B17457` →
   `#27667B` → `#00B9A8` → `#3FCF8E` (current).
-- **Fonts:** Geist + Geist Mono from Google Fonts (`apps/app/index.html`),
+- **Fonts:** Geist + Geist Mono from Google Fonts (`apps/web/index.html`),
   mapped to `--font-sans` / `--font-mono`, available as `font-sans` /
   `font-mono`.
 - **Sidebar surface** = `--sidebar` (white in light, `#18181b` in dark); hover
@@ -212,8 +215,8 @@ opens the session URL; View in {integration} is a placeholder.
 
 ```bash
 pnpm install
-pnpm dev:app                # vite dev → http://localhost:5173
-pnpm --filter @pinlayer/app build
+pnpm dev:web                # vite dev → http://localhost:5173
+pnpm --filter @pinlay/web build
 pnpm -r typecheck
 ```
 
@@ -231,22 +234,28 @@ Useful routes (all under the AppLayout shell unless noted):
 
 ## 7. What's next (in priority order)
 
-1. **`@pinlayer/api`** — the backend the dashboard already expects.
+1. **`apps/api`** — the backend the dashboard already expects.
    Hono on Cloudflare Workers + Neon Postgres + Drizzle ORM (per
    `specs/BACKEND_SPEC.md`). Start with `auth` + `sessions` + `pins`. Plug
    into the existing composables — replace the mock in `shared/lib/data.ts`
    with `fetch('/api/sessions')` etc. (vite already proxies `/api` → `:8787`).
-2. **New Session modal** on Pinboards — URL input, pinboard select, default
+   Folder exists with a `.gitkeep` placeholder; add `package.json` to scaffold.
+2. **`packages/inject`** — the page-side runtime that the extension's content
+   script (and any future embed) loads into the host page. Single source of
+   truth for pin-placement logic, anchor resolution, and DOM observers. Lives
+   here so both `apps/extension` and any in-product widget can consume it
+   without going through the extension surface. Folder is reserved.
+3. **`apps/extension`** — port from DevProbe's working `apps/extension/` per
+   `specs/EXTENSION_SPEC.md`. Manifest v3, shadow-DOM UI styled from
+   `@pinlay/design`'s `tokens.css`, content script delegates DOM work to
+   `@pinlay/inject`. Folder is reserved.
+4. **New Session modal** on Pinboards — URL input, pinboard select, default
    integration, deep-links the extension into annotation mode. Wires to
    `POST /sessions` once the API exists.
-3. **Command palette (⌘K)** behind the StatusBar's search trigger — fuzzy
-   over sessions/pins/URLs/nav. Reka-ui has Combobox primitives; or roll a
-   small one on Popover.
-4. **`apps/extension`** — port from DevProbe's working `apps/extension/` per
-   `specs/EXTENSION_SPEC.md`. Share `@pinlayer/design`'s `tokens.css` for
-   shadow-DOM styling.
-5. **Polish placeholders** — flesh out Dashboard (analytics KPIs/charts),
-   Integrations (slide-over config), Settings (workspace/team/notifications).
+5. **Command palette (⌘K)** in the StatusBar — fuzzy over sessions/pins/URLs/
+   nav. Reka-ui has Combobox primitives; or roll a small one on Popover.
+6. **Polish placeholders** — flesh out Dashboard (analytics KPIs/charts),
+   Integrations (slide-over config), Settings sections that still mock.
 
 ---
 
@@ -254,8 +263,8 @@ Useful routes (all under the AppLayout shell unless noted):
 
 1. Keep the bundle label **"Pinboards"** for the sessions feed, or rename to
    **"Sessions"**?
-2. Same backend as a shared service, or a fresh `@pinlayer/api` instance?
-   (Code currently assumes a fresh, pinLayer-owned API.)
+2. Same backend as a shared service, or a fresh `@pinlay/api` instance?
+   (Code currently assumes a fresh, pinlay-owned API.)
 3. Activity thread + ReplyBox: real-time (websocket) or polling for v1?
 
 ---

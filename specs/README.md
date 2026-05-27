@@ -1,10 +1,10 @@
-# pinLayer — Specifications
+# pinlay — Specifications
 
-> pinLayer is a browser-first annotation product. Teams drop visual pins on live
+> pinlay is a browser-first annotation product. Teams drop visual pins on live
 > web pages — anchored to real DOM elements — and those pins become trackable,
 > route-able issues. "Figma comments for your live product."
 
-This folder is the source of truth for **what** pinLayer is and **how** it is built.
+This folder is the source of truth for **what** pinlay is and **how** it is built.
 Read it before writing code. Specs describe the system; they are deliberately
 implementation-light where the design bundle already settles the visual answer.
 

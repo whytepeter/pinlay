@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type { Anchor } from "@pinlayer/shared";
-import { Icon } from "@pinlayer/design";
+import type { Anchor } from "@pinlay/shared";
+import { Icon } from "@pinlay/design";
 
 const props = defineProps<{ anchor: Anchor; stale?: boolean }>();
 

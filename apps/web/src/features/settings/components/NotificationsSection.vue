@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Switch } from "@pinlayer/design";
+import { Switch } from "@pinlay/design";
 import { useSettings } from "../composables/useSettings";
 import type { NotificationKey } from "../composables/useSettings";
 import SectionHeading from "./SectionHeading.vue";

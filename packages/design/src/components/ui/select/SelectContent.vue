@@ -8,7 +8,7 @@ import {
   SelectViewport,
   useForwardPropsEmits,
 } from "reka-ui"
-import { cn } from '@pinlayer/design/lib/utils'
+import { cn } from '@pinlay/design/lib/utils'
 import { SelectScrollDownButton, SelectScrollUpButton } from "."
 
 defineOptions({

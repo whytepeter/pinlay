@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { Button, Icon } from "@pinlayer/design";
+import { Button, Icon } from "@pinlay/design";
 import { type PinItem } from "@/shared/lib/data";
 import { timeAgo } from "@/shared/lib/format";
 

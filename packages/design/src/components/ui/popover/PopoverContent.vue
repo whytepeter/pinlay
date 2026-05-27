@@ -7,7 +7,7 @@ import {
   PopoverPortal,
   useForwardPropsEmits,
 } from "reka-ui"
-import { cn } from '@pinlayer/design/lib/utils'
+import { cn } from '@pinlay/design/lib/utils'
 
 defineOptions({
   inheritAttrs: false,

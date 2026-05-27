@@ -1,15 +1,22 @@
 import { reactive, ref } from "vue";
-import type { IntegrationKind, Role, User } from "@pinlayer/shared";
+import type { IntegrationKind, Role, User } from "@pinlay/shared";
 import { PEOPLE } from "@/shared/lib/data";
+
+export type MemberStatus = "active" | "pending" | "expired";
 
 export interface Member extends User {
   role: Role;
+  status: MemberStatus;
+  invitedAt?: string; // ISO; set when status === "pending"
 }
+
+export type PlanId = "free" | "team";
 
 export interface WorkspaceState {
   name: string;
   slug: string;
   defaultIntegration: IntegrationKind;
+  plan: PlanId;
 }
 
 export type NotificationKey =
@@ -34,10 +41,26 @@ const workspace = reactive<WorkspaceState>({
   name: "Acme Inc",
   slug: "acme",
   defaultIntegration: "linear",
+  plan: "team",
 });
-const members = ref<Member[]>(
-  PEOPLE.map((p, i) => ({ ...p, role: DEFAULT_ROLES[i] ?? "member" })),
-);
+const members = ref<Member[]>([
+  ...PEOPLE.map<Member>((p, i) => ({
+    ...p,
+    role: DEFAULT_ROLES[i] ?? "member",
+    status: "active",
+  })),
+  // One pre-seeded pending invite so the UI shows the state out of the box.
+  {
+    id: "u_pending_alex",
+    orgId: PEOPLE[0]!.orgId,
+    email: "alex@acme.com",
+    name: "alex",
+    avatarHue: 210,
+    role: "member",
+    status: "pending",
+    invitedAt: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(), // 26h ago
+  },
+]);
 const notifications = reactive<NotificationPrefs>({
   newComment: { email: true, slack: true },
   pinAssigned: { email: true, slack: true },
@@ -71,7 +94,22 @@ export function useSettings() {
       name: handle,
       avatarHue: Math.floor(Math.random() * 360),
       role,
+      status: "pending",
+      invitedAt: new Date().toISOString(),
     });
+  }
+  function resendInvite(id: string) {
+    const m = members.value.find((x) => x.id === id);
+    if (m && m.status !== "active") {
+      m.status = "pending";
+      m.invitedAt = new Date().toISOString();
+    }
+  }
+  function revokeInvite(id: string) {
+    members.value = members.value.filter((m) => m.id !== id);
+  }
+  function setPlan(plan: PlanId) {
+    workspace.plan = plan;
   }
 
   return {
@@ -84,5 +122,8 @@ export function useSettings() {
     setMemberRole,
     removeMember,
     inviteMember,
+    resendInvite,
+    revokeInvite,
+    setPlan,
   };
 }

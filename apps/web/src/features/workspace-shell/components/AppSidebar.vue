@@ -1,35 +1,49 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
   Icon,
+  Input,
+  Label,
   Separator,
-} from "@pinlayer/design";
+} from "@pinlay/design";
 import { useShell } from "@/shared/composables/useShell";
+import { BOARD_COLORS, useBoards } from "@/shared/composables/useBoards";
 import WorkspaceSwitcher from "./WorkspaceSwitcher.vue";
 
 const route = useRoute();
 const { mobileOpen, closeMobile } = useShell();
+const { boards, activeBoardId, boardCounts, addBoard } = useBoards();
 
 /**
  * Hover-expand on desktop. Stays expanded while a menu is open (so clicking the
- * workspace / help menu — which portal outside the sidebar — doesn't collapse
- * it). On mobile the drawer (mobileOpen) is the expanded state.
+ * workspace / help menu / new-board dialog — which portal outside the sidebar
+ * — doesn't collapse it). On mobile the drawer (mobileOpen) is the expanded
+ * state.
  */
 const hovered = ref(false);
 const wsMenuOpen = ref(false);
 const helpMenuOpen = ref(false);
+const newBoardOpen = ref(false);
 const expanded = computed(
   () =>
-    hovered.value || mobileOpen.value || wsMenuOpen.value || helpMenuOpen.value
+    hovered.value ||
+    mobileOpen.value ||
+    wsMenuOpen.value ||
+    helpMenuOpen.value ||
+    newBoardOpen.value,
 );
 
 const nav = [
@@ -39,11 +53,18 @@ const nav = [
   { name: "Settings", to: "/settings", icon: "settings" },
 ];
 
-const boards = [
-  { name: "Checkout", color: "#3fcf8e", count: 8 },
-  { name: "Marketing site", color: "#0d9488", count: 3 },
-  { name: "Mobile web", color: "#f97316", count: 12 },
-];
+const newBoard = reactive<{ name: string; color: string }>({
+  name: "",
+  color: BOARD_COLORS[0]!,
+});
+
+function submitNewBoard() {
+  if (!newBoard.name.trim()) return;
+  addBoard(newBoard.name, newBoard.color);
+  newBoard.name = "";
+  newBoard.color = BOARD_COLORS[0]!;
+  newBoardOpen.value = false;
+}
 
 function isActive(to: string) {
   // Pinboards (/) stays highlighted on issue detail (/s/:id) — it's a child view.
@@ -73,7 +94,7 @@ function isActive(to: string) {
       <span
         v-show="expanded"
         class="whitespace-nowrap text-[15px] font-semibold tracking-tight"
-        >pinLayer</span
+        >pinlay</span
       >
       <span
         v-show="expanded"
@@ -126,27 +147,90 @@ function isActive(to: string) {
         <button
           class="flex size-5 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
           title="New board"
+          @click="newBoardOpen = true"
         >
           <Icon name="plus" :size="14" />
         </button>
       </div>
       <div class="flex flex-col gap-1">
-        <a
+        <RouterLink
           v-for="b in boards"
-          :key="b.name"
-          class="flex h-8 cursor-pointer items-center gap-3 rounded-md px-2.5 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
+          :key="b.id"
+          :to="{ path: '/', query: { board: b.id } }"
+          class="flex h-8 items-center gap-3 rounded-md px-2.5 text-sm transition-colors"
+          :class="
+            activeBoardId === b.id
+              ? 'bg-sidebar-accent font-medium text-foreground'
+              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-foreground'
+          "
+          @click="closeMobile"
         >
           <span
             class="size-2 shrink-0 rounded-full"
             :style="{ background: b.color }"
           />
           <span class="flex-1 truncate whitespace-nowrap">{{ b.name }}</span>
-          <span class="font-mono text-[11px] text-muted-foreground/70">{{
-            b.count
-          }}</span>
-        </a>
+          <span class="font-mono text-[11px] text-muted-foreground/70">
+            {{ boardCounts[b.id] ?? 0 }}
+          </span>
+        </RouterLink>
       </div>
     </div>
+
+    <!-- new board dialog -->
+    <Dialog v-model:open="newBoardOpen">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>New board</DialogTitle>
+          <DialogDescription>
+            Group sessions by page, feature, or any slice you triage together.
+          </DialogDescription>
+        </DialogHeader>
+        <div class="flex flex-col gap-4 py-2">
+          <div class="grid gap-2">
+            <Label for="board-name">Name</Label>
+            <Input
+              id="board-name"
+              v-model="newBoard.name"
+              placeholder="e.g. Onboarding flow"
+              autocomplete="off"
+              @keydown.enter="submitNewBoard"
+            />
+          </div>
+          <div class="grid gap-2">
+            <Label>Color</Label>
+            <div class="flex flex-wrap gap-2">
+              <button
+                v-for="c in BOARD_COLORS"
+                :key="c"
+                type="button"
+                class="flex size-7 items-center justify-center rounded-full transition-transform hover:scale-110"
+                :class="
+                  newBoard.color === c
+                    ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background'
+                    : ''
+                "
+                :style="{ background: c }"
+                :title="c"
+                @click="newBoard.color = c"
+              />
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" size="sm" @click="newBoardOpen = false">
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            :disabled="!newBoard.name.trim()"
+            @click="submitNewBoard"
+          >
+            Create board
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
     <div class="flex-1" />
 
@@ -177,35 +261,10 @@ function isActive(to: string) {
           <DropdownMenuItem>
             <Icon name="book-open" :size="14" /> Docs
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Icon name="shield-check" :size="14" /> Security
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Icon name="activity" :size="14" /> System status
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Icon name="dollar-sign" :size="14" /> Pricing
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Icon name="newspaper" :size="14" /> Blog
-          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <Icon name="download" :size="14" /> Install
-            </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent class="w-56">
-              <DropdownMenuItem>
-                <Icon name="globe" :size="14" /> Browser extension
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Icon name="message-square" :size="14" /> Slack app
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Icon name="laptop" :size="14" /> macOS app
-              </DropdownMenuItem>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
+          <DropdownMenuItem>
+            <Icon name="download" :size="14" /> Install browser extension
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

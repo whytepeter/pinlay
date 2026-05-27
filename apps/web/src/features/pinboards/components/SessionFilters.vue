@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { User } from "@pinlayer/shared";
+import type { User } from "@pinlay/shared";
 import {
   Icon,
   Input,
@@ -12,7 +12,7 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-} from "@pinlayer/design";
+} from "@pinlay/design";
 
 const props = defineProps<{
   counts: { all: number; open: number; in_progress: number; resolved: number };
@@ -47,10 +47,13 @@ const statusTabs = computed(() => [
           v-for="t in statusTabs"
           :key="t.value"
           :value="t.value"
-          class="gap-1.5 text-xs"
+          class="group gap-1.5 text-xs"
         >
           {{ t.label }}
-          <span class="font-mono text-[10px] opacity-70">{{ t.count }}</span>
+          <span
+            class="font-mono text-[10px] opacity-70 group-data-[state=active]:text-primary group-data-[state=active]:opacity-100"
+            >{{ t.count }}</span
+          >
         </TabsTrigger>
       </TabsList>
     </Tabs>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Card, CardContent, Skeleton } from "@pinlayer/design";
+import { Card, CardContent, Skeleton } from "@pinlay/design";
 import PageHeader from "@/shared/components/PageHeader.vue";
 
 const kpis = ["Total pins", "Open", "Critical", "Avg time-to-fix"];

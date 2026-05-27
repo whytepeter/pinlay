@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { DisplayStatus } from "@pinlayer/shared";
-import { Button, Icon } from "@pinlayer/design";
+import type { DisplayStatus } from "@pinlay/shared";
+import { Button, Icon } from "@pinlay/design";
 import {
   personById,
   type PinItem,

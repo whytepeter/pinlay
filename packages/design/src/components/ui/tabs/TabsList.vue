@@ -4,7 +4,7 @@ import type { TabsListProps } from "reka-ui"
 import type { HTMLAttributes } from "vue"
 import { reactiveOmit } from "@vueuse/core"
 import { TabsList } from "reka-ui"
-import { cn } from '@pinlayer/design/lib/utils'
+import { cn } from '@pinlay/design/lib/utils'
 
 const props = defineProps<TabsListProps & { class?: HTMLAttributes["class"] }>()
 
@@ -32,10 +32,19 @@ function updateIndicator() {
     indicatorStyle.value = { opacity: '0' }
     return
   }
+  // Use getBoundingClientRect for sub-pixel accuracy. offsetTop/Height round to
+  // integers, which causes a ~0.5–1px vertical drift on containers with
+  // border + odd padding (e.g. the 1px border + 0.5 padding TabsList).
+  const rootRect = root.getBoundingClientRect()
+  const aRect = active.getBoundingClientRect()
+  // Subtract the offsetParent's border (clientTop/Left) so the translate origin
+  // lines up with `top: 0`'s padding-edge anchor.
+  const x = aRect.left - rootRect.left - root.clientLeft
+  const y = aRect.top - rootRect.top - root.clientTop
   indicatorStyle.value = {
-    width: `${active.offsetWidth}px`,
-    height: `${active.offsetHeight}px`,
-    transform: `translate(${active.offsetLeft}px, ${active.offsetTop}px)`,
+    width: `${aRect.width}px`,
+    height: `${aRect.height}px`,
+    transform: `translate(${x}px, ${y}px)`,
     opacity: '1',
   }
 }
@@ -69,13 +78,13 @@ onBeforeUnmount(() => {
     data-slot="tabs-list"
     v-bind="delegatedProps"
     :class="cn(
-      'bg-muted scrollbar-hide relative inline-flex w-fit shrink-0 items-center gap-1 overflow-auto rounded-lg p-1 text-muted-foreground data-[orientation=vertical]:w-full data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch',
+      'scrollbar-hide relative inline-flex w-fit shrink-0 items-center gap-0.5 overflow-auto rounded-md border bg-card p-0.5 text-muted-foreground data-[orientation=vertical]:w-full data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch',
       props.class,
     )"
   >
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute left-0 top-0 rounded-md bg-background shadow-xs transition-all duration-300 ease-out"
+      class="pointer-events-none absolute left-0 top-0 rounded-[5px] bg-secondary transition-all duration-300 ease-out"
       :style="indicatorStyle"
     />
     <slot />

@@ -1,6 +1,6 @@
 # Design System Spec
 
-The design system is built from scratch into `@pinlayer/design`. The Claude Design
+The design system is built from scratch into `@pinlay/design`. The Claude Design
 bundle is the visual reference; this spec is the durable contract. **Light mode is
 the default.** Aesthetic target: Linear × Vercel × Raycast — precise, calm,
 information-dense, never busy.
@@ -9,7 +9,7 @@ information-dense, never busy.
 
 - A single `data-theme` attribute on `<html>` toggles `light` (default) / `dark`.
 - All colors are CSS variables. Components never hard-code hex; they read tokens.
-- Accent is swappable at runtime (amber default for pinLayer) by overriding four
+- Accent is swappable at runtime (amber default for pinlay) by overriding four
   `--accent*` variables. Status "in progress" tracks the accent.
 - Density is a variable (`--density-pad`: compact / comfortable / roomy) `[v1]`.
 
@@ -60,7 +60,7 @@ information-dense, never busy.
 }
 ```
 
-### Accent (default = amber for pinLayer)
+### Accent (default = amber for pinlay)
 
 ```css
 :root {
@@ -113,7 +113,7 @@ Type scale in use: 32 (KPI), 20 (page title), 19 (pin title), 15 (brand/modal),
 
 ## 5. Component catalog
 
-Built into `@pinlayer/design`. (React names from the bundle → Vue components.)
+Built into `@pinlay/design`. (React names from the bundle → Vue components.)
 
 | Component | Purpose / notes |
 |---|---|
@@ -174,7 +174,7 @@ Send, Sun, Moon, ArrowLeft/Right, Chevron(Down).
   shadow-DOM styles can `@import` the same source. Extension uses
   `prefers-color-scheme` for dark/light (class strategy can't cross the shadow
   boundary — a known DeveProbe gotcha).
-- `@pinlayer/design` exports: `tokens.css`, the `Icon` set, and the component
+- `@pinlay/design` exports: `tokens.css`, the `Icon` set, and the component
   library; both apps depend on it.
 
 ## 10. Responsive

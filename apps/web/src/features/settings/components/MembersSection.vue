@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import type { Role } from "@pinlayer/shared";
+import type { Role } from "@pinlay/shared";
 import {
   Badge,
   Button,
@@ -23,12 +23,29 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@pinlayer/design";
+} from "@pinlay/design";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
 import { useSettings } from "../composables/useSettings";
 import SectionHeading from "./SectionHeading.vue";
 
-const { members, setMemberRole, removeMember, inviteMember } = useSettings();
+const {
+  members,
+  setMemberRole,
+  removeMember,
+  inviteMember,
+  resendInvite,
+  revokeInvite,
+} = useSettings();
+
+function timeAgo(iso?: string) {
+  if (!iso) return "";
+  const ms = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(ms / 60000);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
 
 const ROLES: { value: Role; label: string }[] = [
   { value: "owner", label: "Owner" },
@@ -62,13 +79,13 @@ function submitInvite() {
   <div
     class="mb-3 flex flex-col gap-2 rounded-lg border bg-card p-2 sm:flex-row sm:items-center sm:gap-2 sm:px-3 sm:py-2"
   >
-    <div class="flex flex-1 items-center gap-2">
+    <div class="flex flex-1 items-center gap-1">
       <Icon name="user-plus" :size="14" class="text-primary" />
       <Input
         v-model="invite.email"
         type="email"
         placeholder="Invite by email"
-        class="flex-1 border-0 bg-transparent px-0 focus-visible:ring-0"
+        class="flex-1 border-0 bg-transparent focus-visible:ring-0"
         @keydown.enter="submitInvite"
       />
     </div>
@@ -115,10 +132,34 @@ function submitInvite() {
       :class="i !== members.length - 1 ? 'border-b' : ''"
     >
       <div class="flex min-w-0 items-center gap-3">
-        <UserAvatar :name="m.name" :hue="m.avatarHue" :size="28" />
+        <UserAvatar
+          :name="m.name"
+          :hue="m.avatarHue"
+          :size="28"
+          :class="m.status !== 'active' ? 'opacity-60' : ''"
+        />
         <div class="min-w-0 flex-1">
-          <p class="truncate text-sm font-medium">{{ m.name }}</p>
-          <p class="truncate text-xs text-muted-foreground">{{ m.email }}</p>
+          <div class="flex items-center gap-2">
+            <p
+              class="truncate text-sm font-medium"
+              :class="m.status !== 'active' ? 'text-muted-foreground' : ''"
+            >
+              {{ m.name }}
+            </p>
+            <span
+              v-if="m.status === 'pending'"
+              class="inline-flex items-center gap-1 text-[10px] font-medium text-amber-600 dark:text-amber-400"
+            >
+              <span class="size-1 rounded-full bg-amber-500" />
+              Pending
+            </span>
+          </div>
+          <p class="truncate text-xs text-muted-foreground">
+            {{ m.email }}
+            <span v-if="m.status === 'pending' && m.invitedAt">
+              · invited {{ timeAgo(m.invitedAt) }}
+            </span>
+          </p>
         </div>
       </div>
 
@@ -161,7 +202,19 @@ function submitInvite() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <template v-if="m.status === 'pending'">
+              <DropdownMenuItem @click="resendInvite(m.id)">
+                <Icon name="send" :size="14" /> Resend invite
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                class="text-destructive"
+                @click="revokeInvite(m.id)"
+              >
+                <Icon name="x" :size="14" /> Revoke invite
+              </DropdownMenuItem>
+            </template>
             <DropdownMenuItem
+              v-else
               class="text-destructive"
               @click="removeMember(m.id)"
             >

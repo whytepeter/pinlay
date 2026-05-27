@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Severity } from "@pinlayer/shared";
+import type { Severity } from "@pinlay/shared";
 import { sevBg, sevRing } from "@/shared/lib/severity";
 
 withDefaults(defineProps<{ level: Severity; size?: number; ring?: boolean }>(), {

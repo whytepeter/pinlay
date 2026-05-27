@@ -1,6 +1,6 @@
-// @pinlayer/design — reusable shadcn-vue primitives + Tailwind v4.
-// Import "@pinlayer/design/tokens.css" once in the host app. Components are
-// styled with Tailwind utilities and read the shadcn/pinLayer CSS variables, so
+// @pinlay/design — reusable shadcn-vue primitives + Tailwind v4.
+// Import "@pinlay/design/tokens.css" once in the host app. Components are
+// styled with Tailwind utilities and read the shadcn/pinlay CSS variables, so
 // theme + accent swap at runtime. Domain components are composed from these in
 // the app's feature folders.
 

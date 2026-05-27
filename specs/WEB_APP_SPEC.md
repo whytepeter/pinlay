@@ -1,4 +1,4 @@
-# Web App Spec (`apps/app`)
+# Web App Spec (`apps/web`)
 
 The dashboard — the command center where teams triage sessions, drill into pins,
 and manage connectors. Vue 3 + Vite + Tailwind v4. **Simple UI, light-first.**
@@ -10,7 +10,7 @@ composables). `pages/` holds thin route stubs; `features/` holds the real code;
 `shared/` holds cross-feature primitives.
 
 ```
-apps/app/src/
+apps/web/src/
 ├── main.ts                     # boot: theme → pinia → router → vue-query → mount
 ├── App.vue                     # <RouterView/>
 ├── app/
@@ -56,7 +56,7 @@ apps/app/src/
 │   └── settings/                # [v1]
 │       └── SettingsPage.vue
 ├── shared/
-│   ├── components/             # the @pinlayer/design re-exports used app-wide
+│   ├── components/             # the @pinlay/design re-exports used app-wide
 │   ├── composables/useTheme.ts
 │   └── lib/{api.ts,format.ts,utils.ts,data.ts}
 └── pages/                      # thin route stubs that import features

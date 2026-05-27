@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { Button, Icon, Input } from "@pinlayer/design";
+import { Button, Icon, Input } from "@pinlay/design";
 import { useSettings } from "../composables/useSettings";
 import SectionHeading from "./SectionHeading.vue";
 

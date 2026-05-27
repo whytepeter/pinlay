@@ -5,7 +5,7 @@
     "types": [],
     "baseUrl": ".",
     "paths": {
-      "@pinlayer/design/*": ["./src/*"]
+      "@pinlay/design/*": ["./src/*"]
     }
   },
   "include": ["src"]

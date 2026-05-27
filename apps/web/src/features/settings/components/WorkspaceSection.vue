@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, computed } from "vue";
-import type { IntegrationKind } from "@pinlayer/shared";
+import type { IntegrationKind } from "@pinlay/shared";
 import {
   Button,
   Input,
@@ -9,7 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@pinlayer/design";
+} from "@pinlay/design";
 import { useSettings } from "../composables/useSettings";
 import SectionHeading from "./SectionHeading.vue";
 import FormGroup from "./FormGroup.vue";
@@ -55,7 +55,7 @@ function reset() {
 <template>
   <SectionHeading
     title="Workspace"
-    subtitle="Your team's identity in pinLayer."
+    subtitle="Your team's identity in pinlay."
   />
 
   <FormGroup>
@@ -75,7 +75,7 @@ function reset() {
         <span
           class="flex items-center bg-muted px-3 font-mono text-xs text-muted-foreground"
         >
-          pinlayer.app/
+          pinlay.app/
         </span>
         <Input
           id="ws-slug"

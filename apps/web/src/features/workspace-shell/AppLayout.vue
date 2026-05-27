@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import { TooltipProvider } from "@pinlayer/design";
+import { TooltipProvider } from "@pinlay/design";
 import { useShell } from "@/shared/composables/useShell";
 import AppSidebar from "./components/AppSidebar.vue";
 import StatusBar from "./components/StatusBar.vue";

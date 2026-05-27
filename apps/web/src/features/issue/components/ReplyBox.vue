@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { Button, Icon, Textarea } from "@pinlayer/design";
+import { Button, Icon, Textarea } from "@pinlay/design";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
 
 const text = ref("");

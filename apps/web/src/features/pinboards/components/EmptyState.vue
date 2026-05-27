@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, Icon } from "@pinlayer/design";
+import { Button, Icon } from "@pinlay/design";
 </script>
 
 <template>

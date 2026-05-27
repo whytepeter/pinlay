@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { DisplayStatus } from "@pinlayer/shared";
+import type { DisplayStatus } from "@pinlay/shared";
 import { personById, type SessionListItem } from "@/shared/lib/data";
 import { firstName, timeAgo } from "@/shared/lib/format";
 import { sevBg, topSeverity } from "@/shared/lib/severity";

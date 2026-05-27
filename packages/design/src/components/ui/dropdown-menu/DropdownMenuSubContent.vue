@@ -6,7 +6,7 @@ import {
   DropdownMenuSubContent,
   useForwardPropsEmits,
 } from "reka-ui"
-import { cn } from '@pinlayer/design/lib/utils'
+import { cn } from '@pinlay/design/lib/utils'
 
 const props = defineProps<DropdownMenuSubContentProps & { class?: HTMLAttributes["class"] }>()
 const emits = defineEmits<DropdownMenuSubContentEmits>()

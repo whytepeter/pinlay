@@ -17,7 +17,7 @@ import {
   Icon,
   Input,
   Label,
-} from "@pinlayer/design";
+} from "@pinlay/design";
 import {
   useIntegrations,
   type IntegrationItem,
@@ -179,7 +179,7 @@ function submitEdit() {
                 integration.id === 'slack'
                   ? '#bugs'
                   : integration.id === 'webhook'
-                    ? 'https://example.com/hooks/pinlayer'
+                    ? 'https://example.com/hooks/pinlay'
                     : 'acme'
               "
               autocomplete="off"

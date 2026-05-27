@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { Severity } from "@pinlayer/shared";
-import { Badge } from "@pinlayer/design";
+import type { Severity } from "@pinlay/shared";
+import { Badge } from "@pinlay/design";
 import SeverityDot from "./SeverityDot.vue";
 
 const props = defineProps<{ level: Severity }>();

@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import {
-  Icon,
-  Input,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@pinlayer/design";
+import { Icon, Input, Tabs, TabsList, TabsTrigger } from "@pinlay/design";
 import PageHeader from "@/shared/components/PageHeader.vue";
 import { useIntegrations } from "./composables/useIntegrations";
 import IntegrationCard from "./components/IntegrationCard.vue";
@@ -14,13 +8,18 @@ import IntegrationCard from "./components/IntegrationCard.vue";
 const { integrations, connectedCount } = useIntegrations();
 
 const tab = ref<"all" | "connected" | "available">("all");
-const query = ref("");
 
-const counts = computed(() => ({
-  all: integrations.value.length,
-  connected: connectedCount.value,
-  available: integrations.value.length - connectedCount.value,
-}));
+const tabOptions = computed(() => [
+  { label: "All", value: "all", count: integrations.value.length },
+  { label: "Connected", value: "connected", count: connectedCount.value },
+  {
+    label: "Available",
+    value: "available",
+    count: integrations.value.length - connectedCount.value,
+  },
+]);
+
+const query = ref("");
 
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase();
@@ -47,21 +46,17 @@ const filtered = computed(() => {
     >
       <Tabs v-model="tab">
         <TabsList>
-          <TabsTrigger value="all" class="gap-1.5 text-xs">
-            All
-            <span class="font-mono text-[10px] opacity-70">{{ counts.all }}</span>
-          </TabsTrigger>
-          <TabsTrigger value="connected" class="gap-1.5 text-xs">
-            Connected
-            <span class="font-mono text-[10px] opacity-70">{{
-              counts.connected
-            }}</span>
-          </TabsTrigger>
-          <TabsTrigger value="available" class="gap-1.5 text-xs">
-            Available
-            <span class="font-mono text-[10px] opacity-70">{{
-              counts.available
-            }}</span>
+          <TabsTrigger
+            v-for="t in tabOptions"
+            :key="t.value"
+            :value="t.value"
+            class="gap-1.5 text-xs group"
+          >
+            {{ t.label }}
+            <span
+              class="font-mono text-[10px] opacity-70 group-data-[state=active]:text-primary group-data-[state=active]:opacity-100"
+              >{{ t.count }}</span
+            >
           </TabsTrigger>
         </TabsList>
       </Tabs>
@@ -86,13 +81,9 @@ const filtered = computed(() => {
     <div class="p-4 sm:p-8">
       <div
         v-if="filtered.length"
-        class="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr))]"
+        class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(min(320px,100%),1fr))]"
       >
-        <IntegrationCard
-          v-for="i in filtered"
-          :key="i.id"
-          :integration="i"
-        />
+        <IntegrationCard v-for="i in filtered" :key="i.id" :integration="i" />
       </div>
       <div
         v-else

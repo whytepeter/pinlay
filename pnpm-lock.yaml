@@ -8,12 +8,12 @@ importers:
 
   .: {}
 
-  apps/app:
+  apps/web:
     dependencies:
-      '@pinlayer/design':
+      '@pinlay/design':
         specifier: workspace:*
         version: link:../../packages/design
-      '@pinlayer/shared':
+      '@pinlay/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       vue:
@@ -47,7 +47,7 @@ importers:
 
   packages/design:
     dependencies:
-      '@pinlayer/shared':
+      '@pinlay/shared':
         specifier: workspace:*
         version: link:../shared
       '@vueuse/core':

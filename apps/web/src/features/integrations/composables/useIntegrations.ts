@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import type { IntegrationKind } from "@pinlayer/shared";
+import type { IntegrationKind } from "@pinlay/shared";
 
 export type IntegrationCategory =
   | "Issue Tracker"

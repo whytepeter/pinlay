@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { reactive, ref, watch } from "vue";
 import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -8,7 +15,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Icon,
-} from "@pinlayer/design";
+  Input,
+  Label,
+} from "@pinlay/design";
 
 defineProps<{ collapsed?: boolean }>();
 const emit = defineEmits<{ "update:open": [boolean] }>();
@@ -19,15 +28,37 @@ interface Workspace {
   plan: string;
 }
 
-const workspaces: Workspace[] = [
-  { id: "acme", name: "Acme Inc", plan: "Pro" },
+const workspaces = ref<Workspace[]>([
+  { id: "acme", name: "Acme Inc", plan: "Team" },
   { id: "side", name: "Side Project", plan: "Free" },
-];
-const current = ref<Workspace>(workspaces[0]!);
+]);
+const current = ref<Workspace>(workspaces.value[0]!);
 
-// Surface open state so the sidebar can stay expanded while the menu is open.
+// Sidebar stays expanded while the menu OR the create dialog is open.
 const open = ref(false);
-watch(open, (v) => emit("update:open", v));
+const createOpen = ref(false);
+watch([open, createOpen], ([a, b]) => emit("update:open", a || b));
+
+const draft = reactive<{ name: string }>({ name: "" });
+
+function openCreate() {
+  draft.name = "";
+  createOpen.value = true;
+}
+
+function submitCreate() {
+  const trimmed = draft.name.trim();
+  if (!trimmed) return;
+  const id = trimmed
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  if (!id || workspaces.value.some((w) => w.id === id)) return;
+  const next: Workspace = { id, name: trimmed, plan: "Free" };
+  workspaces.value.push(next);
+  current.value = next;
+  createOpen.value = false;
+}
 </script>
 
 <template>
@@ -73,9 +104,43 @@ watch(open, (v) => emit("update:open", v));
         <Icon v-if="w.id === current.id" name="check" :size="14" />
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem>
+      <DropdownMenuItem @select="openCreate">
         <Icon name="plus" :size="14" /> Create workspace
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
+
+  <Dialog v-model:open="createOpen">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Create workspace</DialogTitle>
+        <DialogDescription>
+          A separate space for a different team or project. You can switch
+          between workspaces from the sidebar.
+        </DialogDescription>
+      </DialogHeader>
+      <div class="grid gap-2 py-2">
+        <Label for="ws-name">Name</Label>
+        <Input
+          id="ws-name"
+          v-model="draft.name"
+          placeholder="e.g. Side Project"
+          autocomplete="off"
+          @keydown.enter="submitCreate"
+        />
+      </div>
+      <DialogFooter>
+        <Button variant="ghost" size="sm" @click="createOpen = false">
+          Cancel
+        </Button>
+        <Button
+          size="sm"
+          :disabled="!draft.name.trim()"
+          @click="submitCreate"
+        >
+          Create workspace
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
