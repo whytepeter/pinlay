@@ -9,7 +9,7 @@ import SectionHeading from "./SectionHeading.vue";
 const { workspace, members, setPlan } = useSettings();
 const { connectedCount } = useIntegrations();
 
-const PRICE_PER_SEAT = 10;
+const PRICE_PER_SEAT = 9;
 
 const pinsThisMonth = computed(() =>
   SESSIONS.reduce((acc, s) => acc + s.pinCount, 0),
@@ -23,7 +23,7 @@ interface UsageMetric {
   icon: string;
   label: string;
   current: number;
-  freeLimit: number | null;
+  limit: number;
 }
 
 const usage = computed<UsageMetric[]>(() => [
@@ -32,33 +32,31 @@ const usage = computed<UsageMetric[]>(() => [
     icon: "map-pin",
     label: "Pins / month",
     current: pinsThisMonth.value,
-    freeLimit: 200,
+    limit: 100,
   },
   {
     key: "members",
     icon: "users",
     label: "Members",
     current: members.value.length,
-    freeLimit: 3,
+    limit: 3,
   },
   {
     key: "integrations",
     icon: "plug",
     label: "Integrations",
     current: connectedCount.value,
-    freeLimit: 2,
+    limit: 2,
   },
 ]);
 
 const isFree = computed(() => workspace.plan === "free");
 
 function usagePct(m: UsageMetric) {
-  if (m.freeLimit === null) return 0;
-  return Math.min(100, (m.current / m.freeLimit) * 100);
+  return Math.min(100, (m.current / m.limit) * 100);
 }
 function usageBar(m: UsageMetric) {
-  if (m.freeLimit === null) return "bg-primary";
-  const ratio = m.current / m.freeLimit;
+  const ratio = m.current / m.limit;
   if (ratio >= 1) return "bg-destructive";
   if (ratio >= 0.8) return "bg-amber-500";
   return "bg-primary";
@@ -92,7 +90,7 @@ const PLANS: Plan[] = [
     period: "forever",
     tagline: "For solo devs and tiny teams.",
     features: [
-      "500 pins / month",
+      "100 pins / month",
       "Up to 3 members",
       "2 integrations connected",
       "30-day pin history",
@@ -102,7 +100,7 @@ const PLANS: Plan[] = [
   {
     id: "team",
     name: "Team",
-    price: "$10",
+    price: "$9",
     period: "/ user / month",
     tagline: "For teams shipping every week.",
     features: [
@@ -110,7 +108,7 @@ const PLANS: Plan[] = [
       "Unlimited members & workspaces",
       "All integrations",
       "Unlimited history",
-      "Slack & email routing",
+      "AI summaries on every session",
       "Priority support",
     ],
   },
@@ -141,7 +139,7 @@ function change(id: PlanId) {
     <h3
       class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70"
     >
-      Current usage{{ isFree ? "" : " — this billing cycle" }}
+      Current usage
     </h3>
     <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
       <div
@@ -159,16 +157,9 @@ function change(id: PlanId) {
           <span class="text-xl font-semibold tracking-tight">{{
             m.current
           }}</span>
-          <span
-            v-if="isFree && m.freeLimit !== null"
-            class="text-xs text-muted-foreground"
-            >/ {{ m.freeLimit }}</span
-          >
+          <span class="text-xs text-muted-foreground">/ {{ m.limit }}</span>
         </div>
-        <div
-          v-if="isFree && m.freeLimit !== null"
-          class="h-1 w-full overflow-hidden rounded-full bg-muted"
-        >
+        <div class="h-1 w-full overflow-hidden rounded-full bg-muted">
           <div
             class="h-full rounded-full transition-all"
             :class="usageBar(m)"

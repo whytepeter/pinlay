@@ -1304,6 +1304,86 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-05-27T15:55:46.932Z"
+    },
+    {
+      "id": "bug-082",
+      "timestamp": "2026-05-27T18:55:30.355Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/features/settings/components/BillingSection.vue",
+      "root_cause": "No early return/throw for edge case: d > 0",
+      "fix": "Added guard clause: if (d > 0)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-27T18:55:30.355Z"
+    },
+    {
+      "id": "bug-083",
+      "timestamp": "2026-05-27T18:55:42.455Z",
+      "error_message": "CSS fix: price",
+      "file": "apps/web/src/features/settings/components/BillingSection.vue",
+      "root_cause": "price: \"$10\", → \"$15\",",
+      "fix": "Changed price: \"$10\", → \"$15\",",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-27T18:55:42.455Z"
+    },
+    {
+      "id": "bug-084",
+      "timestamp": "2026-05-27T18:59:22.539Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/features/settings/components/BillingSection.vue",
+      "root_cause": "Had \"Slack & email routing\"",
+      "fix": "Changed to \"Priority support\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-27T19:01:58.985Z"
+    },
+    {
+      "id": "bug-085",
+      "timestamp": "2026-05-27T19:02:29.190Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/features/settings/components/BillingSection.vue",
+      "root_cause": "24 lines replaced/restructured",
+      "fix": "Rewrote 65→43 lines (24 removed) | Also: <span; v-if=\"isFree && m.freeLimit !== null\"",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-27T19:02:58.280Z"
+    },
+    {
+      "id": "bug-086",
+      "timestamp": "2026-05-27T19:22:54.869Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/features/workspace-shell/components/AppSidebar.vue",
+      "root_cause": "Had \"map-pin\"",
+      "fix": "Changed to \"24\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-27T19:22:54.869Z"
     }
   ]
 }

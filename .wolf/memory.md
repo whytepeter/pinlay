@@ -600,3 +600,45 @@
 | 17:25 | Billing v3 (realistic, jam.dev-simple): renamed plan "pro"→"team" across PlanId/PLANS/useSettings/WorkspaceSwitcher; Free is now capped but generous (500 pins/mo, 3 members, 2 integrations, 30-day history); Team is $10/user/mo unlimited; usage block dropped to 3 cards (Pins/Members/Integrations) — the actual upgrade gates; added Next-invoice card on Team (active seats × $10, first-of-next-month date) | useSettings.ts, BillingSection.vue, WorkspaceSwitcher.vue | verified both Free + Team states in preview | ~620 |
 | 16:55 | Session end: 23 writes across 5 files (AppSidebar.vue, WorkspaceSwitcher.vue, useSettings.ts, BillingSection.vue, SettingsPage.vue) | 15 reads | ~18811 tok |
 | 16:55 | Edited apps/web/src/features/settings/components/BillingSection.vue | 2→2 lines | ~15 |
+
+## Session: 2026-05-27 17:25
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-27 19:05
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-27 19:53
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 19:54 | Edited apps/web/src/features/settings/components/BillingSection.vue | 10 → 15 | ~7 |
+| 19:55 | Edited apps/web/src/features/settings/components/BillingSection.vue | added 4 condition(s) | ~293 |
+| 19:55 | Edited apps/web/src/features/settings/components/BillingSection.vue | 23→24 lines | ~159 |
+| 19:56 | Edited apps/web/src/features/settings/components/BillingSection.vue | CSS: Icon | ~214 |
+| 19:05 | Billing v4: pins 200→100/mo on Free; Team price $10→$15/user/mo; added "AI summaries on every session" to Team feature list; usage block now shows trend (current vs. last cycle) on Team via Icon trending-up/down/minus + "from N last cycle" muted text — gives a comparison signal even without caps | BillingSection.vue | verified Free + Team in preview (Pins 28 ↗ from 22, $75 next invoice = 5 × $15) | ~410 |
+| 19:58 | Session end: 4 writes across 1 files (BillingSection.vue) | 0 reads | ~721 tok |
+| 19:59 | Edited apps/web/src/features/settings/components/BillingSection.vue | 3→2 lines | ~18 |
+| 19:59 | Edited apps/web/src/features/settings/components/BillingSection.vue | 15→12 lines | ~100 |
+| 19:15 | Billing v5 cleanup: simplified Team trend chip from "↗ from 22 last cycle" to just "↗ +6" (arrow + signed delta, "—" for flat); removed "Slack & email routing" from Team feature list per user direction | BillingSection.vue | verified in preview | ~120 |
+| 20:01 | Session end: 6 writes across 1 files (BillingSection.vue) | 0 reads | ~847 tok |
+| 20:01 | Edited apps/web/src/features/settings/components/BillingSection.vue | 15 → 9 | ~7 |
+| 20:01 | Edited apps/web/src/features/settings/components/BillingSection.vue | 2→2 lines | ~13 |
+| 20:02 | Edited apps/web/src/features/settings/components/BillingSection.vue | modified usagePct() | ~231 |
+| 20:02 | Edited apps/web/src/features/settings/components/BillingSection.vue | 5→5 lines | ~37 |
+| 20:02 | Edited apps/web/src/features/settings/components/BillingSection.vue | reduced (-19 lines) | ~136 |
+| 19:35 | Billing v6: reverted to bars-and-limits visual on BOTH plans (user preferred "28 / 100 + progress bar" look — drop the Team trend chip and "from N last cycle" feature entirely); dropped lastMonth field + trendDelta/Icon/Class helpers; renamed UsageMetric.freeLimit → limit since it now applies to both tiers; price $15 → $9; header simplified back to just "Current usage" | BillingSection.vue | verified in preview (Team @ $9, 28/100 with violet bar, next invoice $45) | ~350 |
+| 20:06 | Session end: 11 writes across 1 files (BillingSection.vue) | 0 reads | ~1303 tok |
+| 20:10 | Session end: 11 writes across 1 files (BillingSection.vue) | 0 reads | ~1303 tok |
+| 20:22 | Created packages/design/src/components/Brand.vue | — | ~261 |
+| 20:22 | Edited packages/design/src/index.ts | 2→4 lines | ~55 |
+| 20:22 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 17→18 lines | ~76 |
+| 20:22 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | CSS: Brand | ~37 |
+| 20:23 | Created apps/web/public/favicon.svg | — | ~76 |
+| 20:23 | Edited apps/web/index.html | 2→3 lines | ~44 |
+| 20:24 | Created apps/extension/package.json | — | ~231 |
+| 20:24 | Created apps/extension/wxt.config.ts | — | ~307 |
+| 20:24 | Created apps/extension/tsconfig.json | — | ~72 |

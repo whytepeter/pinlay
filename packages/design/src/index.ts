@@ -6,6 +6,8 @@
 
 // Icon (lucide-vue-next wrapper)
 export { default as Icon } from "./components/Icon.vue";
+// Brand mark (custom SVG, currentColor)
+export { default as Brand } from "./components/Brand.vue";
 
 // Utility
 export { cn } from "./lib/utils";

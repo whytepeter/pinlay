@@ -84,7 +84,7 @@ function submitInvite() {
             <UserAvatar
               :name="m.name"
               :hue="m.hue"
-              :size="24"
+              :size="22"
               class="ring-2 ring-background"
             />
           </TooltipTrigger>

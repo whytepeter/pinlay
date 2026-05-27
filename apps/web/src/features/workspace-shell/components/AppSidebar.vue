@@ -2,6 +2,7 @@
 import { computed, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import {
+  Brand,
   Button,
   Dialog,
   DialogContent,
@@ -89,7 +90,7 @@ function isActive(to: string) {
       :class="expanded ? '' : 'justify-center px-0'"
     >
       <span class="flex shrink-0 items-center justify-center rounded-lg">
-        <Icon name="map-pin" :size="24" class="fill-primary text-white" />
+        <Brand :size="24" class="text-primary" />
       </span>
       <span
         v-show="expanded"

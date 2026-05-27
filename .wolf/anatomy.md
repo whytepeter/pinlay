@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-27T15:55:46.921Z
-> Files: 105 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-27T19:24:51.294Z
+> Files: 111 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -24,8 +24,15 @@
 ## Not yet created (future phases)
 
 
+## apps/extension/
+
+- `package.json` — Node.js package manifest (~231 tok)
+- `tsconfig.json` — TypeScript configuration (~72 tok)
+- `wxt.config.ts` — pinlay extension — WXT + Vue 3 + Tailwind v4. (~307 tok)
+
 ## apps/web/
 
+- `index.html` — pinlay (~184 tok)
 - `package.json` — Node.js package manifest (~181 tok)
 - `package.json` — Node.js package manifest (~181 tok)
 
@@ -41,6 +48,10 @@
 - `src/pages/HomeView.vue` — design-system check page (exercises every component) (~1500 tok)
 - `tsconfig.json` — extends base; @/@ui paths; vite/client types (~90 tok)
 - `vite.config.ts` — vue + @tailwindcss/vite plugins; @/@ui aliases; /api proxy→:8787 (~170 tok)
+
+## apps/web/public/
+
+- `favicon.svg` (~76 tok)
 
 ## apps/web/src/
 
@@ -109,7 +120,7 @@
 
 ## apps/web/src/features/settings/components/
 
-- `BillingSection.vue` — Vue: Free, setup (~1848 tok)
+- `BillingSection.vue` — Vue: Free, setup (~1764 tok)
 - `BillingSection.vue` — Free/Pro plan-comparison cards + mock setPlan; reads workspace.plan from useSettings (~500 tok)
 - `DangerZoneSection.vue` — Vue: setup (~529 tok)
 - `FormField.vue` — Vue: setup (~178 tok)
@@ -130,7 +141,7 @@
 
 ## apps/web/src/features/workspace-shell/components/
 
-- `AppSidebar.vue` — Hover-expand on desktop. Stays expanded while a menu is open (so clicking the (~2366 tok)
+- `AppSidebar.vue` — Hover-expand on desktop. Stays expanded while a menu is open (so clicking the (~2362 tok)
 - `StatusBar.vue` — Vue: setup (~1288 tok)
 - `WorkspaceSwitcher.vue` — Vue: Acme Inc, setup (~1145 tok)
 
@@ -183,8 +194,12 @@
 
 ## packages/design/src/
 
-- `index.ts` — Import "@pinlay/design/tokens.css" once in the host app. Components are (~356 tok)
+- `index.ts` — Import "@pinlay/design/tokens.css" once in the host app. Components are (~382 tok)
 - `tokens.css` — Styles: 5 rules, 87 vars (~1579 tok)
+
+## packages/design/src/components/
+
+- `Brand.vue` — Vue: setup (~261 tok)
 
 ## packages/design/src/components/ui/button/
 
