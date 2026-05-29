@@ -1,0 +1,190 @@
+/**
+ * API client
+ * ──────────
+ * All requests are proxied through the background service worker via
+ * chrome.runtime.sendMessage so calls leave with the extension's
+ * chrome-extension:// origin (which the Worker's CORS allows). Content
+ * scripts inherit the host page origin which the Worker rejects.
+ *
+ * Binary payloads go over as base64 strings — Blob/File AND ArrayBuffer
+ * both arrive as `{}` on the SW side, so JSON-safe serialisation is the
+ * only reliable transport for file uploads.
+ */
+import type { Severity, Status, PinType } from "@pinlay/shared";
+import { isExtensionAlive } from "./extension";
+
+export interface Me {
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl: string | null;
+  orgId: string;
+  role: string;
+}
+
+export interface WorkspaceMember {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl: string | null;
+  role: string;
+}
+
+/**
+ * A pin row from the API (grouped annotation model). Each pin belongs to a
+ * session and a grouping issue; the overlay renders these on the page.
+ */
+export interface AnnotationPinRow {
+  id: string;
+  sessionId: string;
+  issueId: string | null;
+  index: number;
+  anchor: Record<string, unknown>;
+  comment: string;
+  severity: Severity;
+  issueType: PinType;
+  status: Status;
+  assigneeId: string | null;
+  labels: string[];
+  createdAt: string;
+}
+
+export interface Attachment {
+  id: string;
+  url: string;
+  type: string;
+  filename: string;
+  contentType: string;
+  sizeBytes: number;
+}
+
+type ApiResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; status?: number; error: string };
+
+async function send<T>(msg: Record<string, unknown>): Promise<T> {
+  if (!isExtensionAlive()) {
+    throw new Error("Extension context invalidated — reload the page.");
+  }
+  const res = (await chrome.runtime.sendMessage({
+    type: "API_FETCH",
+    ...msg,
+  })) as ApiResult<T> | undefined;
+  if (!res) throw new Error("No response from background worker.");
+  if (!res.ok) throw new Error(res.error);
+  return res.data;
+}
+
+/** Encode an ArrayBuffer as base64 (chunked to avoid call-stack overflow). */
+function bufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  const CHUNK = 0x8000;
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    binary += String.fromCharCode.apply(
+      null,
+      bytes.subarray(i, i + CHUNK) as unknown as number[],
+    );
+  }
+  return btoa(binary);
+}
+
+export const api = {
+  me: () => send<Me>({ path: "/auth/me", method: "GET" }),
+
+  getWorkspaceMembers: () =>
+    send<WorkspaceMember[]>({
+      path: "/auth/workspace/members",
+      method: "GET",
+    }),
+
+  // ── Live annotation (GROUPED: session → issue → pins) ────────────────────
+  /**
+   * Create a pin. Omit sessionId/issueId on the FIRST pin of a sitting — the
+   * server lazily creates the session + grouping issue and returns their ids,
+   * which the overlay then reuses for every subsequent pin.
+   */
+  createPin: (input: {
+    sessionId?: string;
+    issueId?: string;
+    pageUrl: string;
+    anchor: Record<string, unknown>;
+    offsetX: number;
+    offsetY: number;
+    comment: string;
+    severity: string;
+    issueType: string;
+    assigneeId?: string | null;
+    labels?: string[];
+  }) =>
+    send<{ pin: AnnotationPinRow; sessionId: string; issueId: string }>({
+      path: "/annotation/pins",
+      method: "POST",
+      json: input,
+    }),
+
+  /** Update a pin (status / comment / severity / anchor). */
+  updatePin: (id: string, patch: Record<string, unknown>) =>
+    send<AnnotationPinRow>({
+      path: `/annotation/pins/${id}`,
+      method: "PATCH",
+      json: patch,
+    }),
+
+  /** Delete a pin. */
+  deletePin: (id: string) =>
+    send<{ deleted: boolean }>({
+      path: `/annotation/pins/${id}`,
+      method: "DELETE",
+    }),
+
+  /** All pins on a page (across sessions), for the overlay's re-render. */
+  getPagePins: (pageUrl: string) =>
+    send<AnnotationPinRow[]>({
+      path: `/annotation/pins?pageUrl=${encodeURIComponent(pageUrl)}`,
+      method: "GET",
+    }),
+
+  /** Finalise a session: set the grouping issue's title (+ optional summary). */
+  submitSession: (sessionId: string, title: string, summary?: string) =>
+    send<{ submitted: boolean; issueId: string | null }>({
+      path: `/annotation/sessions/${sessionId}/submit`,
+      method: "POST",
+      json: { title, ...(summary !== undefined && { summary }) },
+    }),
+
+  /** Single-shot attachment upload (screenshots / small files). */
+  uploadAttachment: async (params: {
+    blob: Blob;
+    filename: string;
+    type: "screenshot" | "thumbnail" | "export";
+    issueId?: string;
+    sessionId?: string;
+  }) => {
+    const base64 = bufferToBase64(await params.blob.arrayBuffer());
+    const fields: Record<string, string> = { type: params.type };
+    if (params.issueId) fields["issueId"] = params.issueId;
+    if (params.sessionId) fields["sessionId"] = params.sessionId;
+
+    return send<Attachment>({
+      path: "/attachments",
+      method: "POST",
+      file: {
+        base64,
+        contentType: params.blob.type || "application/octet-stream",
+        filename: params.filename,
+      },
+      fields,
+    });
+  },
+};
+
+/** Convert a data URL into a Blob (used by clean-screenshot capture). */
+export function dataUrlToBlob(dataUrl: string): Blob {
+  const [meta, b64] = dataUrl.split(",");
+  const mime = meta?.match(/:(.*?);/)?.[1] ?? "image/png";
+  const binary = atob(b64 ?? "");
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}

@@ -1,12 +1,14 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-27T19:24:51.294Z
-> Files: 111 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-29T00:14:25.347Z
+> Files: 143 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
+- `.gitignore` — Git ignore rules (~101 tok)
 - `HANDOFF.md` — pinlay — Handoff (~3582 tok)
-- `package.json` — Node.js package manifest (~160 tok)
+- `package.json` — Node.js package manifest (~183 tok)
+- `ROADMAP.md` — pinlay — Product Roadmap (~4227 tok)
 
 ## ./ (root)
 
@@ -28,7 +30,60 @@
 
 - `package.json` — Node.js package manifest (~231 tok)
 - `tsconfig.json` — TypeScript configuration (~72 tok)
-- `wxt.config.ts` — pinlay extension — WXT + Vue 3 + Tailwind v4. (~307 tok)
+- `wxt.config.ts` — pinlay extension — WXT + Vue 3 + Tailwind v4. (~323 tok)
+
+## apps/extension/public/
+
+- `icon.svg` (~76 tok)
+
+## apps/extension/src/assets/
+
+- `style.css` — Styles: 5 rules, 32 vars (~685 tok)
+
+## apps/extension/src/components/annotation/
+
+- `AnnotationOverlay.vue` — Vue: setup (~7627 tok)
+- `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~927 tok)
+- `AnnotationPinComposer.vue` — Vue component (~7779 tok)
+- `AnnotationPinDetail.vue` — Vue component (~5244 tok)
+
+## apps/extension/src/components/capture/
+
+- `RegionSelector.vue` — Vue: setup (~1331 tok)
+
+## apps/extension/src/components/capture/markup/
+
+- `MarkupCanvas.vue` — Vue: setup (~1311 tok)
+- `MarkupToolbar.vue` — Vue: setup (~1807 tok)
+- `MarkupView.vue` — Vue: setup (~1096 tok)
+- `types.ts` — Markup tool + shape types. (~309 tok)
+- `useMarkupCanvas.ts` — useMarkupCanvas (~6016 tok)
+
+## apps/extension/src/components/launcher/
+
+- `ConnectPrompt.vue` — Vue: setup (~404 tok)
+- `FloatingLauncher.vue` — Vue: setup (~5516 tok)
+- `LauncherItem.vue` — Vue: setup (~789 tok)
+
+## apps/extension/src/entrypoints/
+
+- `background.ts` — Background service worker. (~1292 tok)
+- `content.ts` — Content script — mounts the on-page surfaces: (~3003 tok)
+
+## apps/extension/src/entrypoints/popup/
+
+- `App.vue` — Vue: setup (~2973 tok)
+- `index.html` — pinlay (~172 tok)
+- `main.ts` (~47 tok)
+
+## apps/extension/src/lib/
+
+- `anchor.ts` — Element anchoring for live annotation. (~1550 tok)
+- `annotation-state.ts` — annotation-state (~809 tok)
+- `api.ts` — API client (~1599 tok)
+- `auth.ts` — Subscribe to auth changes — fires when the token is added, updated, or cleared. (~562 tok)
+- `env.ts` — Exports WEB_APP_URL, API_URL (~48 tok)
+- `extension.ts` — Extension runtime helpers. (~253 tok)
 
 ## apps/web/
 
@@ -195,7 +250,7 @@
 ## packages/design/src/
 
 - `index.ts` — Import "@pinlay/design/tokens.css" once in the host app. Components are (~382 tok)
-- `tokens.css` — Styles: 5 rules, 87 vars (~1579 tok)
+- `tokens.css` — Styles: 5 rules, 87 vars (~1580 tok)
 
 ## packages/design/src/components/
 
@@ -210,12 +265,22 @@
 - `DialogOverlay.vue` — Vue: setup (~204 tok)
 - `DialogScrollContent.vue` — Vue: setup (~517 tok)
 
+## packages/design/src/components/ui/dropdown-menu/
+
+- `DropdownMenuContent.vue` — Vue: setup (~509 tok)
+- `DropdownMenuSubContent.vue` — Vue: setup (~347 tok)
+
 ## packages/design/src/components/ui/input/
 
 - `Input.vue` — Vue: setup (~307 tok)
 
+## packages/design/src/components/ui/popover/
+
+- `PopoverContent.vue` — Vue: setup (~390 tok)
+
 ## packages/design/src/components/ui/select/
 
+- `SelectContent.vue` — Vue: setup (~524 tok)
 - `SelectItem.vue` — Vue: setup (~392 tok)
 - `SelectTrigger.vue` — Vue: setup (~457 tok)
 

@@ -1,0 +1,54 @@
+@import "tailwindcss";
+/* Pull pinlay tokens into the shadow root. tokens.css now uses
+   `:root, :host, [data-theme="light"]` so the vars apply inside shadow DOM. */
+@import "@pinlay/design/tokens.css";
+
+/* Scan @pinlay/design so its utility classes are generated in the extension
+   build too — same monorepo workaround as apps/web/src/assets/main.css. */
+@source "../../../../packages/design/src";
+
+@custom-variant dark ([data-theme=dark] *);
+
+/* Map shadcn/pinlay tokens onto Tailwind utilities (mirrors the web app). */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  /* Pinlay semantic palettes — same mapping the web app uses so domain
+     classes like bg-sev-critical / bg-status-resolved generate. */
+  --color-sev-critical: var(--sev-critical);
+  --color-sev-high: var(--sev-high);
+  --color-sev-medium: var(--sev-medium);
+  --color-sev-low: var(--sev-low);
+  --color-status-open: var(--status-open);
+  --color-status-progress: var(--status-progress);
+  --color-status-resolved: var(--status-resolved);
+  --color-status-stale: var(--status-stale);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --radius: var(--radius);
+}
+
+/* No @layer base body rule here on purpose.
+   WXT's createShadowRootUi mounts an <html><body> inside the shadow root and
+   this stylesheet is injected there too — so any `body { background: … }`
+   rule paints var(--background) over the whole viewport on the host page.
+   The popup sets its own background via index.html (<body class="bg-background">). */

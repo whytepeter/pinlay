@@ -1,0 +1,936 @@
+<!--
+  AnnotationOverlay
+  ─────────────────
+  Top-level orchestrator for the live-annotation flow, with two modes:
+
+    VIEW (default):
+      • Page is fully interactive — root has pointer-events:none.
+      • Existing pins for this URL are fetched + rendered. Clicking a pin
+        opens AnnotationPinDetail with the stored comment.
+      • The FloatingLauncher IS the toolbar — Start / Cancel / Done lives there.
+
+    PLACE:
+      • A click-capture layer covers the page. Cursor: crosshair.
+      • Hover an element → outline highlight. Click → describe element,
+        drop a draft pin, open AnnotationPinComposer.
+      • Submit → POST /annotation/pins, pin turns violet + persists.
+      • Cancel / Esc → drop the draft pin, return to VIEW.
+
+  Persistence: existing pins survive because each pin is a row in the org's
+  pins table. Visiting the same URL again + entering annotation refetches
+  them via /annotation/pins.
+-->
+<template>
+  <!-- Outer layer is INERT by default — pointer-events:none lets every page
+       click pass through. Children opt back in. -->
+  <div class="fixed inset-0 z-[2147483640] pointer-events-none">
+    <!-- PLACE-mode capture layer: covers the page only while picking AND no
+         composer is open. The second guard keeps composer clicks from being
+         stolen by the layer. -->
+    <div
+      v-if="mode === 'place' && !composingPin"
+      class="absolute inset-0 pointer-events-auto"
+      style="cursor: crosshair"
+      @click.stop="onPlaceClick"
+      @mousemove.passive="onPlaceMove"
+    >
+      <div
+        v-if="hover"
+        class="absolute pointer-events-none rounded-sm transition-[transform,width,height] duration-75"
+        :style="{
+          left: hover.x + 'px',
+          top: hover.y + 'px',
+          width: hover.w + 'px',
+          height: hover.h + 'px',
+          background: 'color-mix(in oklab, var(--primary) 8%, transparent)',
+          outline: '2px solid var(--primary)',
+          boxShadow: '0 0 0 1px rgba(0,0,0,0.06)',
+        }"
+      />
+    </div>
+
+    <!-- Pins (existing + draft + just-submitted). Positions are VIEWPORT
+         coords recomputed on scroll/resize. -->
+    <AnnotationPin
+      v-for="r in renderedPins"
+      :key="r.pin.id"
+      :index="r.pin.index"
+      :page-x="r.x"
+      :page-y="r.y"
+      :severity="pinSeverity(r.pin)"
+      :status="pinStatus(r.pin)"
+      :state="r.pin.state"
+      :stale="r.stale"
+      @open="openPin(r.pin.id)"
+    />
+
+    <!-- Composer for a freshly-dropped pin. -->
+    <AnnotationPinComposer
+      v-if="composingPin"
+      :index="composingPin.index"
+      :page-x="composerPos.x"
+      :page-y="composerPos.y"
+      :selector="composerSelector"
+      :submitting="composingPin.submitting"
+      :error="composingPin.error"
+      :members="members"
+      @submit="onComposerSubmit"
+      @cancel="onComposerCancel"
+    />
+
+    <!-- Detail popover for an existing pin. -->
+    <AnnotationPinDetail
+      v-if="viewingPin"
+      :index="viewingPin.index"
+      :page-x="detailPos.x"
+      :page-y="detailPos.y"
+      :comment="viewingPin.comment"
+      :severity="viewingPin.severity"
+      :issue-type="viewingPin.issueType"
+      :status="viewingPin.status"
+      :attachments="viewingPin.attachments"
+      :author="viewingPin.author"
+      :created-at="viewingPin.createdAt"
+      :updating="statusUpdatingId === viewingPin.id"
+      :stale="detailPos.stale"
+      @close="viewingPinId = null"
+      @reanchor="startReanchor(viewingPin.id)"
+      @change-status="onChangeStatus(viewingPin.id, $event)"
+    />
+
+    <!-- Finish-review dialog — names the grouped issue on Done. -->
+    <div
+      v-if="finishing"
+      class="pointer-events-auto fixed inset-0 z-[2147483647] flex items-center justify-center"
+      style="background: rgba(0,0,0,0.45)"
+      @click.self="cancelFinish"
+    >
+      <div
+        class="w-[360px] rounded-xl border border-border bg-card p-4 shadow-[0_24px_64px_rgba(0,0,0,0.3)]"
+      >
+        <h3 class="text-[14px] font-semibold text-foreground">Finish review</h3>
+        <p class="mt-1 text-[12px] text-muted-foreground">
+          {{ sessionPinCount }} pin{{ sessionPinCount === 1 ? "" : "s" }} will be
+          grouped into one issue.
+        </p>
+        <label
+          class="mt-3 block text-[10px] font-semibold uppercase tracking-wide text-muted-foreground"
+          >Title</label
+        >
+        <input
+          v-model="reviewTitle"
+          type="text"
+          class="mt-1 block w-full rounded-md border border-border bg-background px-2.5 py-2 text-[13px] focus:outline-none focus:ring-1 focus:ring-ring"
+          @keydown.enter.prevent="confirmFinish"
+        />
+
+        <div
+          v-if="priorPinsCount > 0"
+          class="mt-3 flex items-start gap-2 rounded-md border border-status-stale/30 bg-status-stale/10 px-2.5 py-2 text-[11px] text-status-stale"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="mt-px h-3 w-3 shrink-0"
+          >
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span>
+            <strong>{{ priorPinsCount }} pin{{ priorPinsCount === 1 ? "" : "s" }}</strong>
+            from a previous session already exist on this page and will not be
+            affected.
+          </span>
+        </div>
+
+        <p class="mt-2 text-[10px] text-muted-foreground">
+          This review will be visible to all workspace members.
+        </p>
+
+        <div class="mt-3 flex items-center justify-end gap-2">
+          <Button variant="ghost" size="sm" :disabled="finishBusy" @click="cancelFinish"
+            >Keep editing</Button
+          >
+          <Button
+            variant="default"
+            size="sm"
+            :disabled="finishBusy"
+            @click="confirmFinish"
+            >Submit review</Button
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { Button } from "@pinlay/design";
+import AnnotationPin from "./AnnotationPin.vue";
+import AnnotationPinComposer, { type PinDraft } from "./AnnotationPinComposer.vue";
+import AnnotationPinDetail from "./AnnotationPinDetail.vue";
+import type { PinListRow } from "../../lib/annotation-state";
+import { describeAnchor, resolveAnchor, type PinAnchor } from "../../lib/anchor";
+import {
+  api,
+  type AnnotationPinRow,
+  type WorkspaceMember,
+} from "../../lib/api";
+import { safeSendMessage } from "../../lib/extension";
+import { WEB_APP_URL } from "../../lib/env";
+import { useAnnotationState } from "../../lib/annotation-state";
+import type { Severity, Status, PinType } from "@pinlay/shared";
+import type { StoredAuth } from "../../lib/auth";
+
+interface BrowserMeta {
+  pageUrl: string;
+  pageTitle: string;
+  userAgent: string;
+  viewport: { width: number; height: number };
+  devicePixelRatio: number;
+}
+
+const props = defineProps<{
+  browserMeta: BrowserMeta;
+  auth: StoredAuth | null;
+}>();
+
+const emit = defineEmits<{ close: [] }>();
+
+// ── Shared state w/ launcher ────────────────────────────────────────────────
+const state = useAnnotationState();
+
+// ── Mode ────────────────────────────────────────────────────────────────────
+const mode = ref<"view" | "place">("view");
+
+function enterPlaceMode() {
+  if (composingPin.value) return;
+  viewingPinId.value = null;
+  mode.value = "place";
+  state.setMode("place");
+}
+function exitPlaceMode() {
+  hover.value = null;
+  mode.value = "view";
+  state.setMode("view");
+}
+
+// Close the composer but STAY in place mode so the user can drop another pin
+// immediately. Place mode is sticky: the user exits explicitly via Escape or
+// the floating-launcher "Cancel pinning" / "Done" — never as a side-effect of
+// submitting a single pin.
+function closeComposerStayPlace() {
+  composingPinId.value = null;
+  hover.value = null;
+  // Defensive: ensure place mode is set in case caller flipped it elsewhere.
+  if (mode.value !== "place") {
+    mode.value = "place";
+    state.setMode("place");
+  }
+}
+
+watch(
+  () => state.placeRequested.value,
+  (v, prev) => {
+    if (v !== prev) enterPlaceMode();
+  },
+);
+watch(
+  () => state.cancelRequested.value,
+  (v, prev) => {
+    if (v !== prev) exitPlaceMode();
+  },
+);
+watch(
+  () => state.exitRequested.value,
+  (v, prev) => {
+    if (v !== prev) onDone();
+  },
+);
+
+// ── Grouped-pin model ───────────────────────────────────────────────────────
+const sessionId = ref<string | null>(null);
+const issueId = ref<string | null>(null);
+const members = ref<WorkspaceMember[]>([]);
+
+interface PinAttachment {
+  name: string;
+  mime: string;
+  dataUrl: string;
+  size: number;
+  dimensions?: { w: number; h: number };
+}
+
+interface ExistingPin {
+  kind: "existing";
+  id: string;
+  issueId: string | null;
+  index: number;
+  pageX: number;
+  pageY: number;
+  anchor: PinAnchor;
+  severity: Severity;
+  status: Status;
+  state: "submitted";
+  comment: string;
+  issueType: string | null;
+  attachments?: PinAttachment[];
+  author?: { name: string; avatarHue?: number };
+  createdAt?: string;
+}
+interface DraftPin {
+  kind: "draft" | "submitted";
+  id: string;
+  index: number;
+  pageX: number;
+  pageY: number;
+  anchor: PinAnchor;
+  draft: PinDraft;
+  state: "draft" | "submitted";
+  submitting: boolean;
+  error?: string;
+}
+type Pin = ExistingPin | DraftPin;
+
+const existingPins = ref<ExistingPin[]>([]);
+const localPins = ref<DraftPin[]>([]);
+
+const visiblePins = computed<Pin[]>(() => [
+  ...existingPins.value,
+  ...localPins.value,
+]);
+
+// ── Viewport positioning ────────────────────────────────────────────────────
+const viewportTick = ref(0);
+let rafPending = false;
+function onViewportChange() {
+  if (rafPending) return;
+  rafPending = true;
+  requestAnimationFrame(() => {
+    viewportTick.value++;
+    rafPending = false;
+  });
+}
+
+function viewportPos(pin: Pin): { x: number; y: number; stale: boolean } {
+  const anchor = pin.anchor;
+  const resolved = resolveAnchor(anchor);
+  if (resolved) {
+    const r = resolved.el.getBoundingClientRect();
+    return {
+      x: r.left + anchor.offset.xPct * r.width,
+      y: r.top + anchor.offset.yPct * r.height,
+      stale: false,
+    };
+  }
+  return {
+    x: pin.pageX - window.scrollX,
+    y: pin.pageY - window.scrollY,
+    stale: true,
+  };
+}
+
+interface RenderedPin {
+  pin: Pin;
+  x: number;
+  y: number;
+  stale: boolean;
+}
+const renderedPins = computed<RenderedPin[]>(() => {
+  void viewportTick.value;
+  return visiblePins.value.map((pin) => {
+    const { x, y, stale } = viewportPos(pin);
+    return { pin, x, y, stale: pin.kind === "existing" && stale };
+  });
+});
+
+const composerPos = computed(() => {
+  void viewportTick.value;
+  return composingPin.value
+    ? viewportPos(composingPin.value)
+    : { x: 0, y: 0, stale: false };
+});
+
+// Short, dev-tools-style label of the clicked element shown in the composer
+// header (e.g. `button[data-testid="submit"]` or `div:nth-of-type(3)`).
+const composerSelector = computed(() => {
+  if (!composingPin.value) return "";
+  const sel = composingPin.value.anchor.selector;
+  return sel.split(" > ").pop() ?? composingPin.value.anchor.tag;
+});
+const detailPos = computed(() => {
+  void viewportTick.value;
+  return viewingPin.value
+    ? viewportPos(viewingPin.value)
+    : { x: 0, y: 0, stale: false };
+});
+
+// ── Pin-list rows ────────────────────────────────────────────────────────────
+const STATUS_DOT_BG: Record<string, string> = {
+  open: "bg-status-open",
+  in_progress: "bg-status-progress",
+  resolved: "bg-status-resolved",
+  draft: "bg-muted",
+  archived: "bg-muted",
+};
+const SEVERITY_DOT_BG: Record<Severity, string> = {
+  low: "bg-sev-low",
+  medium: "bg-sev-medium",
+  high: "bg-sev-high",
+  critical: "bg-sev-critical",
+};
+
+const pinListRows = computed<PinListRow[]>(() =>
+  renderedPins.value.map((r) => {
+    const status = pinStatus(r.pin);
+    return {
+      id: r.pin.id,
+      index: r.pin.index,
+      title:
+        r.pin.kind === "existing" ? r.pin.comment : r.pin.draft.comment,
+      statusLabel: status ? status.replace(/_/g, " ") : "draft",
+      dotBg: status
+        ? (STATUS_DOT_BG[status] ?? "bg-muted")
+        : SEVERITY_DOT_BG[pinSeverity(r.pin)],
+      stale: r.stale,
+    };
+  }),
+);
+
+function onJumpToPin(pinId: string) {
+  const pin = visiblePins.value.find((p) => p.id === pinId);
+  if (!pin) return;
+  const resolved = resolveAnchor(pin.anchor);
+  if (resolved) {
+    resolved.el.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else {
+    window.scrollTo({
+      top: Math.max(0, pin.pageY - window.innerHeight / 2),
+      behavior: "smooth",
+    });
+  }
+  openPin(pinId);
+}
+
+function pinSeverity(pin: Pin): Severity {
+  return pin.kind === "existing" ? pin.severity : pin.draft.severity;
+}
+function pinStatus(pin: Pin): Status | undefined {
+  if (pin.kind === "existing") return pin.status;
+  return pin.state === "submitted" ? "open" : undefined;
+}
+
+// The pin currently in composer (only ever a DraftPin in `draft` state).
+const composingPinId = ref<string | null>(null);
+const composingPin = computed<DraftPin | null>(() => {
+  if (!composingPinId.value) return null;
+  const pin = localPins.value.find((p) => p.id === composingPinId.value);
+  return pin && pin.state === "draft" ? pin : null;
+});
+
+// The pin currently shown in detail popover.
+const viewingPinId = ref<string | null>(null);
+const viewingPin = computed<ExistingPin | null>(() => {
+  if (!viewingPinId.value) return null;
+  return existingPins.value.find((p) => p.id === viewingPinId.value) ?? null;
+});
+
+// ── Hydrate existing pins ───────────────────────────────────────────────────
+state.setActive(true);
+
+onMounted(async () => {
+  // Auth gate disabled until apps/api lands. Without a token we skip both
+  // fetches and the overlay runs in local-only mode (drafts promote locally
+  // on submit, see onComposerSubmit). Restore the original guard
+  //   `if (!props.auth?.token || !props.browserMeta.pageUrl) return;`
+  // when the API is wired up.
+  if (!props.auth?.token || !props.browserMeta.pageUrl) return;
+
+  const [pinsResult, membersResult] = await Promise.allSettled([
+    api.getPagePins(props.browserMeta.pageUrl),
+    api.getWorkspaceMembers(),
+  ]);
+
+  if (pinsResult.status === "fulfilled") {
+    existingPins.value = pinsResult.value
+      .map((row, i) => rowToExistingPin(row, i + 1))
+      .filter((p): p is ExistingPin => p !== null);
+  } else {
+    console.warn("[pinlay] failed to load existing pins:", pinsResult.reason);
+  }
+
+  if (membersResult.status === "fulfilled") {
+    members.value = membersResult.value;
+  }
+});
+
+watch(
+  () =>
+    existingPins.value.length +
+    localPins.value.filter((p) => p.state === "submitted").length,
+  (count) => state.setPinCount(count),
+  { immediate: true },
+);
+
+watch(pinListRows, (rows) => state.setPinRows(rows), { immediate: true });
+
+watch(
+  () => state.jumpRequested.value,
+  (v, prev) => {
+    if (v !== prev) onJumpToPin(state.jumpTargetId.value);
+  },
+);
+
+onMounted(() => {
+  window.addEventListener("scroll", onViewportChange, true);
+  window.addEventListener("resize", onViewportChange);
+});
+
+onBeforeUnmount(() => {
+  state.setActive(false);
+  window.removeEventListener("scroll", onViewportChange, true);
+  window.removeEventListener("resize", onViewportChange);
+});
+
+function rowToExistingPin(row: AnnotationPinRow, index: number): ExistingPin | null {
+  const anchor = row.anchor as unknown as PinAnchor;
+  if (!anchor?.rect) return null;
+
+  const pageX = anchor.rect.x + anchor.offset.xPct * anchor.rect.w + anchor.scroll.x;
+  const pageY = anchor.rect.y + anchor.offset.yPct * anchor.rect.h + anchor.scroll.y;
+
+  return {
+    kind: "existing",
+    id: row.id,
+    issueId: row.issueId,
+    index,
+    pageX,
+    pageY,
+    anchor,
+    severity: (row.severity ?? "medium") as Severity,
+    status: (row.status ?? "open") as Status,
+    state: "submitted",
+    comment: row.comment,
+    issueType: row.issueType ?? null,
+  };
+}
+
+// ── Hover highlight (PLACE only) ────────────────────────────────────────────
+const hover = ref<{ x: number; y: number; w: number; h: number } | null>(null);
+const overlayHostSelector = "pinlay-annotation";
+
+function isOverlayChrome(el: Element | null): boolean {
+  if (!el) return false;
+  const hostEl = document.querySelector(overlayHostSelector) as HTMLElement | null;
+  const launcherEl = document.querySelector("pinlay-launcher") as HTMLElement | null;
+  return (
+    (!!hostEl && hostEl.contains(el)) || (!!launcherEl && launcherEl.contains(el))
+  );
+}
+
+function elementAt(x: number, y: number): Element | null {
+  const stack = document.elementsFromPoint(x, y);
+  for (const el of stack) {
+    if (isOverlayChrome(el)) continue;
+    if (el === document.body || el === document.documentElement) continue;
+    return meaningfulTarget(el);
+  }
+  return null;
+}
+
+const MIN_TARGET_PX = 12;
+function meaningfulTarget(el: Element): Element {
+  let cur: Element = el;
+  for (let i = 0; i < 4; i++) {
+    const parent = cur.parentElement;
+    if (!parent || parent === document.body) break;
+
+    const r = cur.getBoundingClientRect();
+    const tooSmall = r.width < MIN_TARGET_PX || r.height < MIN_TARGET_PX;
+
+    const style = window.getComputedStyle(cur);
+    const isInline = style.display.startsWith("inline");
+
+    if (tooSmall || isInline) {
+      const pr = parent.getBoundingClientRect();
+      const parentTooBig =
+        pr.width * pr.height > window.innerWidth * window.innerHeight * 0.6;
+      if (parentTooBig) break;
+      cur = parent;
+      continue;
+    }
+    break;
+  }
+  return cur;
+}
+
+let hoverRafPending = false;
+let lastMove: { x: number; y: number } | null = null;
+function onPlaceMove(e: MouseEvent) {
+  if (composingPin.value) return;
+  lastMove = { x: e.clientX, y: e.clientY };
+  if (hoverRafPending) return;
+  hoverRafPending = true;
+  requestAnimationFrame(() => {
+    hoverRafPending = false;
+    if (!lastMove) return;
+    const el = elementAt(lastMove.x, lastMove.y);
+    if (!el) {
+      hover.value = null;
+      return;
+    }
+    const r = el.getBoundingClientRect();
+    hover.value = { x: r.left, y: r.top, w: r.width, h: r.height };
+  });
+}
+
+async function onPlaceClick(e: MouseEvent) {
+  if (composingPin.value) return;
+  const el = elementAt(e.clientX, e.clientY);
+  if (!el) return;
+
+  const anchor = describeAnchor(el, e.clientX, e.clientY);
+
+  if (reanchoringPinId.value) {
+    void applyReanchor(reanchoringPinId.value, anchor, e);
+    return;
+  }
+
+  const id = `pin-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+  const newIndex = visiblePins.value.length + 1;
+  const pin: DraftPin = {
+    kind: "draft",
+    id,
+    index: newIndex,
+    pageX: e.clientX + window.scrollX,
+    pageY: e.clientY + window.scrollY,
+    anchor,
+    draft: {
+      comment: "",
+      severity: "medium",
+      issueType: "visual" as PinType,
+      images: [],
+      assigneeId: null,
+      labels: [],
+    },
+    state: "draft",
+    submitting: false,
+  };
+  localPins.value.push(pin);
+  composingPinId.value = id;
+  hover.value = null;
+}
+
+// ── Re-anchor a stale pin ────────────────────────────────────────────────────
+const reanchoringPinId = ref<string | null>(null);
+
+function startReanchor(pinId: string) {
+  reanchoringPinId.value = pinId;
+  viewingPinId.value = null;
+  mode.value = "place";
+  state.setMode("place");
+}
+
+async function applyReanchor(pinId: string, anchor: PinAnchor, e: MouseEvent) {
+  const pin = existingPins.value.find((p) => p.id === pinId);
+  reanchoringPinId.value = null;
+  exitPlaceMode();
+  if (!pin) return;
+
+  pin.anchor = anchor;
+  pin.pageX = e.clientX + window.scrollX;
+  pin.pageY = e.clientY + window.scrollY;
+
+  try {
+    await api.updatePin(pinId, {
+      anchor: anchor as unknown as Record<string, unknown>,
+      offsetX: anchor.offset.xPct,
+      offsetY: anchor.offset.yPct,
+    });
+  } catch (err) {
+    console.warn("[pinlay] failed to persist re-anchor:", (err as Error).message);
+  }
+}
+
+// ── Pin click handlers (VIEW) ───────────────────────────────────────────────
+function openPin(pinId: string) {
+  const existing = existingPins.value.find((p) => p.id === pinId);
+  if (existing) {
+    viewingPinId.value = pinId;
+    return;
+  }
+  const local = localPins.value.find((p) => p.id === pinId);
+  if (local && local.state === "draft" && !local.submitting) {
+    composingPinId.value = pinId;
+  }
+}
+
+function openInDashboard(issueId: string) {
+  void safeSendMessage({ type: "OPEN_TAB", url: `${WEB_APP_URL}/s/${issueId}` });
+  viewingPinId.value = null;
+}
+
+// ── Inline status change ─────────────────────────────────────────────────────
+const statusUpdatingId = ref<string | null>(null);
+
+async function onChangeStatus(pinId: string, status: Status) {
+  const pin = existingPins.value.find((p) => p.id === pinId);
+  if (!pin || pin.status === status) return;
+
+  statusUpdatingId.value = pinId;
+  const prev = pin.status;
+  pin.status = status;
+  try {
+    await api.updatePin(pinId, { status });
+  } catch (e) {
+    pin.status = prev;
+    console.warn("[pinlay] failed to update pin status:", (e as Error).message);
+  } finally {
+    statusUpdatingId.value = null;
+  }
+}
+
+// ── Composer events ─────────────────────────────────────────────────────────
+async function onComposerSubmit(draft: PinDraft) {
+  const pin = composingPin.value;
+  if (!pin) return;
+  pin.draft = draft;
+  pin.submitting = true;
+  pin.error = undefined;
+
+  // Local-only mode (no API yet): promote the draft to an existing pin
+  // without hitting the network. Delete this branch when apps/api lands —
+  // the guard above used to short-circuit with "Connect a workspace…".
+  if (!props.auth?.token) {
+    const attachments = await Promise.all(
+      (draft.images ?? []).map(fileToAttachment),
+    );
+    const localId = `local-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    composingPinId.value = null;
+    localPins.value = localPins.value.filter((p) => p.id !== pin.id);
+    existingPins.value.push({
+      kind: "existing",
+      id: localId,
+      issueId: null,
+      index: existingPins.value.length + 1,
+      pageX: pin.pageX,
+      pageY: pin.pageY,
+      anchor: pin.anchor,
+      severity: draft.severity,
+      status: "open",
+      state: "submitted",
+      comment: draft.comment,
+      issueType: draft.issueType,
+      attachments: attachments.filter((a): a is PinAttachment => a !== null),
+      author: { name: "You", avatarHue: 264 },
+      createdAt: new Date().toISOString(),
+    });
+    reindexPins();
+    // Sticky place mode: don't auto-open the new pin's detail — the user is
+    // mid-flow and the next click should drop another pin.
+    closeComposerStayPlace();
+    return;
+  }
+
+  try {
+    const res = await api.createPin({
+      sessionId: sessionId.value ?? undefined,
+      issueId: issueId.value ?? undefined,
+      pageUrl: props.browserMeta.pageUrl,
+      anchor: pin.anchor as unknown as Record<string, unknown>,
+      offsetX: pin.anchor.offset.xPct,
+      offsetY: pin.anchor.offset.yPct,
+      comment: draft.comment,
+      severity: draft.severity,
+      issueType: draft.issueType,
+      assigneeId: draft.assigneeId ?? undefined,
+      labels: draft.labels.length ? draft.labels : undefined,
+    });
+    sessionId.value = res.sessionId;
+    issueId.value = res.issueId;
+
+    for (const img of draft.images ?? []) {
+      await api
+        .uploadAttachment({
+          blob: img,
+          filename: img.name || `image-${Date.now()}.png`,
+          type: "screenshot",
+          issueId: res.issueId,
+        })
+        .catch(() => null);
+    }
+
+    composingPinId.value = null;
+    localPins.value = localPins.value.filter((p) => p.id !== pin.id);
+    existingPins.value.push({
+      kind: "existing",
+      id: res.pin.id,
+      issueId: res.issueId,
+      index: existingPins.value.length + 1,
+      pageX: pin.pageX,
+      pageY: pin.pageY,
+      anchor: pin.anchor,
+      severity: draft.severity,
+      status: "open",
+      state: "submitted",
+      comment: draft.comment,
+      issueType: draft.issueType,
+    });
+    reindexPins();
+
+    // Sticky place mode (same rationale as the local-only branch above).
+    closeComposerStayPlace();
+  } catch (e) {
+    pin.error =
+      (e as Error).message || "Could not submit pin. Please try again.";
+    pin.submitting = false;
+  }
+}
+
+// Read a File into a PinAttachment shape (used by the local-only submit
+// path so the detail view can render the screenshot card with dimensions +
+// size). Failures return null so a corrupt file doesn't kill the whole pin.
+async function fileToAttachment(file: File): Promise<PinAttachment | null> {
+  try {
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(reader.error);
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
+    const dimensions = await new Promise<{ w: number; h: number } | undefined>(
+      (resolve) => {
+        const img = new Image();
+        img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight });
+        img.onerror = () => resolve(undefined);
+        img.src = dataUrl;
+      },
+    );
+    return {
+      name: file.name,
+      mime: file.type || "application/octet-stream",
+      dataUrl,
+      size: file.size,
+      dimensions,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function reindexPins() {
+  existingPins.value.forEach((p, i) => {
+    p.index = i + 1;
+  });
+  localPins.value.forEach((p, i) => {
+    p.index = existingPins.value.length + i + 1;
+  });
+}
+
+function onComposerCancel() {
+  const pin = composingPin.value;
+  if (!pin) return;
+  if (pin.state === "draft" && !pin.submitting) {
+    localPins.value = localPins.value.filter((p) => p.id !== pin.id);
+    localPins.value.forEach((p, i) => {
+      p.index = existingPins.value.length + i + 1;
+    });
+  }
+  // Sticky place mode: cancelling the composer drops the draft but keeps the
+  // user in place mode. A second Escape (or the FAB) exits placing entirely.
+  closeComposerStayPlace();
+}
+
+// ── Done → finish review ─────────────────────────────────────────────────────
+const finishing = ref(false);
+const reviewTitle = ref("");
+const finishBusy = ref(false);
+
+const sessionPinCount = computed(
+  () =>
+    existingPins.value.filter((p) => p.issueId === issueId.value).length,
+);
+const priorPinsCount = computed(
+  () => existingPins.value.filter((p) => p.issueId !== issueId.value).length,
+);
+
+function onDone() {
+  if (composingPin.value) onComposerCancel();
+
+  // Show the title popover whenever any pin has been dropped this sitting —
+  // not gated on `sessionId.value`, because in local-only mode (no API yet)
+  // sessionId stays null but the user still wants the naming flow.
+  if (existingPins.value.length > 0) {
+    reviewTitle.value = defaultReviewTitle();
+    finishing.value = true;
+    return;
+  }
+  emit("close");
+}
+
+function defaultReviewTitle(): string {
+  let host = props.browserMeta.pageUrl;
+  try {
+    host = new URL(props.browserMeta.pageUrl).host;
+  } catch {
+    /* keep */
+  }
+  const n = sessionPinCount.value;
+  return `Annotation review · ${host} · ${n} pin${n === 1 ? "" : "s"}`;
+}
+
+async function confirmFinish() {
+  // Local-only mode: no sessionId, no persistence — just close cleanly so
+  // the user sees the naming flow end-to-end. When the API lands the title
+  // call below will run.
+  if (sessionId.value) {
+    finishBusy.value = true;
+    try {
+      await api.submitSession(
+        sessionId.value,
+        reviewTitle.value.trim() || defaultReviewTitle(),
+      );
+    } catch (e) {
+      console.warn("[pinlay] failed to submit session:", (e as Error).message);
+    } finally {
+      finishBusy.value = false;
+    }
+  }
+  finishing.value = false;
+  emit("close");
+}
+
+function cancelFinish() {
+  finishing.value = false;
+}
+
+function onKeyDown(e: KeyboardEvent) {
+  if (e.key !== "Escape") return;
+  if (finishing.value) {
+    cancelFinish();
+    return;
+  }
+  if (composingPin.value) {
+    onComposerCancel();
+    return;
+  }
+  if (viewingPinId.value) {
+    viewingPinId.value = null;
+    return;
+  }
+  if (mode.value === "place") {
+    exitPlaceMode();
+    return;
+  }
+  onDone();
+}
+
+onMounted(() => document.addEventListener("keydown", onKeyDown, true));
+onBeforeUnmount(() => document.removeEventListener("keydown", onKeyDown, true));
+</script>

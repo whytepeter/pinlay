@@ -13,6 +13,7 @@
  */
 
 :root,
+:host,
 [data-theme="light"] {
   /* pinlay surfaces — zinc */
   --bg-0: #fafafa;
@@ -80,7 +81,8 @@
   --sidebar-accent: #27272a;
 }
 
-:root {
+:root,
+:host {
   /* Brand accent — violet (maps to shadcn --primary).
      hover/soft/glow are DERIVED from --primary via color-mix, so swapping the
      accent is a one-line change. Only --primary[-foreground] are set by hand. */

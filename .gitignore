@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# WXT (browser extension) build + cache
+.output
+.wxt
+
+# OpenWolf working files (not the canonical buglog)
+.wolf/*.snippet
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

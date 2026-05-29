@@ -8,6 +8,9 @@ export default defineConfig({
   srcDir: "src",
   modules: ["@wxt-dev/module-vue", "@wxt-dev/auto-icons"],
   extensionApi: "chrome",
+  autoIcons: {
+    baseIconPath: "assets/icon.svg",
+  },
   vite: () => ({
     plugins: [tailwindcss()],
   }),

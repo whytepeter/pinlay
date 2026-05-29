@@ -16,5 +16,8 @@
     "build:ext": "pnpm --filter @pinlay/extension build",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["sharp", "esbuild", "spawn-sync"]
   }
 }

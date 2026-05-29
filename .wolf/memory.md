@@ -642,3 +642,278 @@
 | 20:24 | Created apps/extension/package.json | — | ~231 |
 | 20:24 | Created apps/extension/wxt.config.ts | — | ~307 |
 | 20:24 | Created apps/extension/tsconfig.json | — | ~72 |
+| 20:25 | Created apps/extension/src/entrypoints/background.ts | — | ~383 |
+| 20:25 | Created apps/extension/src/entrypoints/content.ts | — | ~346 |
+| 20:25 | Created apps/extension/src/entrypoints/popup/index.html | — | ~172 |
+| 20:25 | Created apps/extension/src/entrypoints/popup/main.ts | — | ~47 |
+| 20:26 | Created apps/extension/src/entrypoints/popup/App.vue | — | ~380 |
+| 20:26 | Created apps/extension/src/assets/style.css | — | ~382 |
+| 20:26 | Created apps/extension/public/icon.svg | — | ~76 |
+| 20:26 | Created apps/extension/src/lib/api.ts | — | ~155 |
+| 20:30 | Custom Brand mark: new Brand.vue in @pinlay/design (tapered teardrop pin with evenodd-punched hole, currentColor — distinct from lucide's symmetric MapPin); replaced sidebar usage; added /favicon.svg + index.html link | Brand.vue, design/index.ts, AppSidebar.vue, web/index.html, web/public/favicon.svg | verified in preview (renders + favicon served) | ~280 |
+| 20:32 | Scaffolded apps/extension/: WXT + Vue 3 + Tailwind v4 + @pinlay/{design,shared} workspace deps; manifest is capture-only (no recording/debugger/tabCapture/offscreen perms from DevProbe); entrypoints = background.ts (msg bridge), content.ts (shadow-DOM overlay root), popup (Brand + "Drop a pin"); auto-icons via /public/icon.svg | apps/extension/{package.json,wxt.config.ts,tsconfig.json,src/**/*,public/icon.svg} | needs `pnpm install` to fetch wxt + friends | ~720 |
+| 20:27 | Session end: 28 writes across 16 files (BillingSection.vue, Brand.vue, index.ts, AppSidebar.vue, favicon.svg) | 3 reads | ~4842 tok |
+| 20:33 | Session end: 28 writes across 16 files (BillingSection.vue, Brand.vue, index.ts, AppSidebar.vue, favicon.svg) | 3 reads | ~4842 tok |
+| 20:35 | Edited apps/extension/wxt.config.ts | 5→8 lines | ~56 |
+| 20:35 | Edited package.json | 4→7 lines | ~44 |
+| 21:05 | Built @pinlay/extension to chrome-mv3: pnpm install ok (363 deps added); fixed auto-icons by moving icon.svg to src/assets/ + setting wxt.config.ts autoIcons.baseIconPath; added pnpm.onlyBuiltDependencies = [sharp,esbuild,spawn-sync] to root pkg so sharp's libvips postinstall ran; build produced manifest + popup + content-script + 16/32/48/128 PNG icons (rasterised from the SVG) at apps/extension/.output/chrome-mv3/ | wxt.config.ts, root package.json, apps/extension/src/assets/icon.svg | icon renders correctly (128px verified) | ~340 |
+| 20:38 | Session end: 30 writes across 16 files (BillingSection.vue, Brand.vue, index.ts, AppSidebar.vue, favicon.svg) | 5 reads | ~5102 tok |
+| 20:56 | Created apps/extension/src/lib/env.ts | — | ~48 |
+| 20:56 | Created apps/extension/src/lib/extension.ts | — | ~253 |
+| 20:56 | Created apps/extension/src/lib/auth.ts | — | ~562 |
+| 20:57 | Created apps/extension/src/lib/anchor.ts | — | ~1550 |
+| 20:57 | Created apps/extension/src/lib/annotation-state.ts | — | ~809 |
+| 20:58 | Created apps/extension/src/lib/api.ts | — | ~1599 |
+| 20:58 | Created apps/extension/src/components/launcher/LauncherItem.vue | — | ~807 |
+| 20:59 | Created apps/extension/src/components/launcher/ConnectPrompt.vue | — | ~404 |
+| 21:00 | Created apps/extension/src/components/launcher/FloatingLauncher.vue | — | ~5286 |
+| 21:00 | Created apps/extension/src/components/annotation/AnnotationPin.vue | — | ~702 |
+| 21:01 | Created apps/extension/src/components/annotation/AnnotationPinDetail.vue | — | ~1943 |
+| 21:02 | Created apps/extension/src/components/annotation/AnnotationPinComposer.vue | — | ~5208 |
+| 21:04 | Created apps/extension/src/components/annotation/AnnotationOverlay.vue | — | ~6501 |
+| 21:04 | Created apps/extension/src/entrypoints/content.ts | — | ~1197 |
+| 21:04 | Created apps/extension/src/entrypoints/background.ts | — | ~1120 |
+| 21:05 | Created apps/extension/src/entrypoints/popup/App.vue | — | ~482 |
+| 21:55 | Ported live-annotation + FAB from devprobe-report → apps/extension/. New: lib/{env,extension,auth,anchor,annotation-state,api}.ts, components/launcher/{LauncherItem,ConnectPrompt,FloatingLauncher}.vue, components/annotation/{AnnotationPin,AnnotationPinComposer,AnnotationPinDetail,AnnotationOverlay}.vue. Rewrote entrypoints/{content,background}.ts and popup/App.vue. All `@deveprobe/*`→`@pinlay/*`, `dp-*`→`pinlay-*`, `dp:`→`pinlay:`, `dp_*`→`pl_*`. Stripped: recording, screenshot capture, cover-screenshot, offscreen host, tabCapture/debugger/offscreen perms. PinType + Status enums swapped to pinlay's narrower shapes. Background gained API_FETCH + OPEN_TAB proxy. Build clean (2.07 MB, lucide tree-shake still pending) | apps/extension/src/** | wxt build ✓; icons rasterised; manifest 813B | ~3100 |
+| 21:07 | Session end: 46 writes across 28 files (BillingSection.vue, Brand.vue, index.ts, AppSidebar.vue, favicon.svg) | 14 reads | ~35751 tok |
+| 21:09 | Edited apps/extension/src/assets/style.css | expanded (+10 lines) | ~198 |
+| 21:09 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | rgb() → mix() | ~47 |
+| 21:09 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 13→13 lines | ~94 |
+| 21:10 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | 20→20 lines | ~160 |
+| 21:10 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | modified switch() | ~177 |
+| 21:10 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 6→6 lines | ~84 |
+| 21:10 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 16→18 lines | ~123 |
+| 21:11 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 9→11 lines | ~144 |
+| 21:11 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 7→7 lines | ~101 |
+| 21:11 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | modified if() | ~278 |
+| 21:11 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 5→1 lines | ~23 |
+| 21:11 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 3→3 lines | ~41 |
+| 21:12 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 4→4 lines | ~55 |
+| 21:12 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 4→4 lines | ~51 |
+| 21:12 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | 3→3 lines | ~40 |
+| 21:12 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | 6→6 lines | ~63 |
+| 21:12 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | inline fix | ~23 |
+| 21:13 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | inline fix | ~23 |
+| 21:13 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 3→3 lines | ~31 |
+| 21:13 | Edited apps/extension/src/components/launcher/LauncherItem.vue | 3→2 lines | ~28 |
+| 22:20 | Theme sweep on the extension port: replaced DevProbe's Tailwind palette (rose/violet/amber/emerald/orange) with pinlay's --sev-* + --status-* tokens via bg-sev-{critical,high,medium,low} and bg-status-{open,progress,resolved,stale}; mapped those into extension style.css @theme inline; FAB annotation-active now var(--sev-high) instead of #f59e0b; shadows use color-mix(var(--primary)) instead of rgba(124,58,237); fixed hsl(var(--token)) scoped-CSS bug (pinlay tokens are direct hex, not HSL components); pin-icon brand chrome → text-primary | apps/extension/src/{components/**,assets/style.css} | wxt build ✓ (CSS shrank slightly) | ~380 |
+| 21:17 | Session end: 66 writes across 28 files (BillingSection.vue, Brand.vue, index.ts, AppSidebar.vue, favicon.svg) | 15 reads | ~38025 tok |
+
+## Session: 2026-05-27 21:46
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-28 11:39
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-28 11:39
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 11:44 | Edited apps/extension/src/entrypoints/popup/App.vue | modified startAnnotation() | ~455 |
+| 11:45 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 5→6 lines | ~84 |
+| 11:46 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 3→4 lines | ~72 |
+| 11:46 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added 1 condition(s) | ~251 |
+| 11:47 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified onComposerSubmit() | ~297 |
+| 11:00 | Auth gate disabled in extension for local UI testing (no API yet): removed <ConnectPrompt> from popup + launcher menu, removed `auth?.token` guard's "Connect a workspace" short-circuit in AnnotationOverlay.onComposerSubmit (replaced with a local-only promotion path generating `local-…` ids). onMounted fetch guard left intact (skipped when no token). All bypasses tagged with restore-instruction comments | apps/extension/src/{entrypoints/popup/App.vue, components/launcher/FloatingLauncher.vue, components/annotation/AnnotationOverlay.vue} | wxt build ✓; popup chunk -2kB | ~180 |
+| 11:50 | Session end: 5 writes across 3 files (App.vue, FloatingLauncher.vue, AnnotationOverlay.vue) | 0 reads | ~1241 tok |
+| 11:52 | Edited packages/design/src/tokens.css | 2→3 lines | ~11 |
+| 11:53 | Edited packages/design/src/tokens.css | 2→3 lines | ~20 |
+| 11:54 | Edited apps/extension/src/assets/style.css | 5→8 lines | ~115 |
+| 11:15 | FAB had no background color in shadow DOM: tokens.css `:root, [data-theme="light"]` doesn't match inside a shadow root, so var(--card)/var(--primary)/etc all resolved to empty. Fixed by (1) adding `:host` to both `:root` blocks in tokens.css (no-op in normal DOM), (2) `@import "@pinlay/design/tokens.css"` at top of extension's style.css so WXT bundles tokens into the shadow-root stylesheet | packages/design/src/tokens.css, apps/extension/src/assets/style.css | wxt build ✓; content CSS +3.6kB | ~140 |
+| 11:57 | Session end: 8 writes across 5 files (App.vue, FloatingLauncher.vue, AnnotationOverlay.vue, tokens.css, style.css) | 1 reads | ~2965 tok |
+| 13:08 | Edited apps/extension/src/assets/style.css | CSS: background | ~103 |
+| 13:08 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | CSS: pinlay | ~107 |
+| 13:08 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 2→3 lines | ~53 |
+| 13:09 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | removed 65 lines | ~40 |
+| 13:11 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 8→3 lines | ~34 |
+| 13:11 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | reduced (-14 lines) | ~54 |
+| 13:12 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | reduced (-10 lines) | ~22 |
+| 13:12 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 2→1 lines | ~18 |
+| 11:35 | Two fixes to launcher/overlay: (1) FAB now goes straight to annotation on click — removed the single-item DEFAULT menu (Annotate + View existing pins footer were the only entries); menu only opens during annotation. Dropped pageExistingCount/api/onAnnotate/onViewExistingPins dead code. (2) Removed `@layer base { body { @apply bg-background } }` from extension style.css — WXT's createShadowRootUi actually mounts <html><body> inside the shadow root, so that rule was painting var(--background) over the host page during annotation. Popup body still gets its bg via index.html class | apps/extension/src/{assets/style.css, components/launcher/FloatingLauncher.vue} | wxt build ✓ | ~280 |
+| 13:35 | Session end: 16 writes across 5 files (App.vue, FloatingLauncher.vue, AnnotationOverlay.vue, tokens.css, style.css) | 3 reads | ~8263 tok |
+| 13:36 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 11→10 lines | ~115 |
+| 13:36 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | reduced (-7 lines) | ~117 |
+| 13:36 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 7→8 lines | ~110 |
+| 13:36 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | modified if() | ~201 |
+| 13:37 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | CSS: Surfaces, menu | ~192 |
+| 11:50 | FAB visual pass: idle bg → explicit #ffffff (white) with violet Brand mark inside; active (annotation OR menu-open) → var(--primary) violet with white Brand mark; pulse rings + pin-count badge swapped from sev-high orange to primary; map-pin lucide icon replaced by Brand component everywhere except the close-X | apps/extension/src/components/launcher/FloatingLauncher.vue | wxt build ✓ | ~140 |
+| 13:39 | Session end: 21 writes across 5 files (App.vue, FloatingLauncher.vue, AnnotationOverlay.vue, tokens.css, style.css) | 3 reads | ~9050 tok |
+| 13:45 | Edited apps/extension/src/assets/style.css | CSS: --color-popover, --color-popover-foreground, --color-primary-hover | ~152 |
+| 13:45 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | inline fix | ~12 |
+| 13:45 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 21→26 lines | ~256 |
+| 13:46 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 17→22 lines | ~181 |
+| 13:46 | Edited apps/extension/src/entrypoints/background.ts | added nullish coalescing | ~236 |
+| 13:46 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 7→8 lines | ~55 |
+| 13:47 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | expanded (+9 lines) | ~193 |
+| 13:47 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added error handling | ~589 |
+| 12:10 | Composer polish: (1) added --color-popover / --color-popover-foreground / --color-primary-hover to extension style.css @theme inline — the Select dropdown had no bg-popover utility so it rendered transparent and looked "behind" the popover. (2) Severity label moved to its own row (same space-y-1 + 10px uppercase label pattern as Type/Assignee/Labels). (3) Footer buttons shrunk to h-7 px-2.5 text-[11px]. (4) Comment placeholder simplified to "What's wrong here?". (5) New "Attach screenshot" camera button — background CAPTURE_VISIBLE_TAB handler calls chrome.tabs.captureVisibleTab; composer sets `capturing` ref → v-show hides popover, hides launcher host, double-rAF wait for repaint, capture, restore, attach as a File chip | apps/extension/src/{assets/style.css, components/annotation/AnnotationPinComposer.vue, entrypoints/background.ts} | wxt build ✓ | ~380 |
+| 14:19 | Session end: 29 writes across 7 files (App.vue, FloatingLauncher.vue, AnnotationOverlay.vue, tokens.css, style.css) | 3 reads | ~10816 tok |
+| 14:22 | Created apps/extension/src/components/annotation/AnnotationPinDetail.vue | — | ~3955 |
+| 14:23 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | expanded (+11 lines) | ~136 |
+| 14:23 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 17→18 lines | ~171 |
+| 14:23 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added nullish coalescing | ~309 |
+| 14:24 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added error handling | ~292 |
+| 14:25 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 18→18 lines | ~192 |
+| 14:25 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | CSS: group-hover | ~342 |
+| 14:26 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added error handling | ~328 |
+| 14:26 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | inline fix | ~22 |
+| 12:35 | Pin Detail redesign per mockup + composer polish. Detail: new layout (header pill #N + severity dot + type pill + status DropdownMenu chip + X; body w/ title/description split from comment first-line; attachment card w/ thumb+PNG badge+dimensions+size+N overflow; author avatar w/ relative time; footer Activity/Reply/Resolve(Re-open)). Stale notice now has inline Re-anchor (removed from footer). Composer: header matches #N pill style; image attachments render as 36px thumb tiles via URL.createObjectURL (revoked on remove/unmount). ExistingPin gained attachments/author/createdAt fields populated by local-only submit path via fileToAttachment helper (reads dataUrl + naturalWidth/height). New PinAttachment type | apps/extension/src/components/annotation/{AnnotationPinDetail.vue, AnnotationPinComposer.vue, AnnotationOverlay.vue} | wxt build ✓ | ~1100 |
+| 14:31 | Session end: 38 writes across 8 files (App.vue, FloatingLauncher.vue, AnnotationOverlay.vue, tokens.css, style.css) | 3 reads | ~16973 tok |
+| 14:34 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 12→13 lines | ~109 |
+| 14:34 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added nullish coalescing | ~139 |
+| 14:36 | Created apps/extension/src/components/annotation/AnnotationPinComposer.vue | — | ~5059 |
+| 14:36 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 21→20 lines | ~174 |
+| 14:36 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 6→4 lines | ~52 |
+| 14:37 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | modified onSubmit() | ~28 |
+| 14:37 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | inline fix | ~16 |
+| 12:55 | Composer redesign per second mockup: header now violet-soft strip with #N pill + element-selector mono label + X (composer prop `selector` derived from anchor.selector last segment via composerSelector computed in overlay); body sections rearranged → SEVERITY label + 4 pills (severity-tinted active borders/bg per pill — critical/high/medium/low each carry their own active color), TYPE label + 8 short-label pills (Visual/Layout/Copy/Broken/Missing/A11y/Perf/Other) replacing the Select dropdown, separate Title `<Input>` (autofocus) + Description `<Textarea>`, plus image-thumb chips; footer toolbar = camera (screenshot) + assignee `<DropdownMenu>` chip (initials avatar w/ deterministic hue per id, "+" when unassigned) + static "→ Linear" target label + Cancel + primary Submit w/ send icon + ⌘↵ kbd pill. PinDraft kept single-field — composer joins title+description into `comment` on emit so the detail's first-line derivation works for both API + local pins. Dropped: markdown toolbar, link popover, labels chip input, body assignee section | apps/extension/src/components/annotation/{AnnotationPinComposer.vue, AnnotationOverlay.vue} | wxt build ✓ | ~900 |
+| 14:39 | Session end: 45 writes across 8 files (App.vue, FloatingLauncher.vue, AnnotationOverlay.vue, tokens.css, style.css) | 3 reads | ~22948 tok |
+| 14:44 | Created apps/extension/src/components/capture/RegionSelector.vue | — | ~1331 |
+| 14:45 | Edited apps/extension/src/entrypoints/content.ts | 4→7 lines | ~90 |
+| 14:45 | Edited apps/extension/src/entrypoints/content.ts | modified main() | ~53 |
+| 14:46 | Edited apps/extension/src/entrypoints/content.ts | expanded (+7 lines) | ~181 |
+| 14:46 | Edited apps/extension/src/entrypoints/content.ts | added error handling | ~1108 |
+| 14:46 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | modified takeScreenshot() | ~301 |
+| 13:25 | Stage 1 of screenshot redesign: replaced one-shot captureVisibleTab in composer with a region-select flow. New RegionSelector.vue ported from DevProbe (drag rect over dimmed page, corner handles + WxH badge, "Drag to capture a region · Esc" hint pill matching pinlay tokens). content.ts mounts it in its own `pinlay-region` shadow root on `pinlay:capture-region` window event; on selected, hides ALL pinlay hosts (region/annotation/launcher), two-rAF wait, captureVisibleTab via background, crops with DPR-aware canvas drawImage, dispatches `pinlay:capture-region-result` w/ cropped dataUrl. Composer.takeScreenshot now dispatches the start event + listens once for the result. Esc/cancel path dispatches `cancelled: true`. Markup canvas (Stage 2) is next | apps/extension/src/components/capture/RegionSelector.vue (new), apps/extension/src/entrypoints/content.ts, apps/extension/src/components/annotation/AnnotationPinComposer.vue | wxt build ✓ | ~310 |
+| 14:52 | Session end: 51 writes across 10 files (App.vue, FloatingLauncher.vue, AnnotationOverlay.vue, tokens.css, style.css) | 5 reads | ~26129 tok |
+| 15:01 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 18→18 lines | ~191 |
+| 15:02 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | reduced (-19 lines) | ~216 |
+| 15:02 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 7→5 lines | ~27 |
+| 15:03 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | expanded (+74 lines) | ~1520 |
+| 15:03 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 10→9 lines | ~38 |
+| 15:04 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | inline fix | ~19 |
+| 15:04 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added optional chaining | ~504 |
+| 15:05 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | modified onSubmit() | ~229 |
+| 15:09 | Created apps/extension/src/components/capture/markup/types.ts | — | ~309 |
+| 15:11 | Created apps/extension/src/components/capture/markup/useMarkupCanvas.ts | — | ~5851 |
+| 15:12 | Created apps/extension/src/components/capture/markup/MarkupCanvas.vue | — | ~1307 |
+| 15:12 | Created apps/extension/src/components/capture/markup/MarkupToolbar.vue | — | ~1807 |
+| 15:13 | Created apps/extension/src/components/capture/markup/MarkupView.vue | — | ~1061 |
+| 15:13 | Edited apps/extension/src/entrypoints/content.ts | added 1 import(s) | ~56 |
+| 15:14 | Edited apps/extension/src/entrypoints/content.ts | 2→3 lines | ~70 |
+| 15:14 | Edited apps/extension/src/entrypoints/content.ts | added optional chaining | ~466 |
+| 14:10 | Composer reordered (Title + Description+markdown editor on top, then Severity + smaller Type pills), Detail dropped Activity/Reply buttons + shrank avatar to 16px. Then ported DevProbe's screenshot markup canvas: new apps/extension/src/components/capture/markup/{types.ts, useMarkupCanvas.ts, MarkupCanvas.vue, MarkupToolbar.vue, MarkupView.vue}. Pen tool dropped (not in pinlay mockup); kept grab/rect/circle/arrow/text/blur + color picker (8 presets + custom) + undo/redo (cap 30) + delete-when-selected. Canvas uses shape-list model (vector, not raster) — blur samples from original screenshot so it's idempotent. content.ts now routes finishRegionCapture → mountMarkup (shadow root `pinlay-markup`, z-index 2147483647, modal position); MarkupView emits attach(dataUrl)/cancel; on attach we dispatch the original `pinlay:capture-region-result` so the composer's existing listener picks it up unchanged. Hardcoded primary `#7c3aed` kept in canvas drawing (CSS vars can't resolve at paint time) | apps/extension/src/components/{annotation/AnnotationPinDetail.vue, annotation/AnnotationPinComposer.vue, capture/markup/*}, apps/extension/src/entrypoints/content.ts | wxt build ✓ (content.js +30kB for markup) | ~1800 |
+| 15:21 | Session end: 67 writes across 15 files (App.vue, FloatingLauncher.vue, AnnotationOverlay.vue, tokens.css, style.css) | 8 reads | ~40295 tok |
+| 15:23 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | CSS: span, span | ~307 |
+| 15:23 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified onDone() | ~117 |
+| 15:24 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: mode | ~160 |
+| 14:35 | Detail footer: replaced single-action Resolve/Re-open button with a primary "Change status ▾" DropdownMenu showing all Status enum options (status dot + label). Header status chip still acts as quick-dropdown for at-a-glance changes. Overlay onDone: dropped `sessionId.value` gate so the finish-review title popover shows whenever ANY pin exists (was previously local-mode-blocked because sessionId stays null without the API). confirmFinish guards api.submitSession on sessionId so the local path closes cleanly | apps/extension/src/components/annotation/{AnnotationPinDetail.vue, AnnotationOverlay.vue} | wxt build ✓ | ~200 |
+| 15:31 | Session end: 70 writes across 15 files (App.vue, FloatingLauncher.vue, AnnotationOverlay.vue, tokens.css, style.css) | 8 reads | ~40920 tok |
+| 15:48 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | removed 12 lines | ~16 |
+| 15:48 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 11→12 lines | ~160 |
+| 15:48 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 9→8 lines | ~36 |
+| 15:48 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 15→12 lines | ~108 |
+
+## Session: 2026-05-28 16:10
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-28 19:15
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 19:18 | Edited packages/design/src/components/ui/dropdown-menu/DropdownMenuContent.vue | CSS: DropdownMenuPortal | ~300 |
+| 19:19 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | added nullish coalescing | ~215 |
+| 19:20 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | removed 35 lines | ~3 |
+| 19:20 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 9→8 lines | ~37 |
+| 19:21 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added nullish coalescing | ~67 |
+| 18:25 | Two-part fix: (1) removed the footer "Change status" button from AnnotationPinDetail per user request — header status pill remains the only status-change surface. (2) Root cause for "dropdown at the back of inline popover": DropdownMenuPortal defaults to document.body, which is OUTSIDE the shadow root, so dropdown content rendered unstyled (no bg-popover utility, no tokens, page content bleeds through). Added optional `to` prop to packages/design/src/components/ui/dropdown-menu/DropdownMenuContent.vue (forwarded to DropdownMenuPortal). Pin detail header dropdown + composer assignee dropdown now pass `:to="rootEl ?? undefined"` so the menu lives inside the shadow tree | packages/design/src/components/ui/dropdown-menu/DropdownMenuContent.vue, apps/extension/src/components/annotation/{AnnotationPinDetail.vue, AnnotationPinComposer.vue} | wxt build ✓ | ~240 |
+| 19:25 | Session end: 5 writes across 3 files (DropdownMenuContent.vue, AnnotationPinDetail.vue, AnnotationPinComposer.vue) | 1 reads | ~667 tok |
+| 19:33 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | CSS: comment | ~71 |
+| 19:33 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 14→10 lines | ~89 |
+| 19:34 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | expanded (+41 lines) | ~830 |
+| 19:35 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added optional chaining | ~131 |
+| 19:35 | Edited apps/extension/src/components/capture/markup/MarkupView.vue | 37→38 lines | ~347 |
+| 19:36 | Edited apps/extension/src/components/capture/markup/MarkupCanvas.vue | CSS: sm, sm | ~33 |
+| 18:45 | Four fixes batched: (1) Submit broke — stale `title.value.trim()` left in onSubmit after the title field was removed; now just `description.value.trim()`. (2) "Markdown" label dropped from the description editor toolbar. (3) Image thumbs gained an eye-icon hover button + a viewport-wide lightbox preview Teleport'd into the composer's rootEl shadow tree; Esc focuses + closes. (4) MarkupView toolbar bottom container changed to `flex-wrap justify-center gap-2` so the Cancel/Attach pill wraps to a second row on narrow viewports; MarkupCanvas bottom padding bumped 88px→140px so wrapped two-row toolbar doesn't cover the canvas. | apps/extension/src/components/annotation/AnnotationPinComposer.vue, apps/extension/src/components/capture/markup/{MarkupView.vue, MarkupCanvas.vue} | wxt build ✓ | ~330 |
+| 19:41 | Session end: 11 writes across 5 files (DropdownMenuContent.vue, AnnotationPinDetail.vue, AnnotationPinComposer.vue, MarkupView.vue, MarkupCanvas.vue) | 1 reads | ~2274 tok |
+| 19:45 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 44→47 lines | ~510 |
+| 19:46 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | CSS: group-hover | ~341 |
+| 19:47 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | expanded (+29 lines) | ~326 |
+| 19:47 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | inline fix | ~15 |
+| 19:48 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | added optional chaining | ~108 |
+| 18:55 | Unified attachment preview pattern across composer + detail. Composer thumb: whole tile is now a button with `cursor-zoom-in`, click opens lightbox; hover shows a dim layer with centered eye icon (was top-left); X stays top-right with `z-10` + `@click.stop` so it doesn't trigger the parent preview. Detail screenshot card: same treatment — thumb is clickable, eye centered on hover, click opens its own Teleport'd full-viewport lightbox inside the popover's rootEl shadow scope (Esc / backdrop / X to close) | apps/extension/src/components/annotation/{AnnotationPinComposer.vue, AnnotationPinDetail.vue} | wxt build ✓ | ~280 |
+| 19:51 | Session end: 16 writes across 5 files (DropdownMenuContent.vue, AnnotationPinDetail.vue, AnnotationPinComposer.vue, MarkupView.vue, MarkupCanvas.vue) | 2 reads | ~7743 tok |
+| 19:52 | Edited packages/design/src/components/ui/dropdown-menu/DropdownMenuContent.vue | inline fix | ~164 |
+| 19:54 | Edited packages/design/src/components/ui/dropdown-menu/DropdownMenuSubContent.vue | inline fix | ~17 |
+| 19:55 | Edited packages/design/src/components/ui/select/SelectContent.vue | inline fix | ~20 |
+| 19:55 | Edited packages/design/src/components/ui/popover/PopoverContent.vue | inline fix | ~15 |
+| 19:56 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | modified toggleMenu() | ~71 |
+| 19:57 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | CSS: background, hover, hover | ~815 |
+| 19:57 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | expanded (+18 lines) | ~228 |
+| 19:58 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | added error handling | ~206 |
+| 19:58 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | CSS: storageHandler, changes, area | ~307 |
+| 19:58 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | added error handling | ~139 |
+| 19:59 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 2→6 lines | ~103 |
+| 20:00 | Created apps/extension/src/entrypoints/popup/App.vue | — | ~902 |
+| 19:15 | Three fixes: (1) DropdownMenuContent / DropdownMenuSubContent / SelectContent / PopoverContent — added `border-border` (was bare `border` → Tailwind v4 defaults to currentColor = inherited text color = near-black; the dropdown border looked too dark against the soft popover). (2) Restored FAB idle menu with Drop a pin → separator → user chip (avatar+name+state) → workspace chip → separator → Hide launcher on this page → Disconnect (disabled until auth). toggleMenu() now always opens menu (no immediate annotation). (3) FAB visibility persisted via chrome.storage.local 'pl_fab_hidden'; FloatingLauncher reads on mount + subscribes to storage onChanged; outer wrapper has `v-if="!hidden || annotationActive"` so the FAB stays during annotation even if hidden. Popup got a "Show/Hide floating launcher" toggle that writes the same key — two-way sync between popup and content-script | packages/design/src/components/ui/{dropdown-menu,select,popover}/*.vue, apps/extension/src/components/launcher/FloatingLauncher.vue, apps/extension/src/entrypoints/popup/App.vue | wxt build ✓ | ~720 |
+| 20:03 | Session end: 28 writes across 10 files (DropdownMenuContent.vue, AnnotationPinDetail.vue, AnnotationPinComposer.vue, MarkupView.vue, MarkupCanvas.vue) | 6 reads | ~11396 tok |
+| 20:04 | Edited apps/extension/src/components/capture/markup/useMarkupCanvas.ts | modified below() | ~187 |
+
+## Session: 2026-05-28 20:07
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 20:08 | canvas2d willReadFrequently fix + build | useMarkupCanvas.ts | build green, content.js 1.07 MB | ~600 |
+| 20:11 | Created apps/extension/src/entrypoints/popup/App.vue | — | ~2034 |
+| 20:11 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: user, workspace | ~179 |
+| 20:11 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 15→16 lines | ~220 |
+| 20:22 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | reduced (-55 lines) | ~275 |
+
+## Session: 2026-05-28 20:31
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-28 22:19
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-28 00:26
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 00:27 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | CSS: 2 | ~335 |
+| 00:27 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | CSS: 2 | ~276 |
+| 00:28 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: sticky, Defensive | ~166 |
+| 00:29 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | exitPlaceMode() → closeComposerStayPlace() | ~54 |
+| 00:29 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified catch() | ~38 |
+| 00:29 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: mode | ~132 |
+| 00:30 | Created apps/extension/src/entrypoints/popup/App.vue | — | ~2973 |
+| 00:32 | Created ROADMAP.md | — | ~4509 |
+| 00:37 | edge-clamp popovers + sticky place mode + polished popup + ROADMAP.md | composer/detail/overlay/popup/ROADMAP | build green | ~1800 |
+| 00:37 | Session end: 8 writes across 5 files (AnnotationPinComposer.vue, AnnotationPinDetail.vue, AnnotationOverlay.vue, App.vue, ROADMAP.md) | 4 reads | ~29394 tok |
+| 00:41 | Edited apps/extension/src/entrypoints/content.ts | modified startAnnotation() | ~536 |
+| 00:44 | popup CTA + FAB idle "Drop a pin" now enter place mode directly | content.ts | build green, bug-135 logged | ~400 |
+| 00:44 | Session end: 9 writes across 6 files (AnnotationPinComposer.vue, AnnotationPinDetail.vue, AnnotationOverlay.vue, App.vue, ROADMAP.md) | 6 reads | ~33543 tok |
+| 00:45 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | CSS: rule | ~210 |
+| 00:45 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | expanded (+25 lines) | ~430 |
+| 00:45 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | reduced (-7 lines) | ~139 |
+| 00:51 | pin colour = severity always (was status for submitted) + resolved checkmark overlay | AnnotationPin.vue | build green | ~300 |
+| 00:51 | Session end: 12 writes across 7 files (AnnotationPinComposer.vue, AnnotationPinDetail.vue, AnnotationOverlay.vue, App.vue, ROADMAP.md) | 7 reads | ~35079 tok |
+
+## Session: 2026-05-29 01:03
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 01:04 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | CSS: IMPORTANT, position | ~132 |
+| 01:04 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | CSS: position | ~317 |
+| 01:05 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | CSS: position | ~95 |
+| 01:05 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | translateX() → descendants() | ~281 |
+| 01:05 | dropped transform on composer + detail wrappers; lightbox now full-viewport | composer/detail Vue | build green | ~400 |
+| 01:06 | Session end: 4 writes across 2 files (AnnotationPinComposer.vue, AnnotationPinDetail.vue) | 2 reads | ~12100 tok |
+| 01:09 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | CSS: Gallery | ~1022 |
+| 01:10 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added 2 condition(s) | ~201 |
+| 01:10 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | added nullish coalescing | ~164 |
+| 01:10 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | added nullish coalescing | ~296 |
+| 01:11 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 6→6 lines | ~73 |
+| 01:11 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | expanded (+54 lines) | ~949 |
+| 01:12 | lightbox scale + gallery (composer + detail): 80vh/80vw, prev/next chevrons, counter pill, thumb strip, arrow-key nav | composer/detail Vue | build green | ~700 |
+| 01:12 | Session end: 10 writes across 2 files (AnnotationPinComposer.vue, AnnotationPinDetail.vue) | 2 reads | ~16071 tok |
+| 01:14 | Edited .gitignore | expanded (+7 lines) | ~42 |
