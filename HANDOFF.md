@@ -4,7 +4,12 @@
 > conventions to follow, and what's next. Then read `specs/` (start with
 > `specs/README.md`) for the deeper product/architecture spec.
 
-_Last updated: 2026-05-25_
+_Last updated: 2026-05-30._
+_Stack reconciled: backend is **NestJS + Prisma + Postgres** (not the original
+Hono/Workers/Drizzle). `apps/extension` and `apps/api` are now scaffolded (the
+⏳ markers below predate that). For current build priorities and the committed
+product wedge, **`ROADMAP.md` is the authority**; the theme section §5 still
+lists the old Supabase-green accent — current accent is violet `#7c3aed`._
 
 ---
 
@@ -28,7 +33,7 @@ pinlay/
 ├── apps/
 │   ├── web/                         # @pinlay/web — the dashboard (Vue 3 + Vite + Tailwind v4) ✅
 │   ├── extension/                   # @pinlay/extension — browser capture surface (manifest v3) ⏳
-│   └── api/                         # @pinlay/api — Hono on CF Workers + Neon + Drizzle ⏳
+│   └── api/                         # @pinlay/api — NestJS + Prisma + Postgres ⏳ scaffolded
 ├── packages/
 │   ├── design/                      # @pinlay/design — shadcn-vue + Tailwind v4 primitives + tokens ✅
 │   ├── shared/                      # @pinlay/shared — enums + zod schemas + TS types ✅
@@ -232,14 +237,71 @@ Useful routes (all under the AppLayout shell unless noted):
 
 ---
 
+## 6b. Deploying the web app (Vercel)
+
+`apps/web` deploys **independently** from the monorepo — the api ships
+separately to its own host. Config lives in [`apps/web/vercel.json`](apps/web/vercel.json)
+so it travels with the app if web is later extracted to its own repo.
+
+**Why it's wired the way it is.** `@pinlay/design` and `@pinlay/shared` are
+**source-only "just-in-time" packages** — their `package.json` `exports` point at
+`./src/*` (`.vue` / `.ts`), with no build step or `dist/`. So `@pinlay/design` is
+never built on its own; Vite (via `@vitejs/plugin-vue`) **compiles its SFCs into
+the web bundle at build time**. The UI is referenced from physical files two
+levels up (`../../packages/design/src`), via both the Vite `@ui` alias and the
+Tailwind `@source` directive in `main.css`.
+
+**Vercel project settings (cannot live in `vercel.json` — set in the dashboard):**
+
+1. **Root Directory = `apps/web`** (where the `vercel.json` is found).
+2. **"Include files outside the Root Directory in the Build Step" = ON.** ⚠️
+   Make-or-break: the build reads `../../packages/design/src`, so those files must
+   exist in the sandbox. A disabled toggle here is the classic
+   `Cannot find module '@pinlay/design'` failure.
+3. Env var **`ENABLE_EXPERIMENTAL_COREPACK=1`** so Vercel honors the
+   `packageManager: pnpm@10.12.1` pin and the pnpm-10 `onlyBuiltDependencies`
+   config (otherwise it may install with a different pnpm major).
+
+**What `vercel.json` sets:**
+
+- `installCommand: pnpm install --filter @pinlay/web...` — installs only web +
+  its workspace deps; skips api's native deps (`prisma`, `bcrypt`, `@nestjs/*`).
+  Still creates the `workspace:*` symlinks to design/shared.
+- `buildCommand: vite build` — **deliberately not** `pnpm build`. The build script
+  is `vue-tsc --noEmit && vite build`, and `vue-tsc` follows imports into
+  `@pinlay/design/src`, so a type error anywhere in the design package would fail
+  the web deploy. Keep `vite build` for resilient deploys and run `vue-tsc` in CI.
+  (Switch to `pnpm build` if you want typecheck-gated deploys.)
+- `rewrites: /(.*) → /index.html` — SPA fallback. The router uses
+  `createWebHistory()`, so deep links (`/s/:id`, `/settings`) 404 on refresh
+  without it. Static assets are served first; only unmatched paths fall through.
+
+**Production API URL (not handled here — do this when mocks are swapped for real
+calls).** The `/api` → `localhost:8787` proxy in `vite.config.ts` is **dev-only**.
+Since web and api deploy separately, prod web must call the api by **absolute URL**
+via an env var (e.g. `VITE_API_URL`), not `/api`. Today the dashboard runs on mock
+data (`shared/lib/data.ts`), so this is dormant — wire the env var when you replace
+the mocks, or prod web will hit `/api` on its own domain and get the SPA-fallback
+HTML instead of JSON.
+
+**Splitting web into its own repo later.** The only thing crossing the web↔api
+boundary is `@pinlay/shared` (the zod/types contract); `@pinlay/design` is shared
+with the extension, not the api. To split: publish `@pinlay/shared` (and
+`@pinlay/design`, shipping a compiled `dist/` for external consumers) to a
+registry, flip the `workspace:*` deps to versioned ranges, and simplify
+`installCommand` back to `pnpm install`. The `vercel.json` already moves with it.
+
+---
+
 ## 7. What's next (in priority order)
 
 1. **`apps/api`** — the backend the dashboard already expects.
-   Hono on Cloudflare Workers + Neon Postgres + Drizzle ORM (per
-   `specs/BACKEND_SPEC.md`). Start with `auth` + `sessions` + `pins`. Plug
-   into the existing composables — replace the mock in `shared/lib/data.ts`
-   with `fetch('/api/sessions')` etc. (vite already proxies `/api` → `:8787`).
-   Folder exists with a `.gitkeep` placeholder; add `package.json` to scaffold.
+   **NestJS + Prisma + Postgres** (per `specs/BACKEND_SPEC.md`; the original
+   Hono/Workers/Drizzle plan was dropped — see the stack note in that spec).
+   Scaffolded with `auth` + `annotation` (sessions/pins) + `attachments` +
+   `health` modules. Plug into the existing composables — replace the mock in
+   `shared/lib/data.ts` with `fetch('/api/sessions')` etc. (vite already proxies
+   `/api`).
 2. **`packages/inject`** — the page-side runtime that the extension's content
    script (and any future embed) loads into the host page. Single source of
    truth for pin-placement logic, anchor resolution, and DOM observers. Lives

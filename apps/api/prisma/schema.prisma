@@ -1,0 +1,197 @@
+// Prisma schema — pinlay v1
+// ─────────────────────────
+// Models match the extension's API contract (apps/extension/src/lib/api.ts)
+// and the shared enums (packages/shared/src/enums.ts). Pin grouping:
+//   Session (a single review sitting) → Issue (titled group of pins) → Pin.
+// Pins exist standalone first (issue == null while drafting); the session is
+// finalised by titling the Issue on "Done".
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums (mirror packages/shared/src/enums.ts) ─────────────────────────────
+enum Severity {
+  critical
+  high
+  medium
+  low
+}
+
+enum Status {
+  open
+  in_progress
+  resolved
+  draft
+  archived
+}
+
+enum PinType {
+  visual
+  layout
+  copy
+  broken
+  missing
+  a11y
+  perf
+  other
+}
+
+enum Role {
+  owner
+  admin
+  member
+  viewer
+}
+
+enum AttachmentType {
+  screenshot
+  thumbnail
+  export
+}
+
+// ── Identity ────────────────────────────────────────────────────────────────
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  avatarUrl    String?
+  // Null for users created via the dev seed or OAuth-only flows. Required
+  // for email/password auth — checked in AuthService.login.
+  passwordHash String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  memberships    WorkspaceMember[]
+  authoredPins   Pin[]    @relation("PinAuthor")
+  assignedPins   Pin[]    @relation("PinAssignee")
+  authoredIssues Issue[]  @relation("IssueAuthor")
+}
+
+model Workspace {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  plan      String   @default("free")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members  WorkspaceMember[]
+  issues   Issue[]
+  sessions Session[]
+}
+
+model WorkspaceMember {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        Role     @default(member)
+  createdAt   DateTime @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+}
+
+// ── Annotation flow ─────────────────────────────────────────────────────────
+// A Session is one review sitting (opened when the user enters annotation,
+// closed when they hit Done). The Issue groups the session's pins under a
+// single title. Pins can exist before an Issue is created (draft state).
+model Session {
+  id          String    @id @default(cuid())
+  workspaceId String
+  authorId    String
+  pageUrl     String
+  status      Status    @default(draft)
+  startedAt   DateTime  @default(now())
+  closedAt    DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  pins      Pin[]
+  issue     Issue?
+
+  @@index([workspaceId])
+  @@index([pageUrl])
+}
+
+model Issue {
+  id          String   @id @default(cuid())
+  workspaceId String
+  sessionId   String   @unique
+  authorId    String
+  title       String
+  summary     String?
+  pageUrl     String
+  status      Status   @default(open)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  session   Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  author    User      @relation("IssueAuthor", fields: [authorId], references: [id])
+  pins      Pin[]
+  attachments Attachment[]
+
+  @@index([workspaceId])
+  @@index([pageUrl])
+}
+
+model Pin {
+  id         String   @id @default(cuid())
+  sessionId  String
+  issueId    String?
+  authorId   String
+  assigneeId String?
+  index      Int
+  pageUrl    String
+  anchor     Json
+  offsetX    Float
+  offsetY    Float
+  comment    String
+  severity   Severity
+  issueType  PinType  @default(other)
+  status     Status   @default(open)
+  labels     String[] @default([])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  session     Session         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  issue       Issue?          @relation(fields: [issueId], references: [id], onDelete: SetNull)
+  author      User            @relation("PinAuthor", fields: [authorId], references: [id])
+  assignee    User?           @relation("PinAssignee", fields: [assigneeId], references: [id])
+  attachments Attachment[]
+
+  @@index([sessionId])
+  @@index([issueId])
+  @@index([pageUrl])
+}
+
+// ── Attachments ─────────────────────────────────────────────────────────────
+// `url` stores the storage URL (S3/R2) once the upload service lands; v1
+// keeps dataUrl strings inline for fast local iteration.
+model Attachment {
+  id          String         @id @default(cuid())
+  pinId       String?
+  issueId     String?
+  type        AttachmentType @default(screenshot)
+  filename    String
+  contentType String
+  url         String
+  sizeBytes   Int
+  width       Int?
+  height      Int?
+  createdAt   DateTime       @default(now())
+
+  pin   Pin?   @relation(fields: [pinId], references: [id], onDelete: Cascade)
+  issue Issue? @relation(fields: [issueId], references: [id], onDelete: Cascade)
+
+  @@index([pinId])
+  @@index([issueId])
+}

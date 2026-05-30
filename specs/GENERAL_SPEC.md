@@ -32,12 +32,13 @@ One repository, three deployables, shared packages. Mirrors DeveProbe.
 ```
 pinlay/
 ├── apps/
-│   ├── app/            # Web dashboard — Vue 3 + Vite (feature structure)
-│   └── extension/      # Browser extension — WXT + Vue 3
+│   ├── web/            # Web dashboard — Vue 3 + Vite (feature structure)
+│   ├── extension/      # Browser extension — WXT + Vue 3
+│   └── api/            # Backend — NestJS + Prisma + Postgres
 ├── packages/
-│   ├── api/            # Backend — Hono on Cloudflare Workers
 │   ├── shared/         # Shared TS types, zod schemas, enums
-│   └── design/         # Design tokens + shared UI components (built from scratch)
+│   ├── design/         # Design tokens + shared UI components
+│   └── inject/         # Page-side runtime shared with the extension [reserved]
 ├── specs/              # ← you are here
 ├── pnpm-workspace.yaml
 └── package.json
@@ -47,11 +48,13 @@ pinlay/
   the primary build target for the first milestone.
 - **`apps/extension`** — the capture surface (see EXTENSION_SPEC). Can be stubbed
   early; the dashboard is usable against seeded/mock data first.
-- **`packages/api`** — Hono + Drizzle + Neon + R2 + Queues (see BACKEND_SPEC).
+- **`apps/api`** — NestJS + Prisma + Postgres (see BACKEND_SPEC).
 - **`packages/shared`** — the contract between app, extension, and api. Enums and
   zod schemas live here once and only once.
 - **`packages/design`** — CSS token file + reusable components. The single source
   of visual truth (see DESIGN_SYSTEM_SPEC).
+- **`packages/inject`** `[reserved]` — page-side runtime (anchor resolution, DOM
+  observers) shared by the extension and any future in-product embed.
 
 > **Naming:** packages are scoped `@pinlay/*` (`@pinlay/web`,
 > `@pinlay/extension`, `@pinlay/api`, `@pinlay/shared`, `@pinlay/design`).
@@ -69,11 +72,11 @@ pinlay/
 | Icons | In-house icon set (lucide-style, 1.5px stroke — see design bundle `icons`) |
 | Fonts | Geist Sans + Geist Mono |
 | Extension | WXT + Vue 3, shadow-DOM overlays |
-| Backend | Hono on Cloudflare Workers |
-| DB / ORM | Neon Postgres + Drizzle |
-| Storage | Cloudflare R2 (screenshots, clips) |
-| Async | Cloudflare Queues (AI, dedupe, integration sync, notifications) |
-| Auth | JWT (jose), bcrypt password hashing |
+| Backend | **NestJS** (Express platform) |
+| DB / ORM | **Postgres** (Neon-hostable) + **Prisma** |
+| Storage | **Inline data-URL on the row (v1)**; object storage (R2 / S3) when clips land |
+| Async | Inline for v1; a queue (BullMQ or similar) when integration-sync / notifications need it |
+| Auth | JWT (`@nestjs/jwt`), bcrypt password hashing |
 
 > **Tailwind v4 note:** there is no `tailwind.config.ts` content array the v3 way.
 > Configure via `@import "tailwindcss"` and `@theme` in CSS. Tokens are CSS custom
@@ -117,7 +120,11 @@ pinlay/
 
 **`[later]`:**
 
-- Real-time collaborative annotation (WebSockets / Durable Objects).
+- **Repro / debug capture as a paid (Team-tier) expansion** — debug bundle
+  (console + network + browser/viewport), action breadcrumbs, 10s screen clip.
+  Deliberately deferred: it's the dev-loop upsell, **not** the core wedge (see
+  ROADMAP Phase 5 and §7 below).
+- Real-time collaborative annotation (live cursors / presence over a websocket).
 - AI: auto-title, severity suggestion, duplicate detection, session summary.
 - Public share links for a session or single pin.
 - Command palette (⌘K).
@@ -125,7 +132,11 @@ pinlay/
 
 ## 7. Non-goals
 
-- Not a screen recorder (no console/network timeline capture in annotation mode).
+- **The v1 wedge is the persistent, anchored annotation layer — not a recorder.**
+  Console/network capture and screen clips are intentionally out of the core
+  product and the MVP; they return only as a paid expansion that closes the dev
+  loop (see §6 `[later]` and ROADMAP Phase 5). We do not lead with repro — that's
+  Jam's game; our differentiator is the durable anchor + the developer overlay.
 - Not a full project-management tool — it routes to one, it doesn't replace it.
 - No marketing-site fluff inside the app. Copy is written for technical users.
 
@@ -139,6 +150,11 @@ pinlay/
 - **Sync** — pushing a pin/session to an integration and reflecting its state back.
 
 ## 9. Roadmap (phases)
+
+> This is the original high-level phasing. For operational sequencing and the
+> committed wedge (anchor moat → developer overlay → Linear loop, with repro
+> capture as a paid expansion), **`ROADMAP.md` at the repo root is the authority**
+> and supersedes any ordering here.
 
 1. **Foundation** — monorepo, `@pinlay/design` tokens + base components, app
    shell, auth.

@@ -917,3 +917,131 @@
 | 01:12 | lightbox scale + gallery (composer + detail): 80vh/80vw, prev/next chevrons, counter pill, thumb strip, arrow-key nav | composer/detail Vue | build green | ~700 |
 | 01:12 | Session end: 10 writes across 2 files (AnnotationPinComposer.vue, AnnotationPinDetail.vue) | 2 reads | ~16071 tok |
 | 01:14 | Edited .gitignore | expanded (+7 lines) | ~42 |
+| 01:16 | Session end: 11 writes across 3 files (AnnotationPinComposer.vue, AnnotationPinDetail.vue, .gitignore) | 3 reads | ~16116 tok |
+| 01:22 | Created apps/api/package.json | — | ~305 |
+| 01:22 | Created apps/api/tsconfig.json | — | ~202 |
+| 01:22 | Created apps/api/tsconfig.build.json | — | ~34 |
+| 01:22 | Created apps/api/prisma/schema.prisma | — | ~1377 |
+| 01:23 | Created apps/api/prisma/seed.ts | — | ~318 |
+| 01:23 | Created apps/api/nest-cli.json | — | ~49 |
+| 01:23 | Created apps/api/src/main.ts | — | ~436 |
+| 01:23 | Created apps/api/src/app.module.ts | — | ~176 |
+| 01:23 | Created apps/api/src/prisma/prisma.service.ts | — | ~133 |
+| 01:23 | Created apps/api/src/prisma/prisma.module.ts | — | ~60 |
+| 01:24 | Created apps/api/src/health/health.module.ts | — | ~50 |
+| 01:24 | Created apps/api/src/health/health.controller.ts | — | ~139 |
+| 01:24 | Created apps/api/src/common/current-user.decorator.ts | — | ~171 |
+| 01:24 | Created apps/api/src/auth/dev-auth.guard.ts | — | ~535 |
+| 01:24 | Created apps/api/src/auth/auth.controller.ts | — | ~330 |
+| 01:24 | Created apps/api/src/auth/auth.module.ts | — | ~78 |
+| 01:24 | Created apps/api/src/annotation/dto/create-pin.dto.ts | — | ~221 |
+| 01:24 | Created apps/api/src/annotation/dto/update-pin.dto.ts | — | ~216 |
+| 01:25 | Created apps/api/src/annotation/dto/submit-session.dto.ts | — | ~72 |
+| 01:25 | Created apps/api/src/annotation/annotation.service.ts | — | ~1824 |
+| 01:25 | Created apps/api/src/annotation/pins.controller.ts | — | ~361 |
+| 01:25 | Created apps/api/src/annotation/sessions.controller.ts | — | ~201 |
+| 01:25 | Created apps/api/src/annotation/annotation.module.ts | — | ~120 |
+| 01:25 | Created apps/api/src/attachments/dto/create-attachment.dto.ts | — | ~169 |
+| 01:26 | Created apps/api/src/attachments/attachments.service.ts | — | ~502 |
+| 01:26 | Created apps/api/src/attachments/attachments.controller.ts | — | ~183 |
+| 01:26 | Created apps/api/src/attachments/attachments.module.ts | — | ~105 |
+| 01:26 | Edited .gitignore | expanded (+9 lines) | ~76 |
+| 01:26 | Edited package.json | expanded (+12 lines) | ~242 |
+| 01:28 | Edited package.json | 8→9 lines | ~50 |
+| 01:35 | Edited apps/api/package.json | 11→11 lines | ~105 |
+| 01:36 | Edited apps/api/package.json | 7→10 lines | ~73 |
+
+## Session: 2026-05-30 01:21
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 01:21
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 01:21 | Edited apps/api/src/main.ts | 9→10 lines | ~123 |
+| 01:22 | Edited apps/api/prisma/schema.prisma | 7→10 lines | ~99 |
+| 01:22 | Edited apps/api/package.json | 13→15 lines | ~124 |
+| 01:22 | Edited apps/api/package.json | 2→3 lines | ~27 |
+| 01:22 | Edited package.json | 9→10 lines | ~55 |
+| 01:24 | Created apps/api/src/auth/dto/signup.dto.ts | — | ~134 |
+| 01:24 | Created apps/api/src/auth/dto/login.dto.ts | — | ~64 |
+| 01:24 | Created apps/api/src/auth/auth.service.ts | — | ~1418 |
+| 01:24 | Created apps/api/src/auth/jwt-auth.guard.ts | — | ~927 |
+| 01:24 | Created apps/api/src/auth/auth.controller.ts | — | ~475 |
+| 01:25 | Created apps/api/src/auth/auth.module.ts | — | ~227 |
+| 01:25 | Edited apps/api/src/annotation/pins.controller.ts | 5→5 lines | ~56 |
+| 01:25 | Edited apps/api/src/annotation/sessions.controller.ts | 5→5 lines | ~57 |
+| 01:25 | Edited apps/api/src/attachments/attachments.controller.ts | 5→5 lines | ~55 |
+
+## Session: 2026-05-30 01:25
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 01:25 | Edited apps/api/src/common/current-user.decorator.ts | 4→4 lines | ~40 |
+| 01:25 | Edited apps/api/prisma/seed.ts | modified main() | ~189 |
+| 01:25 | Edited apps/api/prisma/seed.ts | 2→4 lines | ~32 |
+| 01:28 | Session end: 3 writes across 2 files (current-user.decorator.ts, seed.ts) | 3 reads | ~9798 tok |
+| 01:28 | Session end: 3 writes across 2 files (current-user.decorator.ts, seed.ts) | 3 reads | ~9798 tok |
+| 01:31 | Created ROADMAP.md | — | ~3510 |
+| 01:32 | Rewrote ROADMAP around anchor-moat wedge; demoted debug bundle to paid Phase 5; flagged NestJS-vs-Hono backend divergence | ROADMAP.md, cerebrum.md | done | ~5k |
+| 01:32 | Session end: 4 writes across 3 files (current-user.decorator.ts, seed.ts, ROADMAP.md) | 3 reads | ~13559 tok |
+| 01:34 | Edited specs/GENERAL_SPEC.md | 23→26 lines | ~341 |
+| 01:35 | Edited specs/GENERAL_SPEC.md | 6→6 lines | ~107 |
+| 01:35 | Edited specs/GENERAL_SPEC.md | 7→11 lines | ~152 |
+| 01:35 | Edited specs/GENERAL_SPEC.md | recorder() → loop() | ~154 |
+| 01:35 | Edited specs/GENERAL_SPEC.md | 4→9 lines | ~105 |
+| 01:35 | Edited specs/BACKEND_SPEC.md | modified note() | ~217 |
+| 01:36 | Edited specs/BACKEND_SPEC.md | 2→2 lines | ~39 |
+| 01:36 | Edited specs/BACKEND_SPEC.md | 4→5 lines | ~99 |
+| 01:36 | Edited specs/BACKEND_SPEC.md | 2→4 lines | ~55 |
+| 01:36 | Edited specs/BACKEND_SPEC.md | modified storage() | ~225 |
+| 01:36 | Edited specs/BACKEND_SPEC.md | 2→4 lines | ~82 |
+| 01:36 | Edited HANDOFF.md | inline fix | ~25 |
+| 01:37 | Edited HANDOFF.md | 6→7 lines | ~124 |
+| 01:37 | Edited HANDOFF.md | 1→6 lines | ~111 |
+| 01:37 | Edited ROADMAP.md | modified Settled() | ~143 |
+| 01:38 | Reconciled specs to real stack: NestJS+Prisma+Postgres committed; debug bundle reframed as paid Phase 5 in GENERAL_SPEC non-goals; ROADMAP backend decision marked resolved | GENERAL_SPEC.md, BACKEND_SPEC.md, HANDOFF.md, ROADMAP.md | done | ~6k |
+| 01:38 | Session end: 19 writes across 6 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 5 reads | ~15678 tok |
+| 01:41 | Session end: 19 writes across 6 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 5 reads | ~15678 tok |
+| 01:42 | Edited apps/api/src/auth/auth.module.ts | 6→10 lines | ~144 |
+| 01:45 | Session end: 20 writes across 7 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 5 reads | ~15822 tok |
+| 01:48 | Created apps/web/vercel.json | — | ~78 |
+| 01:48 | Session end: 21 writes across 8 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 5 reads | ~15900 tok |
+| 01:50 | Edited HANDOFF.md | modified settings() | ~917 |
+| 01:50 | Added apps/web/vercel.json (filtered install, vite build, SPA rewrite) + "Deploying the web app" section in HANDOFF §6b | apps/web/vercel.json, HANDOFF.md | done | ~3k |
+| 01:51 | Session end: 22 writes across 8 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 5 reads | ~16985 tok |
+| 01:52 | Session end: 22 writes across 8 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 5 reads | ~16985 tok |
+| 01:52 | Created apps/api/nest-cli.json | — | ~62 |
+| 01:53 | Edited apps/api/tsconfig.json | 2→2 lines | ~16 |
+| 01:54 | Edited apps/api/src/auth/dto/signup.dto.ts | expanded (+7 lines) | ~145 |
+| 01:57 | Edited apps/api/prisma/seed.ts | added nullish coalescing | ~140 |
+| 01:57 | NestJS API + Prisma + JWT auth on Neon | apps/api/* | health/signup/login/me all green | ~3500 |
+| 01:58 | Created apps/extension/src/lib/anchor.ts | — | ~4124 |
+| 01:58 | Session end: 27 writes across 12 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 7 reads | ~30649 tok |
+| 01:59 | Session end: 27 writes across 12 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 7 reads | ~30649 tok |
+| 02:03 | Hardened resolveAnchor with graded fallback tiers (xpath/attribute/text/role fingerprints) + anchorHealth(); built extension | apps/extension/src/lib/anchor.ts | done; build OK at .output/chrome-mv3 | ~9k |
+| 02:03 | Session end: 27 writes across 12 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 12 reads | ~35785 tok |
+| 02:05 | Session end: 27 writes across 12 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 12 reads | ~35785 tok |
+| 02:06 | Session end: 27 writes across 12 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 12 reads | ~35785 tok |
+| 02:07 | Created apps/api/src/config/env.ts | — | ~838 |
+| 02:07 | Edited apps/api/src/auth/jwt-auth.guard.ts | 17→20 lines | ~244 |
+| 02:07 | Edited apps/api/src/auth/jwt-auth.guard.ts | modified env() | ~354 |
+| 02:08 | Edited apps/api/src/main.ts | added 1 condition(s) | ~735 |
+| 02:08 | Created apps/api/src/app.module.ts | — | ~346 |
+| 02:08 | Edited apps/api/src/auth/auth.controller.ts | modified constructor() | ~341 |
+| 02:08 | Edited apps/api/src/annotation/annotation.service.ts | 2→6 lines | ~40 |
+| 02:08 | Edited apps/api/src/annotation/annotation.service.ts | added 4 condition(s) | ~456 |
+| 02:08 | Edited apps/api/src/annotation/annotation.service.ts | added 1 condition(s) | ~148 |
+| 02:13 | Edited apps/extension/tsconfig.json | inline fix | ~17 |
+| 02:14 | Edited apps/api/tsconfig.json | 2→2 lines | ~20 |
+| 02:14 | Edited apps/extension/src/lib/anchor.ts | added 5 condition(s) | ~885 |
+| 02:15 | Edited apps/extension/src/lib/anchor.ts | 6→8 lines | ~81 |
+| 02:15 | Created apps/extension/vitest.config.ts | — | ~46 |
+| 02:15 | Created apps/extension/test/anchor.test.ts | — | ~1850 |
+| 02:15 | Edited apps/extension/package.json | 3→4 lines | ~34 |
+| 02:17 | API security hardening: gated dev-auth + throttler + IDOR guards + env validation | apps/api/{config/env,auth,annotation,app.module,main} | all 4 fixes verified live, typecheck clean | ~5000 |
+| 02:17 | Session end: 43 writes across 21 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 16 reads | ~42969 tok |
+| 02:18 | Added fingerprint-confirmation to resolveAnchor (reorder no longer returns wrong el); vitest+jsdom anchor harness 7/7=100%; fixed tsconfig vite/client + .wxt include; rebuilt ext | apps/extension/src/lib/anchor.ts, test/anchor.test.ts, vitest.config.ts, tsconfig.json | done | ~12k |
+| 02:19 | Session end: 43 writes across 21 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 16 reads | ~42969 tok |

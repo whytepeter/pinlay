@@ -1,14 +1,14 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-29T00:14:25.347Z
-> Files: 143 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-30T01:15:49.862Z
+> Files: 179 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
-- `.gitignore` — Git ignore rules (~101 tok)
-- `HANDOFF.md` — pinlay — Handoff (~3582 tok)
-- `package.json` — Node.js package manifest (~183 tok)
-- `ROADMAP.md` — pinlay — Product Roadmap (~4227 tok)
+- `.gitignore` — Git ignore rules (~144 tok)
+- `HANDOFF.md` — pinlay — Handoff (~4508 tok)
+- `package.json` — Node.js package manifest (~299 tok)
+- `ROADMAP.md` — pinlay — Product Roadmap (~3286 tok)
 
 ## ./ (root)
 
@@ -26,10 +26,82 @@
 ## Not yet created (future phases)
 
 
+## apps/api/
+
+- `nest-cli.json` (~62 tok)
+- `package.json` — Node.js package manifest (~351 tok)
+- `tsconfig.build.json` (~34 tok)
+- `tsconfig.json` — TypeScript configuration (~197 tok)
+
+## apps/api/prisma/
+
+- `schema.prisma` — Prisma schema — pinlay v1 (~1424 tok)
+- `seed.ts` — prisma: main (~448 tok)
+
+## apps/api/src/
+
+- `app.module.ts` — Exports AppModule (~346 tok)
+- `main.ts` — Declares bootstrap (~735 tok)
+
+## apps/api/src/annotation/
+
+- `annotation.module.ts` — Exports AnnotationModule (~120 tok)
+- `annotation.service.ts` — An assignee must be a member of the caller's workspace. Without this an (~2268 tok)
+- `pins.controller.ts` — Exports PinsController (~361 tok)
+- `sessions.controller.ts` — Exports SessionsController (~201 tok)
+
+## apps/api/src/annotation/dto/
+
+- `create-pin.dto.ts` — Exports CreatePinDto (~221 tok)
+- `submit-session.dto.ts` — Exports SubmitSessionDto (~72 tok)
+- `update-pin.dto.ts` — Patch shape — everything optional. (~216 tok)
+
+## apps/api/src/attachments/
+
+- `attachments.controller.ts` — Exports AttachmentsController (~183 tok)
+- `attachments.module.ts` — Exports AttachmentsModule (~105 tok)
+- `attachments.service.ts` — v1: inline storage. We persist the data URL on the row itself so the (~502 tok)
+
+## apps/api/src/attachments/dto/
+
+- `create-attachment.dto.ts` — Exports CreateAttachmentFileDto, CreateAttachmentDto (~169 tok)
+
+## apps/api/src/auth/
+
+- `auth.controller.ts` — Mirrors the extension's `Me` shape (apps/extension/src/lib/api.ts). (~561 tok)
+- `auth.module.ts` — Exports AuthModule (~308 tok)
+- `auth.service.ts` — Exports JwtPayload, AuthResult, AuthService (~1418 tok)
+- `dev-auth.guard.ts` — Dev-only auth guard. While real OAuth is pending, every request resolves (~535 tok)
+- `jwt-auth.guard.ts` — Mark an endpoint as anonymous (no auth required). (~1042 tok)
+
+## apps/api/src/auth/dto/
+
+- `login.dto.ts` — Exports LoginDto (~64 tok)
+- `signup.dto.ts` — Plain-text password; hashed before storage. (~145 tok)
+
+## apps/api/src/common/
+
+- `current-user.decorator.ts` — Exports AuthenticatedUser, CurrentUser (~167 tok)
+
+## apps/api/src/config/
+
+- `env.ts` — Validated environment access. (~838 tok)
+
+## apps/api/src/health/
+
+- `health.controller.ts` — Exports HealthController (~139 tok)
+- `health.module.ts` — Exports HealthModule (~50 tok)
+
+## apps/api/src/prisma/
+
+- `prisma.module.ts` — Exports PrismaModule (~60 tok)
+- `prisma.service.ts` — Exports PrismaService (~133 tok)
+
 ## apps/extension/
 
-- `package.json` — Node.js package manifest (~231 tok)
-- `tsconfig.json` — TypeScript configuration (~72 tok)
+- `package.json` — Node.js package manifest (~258 tok)
+- `tsconfig.json` — TypeScript configuration (~77 tok)
+- `vitest.config.ts` — /*.test.ts"], (~46 tok)
 - `wxt.config.ts` — pinlay extension — WXT + Vue 3 + Tailwind v4. (~323 tok)
 
 ## apps/extension/public/
@@ -78,18 +150,23 @@
 
 ## apps/extension/src/lib/
 
-- `anchor.ts` — Element anchoring for live annotation. (~1550 tok)
+- `anchor.ts` — Element anchoring for live annotation. (~4650 tok)
 - `annotation-state.ts` — annotation-state (~809 tok)
 - `api.ts` — API client (~1599 tok)
 - `auth.ts` — Subscribe to auth changes — fires when the token is added, updated, or cleared. (~562 tok)
 - `env.ts` — Exports WEB_APP_URL, API_URL (~48 tok)
 - `extension.ts` — Extension runtime helpers. (~253 tok)
 
+## apps/extension/test/
+
+- `anchor.test.ts` — Anchor-resilience harness (Roadmap 1.2). (~1850 tok)
+
 ## apps/web/
 
 - `index.html` — pinlay (~184 tok)
 - `package.json` — Node.js package manifest (~181 tok)
 - `package.json` — Node.js package manifest (~181 tok)
+- `vercel.json` (~78 tok)
 
 ## apps/web/ — `@pinlay/app` (the dashboard)
 
@@ -305,7 +382,8 @@
 
 ## specs/
 
-- `GENERAL_SPEC.md` — General Spec (~1728 tok)
+- `BACKEND_SPEC.md` — Backend Spec (`apps/api`) (~2017 tok)
+- `GENERAL_SPEC.md` — General Spec (~2014 tok)
 - `WEB_APP_SPEC.md` — Web App Spec (`apps/web`) (~2449 tok)
 
 ## specs/ — source of truth (7 files)

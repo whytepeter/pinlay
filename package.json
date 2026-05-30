@@ -15,9 +15,23 @@
     "build:api": "pnpm --filter @pinlay/api build",
     "build:ext": "pnpm --filter @pinlay/extension build",
     "build": "pnpm -r build",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "db:generate": "pnpm --filter @pinlay/api db:generate",
+    "db:migrate": "pnpm --filter @pinlay/api db:migrate",
+    "db:push": "pnpm --filter @pinlay/api db:push",
+    "db:studio": "pnpm --filter @pinlay/api db:studio",
+    "db:seed": "pnpm --filter @pinlay/api db:seed"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["sharp", "esbuild", "spawn-sync"]
+    "onlyBuiltDependencies": [
+      "sharp",
+      "esbuild",
+      "spawn-sync",
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "@nestjs/core",
+      "bcrypt"
+    ]
   }
 }

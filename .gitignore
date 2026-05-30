@@ -19,6 +19,15 @@ dist-ssr
 # OpenWolf working files (not the canonical buglog)
 .wolf/*.snippet
 
+# Local env files
+.env
+.env.local
+*.env.local
+
+# Prisma generated client (generated on install via postinstall)
+**/node_modules/.prisma
+apps/api/prisma/generated
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

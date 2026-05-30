@@ -1,8 +1,17 @@
-# Backend Spec (`packages/api`)
+# Backend Spec (`apps/api`)
 
-Hono on Cloudflare Workers. Neon Postgres + Drizzle ORM. R2 for media. Cloudflare
-Queues for async work. JWT auth. The API is the contract shared by `app` and
-`extension`; its request/response shapes and enums live in `@pinlay/shared`.
+NestJS (Express platform) + Prisma + Postgres (Neon-hostable). Media stored
+inline as data-URLs on the row for v1 (object storage — R2 / S3 — arrives when
+screen clips do). Async work runs inline for v1 (a queue lib like BullMQ when
+integration-sync / notifications need it). JWT auth (`@nestjs/jwt`) + bcrypt. The
+API is the contract shared by `web` and `extension`; its request/response shapes
+and enums live in `@pinlay/shared`.
+
+> _Stack note (2026-05-30):_ this spec originally called for Hono on Cloudflare
+> Workers + Drizzle + R2 + Cloudflare Queues. The shipped `apps/api` is
+> NestJS + Prisma + Postgres; this doc has been reconciled to match. The data
+> model, API surface, and principles below are unchanged — only the runtime,
+> ORM, storage, and async mechanism differ.
 
 > The data model here is **purpose-built for pinlay's UI** — it is not lifted
 > from DeveProbe and not the Claude Design mock. Key choice: the **Session is the
@@ -75,8 +84,8 @@ lastSyncedAt.
 
 ## 4. API surface
 
-All under `/` with `requireAuth()` except auth routes. JSON in/out; `ok()`/`err()`
-envelopes.
+All under `/` behind the JWT auth guard (`JwtAuthGuard`) except auth routes (and
+those marked anonymous). JSON in/out; `ok()`/`err()` envelopes.
 
 **Auth**
 - `POST /auth/signup` · `POST /auth/login` · `POST /auth/logout` · `GET /auth/me`
@@ -102,7 +111,9 @@ envelopes.
 - `POST /comments` (scope+targetId+body) · `GET /activity?scope=&targetId=`
 
 **Attachments**
-- `POST /attachments` (presigned R2 upload) · `GET /attachments/:id` (signed URL)
+- `POST /attachments` · `GET /attachments/:id` — v1 stores the (redacted)
+  data-URL inline on the row; swaps to presigned object-storage upload + signed
+  read URLs when screen clips land.
 
 **Integrations**
 - `GET /integrations` · `POST /integrations/:kind/connect` ·
@@ -114,12 +125,16 @@ envelopes.
 
 ## 5. Auth
 
-JWT (jose) signed with a Worker secret; bcrypt password hashing. Token carries
-`{ userId, orgId, role }`. `requireAuth()` verifies and injects an `auth` context.
-The extension stores the token in extension storage and sends it via the background
-proxy.
+JWT (`@nestjs/jwt`) signed with a server secret; bcrypt password hashing. Token
+carries `{ userId, orgId, role }`. `JwtAuthGuard` verifies it and injects the
+authenticated user (via the `@CurrentUser()` decorator). The extension stores the
+token in extension storage and sends it via the background proxy (which carries
+the `chrome-extension://` origin the API expects).
 
-## 6. Async jobs (Queues)
+## 6. Async jobs
+
+Run **inline** within the request for v1. Promote to a queue (BullMQ or similar)
+once these need retries / off-request latency:
 
 - **integration_sync** — push a pin to its integration, write `sync_record`,
   reflect external state (`ok|pending|failed`), emit a `sync` activity event.
@@ -129,15 +144,19 @@ proxy.
 
 ## 7. Storage
 
-R2 buckets for screenshots and clips. Uploads are presigned and redacted
-client-side before transfer. Reads go through short-lived signed URLs.
+**v1: inline** — attachment bytes persist as a (client-redacted) data-URL on the
+attachment row, served directly. When screen clips arrive (a paid-expansion
+feature, ROADMAP Phase 5), move to object storage (R2 / S3): presigned uploads,
+redacted client-side before transfer, reads via short-lived signed URLs.
 
 ## 8. Reuse vs. rebuild
 
 - **Reuse the ideas, not the schema** from DeveProbe: the lazy-session pattern and
   the anchor resolution-order logic are proven — port the *logic*.
 - **Rebuild** the schema per §3 (collapsed session unit, small status enum, no
-  recording/console/network tables).
+  recording/console/network tables). Repro capture (a `pin.debug` jsonb column,
+  breadcrumbs, clip attachments) is an **additive Team-tier expansion**
+  (ROADMAP Phase 5) — deliberately absent from the v1 schema, not forgotten.
 
 ## 9. Acceptance criteria
 

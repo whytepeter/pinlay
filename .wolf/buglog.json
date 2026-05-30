@@ -2235,6 +2235,375 @@
       "related_bugs": [],
       "occurrences": 3,
       "last_seen": "2026-05-29T00:11:22.851Z"
+    },
+    {
+      "id": "bug-140",
+      "timestamp": "2026-05-29T00:26:45.400Z",
+      "error_message": "Significant refactor of ",
+      "file": "package.json",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 13→25 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-29T00:26:45.400Z"
+    },
+    {
+      "id": "bug-141",
+      "timestamp": "2026-05-30T00:22:04.260Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/api/prisma/schema.prisma",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 7→10 lines (6 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "prisma"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T00:22:04.260Z"
+    },
+    {
+      "id": "bug-142",
+      "timestamp": "2026-05-30T00:22:17.164Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/api/package.json",
+      "root_cause": "Had \"@types/express\"",
+      "fix": "Changed to \"@types/bcrypt\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T00:22:17.164Z"
+    },
+    {
+      "id": "bug-143",
+      "timestamp": "2026-05-30T00:25:38.850Z",
+      "error_message": "Type error",
+      "file": "apps/api/prisma/seed.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation | Also: console.log(; `Seeded ${user.email} into workspace ${workspace.slug} (pass",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-30T00:25:43.822Z"
+    },
+    {
+      "id": "bug-144",
+      "timestamp": "2026-05-30T00:35:12.615Z",
+      "error_message": "Significant refactor of ",
+      "file": "specs/GENERAL_SPEC.md",
+      "root_cause": "5 lines replaced/restructured",
+      "fix": "Rewrote 6→6 lines (5 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T00:35:12.615Z"
+    },
+    {
+      "id": "bug-145",
+      "timestamp": "2026-05-30T00:35:58.916Z",
+      "error_message": "Significant refactor of ",
+      "file": "specs/BACKEND_SPEC.md",
+      "root_cause": "4 lines replaced/restructured",
+      "fix": "Rewrote 5→14 lines (4 removed) | Also: JWT (jose) signed with a Worker secret; bcrypt pas; `{ userId, orgId, role }`. `requireAuth()` verifie | Also: ## 6. Async jobs (Queues); R2 buckets for screenshots and clips. Uploads are ",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 3,
+      "last_seen": "2026-05-30T00:36:30.446Z"
+    },
+    {
+      "id": "bug-146",
+      "timestamp": "2026-05-30T00:36:03.124Z",
+      "error_message": "Incorrect value in code",
+      "file": "specs/BACKEND_SPEC.md",
+      "root_cause": "Had ` with `",
+      "fix": "Changed to ` behind the JWT auth guard (`",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T00:36:03.124Z"
+    },
+    {
+      "id": "bug-147",
+      "timestamp": "2026-05-30T00:37:39.028Z",
+      "error_message": "Function not marked async",
+      "file": "ROADMAP.md",
+      "root_cause": "Function uses await but wasn't declared async",
+      "fix": "Added async modifier",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T00:37:39.028Z"
+    },
+    {
+      "id": "bug-148",
+      "timestamp": "2026-05-30T00:42:04.441Z",
+      "error_message": "Type error",
+      "file": "apps/api/src/auth/auth.module.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T00:42:04.441Z"
+    },
+    {
+      "id": "bug-149",
+      "timestamp": "2026-05-30T00:53:03.717Z",
+      "error_message": "Wrong reference: true should be false",
+      "file": "apps/api/tsconfig.json",
+      "root_cause": "Used \"true\" instead of \"false\"",
+      "fix": "Changed true → false",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T00:53:03.717Z"
+    },
+    {
+      "id": "bug-150",
+      "timestamp": "2026-05-30T00:57:13.579Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/api/prisma/seed.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T00:57:13.579Z"
+    },
+    {
+      "id": "bug-151",
+      "timestamp": "2026-05-30T00:00:00Z",
+      "error_message": "error TS2688: Cannot find type definition file for 'vite/client'. (pnpm --filter @pinlay/extension typecheck)",
+      "file": "apps/extension/tsconfig.json",
+      "root_cause": "tsconfig has \"types\": [\"chrome\", \"vite/client\"] but `vite` is not a declared dependency of @pinlay/extension (it's only transitive via WXT) and pnpm's isolated node_modules does not hoist it, so vue-tsc cannot resolve vite/client and aborts before checking any source. Pre-existing; not caused by the anchor change.",
+      "fix": "Run `wxt prepare` to generate .wxt types first (needed regardless). Then either (a) add \"vite\" to extension devDependencies so vite/client resolves, or (b) drop \"vite/client\" from the tsconfig `types` array and rely on WXT's generated .wxt/wxt.d.ts. Workaround used for verification: isolated `tsc --skipLibCheck --lib dom,...` on the single file. `wxt build` is unaffected (esbuild strips types).",
+      "tags": [
+        "extension",
+        "wxt",
+        "typecheck",
+        "vue-tsc",
+        "vite",
+        "pnpm",
+        "tsconfig",
+        "pre-existing"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T00:00:00Z"
+    },
+    {
+      "id": "bug-152",
+      "timestamp": "2026-05-30T01:07:27.468Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/api/src/auth/jwt-auth.guard.ts",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 17→20 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T01:07:27.468Z"
+    },
+    {
+      "id": "bug-153",
+      "timestamp": "2026-05-30T01:08:00.556Z",
+      "error_message": "Wrong operator: ?? should be ===",
+      "file": "apps/api/src/main.ts",
+      "root_cause": "Used \"??\" instead of \"===\"",
+      "fix": "Changed operator ?? → ===",
+      "tags": [
+        "auto-detected",
+        "operator-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T01:08:00.556Z"
+    },
+    {
+      "id": "bug-154",
+      "timestamp": "2026-05-30T01:08:50.950Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/api/src/annotation/annotation.service.ts",
+      "root_cause": "No early return/throw for edge case: !assigneeId",
+      "fix": "Added guard clause: if (!assigneeId)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T01:08:50.950Z"
+    },
+    {
+      "id": "bug-155",
+      "timestamp": "2026-05-30T01:08:58.442Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/api/src/annotation/annotation.service.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T01:08:58.442Z"
+    },
+    {
+      "id": "bug-156",
+      "timestamp": "2026-05-30T01:14:26.153Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/api/tsconfig.json",
+      "root_cause": "Had \"prisma/**/*.ts\"",
+      "fix": "Changed to \"exclude\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T01:14:26.153Z"
+    },
+    {
+      "id": "bug-157",
+      "timestamp": "2026-05-30T01:14:58.551Z",
+      "error_message": "Type error",
+      "file": "apps/extension/src/lib/anchor.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T01:14:58.551Z"
+    },
+    {
+      "id": "bug-160",
+      "timestamp": "2026-05-30T02:15:00.000Z",
+      "error_message": "CRITICAL auth bypass: GET /api/auth/me with NO token returned 200 + owner data. Anyone could read/write the API unauthenticated if DEV_USER_EMAIL was set.",
+      "file": "apps/api/src/auth/jwt-auth.guard.ts + apps/api/src/config/env.ts",
+      "root_cause": "JwtAuthGuard dev fallback resolved any tokenless request to DEV_USER_EMAIL as owner, with NO NODE_ENV guard. DEV_USER_EMAIL ships in .env.example, so one careless prod env copy = fully open API. Guard read process.env directly.",
+      "fix": "Added validated config singleton src/config/env.ts. Dev-auth requires nodeEnv!=production AND ALLOW_DEV_AUTH=true AND DEV_USER_EMAIL set. env() THROWS at boot if ALLOW_DEV_AUTH is on in production (process refuses to start). Guard reads env().devAuthEnabled. Verified: prod+ALLOW_DEV_AUTH refuses boot; prod without it -> devAuthEnabled=false even if DEV_USER_EMAIL leaks.",
+      "tags": [
+        "security",
+        "critical",
+        "auth-bypass",
+        "nestjs",
+        "guard"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T02:15:00.000Z"
+    },
+    {
+      "id": "bug-161",
+      "timestamp": "2026-05-30T02:16:00.000Z",
+      "error_message": "No rate limiting on /api/auth/login - 20 rapid wrong-password attempts all 401, never 429. Brute-force unthrottled.",
+      "file": "apps/api/src/app.module.ts + apps/api/src/auth/auth.controller.ts",
+      "root_cause": "No @nestjs/throttler; no global or per-route rate limit.",
+      "fix": "Installed @nestjs/throttler. Global ThrottlerGuard via APP_GUARD (100/min/IP). Tight @Throttle({ttl:60s,limit:5}) on login + signup. Verified: 6th rapid login -> 429.",
+      "tags": [
+        "security",
+        "rate-limiting",
+        "brute-force",
+        "nestjs",
+        "throttler"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T02:16:00.000Z"
+    },
+    {
+      "id": "bug-162",
+      "timestamp": "2026-05-30T02:17:00.000Z",
+      "error_message": "Assignee/issue IDOR: createPin/updatePin accepted assigneeId or issueId from ANOTHER workspace with no membership check. Leaked cross-tenant user IDs onto pins.",
+      "file": "apps/api/src/annotation/annotation.service.ts",
+      "root_cause": "assigneeId/issueId written straight from DTO with no workspace-membership validation. Tenant scoping was on reads/updates but not these FK inputs.",
+      "fix": "Added assertAssigneeInWorkspace() (assignee must be WorkspaceMember of caller ws -> 400) + assertIssueInWorkspace() (issue must belong to caller ws -> 404). Called in createPin + on reassign in updatePin. Verified: cross-ws assignee -> 400, foreign issueId -> 404, normal pin -> 201.",
+      "tags": [
+        "security",
+        "idor",
+        "multi-tenant",
+        "authorization",
+        "nestjs"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T02:17:00.000Z"
+    },
+    {
+      "id": "bug-163",
+      "timestamp": "2026-05-30T02:20:00.000Z",
+      "error_message": "vue-tsc surfaces pre-existing errors once vite/client resolves: TS2304 createShadowRootUi & TS2353 autoIcons (auto-import types not loaded); TS6133 unused vars in FloatingLauncher.vue/AnnotationOverlay.vue/popup App.vue; TS2769 FloatingLauncher.vue:375 (computed style union with optional top/bottom not assignable to Record<string,string>).",
+      "file": "apps/extension/tsconfig.json, apps/extension/src/components/launcher/FloatingLauncher.vue",
+      "root_cause": "Always failing but vue-tsc aborted early on the unrelated vite/client error (bug-151) so never seen. The auto-import errors were caused by the hand-written tsconfig include overriding WXT and dropping .wxt/wxt.d.ts.",
+      "fix": "FIXED: added vite devDep + .wxt/wxt.d.ts to tsconfig include (kills createShadowRootUi/autoIcons errors). REMAINING (out of anchor-work scope): type FloatingLauncher fabPositionStyle as Record<string,string>/CSSProperties; remove/underscore unused placeholder refs. wxt build unaffected (esbuild strips types).",
+      "tags": [
+        "extension",
+        "wxt",
+        "vue-tsc",
+        "typecheck",
+        "auto-imports",
+        "pre-existing",
+        "partial-fix"
+      ],
+      "related_bugs": [
+        "bug-151"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-05-30T02:20:00.000Z"
     }
   ]
 }

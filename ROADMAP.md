@@ -1,394 +1,294 @@
 # pinlay — Product Roadmap
 
-> Prioritized improvement plan for the browser extension + dashboard.
-> Ordering is by **user value per unit of build effort**, not by what's most fun
-> to build. Personas referenced throughout: **QA** (files the pin), **Dev**
-> (fixes the bug), **Reviewer** (PM/designer triaging).
+> Prioritized plan for the browser extension + dashboard.
+> Ordering is by **evidence and leverage**, not by what's most fun to build.
+> Personas: **QA** (files the pin), **Dev** (fixes the bug), **Reviewer**
+> (PM/designer triaging), **Designer** (review vs. design).
+>
+> _Rewritten 2026-05-30 to commit to a single wedge and resolve the
+> spec/roadmap contradiction (see "Positioning" below)._
 
 ---
 
-## Phase 0 — Foundation polish (in flight)
+## Positioning — the one decision everything hangs on
 
-Small UX correctness fixes. These are the difference between "looks like a
-demo" and "feels like a product." Ship before anything else.
+pinlay is **persistent, anchored comments for your live web app** — the pins
+stick to real DOM elements, survive deploys, and a developer can walk through
+the open ones *on the live page* and resolve them in context.
+
+That sentence is the wedge. It is the one thing the crowded field around us
+(Marker.io, BugHerd, Userback, Ruttl, Pastel) does **not** do well, and the one
+thing the funded repro-tools (Jam.dev, Bird Eats Bug) don't do at all. Vercel
+has persistent comments but only on preview deploys — nobody owns "comments
+that stick to staging and production for any site."
+
+**What we are NOT (v1):** a screen recorder, a repro-bundle tool, or a
+project-management replacement. The **debug bundle** (console/network/DOM
+capture) was the old Phase 1 "biggest leverage point." It is demoted: it is a
+**paid expansion** that closes the dev loop *after* the wedge has pulled users
+in — not the thing we differentiate on. Building it first means fighting Jam on
+the one feature Jam exists to own, while abandoning the moat that's actually
+ours.
+
+> This resolves the contradiction between `specs/GENERAL_SPEC.md` §7 (lightweight
+> annotation layer, no console/network capture) and the previous roadmap (debug
+> bundle as #1). The spec wins for v1. The bundle returns in Phase 5 as Team-tier.
+
+**The three things that make this a product** (everything else is decoration
+until these exist):
+
+1. The anchor is unbreakable — pins survive a real refactor/deploy.
+2. A dev can see and resolve open pins live on the page (the **developer overlay**).
+3. Status round-trips with Linear so pins don't die in a dashboard nobody reopens.
+
+---
+
+## Phase 0 — Validation 🔥🔥🔥  (no code)
+
+> The highest-leverage work this month involves writing zero features. We have a
+> polished dashboard and a working annotation flow and **no evidence anyone wants
+> this.** Get that evidence before building more.
 
 | # | Item | Status |
 |---|---|---|
-| 0.1 | Edge-clamp composer + detail popovers (no overflow at viewport edges) | ✅ done |
-| 0.2 | Sticky place mode (one click = one pin, Esc / FAB to exit) | ✅ done |
-| 0.3 | Polished toolbar popup with account + workspace + preferences | ✅ done |
-| 0.4 | Canvas `willReadFrequently` perf fix in markup tool | ✅ done |
+| 0.1 | Recruit 5 real users (QA / designer / PM at small product teams) | open |
+| 0.2 | Watch each one drop pins on *their own* live site, unscripted, screen-shared | open |
+| 0.3 | Capture: where they hesitate, what they expected, would-they-pay | open |
+| 0.4 | Kill / keep / change decision on the wedge based on what you see | open |
+
+**Acceptance:** You can name 5 people who used it and quote what each said.
+If you can't find 5 who'll *try* it, that's the most important signal on this
+page — and far cheaper to get now than after Phase 4.
+
+**Leftover Phase-0 UX correctness fixes** (do these only if they block a user
+test — otherwise they wait):
+
+| # | Item | Status |
+|---|---|---|
 | 0.5 | Severity / status / type icon dictionary audit (no missing lucide names) | open |
 | 0.6 | Loading + error empty states for `getPagePins` while API is wiring up | open |
-| 0.7 | Disable submit during `submitting` (already partly wired — audit pass) | open |
+| 0.7 | Disable submit during `submitting` (audit pass) | open |
 
 ---
 
-## Phase 1 — Repro Layer 🔥🔥🔥
-> **Single biggest leverage point in the whole roadmap.** Devs can't fix what
-> they can't reproduce. Attach context to every pin automatically; the QA
-> doesn't have to think about it.
+## Phase 1 — The Anchor Moat 🔥🔥🔥
 
-### 1.1 Debug bundle (auto-attached)
+> This is the only genuinely hard, genuinely *ours* problem. If the anchor isn't
+> rock-solid, we are a worse Marker.io. If it is, we are the only "comments that
+> stick to production" tool not locked to Vercel. **Prove a pin survives a real
+> deploy before building anything else.** (Pulled forward from the old Phase 4.)
 
-**What:** Every pin payload silently includes a `debug` object with:
-- `browser`: `{ name, version, os, locale }`
-- `viewport`: `{ width, height, dpr, theme: "light"|"dark"|"auto" }`
-- `url`: full URL + sanitised query string (allowlist of params, redact `token|key|secret|password`)
-- `console`: last 50 console entries (`{ level, message, timestamp }`) — captured by patching `console.{log,info,warn,error}` on content-script mount
-- `network`: 4xx/5xx requests in the last 30s (`{ url, method, status, duration, timestamp }`) — captured via `PerformanceObserver` on `resource` entries
-- `featureFlags`: allowlisted `localStorage` / `cookie` keys (configurable per workspace)
+### 1.1 Anchor-health badge
 
-**Why:**
-- **Dev:** Opens issue → already knows browser, OS, viewport, recent errors, failing API calls. No more "what browser were you on?" ping-pong.
-- **QA:** Files faster because the heavy lifting is invisible.
+**What:** Every pin shows a resolve-health indicator:
+- 🟢 **Resolves** via stable-attr or selector
+- 🟡 **Fallback** to bounding rect / text fingerprint only
+- 🔴 **Dead** — no resolve target
 
-**Spec:**
-- New `apps/extension/src/lib/debug-capture.ts` exporting:
-  ```ts
-  startDebugCapture(): DebugSession  // patches console + network listeners
-  snapshotDebug(session): DebugBundle  // call at pin-drop time
-  stopDebugCapture(session): void  // on annotation end
-  ```
-- Patches happen on `pinlay:start-annotation`, not on content-script mount, to avoid surveilling pages where the user isn't annotating.
-- Bundle attached to `PinDraft` as `debug?: DebugBundle`.
-- API: `pin.debug` JSONB column on `pins` table.
+**Why:** Dev and Reviewer know instantly whether a pin still points at
+something. This is also our honesty signal — we're claiming durability, so we
+must *show* it.
 
-**Acceptance:**
-- [ ] Pin created → debug bundle visible on detail popover under a "Debug" disclosure
-- [ ] Dashboard pin page renders the bundle as collapsible sections
-- [ ] No secret-looking strings (token / key / password / Bearer) survive sanitisation
-- [ ] Console patching does not leak when annotation ends
-
-**Effort:** M (3–4 days)
-**Dependencies:** apps/api `pins.debug` column
-
-### 1.2 Action breadcrumbs
-
-**What:** Ring buffer of the last 15 user actions (click on selector, route change, form-input event types — **never values**) attached to the pin as `breadcrumbs: Crumb[]`.
-
-**Why:**
-- **Dev:** Sees the path to the bug. "User clicked Sign in → /onboarding → clicked Skip → pin." Reproduces in 30 seconds instead of 30 minutes.
-
-**Spec:**
-- Reuse the debug-capture session. Patch `document.addEventListener("click", …, capture)` and observe `history.pushState` / `popstate` / `hashchange`.
-- Crumb shape: `{ type: "click"|"route"|"input", at: ISO, target?: stableSelector, url?: string }`.
-- Input crumbs record `type`/`name` of the input only — no values.
-
-**Acceptance:**
-- [ ] Breadcrumbs render as a vertical timeline on the dashboard pin page
-- [ ] Toggleable in workspace settings (some teams will want it off for compliance)
-- [ ] Test plan: simulate 50 events in 1 second — buffer caps at 15, no leak
-
-**Effort:** S (1 day)
-**Dependencies:** 1.1
-
-### 1.3 DOM snapshot of anchored element
-
-**What:** At pin-drop time, capture compressed HTML of the anchored element + 2 ancestors + computed styles (whitelist of layout properties only — no `background-image: url(...)`).
-
-**Why:**
-- **Dev:** Even if the page changes before they look, they can see what the element looked like at capture. Critical for visual / DOM bugs.
-- **Anchor resilience:** Snapshot diffed against live DOM in Phase 4.3 (suggested re-anchor).
-
-**Spec:**
-- `apps/extension/src/lib/dom-snapshot.ts`:
-  ```ts
-  snapshotAnchor(el: Element): DomSnapshot
-  // returns { html, computedStyles, ancestorsSnippet, bbox }
-  ```
-- Gzip via `CompressionStream` (~1–5 KB per snapshot).
-- Attached to pin as `domSnapshot: { gz: base64, ... }`.
-
-**Acceptance:**
-- [ ] Pin detail "Inspect captured DOM" button opens a modal with the snapshot rendered in a sandboxed iframe + computed-styles table
-- [ ] Snapshot size always under 20 KB compressed (cap + truncate if larger)
-
-**Effort:** M (2 days)
-**Dependencies:** apps/api `pins.dom_snapshot` column
-
----
-
-## Phase 2 — Capture Speed 🔥🔥
-
-> QA workflows die at "this composer is annoying to fill out." Reduce taps,
-> add affordances, give them keyboard shortcuts.
-
-### 2.1 Quick-pin keyboard shortcut
-
-**What:** `Cmd/Ctrl + Shift + P` on any page → instantly enters place mode. Single-key `P` while annotating drops a pin at the current mouse position.
-
-**Why:**
-- **QA:** Files a pin in 1 keystroke instead of "open extension → click button."
-- **Reviewer:** Multi-pin reviews stop feeling tedious.
-
-**Spec:**
-- `chrome.commands` declaration in `wxt.config.ts` for the global toggle.
-- Content-script keydown listener while annotation is active for the in-page `P`.
-- Surface the shortcut in the toolbar popup CTA as a `⌘⇧P` kbd pill.
-
-**Acceptance:**
-- [ ] Global shortcut documented in extension manifest (user-rebindable in `chrome://extensions/shortcuts`)
-- [ ] Shortcut hint shown in popup
-- [ ] Does not fire while focus is in an input
-
-**Effort:** S (½ day)
-
-### 2.2 Pin templates
-
-**What:** Pre-set composer states. Tap "Visual bug" → severity = `low`, type = `visual`, focus the description. Tap "Crash" → severity = `critical`, type = `bug`.
-
-Templates: **Visual bug · Copy fix · Functional bug · Crash · Idea · Question · A11y**
-
-**Why:**
-- **QA:** 4 clicks down to 1 for the 80% case.
-
-**Spec:**
-- New `lib/pin-templates.ts` with the 7 presets above as exported config.
-- Composer renders a horizontal scroll row of template chips above the severity row.
-- Selected template persists for the current sitting (next pin defaults to same template until changed).
-- Workspace-level custom templates (Phase 7).
-
-**Acceptance:**
-- [ ] Template chip row collapses on viewports < 400px
-- [ ] "Last used" template restored on next annotation session (chrome.storage.local)
-
-**Effort:** S (1 day)
-
-### 2.3 Multi-viewport sweep
-
-**What:** Composer footer button: "Capture at 3 sizes." Cycles tab viewport through 375 / 768 / 1280 (configurable), screenshots each, attaches all three.
-
-**Why:**
-- **QA:** Files responsive bugs as a single pin instead of three.
-- **Dev:** Sees the bug across breakpoints without re-querying.
-
-**Spec:**
-- Background SW orchestrates: `chrome.debugger.attach` → `Emulation.setDeviceMetricsOverride` → wait → `Page.captureScreenshot` → repeat → detach.
-- Requires `debugger` permission — only request on first use with an explainer modal.
-
-**Acceptance:**
-- [ ] Three screenshots attached with breakpoint label overlay
-- [ ] Falls back to single screenshot if `debugger` permission denied
-- [ ] Restores viewport on completion (or page reload if attach fails)
+**Spec:** Health checked when the dashboard pin card mounts (hidden iframe to the
+page, fast) or server-side on a refresh-on-demand job. Cache on the pin row.
 
 **Effort:** M (3 days)
-**Dependencies:** debugger permission gate
 
-### 2.4 Pin dedup on (anchor + URL)
+### 1.2 Resilient anchor hardening + the "survives a deploy" test
 
-**What:** Before creating a pin, check existing pins on this URL with a matching stable anchor. If found, surface: **"A pin already exists here — comment on it instead?"** with the existing pin's snippet.
+**What:** Tighten the resolve chain (stable-attr → selector → text fingerprint →
+bbox) and build a repeatable test harness: pin a page, mutate the DOM the way a
+real refactor would (reorder, rename classes, wrap in a div, change copy), and
+measure resolve rate.
 
-**Why:**
-- **Reviewer:** Stops 5 different reviewers from filing the same bug 5 times.
-
-**Spec:**
-- Client-side check before composer opens. Match on `anchor.stableAttr` exact + URL pathname exact.
-- If match found, show a 200ms transient inline card on the composer header.
-- "Comment on existing" → closes composer, opens detail popover, focuses reply.
+**Why:** This is the claim the whole product rests on. We need a number.
 
 **Acceptance:**
-- [ ] Match detected within 100ms of click
-- [ ] Manually overrideable ("File new anyway")
-- [ ] Doesn't trigger across different pathnames even with the same anchor
+- [ ] Documented resolve rate across the mutation harness (target: >80% green/yellow)
+- [ ] Dead-anchor cases degrade gracefully to stored doc coords with a `stale: true` flag
 
-**Effort:** S (1 day)
-**Dependencies:** Reply support on detail popover (currently removed — restore minimal version)
+**Effort:** M (3–4 days)
+
+### 1.3 Suggested re-anchor
+
+**What:** When the stable-attr is gone, diff the page against the stored anchor
+hints and surface *"Did this pin move here?"* with a thumbnail + confidence.
+
+**Why:** Refactors don't kill the issue trail. This is the feature that turns
+"durable anchor" from a claim into a delight.
+
+**Effort:** M (2–3 days)
+**Dependencies:** 1.1, 1.2. (Needs a lightweight DOM hint stored at pin time —
+the *minimum* snapshot to support re-anchor, NOT the full debug-bundle DOM capture.)
 
 ---
 
-## Phase 3 — Dev Loop 🔥🔥🔥
+## Phase 2 — The Developer Overlay 🔥🔥🔥  (the demo)
 
-> Pins die in the dashboard if devs can't act on them inside their normal
-> workflow. Linear/Jira/GitHub integration is the difference between adoption
-> and tab-switching frustration.
+> Named in `GENERAL_SPEC` §8 as "developer overlay," scheduled nowhere in the old
+> roadmap. **This is the thing you show people.** It's what no one-shot capture
+> tool can do.
+
+### 2.1 See open pins live on the page
+
+**What:** A dev opens the live site with the extension; all *open* pins for that
+URL render floating on their real anchored elements. Hover → snippet. Click →
+detail popover with status/assignee/resolve.
+
+**Why:** The dev fixes bugs *in context*, on the actual page, not by tab-switching
+to a dashboard and back. This is the loop competitors can't close because their
+pins don't persist or re-resolve.
+
+**Acceptance:**
+- [ ] Open pins for the current URL render on mount, anchored live
+- [ ] Resolve / status change from the overlay writes back (same path as composer)
+- [ ] Stale pins render in their last-known position with the stale treatment
+
+**Effort:** L (4–5 days)
+**Dependencies:** Phase 1 anchoring; `getPagePins` wired to the API.
+
+### 2.2 "Reproduce this state" deep-link
+
+**What:** Pin detail → opens the captured URL (full query/hash) in a new tab and
+flashes *"Viewing the state from pin #4"*, scrolling to + highlighting the pin.
+
+**Why:** One click lands the dev on the exact state with the pin in view. Pairs
+with 2.1 to make the overlay the dev's home base.
+
+**Spec:** URL hash `#pinlay-pin=<id>`; content script reads it on mount.
+
+**Effort:** S (1 day)
+
+---
+
+## Phase 3 — The Retention Loop 🔥🔥🔥
+
+> Pins die in a dashboard nobody reopens. Status has to round-trip with where the
+> dev already lives. This is the single most important *non-wedge* feature.
 
 ### 3.1 Two-way Linear sync
 
-**What:** Pin status updates flow Linear → pinlay and pinlay → Linear. Comments roundtrip.
+**What:** Pin status + comments roundtrip. Linear → pinlay and pinlay → Linear.
 
-**Why:**
-- **Dev:** Lives in Linear. Updates Linear, pinlay reflects the change. No double-bookkeeping.
-- **Reviewer:** Sees real progress without leaving the dashboard.
+**Why:** Dev updates Linear, pinlay reflects it — no double-bookkeeping. Reviewer
+sees real progress without leaving the dashboard. Without this, week-2 retention
+is zero.
 
 **Spec:**
-- Linear webhook → `apps/api/src/integrations/linear-webhook.ts` → updates pin status + appends comment as activity event.
-- Outbound: pin status change → Linear GraphQL `issueUpdate`.
-- Mapping: pinlay `open` ↔ Linear `Backlog`/`Triage`; `in_progress` ↔ `In Progress`; `resolved` ↔ `Done`. Workspace-configurable.
+- Linear webhook → `apps/api/src/integrations/linear-webhook.ts` → update pin
+  status + append comment as activity.
+- Outbound: status change → Linear GraphQL `issueUpdate`.
+- Mapping (workspace-configurable): `open` ↔ Backlog/Triage; `in_progress` ↔ In
+  Progress; `resolved` ↔ Done.
+- Loop guard: don't re-emit a webhook-originated change back to Linear.
 
 **Acceptance:**
 - [ ] Status change in Linear visible in dashboard within 5s
-- [ ] Comments authored in Linear show up as pinlay activity with original author attribution
-- [ ] Round-trip loop guard (don't re-emit a webhook-originated change back to Linear)
+- [ ] Comments authored in Linear appear as activity with original author
+- [ ] No infinite round-trip
 
 **Effort:** L (5–7 days)
-**Dependencies:** apps/api, Linear OAuth installed at workspace level
+**Dependencies:** apps/api, Linear OAuth at workspace level.
 
 ### 3.2 PR linking + auto-resolve
 
-**What:** Paste a GitHub/GitLab PR URL into a pin. When the PR merges (via webhook), pin auto-moves to `resolved` and stores the commit SHA. Resolved pins on the dashboard show a "Fixed in #1234" chip.
+**What:** Link a GitHub/GitLab PR to a pin; on merge (webhook) the pin
+auto-resolves and records the commit SHA. Dashboard shows a "Fixed in #1234" chip.
 
-**Why:**
-- **Dev:** Closes the loop without touching the dashboard. Provides a visible audit trail.
-- **Reviewer:** Sees what was fixed by what commit.
-
-**Spec:**
-- New `pin.linkedPrUrl` field + GitHub webhook handler.
-- On `pull_request.closed` with `merged=true`, find pins linked to that PR, transition to `resolved`, record `resolvedByCommit`.
-
-**Acceptance:**
-- [ ] PR chip on dashboard pin card with merge state colour
-- [ ] Reverted PRs surface a warning chip on the pin
+**Why:** Closes the loop without anyone touching the dashboard; visible audit trail.
 
 **Effort:** M (2–3 days)
-**Dependencies:** apps/api
-
-### 3.3 "Open this state" deep-link
-
-**What:** Pin detail has a button: **"Reproduce this state"**. Opens the captured URL in a new tab + flashes a banner in the page: *"You're viewing the URL state from pin #4. Click the pin to inspect."*
-
-**Why:**
-- **Dev:** One click to land back on the exact URL with the exact query/hash + the pin highlighted.
-
-**Spec:**
-- URL contains a hash param `#pinlay-pin=<id>`. Content script reads it on mount → flashes the banner → scrolls to and highlights the pin.
-
-**Acceptance:**
-- [ ] Banner dismissible
-- [ ] Banner does not appear if the user opens a pinlay URL without the hash
-
-**Effort:** S (1 day)
+**Dependencies:** apps/api.
 
 ---
 
-## Phase 4 — Triage 🔥🔥
+## Phase 4 — Capture & Triage speed 🔥🔥
 
-> Once volume grows, the dashboard is where people live. Make it keyboard-fast
-> and surface what matters.
+> Once real users are filing volume, reduce friction on both ends.
 
-### 4.1 Dashboard keyboard navigation
+### 4.1 Quick-pin keyboard shortcut
+`Cmd/Ctrl+Shift+P` enters place mode; single `P` drops a pin while annotating
+(never fires in an input). Shortcut hint in the popup. **Effort:** S (½ day)
 
-**What:** `j/k` between pins · `e` resolve · `r` reply · `/` search · `c` comment · `g i` go to inbox · `?` shortcuts modal.
+### 4.2 Pin templates
+Presets that pre-fill severity + type + focus the description: Visual bug · Copy
+fix · Functional bug · Crash · Idea · Question · A11y. Last-used persists per
+sitting. **Effort:** S (1 day)
 
-**Why:** Linear-style. Power users will love it; new users won't notice.
+### 4.3 Pin dedup on (anchor + URL)
+Before the composer opens, if a pin already exists on this element + pathname,
+offer *"Comment on it instead?"* Stops 5 reviewers filing the same bug 5 times.
+**Effort:** S (1 day) · **Dependencies:** minimal reply on detail popover.
 
-**Spec:** New composable `useKeyboardNav.ts` in `apps/web/src/lib/`.
-
-**Effort:** S (1 day)
-
-### 4.2 Anchor health badge + dead-anchor filter
-
-**What:** Each pin shows a small health indicator:
-- 🟢 **Resolves** via stable-attr or selector
-- 🟡 **Fallback** to bounding rect only
-- 🔴 **Dead** — no resolve, no fallback target
-
-Filter: "Show only dead anchors" → bulk re-anchor or archive workflow.
-
-**Why:**
-- **Dev:** Knows immediately if the pin is still pointing at something.
-- **Reviewer:** Can clean up after a refactor in one pass.
-
-**Spec:**
-- Health checked client-side when the dashboard pin card mounts (via a hidden iframe to the page — fast) OR server-side on a nightly job that fetches the page headless.
-- Cache result on pin row, refresh on demand.
-
-**Acceptance:**
-- [ ] Dead-anchor filter pill in dashboard sidebar
-- [ ] Bulk "Archive dead pins" action
-
-**Effort:** M (3 days)
-**Dependencies:** dom-snapshot from 1.3 (used for diff)
-
-### 4.3 Suggested re-anchor
-
-**What:** When stable-attr is gone, compare the captured DOM snapshot to the live DOM (Levenshtein on text content + tag structure) and surface a suggestion: *"Did this pin move here?"* with a thumbnail.
-
-**Why:**
-- **Reviewer / Dev:** Refactors don't kill the issue trail.
-
-**Spec:** Heuristic match in browser; show top candidate with confidence score.
-
-**Effort:** M (2–3 days)
-**Dependencies:** 1.3, 4.2
-
-### 4.4 "Inspect anchor" jump-to button
-
-**What:** Detail popover button: opens the page, scrolls to the pin, highlights the anchored element (same outline the composer uses).
-
-**Effort:** S (½ day)
+### 4.4 Dashboard keyboard navigation
+`j/k` between pins · `e` resolve · `r` reply · `/` search · `?` shortcuts modal.
+Linear-style; power users love it, new users don't notice. **Effort:** S (1 day)
 
 ---
 
-## Phase 5 — Replay 🔥🔥🔥
+## Phase 5 — Paid expansion (Team tier) 🔥🔥
 
-> If we ship one premium feature this quarter, it's this. Jam's moat.
+> Now — and only now — add the things that justify the $9/seat Team plan already
+> designed in `BillingSection`. These deepen the dev loop; they are not the wedge.
 
-### 5.1 10-second screen-clip ring buffer
+### 5.1 Debug bundle (the old Phase 1, demoted on purpose)
 
-**What:** While annotation is active, a 10s MediaRecorder ring buffer runs in the background. On pin drop, the last 10s clip is attached to the pin as `video/webm`.
+**What:** Pins on the Team tier silently attach a `debug` object: browser,
+viewport, sanitised URL, last 50 console entries, recent 4xx/5xx network, and
+allowlisted feature flags. Capture starts on `start-annotation`, never on page
+load (no surveillance of pages the user isn't annotating).
 
-**Why:**
-- **Dev:** Sees what the user did *just before* the bug. The single highest-leverage repro aid in the industry.
-- **QA:** No more "let me record this and start over."
+**Why now, not earlier:** This is what makes a *dev* say yes — but it's table
+stakes in the repro field, so it can't be our differentiator. As a paid upsell
+on top of an anchor moat people already love, it's leverage. As a wedge, it's a
+fight with Jam we lose. **Sanitise hard** (redact token/key/secret/password/Bearer).
 
-**Spec:**
-- `getDisplayMedia` with `preferCurrentTab: true` to skip the picker.
-- MediaRecorder with 1s timeslice, keep last 10 chunks.
-- On pin drop → join chunks, encode to webm, upload.
-- User-toggleable per-workspace (privacy-sensitive teams will want it off).
+**Effort:** M (3–4 days) · **Dependencies:** `pins.debug` JSONB column; Team gating.
 
-**Acceptance:**
-- [ ] First annotation prompts for screen-capture permission with a clear explainer
-- [ ] Clip player on dashboard with seekbar + 1× / 0.5× / 2× speeds
-- [ ] Disabled state when permission denied — annotation still works
+### 5.2 Action breadcrumbs
+Ring buffer of the last 15 actions (click selector / route change / input *type*,
+never values). Reuses 5.1's capture session. Workspace-toggleable for compliance.
+**Effort:** S (1 day) · **Dependencies:** 5.1
 
-**Effort:** L (5–7 days)
-**Dependencies:** Storage backend for video blobs (R2 / S3)
+### 5.3 10-second screen-clip ring buffer
+`getDisplayMedia({ preferCurrentTab: true })`, 1s timeslice, keep last 10 chunks;
+on pin drop, attach the webm. Per-workspace opt-in. The premium repro feature —
+only worth it once the loop above is real. **Effort:** L (5–7 days) ·
+**Dependencies:** R2/S3 blob storage, Team gating.
 
 ---
 
-## Phase 6 — Collab 🔥
+## Phase 6 — Collab & scale 🔥  (post-PMF)
 
-> Multi-reviewer sessions stop being a free-for-all when there's presence.
-
-### 6.1 Live cursors + presence
-
-**What:** When two reviewers are on the same page at the same time, each sees the other's cursor + a small avatar header in the FAB.
-
-**Why:** Reduces duplicate pins. Feels like a product, not a tool.
-
-**Spec:** Realtime channel (Cloudflare Durable Object or Liveblocks). Throttle cursor at 30fps.
-
-**Effort:** L (4–5 days)
-**Dependencies:** apps/api realtime infra
-
-### 6.2 Comments + @mentions
-
-**What:** Pin detail gets a reply thread (restore the removed footer with a minimal version). `@` brings up a workspace member picker. Mentions notify on dashboard + integrations.
-
-**Effort:** M (3 days)
-
-### 6.3 Notification controls
-
-**What:** Per-pin "watching" state. Default: author + assignee. Workspace digest email (daily summary, not per-event).
-
-**Effort:** S (1 day after 6.2)
+| # | Item | Effort |
+|---|---|---|
+| 6.1 | Live cursors + presence on the same page (realtime channel) | L |
+| 6.2 | Comments + @mentions on pin detail | M |
+| 6.3 | Notification controls + daily digest (per-pin watching) | S |
 
 ---
 
 ## Phase 7 — Polish
 
-> Things that quietly raise the floor.
-
 | # | Item | Effort |
 |---|---|---|
-| 7.1 | First-pin onboarding tour (3-step modal triggered on first annotation) | S |
-| 7.2 | Auto-stale lifecycle: pins with no activity for 30 days + URL unreachable → `stale` | S |
-| 7.3 | Workspace-level custom pin templates (extends 2.2) | S |
-| 7.4 | Lucide tree-shake: `Icon.vue` switches from `import * as icons` to name-keyed dynamic map → cuts bundle ~600KB | S |
-| 7.5 | Inject runtime moved to `packages/inject` (per spec) | M |
-| 7.6 | Severity / type taxonomy localisation | S |
+| 7.1 | First-pin onboarding tour (3-step, on first annotation) | S |
+| 7.2 | Auto-stale lifecycle (no activity 30d + URL unreachable → `stale`) | S |
+| 7.3 | Workspace-level custom pin templates (extends 4.2) | S |
+| 7.4 | Lucide tree-shake in `Icon.vue` (dynamic map, ~−600KB popup bundle) | S |
+| 7.5 | Page-side runtime moved to `packages/inject` | M |
+
+---
+
+## Resolved decision — backend stack
+
+**Settled (2026-05-30): NestJS + Prisma + Postgres.** The scaffolded `apps/api`
+was already NestJS/Prisma; the specs (`GENERAL_SPEC` §3–4, `BACKEND_SPEC`) and
+`HANDOFF.md` were reconciled to match — the original Hono/Cloudflare-Workers/
+Drizzle/R2/Queues plan is dropped. Storage is inline data-URL for v1 (object
+storage when clips land); async is inline for v1 (a queue lib when sync /
+notifications need it). Phase 6.1 realtime moves to a standard websocket
+service rather than Durable Objects.
 
 ---
 
@@ -396,24 +296,21 @@ Filter: "Show only dead anchors" → bulk re-anchor or archive workflow.
 
 | Week | Focus | Outcome |
 |---|---|---|
-| 1 | Phase 0 leftovers · 1.1 Debug bundle (start) | Polish ship + debug capture skeleton |
-| 2 | 1.1 Debug bundle (finish) · 1.2 Breadcrumbs | Every pin self-explains why it broke |
-| 3 | 2.1 Quick-pin · 2.2 Templates · 2.4 Dedup | QA workflow feels fast |
-| 4 | 3.1 Linear sync (start) · 4.1 Keyboard nav · 3.3 Deep-link | Dev-loop closes |
-| 5 | 3.1 Linear sync (finish) · 3.2 PR auto-resolve | Status round-trips |
-| 6 | 5.1 Screen clip | Repro story complete; ready for beta |
+| 1 | **Phase 0 validation** (5 real users) + any blocking 0.5–0.7 fixes | Evidence the wedge is real — go/no-go |
+| 2 | 1.1 health badge · 1.2 anchor hardening (start) | A measured resolve rate |
+| 3 | 1.2 (finish) · 1.3 suggested re-anchor | Pins provably survive a deploy |
+| 4 | 2.1 developer overlay (start) · backend decision | The demo takes shape |
+| 5 | 2.1 (finish) · 2.2 deep-link · 3.1 Linear sync (start) | Devs resolve in context |
+| 6 | 3.1 Linear sync (finish) · 3.2 PR auto-resolve | Status round-trips; loop closed |
 
-Anything past week 6 ships post-beta. The launch story is: **"Drop a pin
-→ dev gets a full repro bundle → fixed in their existing PR workflow."**
-
----
+The launch story is: **"Drop a pin on your live app → it stays anchored through
+your next deploy → your dev sees it on the page and resolves it → Linear updates
+itself."** Debug bundles and screen clips are how we charge for it later, not how
+we win the first user.
 
 ## Out of scope for v1
 
-- Mobile / native app
-- Figma plugin
-- AI auto-triage / auto-tag
-- A11y audit mode (separate product surface)
-- Multi-page session recordings (vs single-page clips)
+- Mobile / native app · Figma plugin · AI auto-triage · standalone a11y-audit mode
+- Multi-page session recordings
 
-These are post-PMF bets, not v1 bets.
+Post-PMF bets, not v1 bets.
