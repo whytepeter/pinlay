@@ -3375,6 +3375,22 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-05-31T20:03:37.193Z"
+    },
+    {
+      "id": "bug-210",
+      "timestamp": "2026-05-31T20:11:35.676Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 7→11 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T20:11:35.676Z"
     }
   ]
 }

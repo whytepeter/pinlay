@@ -208,6 +208,7 @@ import {
   type AnnotationPinRow,
   type WorkspaceMember,
 } from "../../lib/api";
+import { normalizeUrl } from "@pinlay/shared";
 import { WEB_APP_URL } from "../../lib/env";
 import { safeSendMessage } from "../../lib/extension";
 import { useAnnotationState } from "../../lib/annotation-state";
@@ -488,7 +489,12 @@ const apiReady = computed(() => apiState.value === "ready");
 // change), pins created after the change MUST attach to the new URL — and the
 // overlay should re-fetch the new page's pins, not keep showing the old set.
 // The single source of truth becomes `livePageUrl`; refs/writes use it.
-const livePageUrl = ref<string>(props.browserMeta.pageUrl || location.href);
+// Stored CANONICAL (via normalizeUrl from @pinlay/shared) so adding/removing
+// tracking params (utm_*, fbclid…) or fragment changes don't fire spurious
+// refetches — only meaningful navigation does.
+const livePageUrl = ref<string>(
+  normalizeUrl(props.browserMeta.pageUrl || location.href),
+);
 
 const apiProbe: Promise<void> = (async () => {
   if (!livePageUrl.value) {
@@ -557,8 +563,12 @@ const _origPushState = history.pushState.bind(history);
 const _origReplaceState = history.replaceState.bind(history);
 
 function onLocationMaybeChanged() {
-  if (location.href === livePageUrl.value) return;
-  livePageUrl.value = location.href;
+  // Compare normalized → normalized so `?utm_source=foo` and `?utm_source=bar`
+  // on the same logical page don't count as navigation. This is the whole
+  // point of putting normalizeUrl on the client: avoid pointless refetches.
+  const next = normalizeUrl(location.href);
+  if (next === livePageUrl.value) return;
+  livePageUrl.value = next;
   // Re-fetch this URL's pins so the overlay reflects the new page. Skip when
   // a composer is open — yanking the surface mid-edit would lose the draft.
   if (!composingPin.value) void refetchPagePins();

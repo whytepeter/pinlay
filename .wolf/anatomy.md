@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-31T20:03:37.181Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-31T20:11:35.663Z
 > Files: 216 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -156,7 +156,7 @@
 
 ## apps/extension/src/components/annotation/
 
-- `AnnotationOverlay.vue` — Vue: setup (~8917 tok)
+- `AnnotationOverlay.vue` — Vue: setup (~9057 tok)
 - `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~927 tok)
 - `AnnotationPinComposer.vue` — Vue component (~7779 tok)
 - `AnnotationPinDetail.vue` — Vue component (~5244 tok)

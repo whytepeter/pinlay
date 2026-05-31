@@ -1469,3 +1469,7 @@
 | 21:03 | Edited apps/api/src/annotation/annotation.service.ts | 3→3 lines | ~43 |
 | 21:05 | @pinlay/shared dist build (Option B from earlier audit): added tsconfig.build.json emitting CJS .js+.d.ts to dist/, conditional exports (import→.ts for Vite/HMR, require→dist/.js for Node CJS), prepare script auto-runs on install. Moved normalizeUrl from apps/api/src/common/url.ts back to @pinlay/shared (single source of truth). Verified live: API uses dist/, ext uses .ts (still HMR-friendly), web typecheck clean | packages/shared/{package.json, tsconfig.build.json, src/{url.ts, index.ts}}, apps/api/src/annotation/annotation.service.ts | done | ~6k |
 | 21:06 | Session end: 42 writes across 9 files (App.vue, session-cache.ts, api.ts, AnnotationOverlay.vue, url.ts) | 7 reads | ~30370 tok |
+| 21:11 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added 1 import(s) | ~40 |
+| 21:11 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 2→7 lines | ~99 |
+| 21:11 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: client | ~158 |
+| 21:12 | Session end: 45 writes across 9 files (App.vue, session-cache.ts, api.ts, AnnotationOverlay.vue, url.ts) | 7 reads | ~31215 tok |

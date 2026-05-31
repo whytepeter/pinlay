@@ -13,8 +13,8 @@
       "first_read": "2026-05-31T19:04:36.802Z"
     },
     "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue": {
-      "count": 4,
-      "tokens": 8389,
+      "count": 5,
+      "tokens": 8917,
       "first_read": "2026-05-31T19:31:56.060Z"
     },
     "/Users/apple/Documents/code/pinlay/packages/shared/src/index.ts": {
@@ -290,13 +290,31 @@
       "action": "edit",
       "tokens": 43,
       "at": "2026-05-31T20:03:37.191Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 42,
+      "at": "2026-05-31T20:11:09.712Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 106,
+      "at": "2026-05-31T20:11:19.719Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 169,
+      "at": "2026-05-31T20:11:35.673Z"
     }
   ],
   "edit_counts": {
     "apps/extension/src/entrypoints/popup/App.vue": 21,
     "apps/extension/src/lib/session-cache.ts": 1,
     "apps/extension/src/lib/api.ts": 1,
-    "apps/extension/src/components/annotation/AnnotationOverlay.vue": 4,
+    "apps/extension/src/components/annotation/AnnotationOverlay.vue": 7,
     "packages/shared/src/url.ts": 2,
     "packages/shared/src/index.ts": 3,
     "apps/api/src/annotation/annotation.service.ts": 5,
@@ -306,7 +324,7 @@
   },
   "anatomy_hits": 5,
   "anatomy_misses": 2,
-  "repeated_reads_warned": 11,
+  "repeated_reads_warned": 12,
   "cerebrum_warnings": 0,
-  "stop_count": 12
+  "stop_count": 13
 }
