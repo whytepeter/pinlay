@@ -481,13 +481,22 @@ type ApiConnState = "probing" | "ready" | "disconnected" | "offline";
 const apiState = ref<ApiConnState>("probing");
 const apiReady = computed(() => apiState.value === "ready");
 
+// ── Live URL tracking ─────────────────────────────────────────────────────
+// The frozen `browserMeta.pageUrl` (captured at annotation start) is only the
+// SEED. If the page is a SPA and navigates during annotation (a side panel
+// pushing /appointments/abc into history, a route swap, even just a hash
+// change), pins created after the change MUST attach to the new URL — and the
+// overlay should re-fetch the new page's pins, not keep showing the old set.
+// The single source of truth becomes `livePageUrl`; refs/writes use it.
+const livePageUrl = ref<string>(props.browserMeta.pageUrl || location.href);
+
 const apiProbe: Promise<void> = (async () => {
-  if (!props.browserMeta.pageUrl) {
+  if (!livePageUrl.value) {
     apiState.value = "offline";
     return;
   }
   try {
-    const pins = await api.getPagePins(props.browserMeta.pageUrl);
+    const pins = await api.getPagePins(livePageUrl.value);
     apiState.value = "ready";
     existingPins.value = pins
       .map((row, i) => rowToExistingPin(row, i + 1))
@@ -539,15 +548,65 @@ watch(
   },
 );
 
+// ── Live URL tracking listeners ──────────────────────────────────────────
+// pushState / replaceState don't fire events natively. We monkey-patch them
+// to dispatch a synthetic `pinlay:location` so we react to SPA navigation
+// the same way we react to popstate/hashchange. Originals are restored on
+// unmount so we don't leak across re-mounts.
+const _origPushState = history.pushState.bind(history);
+const _origReplaceState = history.replaceState.bind(history);
+
+function onLocationMaybeChanged() {
+  if (location.href === livePageUrl.value) return;
+  livePageUrl.value = location.href;
+  // Re-fetch this URL's pins so the overlay reflects the new page. Skip when
+  // a composer is open — yanking the surface mid-edit would lose the draft.
+  if (!composingPin.value) void refetchPagePins();
+}
+
+async function refetchPagePins() {
+  if (apiState.value !== "ready") return;
+  try {
+    const pins = await api.getPagePins(livePageUrl.value);
+    existingPins.value = pins
+      .map((row, i) => rowToExistingPin(row, i + 1))
+      .filter((p): p is ExistingPin => p !== null);
+  } catch {
+    /* leave the previous list; livePageUrl already updated for next write */
+  }
+}
+
+function patchHistoryForLocationEvents() {
+  history.pushState = function (...args) {
+    const r = _origPushState(...args);
+    onLocationMaybeChanged();
+    return r;
+  };
+  history.replaceState = function (...args) {
+    const r = _origReplaceState(...args);
+    onLocationMaybeChanged();
+    return r;
+  };
+}
+
 onMounted(() => {
   window.addEventListener("scroll", onViewportChange, true);
   window.addEventListener("resize", onViewportChange);
+  window.addEventListener("popstate", onLocationMaybeChanged);
+  window.addEventListener("hashchange", onLocationMaybeChanged);
+  patchHistoryForLocationEvents();
 });
 
 onBeforeUnmount(() => {
   state.setActive(false);
   window.removeEventListener("scroll", onViewportChange, true);
   window.removeEventListener("resize", onViewportChange);
+  window.removeEventListener("popstate", onLocationMaybeChanged);
+  window.removeEventListener("hashchange", onLocationMaybeChanged);
+  // Restore originals — leaving patched globals after unmount would corrupt
+  // the page's history API for the host site.
+  history.pushState = _origPushState;
+  history.replaceState = _origReplaceState;
 });
 
 function rowToExistingPin(row: AnnotationPinRow, index: number): ExistingPin | null {
@@ -792,7 +851,9 @@ async function onComposerSubmit(draft: PinDraft) {
     const res = await api.createPin({
       sessionId: sessionId.value ?? undefined,
       issueId: issueId.value ?? undefined,
-      pageUrl: props.browserMeta.pageUrl,
+      // LIVE URL — captured at submit time, not annotation start. Ensures a
+      // pin dropped after an SPA route push lands on the right page.
+      pageUrl: livePageUrl.value,
       anchor: pin.anchor as unknown as Record<string, unknown>,
       offsetX: pin.anchor.offset.xPct,
       offsetY: pin.anchor.offset.yPct,
@@ -925,9 +986,9 @@ function onDone() {
 }
 
 function defaultReviewTitle(): string {
-  let host = props.browserMeta.pageUrl;
+  let host = livePageUrl.value;
   try {
-    host = new URL(props.browserMeta.pageUrl).host;
+    host = new URL(livePageUrl.value).host;
   } catch {
     /* keep */
   }

@@ -169,3 +169,49 @@
 - **KEPT as-is (different model):** `apps/api/src/annotation/sessions.controller.ts` + `POST /annotation/sessions/:id/submit` and the `Session` Prisma model — that's the capture-SITTING (write surface), legitimately a "session". Only the dashboard READ surface became "issues". Do NOT rename the annotation session controller or the Session model.
 - **Node gotcha**: this shell sometimes defaults to Node v16 (nvm) → pnpm refuses (needs ≥18.12). Always `nvm use 20` before pnpm in apps/api. Node 20.18.1 is correct.
 - Verified live: GET /issues 200 (real data w/ PL-0003 refs + rollups), GET /sessions 404, /annotation/sessions/:id/submit still mounted. Web typecheck + API build clean.
+
+## Popup session-cache (2026-05-30)
+- `apps/extension/src/lib/session-cache.ts` — persists `{me, workspace, fetchedAt}` to `chrome.storage.local["pl_session_cache"]`. Stale-while-revalidate: popup hydrates from cache BEFORE refresh(), so every open shows the user's real name/workspace instantly — skeleton flashes only when there's no cached data (truly first open after install / after disconnect).
+- **Cache lifecycle**: write on every successful refresh; clear on `onDisconnect()` + on 401 from refresh (the cached identity is no longer valid). **Offline (network error) KEEPS the cache** — a brief blip shouldn't blank the popup; the header pill "Offline" signals staleness.
+- **`hasIdentity` computed** = `!!me && !!workspace`. Drives the template: account block, Drop-a-pin button, Preferences section, and footer Connect/Disconnect button all gate on `hasIdentity` instead of `isConnected`, so a cached-but-offline user still sees their identity. The action subtitle distinguishes "Connect" (cold disconnected) from "Reconnect" (cached + offline). Drop-a-pin's `disabled` still requires `isConnected` — pinning genuinely needs the API.
+- **Idle prompt** now gates on a new `showIdlePrompt = !isLoading && !hasIdentity` — only renders on a true cold disconnected state.
+- Logged bug pattern (no buglog entry — UX fix not a bug): the cache is the right place for "data persisted across popup opens" because the popup is a fresh Vue app on each toolbar click (no in-memory continuity). Module-level refs do NOT survive.
+
+## Workspace switcher in the extension popup (2026-05-30)
+- The workspace row IS the switcher trigger: button with `chevrons-up-down` chip (right side, only when `isConnected`). Click → toggle inline panel below, **lazy-loads /workspaces on first open** (saves the call for solo-workspace users).
+- Switch flow: `api.switchWorkspace(id)` → server re-mints JWT bound to target ws → popup `setAuth({token: res.token, orgId: res.workspace.id})` → `clearSessionCache()` → `refresh()`. Per-row spinner via `switchingTo === ws.id`; the rest disable to prevent double-clicks. Current ws gets a primary-bg avatar + check on the right.
+- Inline panel (not a portal) sits below the workspace row inside the same Account card → no z-index gymnastics, just a `border-t bg-muted/20` strip. Keeps everything in one popover surface.
+- Disabled while cached-but-offline (the POST would fail). Workspace row still visible/readable; just not interactive.
+- API endpoints used: `GET /workspaces` (lazy), `POST /workspaces/:id/switch` (returns `{token, workspace}`). Both already verified live in the workspace/ module work.
+
+## Tailwind toggle math (avoid knob overflow)
+- 2px-gutter standard pattern: track `h-5 w-9` (20×36), knob `h-4 w-4` (16) at `top-0.5 left-0.5` (2px), ON translateX = track-width − 2×inset − knob = 36 − 4 − 16 = 16px → right edge at 34, clean 2px gutter. Don't use `h-[18px] w-8` + `w-[14px]` translateX 14 — math comes out to 30px which clips the 32px track once shadow is factored in. Logged in popup toggle for the FAB hide setting.
+
+## SPA-aware pin pageUrl (2026-05-30)
+- **Bug fixed**: pins captured `props.browserMeta.pageUrl` (frozen at annotation start) instead of the URL at click time. On SPA route changes during a sitting (e.g. glown.io/appointments → /appointments/abc123 via side panel) new pins would attach to the OLD URL and silently fail to reappear on revisit.
+- Solution: `livePageUrl: ref<string>` in AnnotationOverlay.vue, seeded from browserMeta, updated by listeners on `popstate` + `hashchange` AND by **monkey-patching `history.pushState`/`replaceState`** (they don't fire events natively). All 5 callsites switched from `browserMeta.pageUrl` to `livePageUrl.value`: apiProbe initial fetch, createPin write, defaultReviewTitle host derivation (2x), and a new `refetchPagePins()` triggered on URL change.
+- On URL change: re-fetch pins for the new page so the overlay shows what's actually there. **Skipped while a composer is open** (yanking the surface mid-edit would lose the draft).
+- `browserMeta` from content.ts stays as the SEED only — kept because other fields (viewport, ua) may rely on capture-time values; just pageUrl became live.
+- Cleanup is critical: `onBeforeUnmount` restores the original `history.pushState`/`replaceState` references — leaving the patched versions in place would corrupt the host page's history API for the rest of its life.
+- The original `Anchor.url.{pathname,search,hash}` capture in `lib/anchor.ts` was already per-pin (live) — only the top-level `Pin.pageUrl` was stale. Both now agree.
+
+## Tailwind switch math (final) — 4px gutter for shadow clearance
+- Pattern that works: track `h-5 w-10` (20×40), knob `h-4 w-4` at `top-0.5 left-0.5`, ON translateX `18px`. Math: OFF knob right edge = 2+16 = 18; ON = 2+18+16 = 36; track width 40 → 4px gutter at the right edge. The 2px gutter I tried before equalled the knob's drop shadow (`shadow-[0_1px_2px_...]`), so the shadow clipped against the rounded corner and READ as overflow. 4px clears it.
+
+## URL normalization for pin matching (2026-05-30)
+- `apps/api/src/common/url.ts` → `normalizeUrl(input: string): string`. Rules: lowercase host, drop fragment, strip tracking params (utm_*, fbclid, gclid, msclkid, mc_cid/eid, _hsenc/hsmi, igshid, vero_id, yclid, _ga, ref, source, referrer), sort remaining params alphabetically, strip trailing slash on non-root paths. Idempotent. Returns input unchanged on parse error (defensive — don't corrupt user-supplied URLs).
+- Applied in `annotation.service.ts` at BOTH the write site (createPin: normalizes once, used for session.pageUrl AND pin.pageUrl) and the read site (listPagePins: re-normalizes query param before exact-matching). Defense-in-depth so older clients sending raw URLs still resolve.
+- Verified live: 5/5 cases. `?utm_source=email&id=42&fbclid=xyz` writes/reads as `?id=42`. Trailing slash + reordered params all match. **Different `?id=` value correctly does NOT match** (real query params preserved).
+- **STRUCTURAL TODO**: `@pinlay/shared` ships as raw .ts source — works for Vite (extension/web) but breaks at Node CJS runtime (`SyntaxError: Unexpected token 'export'`). For now `normalizeUrl` lives in apps/api/src/common/. When `@pinlay/shared` gets a compiled `dist/` (HANDOFF already flags this for Vercel deploy), move it back and import from there (extension can then normalize client-side too for snappier comparisons). Conditional exports pattern: `"exports": { ".": { "import": "./src/index.ts", "require": "./dist/index.js" } }`.
+
+## @pinlay/shared now ships a dist (2026-05-30) — structural TODO resolved
+- Shared package now emits CJS to `packages/shared/dist/` via `tsconfig.build.json` (`module: commonjs`, `target: ES2022`, `lib: [ES2022, DOM, DOM.Iterable]`, `verbatimModuleSyntax: false`, `noEmit: false`). `pnpm --filter @pinlay/shared build` produces `dist/{enums,schemas,url,index}.{js,d.ts,…}`.
+- **Conditional exports** in package.json route per-consumer correctly:
+  - `"types": "./dist/index.d.ts"` — IDE / typecheckers
+  - `"import": "./src/index.ts"` — bundlers (Vite for extension + web) keep using raw .ts → HMR + fast feedback
+  - `"require": "./dist/index.js"` — Node CJS (the NestJS API) → real require()-able artifact
+- `"type": "module"` was REMOVED so Node treats `dist/*.js` as CJS (matches the emit). Bundlers don't care about `type:` for .ts files.
+- `prepare` script auto-runs on `pnpm install` so the dist always exists. Also wired as the `build` script (so `pnpm -r build` includes it in topological order).
+- **normalizeUrl moved back to @pinlay/shared** from its apps/api copy. Single source of truth. The extension can now import it client-side too when it wants to normalize before sending (e.g. for dedup/comparison without a round-trip).
+- Verified live: API consumes dist via require() (write/read normalization roundtrip = 1 match), extension build clean (uses .ts source via Vite), web typecheck clean.
+- **Gotchas to remember**: (1) lib MUST include DOM + DOM.Iterable because url.ts uses URL/URLSearchParams + iterates `.entries()`. (2) The base tsconfig sets `verbatimModuleSyntax: true` which is INCOMPATIBLE with `module: commonjs` — must override to false in tsconfig.build.json. (3) `noEmit: true` in base must be overridden to false. (4) Do not put `//` keys inside compilerOptions — tsc rejects them; use a top-level "//" key only.

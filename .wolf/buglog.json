@@ -3135,6 +3135,246 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-05-31T11:02:35.894Z"
+    },
+    {
+      "id": "bug-195",
+      "timestamp": "2026-05-31T16:46:09.199Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 10→36 lines (3 removed) | Also: <div class=\"overflow-hidden rounded-lg border bord; {{ userSubtext }}",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-31T16:47:09.286Z"
+    },
+    {
+      "id": "bug-196",
+      "timestamp": "2026-05-31T16:46:27.851Z",
+      "error_message": "CSS fix: hover",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "hover: bg-primary-hover active:scale-[0.99] disabled:opacity-60\" → bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none\"",
+      "fix": "Changed hover: bg-primary-hover active:scale-[0.99] disabled:opacity-60\" → bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T16:46:27.851Z"
+    },
+    {
+      "id": "bug-197",
+      "timestamp": "2026-05-31T18:09:05.733Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 6→8 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T18:09:05.733Z"
+    },
+    {
+      "id": "bug-198",
+      "timestamp": "2026-05-31T19:05:36.783Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 20→32 lines (3 removed) | Also: button — bouncing between Connect/Disconnect feels; v-else-if=\"isConnected\"",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-31T19:07:11.165Z"
+    },
+    {
+      "id": "bug-199",
+      "timestamp": "2026-05-31T19:06:10.640Z",
+      "error_message": "CSS fix: IDLE",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "IDLE: not connected → a real prompt, not just two empty rows. → only when we have NO identity at all (disconnected from a",
+      "fix": "Changed IDLE: not connected → a real prompt, not just two empty rows. → only when we have NO identity at all (disconnected from a",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T19:06:10.640Z"
+    },
+    {
+      "id": "bug-200",
+      "timestamp": "2026-05-31T19:13:14.706Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 15→19 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T19:13:14.706Z"
+    },
+    {
+      "id": "bug-201",
+      "timestamp": "2026-05-31T19:14:00.841Z",
+      "error_message": "Missing error handling in function",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T19:14:00.841Z"
+    },
+    {
+      "id": "bug-202",
+      "timestamp": "2026-05-31T19:14:58.868Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T19:14:58.868Z"
+    },
+    {
+      "id": "bug-203",
+      "timestamp": "2026-05-31T19:25:52.296Z",
+      "error_message": "CSS fix: enabled",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "enabled: hover:bg-muted/60 disabled:opacity-60\" → hover:bg-muted disabled:opacity-60\"",
+      "fix": "Changed enabled: hover:bg-muted/60 disabled:opacity-60\" → hover:bg-muted disabled:opacity-60\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T19:25:52.296Z"
+    },
+    {
+      "id": "bug-204",
+      "timestamp": "2026-05-31T19:26:25.406Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "No early return/throw for edge case: !switcherOpen.value",
+      "fix": "Added guard clause: if (!switcherOpen.value)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T19:26:25.406Z"
+    },
+    {
+      "id": "bug-205",
+      "timestamp": "2026-05-31T19:32:44.269Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 11→20 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T19:32:44.269Z"
+    },
+    {
+      "id": "bug-206",
+      "timestamp": "2026-05-31T19:32:55.169Z",
+      "error_message": "CSS fix: pageUrl",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "pageUrl: props.browserMeta.pageUrl, → livePageUrl.value,",
+      "fix": "Changed pageUrl: props.browserMeta.pageUrl, → livePageUrl.value,",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T19:32:55.169Z"
+    },
+    {
+      "id": "bug-207",
+      "timestamp": "2026-05-31T19:33:48.901Z",
+      "error_message": "Missing error handling in onLocationMaybeChanged",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T19:33:48.901Z"
+    },
+    {
+      "id": "bug-208",
+      "timestamp": "2026-05-31T19:52:35.586Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/api/src/annotation/annotation.service.ts",
+      "root_cause": "Had \"@pinlay/shared\"",
+      "fix": "Changed to \"../prisma/prisma.service\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T19:52:35.586Z"
+    },
+    {
+      "id": "bug-209",
+      "timestamp": "2026-05-31T20:03:37.193Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/api/src/annotation/annotation.service.ts",
+      "root_cause": "Had \"../prisma/prisma.service\"",
+      "fix": "Changed to \"@pinlay/shared\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-31T20:03:37.193Z"
     }
   ]
 }

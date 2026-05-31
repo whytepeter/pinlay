@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-31T11:03:00.039Z
-> Files: 210 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-31T20:03:37.181Z
+> Files: 216 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -46,7 +46,7 @@
 ## apps/api/src/annotation/
 
 - `annotation.module.ts` — Exports AnnotationModule (~126 tok)
-- `annotation.service.ts` — An assignee must be a member of the caller's workspace. Without this an (~2268 tok)
+- `annotation.service.ts` — An assignee must be a member of the caller's workspace. Without this an (~2426 tok)
 - `pins.controller.ts` — Exports PinsController (~361 tok)
 - `sessions.controller.ts` — Write half of the session lifecycle: finishing/submitting a capture sitting (~285 tok)
 
@@ -82,6 +82,7 @@
 ## apps/api/src/common/
 
 - `current-user.decorator.ts` — Exports AuthenticatedUser, CurrentUser (~162 tok)
+- `url.ts` — URL normalization — the single source of truth for "do these two URLs (~823 tok)
 
 ## apps/api/src/config/
 
@@ -155,7 +156,7 @@
 
 ## apps/extension/src/components/annotation/
 
-- `AnnotationOverlay.vue` — Vue: setup (~8192 tok)
+- `AnnotationOverlay.vue` — Vue: setup (~8917 tok)
 - `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~927 tok)
 - `AnnotationPinComposer.vue` — Vue component (~7779 tok)
 - `AnnotationPinDetail.vue` — Vue component (~5244 tok)
@@ -185,7 +186,7 @@
 
 ## apps/extension/src/entrypoints/popup/
 
-- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~3444 tok)
+- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~7108 tok)
 - `index.html` — pinlay (~172 tok)
 - `main.ts` (~47 tok)
 
@@ -193,10 +194,11 @@
 
 - `anchor.ts` — Element anchoring for live annotation. (~4650 tok)
 - `annotation-state.ts` — annotation-state (~809 tok)
-- `api.ts` — API client (~1856 tok)
+- `api.ts` — API client (~1991 tok)
 - `auth.ts` — Subscribe to auth changes — fires when the token is added, updated, or cleared. (~562 tok)
 - `env.ts` — Exports WEB_APP_URL, API_URL (~131 tok)
 - `extension.ts` — Extension runtime helpers. (~253 tok)
+- `session-cache.ts` — Persisted snapshot of "who the user is" — identity (`/auth/me`) + active (~519 tok)
 
 ## apps/extension/test/
 
@@ -429,11 +431,21 @@
 
 - `color.ts` — Tiny color helpers for deriving shades in JS (charts, dynamic accents, etc.). (~461 tok)
 
+## packages/shared/
+
+- `package.json` — Node.js package manifest (~233 tok)
+- `tsconfig.build.json` (~125 tok)
+
 ## packages/shared/ — `@pinlay/shared` (types + schemas)
 
 - `src/enums.ts` — Severity, Status, DisplayStatus, PinType, SyncState, Role, IntegrationKind (zod) (~350 tok)
 - `src/index.ts` — barrel (~15 tok)
 - `src/schemas.ts` — zod schemas+types: Session, Pin, Anchor, SeverityCounts, User, Integration… (~1230 tok)
+
+## packages/shared/src/
+
+- `index.ts` (~22 tok)
+- `url.ts` — URL normalization — the single source of truth for "do these two URLs (~812 tok)
 
 ## specs/
 

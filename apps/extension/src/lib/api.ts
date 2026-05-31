@@ -122,6 +122,20 @@ export const api = {
   currentWorkspace: () =>
     send<Workspace>({ path: "/workspaces/current", method: "GET" }),
 
+  /** Every workspace the caller belongs to — drives the switcher. */
+  listWorkspaces: () =>
+    send<Workspace[]>({ path: "/workspaces", method: "GET" }),
+
+  /**
+   * Switch active workspace. Server verifies membership + mints a NEW JWT
+   * bound to the target ws; the client must replace its stored token.
+   */
+  switchWorkspace: (id: string) =>
+    send<{ token: string; workspace: Workspace }>({
+      path: `/workspaces/${id}/switch`,
+      method: "POST",
+    }),
+
   getWorkspaceMembers: () =>
     send<WorkspaceMember[]>({
       path: "/auth/workspace/members",

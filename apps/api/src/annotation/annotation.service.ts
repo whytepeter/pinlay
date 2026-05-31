@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { Pin, Prisma } from "@prisma/client";
+import { normalizeUrl } from "@pinlay/shared";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreatePinDto } from "./dto/create-pin.dto";
 import { UpdatePinDto } from "./dto/update-pin.dto";
@@ -78,6 +79,11 @@ export class AnnotationService {
     await this.assertAssigneeInWorkspace(user.workspaceId, dto.assigneeId);
     await this.assertIssueInWorkspace(user.workspaceId, dto.issueId);
 
+    // Canonicalize the URL at the boundary so a pin filed via
+    // `…/checkout/?utm_source=email` matches a revisit to `…/checkout` (and
+    // vice versa). One source of truth — same function used on read below.
+    const pageUrl = normalizeUrl(dto.pageUrl);
+
     // Lazily create the Session on the first pin of a sitting. Same goes
     // for an Issue once `submitSession` is called.
     const session = dto.sessionId
@@ -91,7 +97,7 @@ export class AnnotationService {
           data: {
             workspaceId: user.workspaceId,
             authorId: user.id,
-            pageUrl: dto.pageUrl,
+            pageUrl,
             status: "draft",
           },
         });
@@ -109,7 +115,7 @@ export class AnnotationService {
         authorId: user.id,
         assigneeId: dto.assigneeId ?? null,
         index: nextIndex + 1,
-        pageUrl: dto.pageUrl,
+        pageUrl,
         anchor: dto.anchor as Prisma.InputJsonValue,
         offsetX: dto.offsetX,
         offsetY: dto.offsetY,
@@ -173,9 +179,13 @@ export class AnnotationService {
     user: AuthenticatedUser,
     pageUrl: string,
   ): Promise<SerializedPin[]> {
+    // Same normalization applied at write time — guarantees a match regardless
+    // of how the client formatted its URL (tracking params, trailing slash,
+    // host case, fragment, query-param ordering).
+    const normalized = normalizeUrl(pageUrl);
     const pins = await this.prisma.pin.findMany({
       where: {
-        pageUrl,
+        pageUrl: normalized,
         session: { workspaceId: user.workspaceId },
         status: { notIn: ["archived"] },
       },

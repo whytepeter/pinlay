@@ -1366,3 +1366,106 @@
 
 | Time | Action | File(s) | Outcome | ~Tokens |
 |------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 14:51
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 15:31
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 15:33
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 16:00
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 16:30
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 17:36
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 17:45
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 17:46 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: pill | ~333 |
+| 17:46 | Edited apps/extension/src/entrypoints/popup/App.vue | expanded (+8 lines) | ~421 |
+| 17:47 | Edited apps/extension/src/entrypoints/popup/App.vue | modified refresh() | ~1361 |
+| 17:47 | Edited apps/extension/src/entrypoints/popup/App.vue | 18→21 lines | ~243 |
+
+## Session: 2026-05-31 18:01
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 19:06 | Popup rewired: loading/connected/disconnected/offline state machine, real workspace name (via new currentWorkspace() client + /workspaces/current), skeleton account loader, idle Connect prompt (offline=retry, disconnected=Connect), Drop-a-pin disabled until connected, honest "Checking/Live/Not connected/Offline" pill (no dummy "Local"); fixed bug-164 missing express dep; verified live 401↔200 | apps/extension/src/{entrypoints/popup/App.vue,lib/api.ts}, apps/api/package.json | done | ~14k |
+| 19:09 | Edited apps/extension/src/entrypoints/popup/App.vue | 6→8 lines | ~118 |
+| 19:09 | Edited apps/extension/src/entrypoints/popup/App.vue | 2→5 lines | ~94 |
+| 19:40 | Session end: 2 writes across 1 files (App.vue) | 1 reads | ~4874 tok |
+| 19:52 | Session end: 2 writes across 1 files (App.vue) | 1 reads | ~4874 tok |
+| 20:04 | Created apps/extension/src/lib/session-cache.ts | — | ~519 |
+| 20:05 | Edited apps/extension/src/entrypoints/popup/App.vue | 3→8 lines | ~78 |
+| 20:05 | Edited apps/extension/src/entrypoints/popup/App.vue | added 1 condition(s) | ~188 |
+| 20:05 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: me, workspace | ~328 |
+| 20:05 | Edited apps/extension/src/entrypoints/popup/App.vue | expanded (+7 lines) | ~134 |
+| 20:06 | Edited apps/extension/src/entrypoints/popup/App.vue | 6→7 lines | ~95 |
+| 20:06 | Edited apps/extension/src/entrypoints/popup/App.vue | exists() → identity() | ~141 |
+| 20:06 | Edited apps/extension/src/entrypoints/popup/App.vue | 7→9 lines | ~85 |
+| 20:06 | Edited apps/extension/src/entrypoints/popup/App.vue | 5→6 lines | ~107 |
+| 20:06 | Edited apps/extension/src/entrypoints/popup/App.vue | modified onDisconnect() | ~43 |
+| 20:07 | Edited apps/extension/src/entrypoints/popup/App.vue | 9→11 lines | ~164 |
+| 20:12 | Popup session-cache (stale-while-revalidate): persist me+workspace to chrome.storage as `pl_session_cache`, hydrate before refresh → no skeleton flash on cold open; offline keeps cached identity (header pill signals staleness), 401/disconnect clears it; introduced hasIdentity computed and routed template gates through it | apps/extension/src/lib/session-cache.ts (new), apps/extension/src/entrypoints/popup/App.vue | done; build+typecheck clean | ~5k |
+| 20:12 | Session end: 13 writes across 2 files (App.vue, session-cache.ts) | 2 reads | ~7783 tok |
+| 20:13 | Edited apps/extension/src/entrypoints/popup/App.vue | 15→19 lines | ~234 |
+| 20:13 | Edited apps/extension/src/lib/api.ts | expanded (+14 lines) | ~186 |
+| 20:14 | Edited apps/extension/src/entrypoints/popup/App.vue | added error handling | ~441 |
+| 20:14 | Edited apps/extension/src/entrypoints/popup/App.vue | inline fix | ~25 |
+| 20:14 | Edited apps/extension/src/entrypoints/popup/App.vue | added optional chaining | ~1106 |
+| 20:23 | Popup: inline workspace switcher (chevrons-up-down toggle, lazy-loads /workspaces on open, switch POSTs to /workspaces/:id/switch → new token via setAuth + clearSessionCache + refresh, current marked w/ check, spinner during switch); fixed launcher-toggle knob overflow (track w-8→w-9, knob translateX 14→16) | apps/extension/src/{lib/api.ts, entrypoints/popup/App.vue} | done | ~6k |
+| 20:24 | Session end: 18 writes across 3 files (App.vue, session-cache.ts, api.ts) | 2 reads | ~10208 tok |
+| 20:25 | Edited apps/extension/src/entrypoints/popup/App.vue | online() → siblings() | ~1354 |
+| 20:26 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: e, e | ~261 |
+| 20:26 | Edited apps/extension/src/entrypoints/popup/App.vue | expanded (+7 lines) | ~96 |
+| 20:27 | Session end: 21 writes across 3 files (App.vue, session-cache.ts, api.ts) | 2 reads | ~13750 tok |
+| 20:28 | Edited apps/extension/src/entrypoints/popup/App.vue | 19→19 lines | ~236 |
+| 20:28 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: ON | ~249 |
+| 20:30 | Session end: 23 writes across 3 files (App.vue, session-cache.ts, api.ts) | 2 reads | ~14270 tok |
+| 20:32 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified if() | ~263 |
+| 20:32 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 5→7 lines | ~100 |
+| 20:33 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 6→6 lines | ~31 |
+| 20:33 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added error handling | ~616 |
+| 20:35 | SPA-aware live URL tracking in overlay: livePageUrl ref seeded from browserMeta, updated on popstate/hashchange + patched pushState/replaceState; pins now write the URL at SUBMIT time (not annotation start) so side-panel route changes work; auto-refetch existing pins on URL change (skipped while composer open); originals restored on unmount; toggle knob track w-9→w-10 + translateX 16→18 for a real 4px gutter | apps/extension/src/components/annotation/AnnotationOverlay.vue, apps/extension/src/entrypoints/popup/App.vue | done; build clean | ~5k |
+| 20:35 | Session end: 27 writes across 4 files (App.vue, session-cache.ts, api.ts, AnnotationOverlay.vue) | 3 reads | ~23740 tok |
+| 20:43 | Session end: 27 writes across 4 files (App.vue, session-cache.ts, api.ts, AnnotationOverlay.vue) | 3 reads | ~23740 tok |
+| 20:45 | Created packages/shared/src/url.ts | — | ~802 |
+| 20:45 | Edited packages/shared/src/index.ts | 2→3 lines | ~22 |
+| 20:46 | Edited apps/api/src/annotation/annotation.service.ts | added 1 import(s) | ~111 |
+| 20:46 | Edited apps/api/src/annotation/annotation.service.ts | modified used() | ~499 |
+| 20:47 | Edited apps/api/src/annotation/annotation.service.ts | modified listPagePins() | ~177 |
+| 20:52 | Created apps/api/src/common/url.ts | — | ~823 |
+| 20:52 | Edited apps/api/src/annotation/annotation.service.ts | 3→3 lines | ~43 |
+| 20:52 | Edited packages/shared/src/index.ts | 3→2 lines | ~15 |
+| 20:54 | URL normalization for pin matching: normalizeUrl() strips tracking params (utm_/fbclid/gclid/etc), lowercases host, drops fragment, sorts query, strips trailing slash; applied in API at WRITE (createPin → session.pageUrl + pin.pageUrl) and READ (listPagePins) sides; defensively returns input unchanged for unparseable URLs; verified 5/5 cases (messy↔canonical match, trailing-slash variant matches, different id correctly DOES NOT match) | apps/api/src/common/url.ts (new), apps/api/src/annotation/annotation.service.ts | done; live verified | ~5k |
+| 20:54 | Session end: 35 writes across 7 files (App.vue, session-cache.ts, api.ts, AnnotationOverlay.vue, url.ts) | 5 reads | ~28582 tok |
+| 20:57 | Session end: 35 writes across 7 files (App.vue, session-cache.ts, api.ts, AnnotationOverlay.vue, url.ts) | 5 reads | ~28582 tok |
+| 21:00 | Created packages/shared/src/url.ts | — | ~812 |
+| 21:00 | Edited packages/shared/src/index.ts | 2→3 lines | ~22 |
+| 21:01 | Created packages/shared/package.json | — | ~233 |
+| 21:01 | Created packages/shared/tsconfig.build.json | — | ~246 |
+| 21:02 | Created packages/shared/tsconfig.build.json | — | ~120 |
+| 21:03 | Edited packages/shared/tsconfig.build.json | inline fix | ~13 |
+| 21:03 | Edited apps/api/src/annotation/annotation.service.ts | 3→3 lines | ~43 |
+| 21:05 | @pinlay/shared dist build (Option B from earlier audit): added tsconfig.build.json emitting CJS .js+.d.ts to dist/, conditional exports (import→.ts for Vite/HMR, require→dist/.js for Node CJS), prepare script auto-runs on install. Moved normalizeUrl from apps/api/src/common/url.ts back to @pinlay/shared (single source of truth). Verified live: API uses dist/, ext uses .ts (still HMR-friendly), web typecheck clean | packages/shared/{package.json, tsconfig.build.json, src/{url.ts, index.ts}}, apps/api/src/annotation/annotation.service.ts | done | ~6k |
+| 21:06 | Session end: 42 writes across 9 files (App.vue, session-cache.ts, api.ts, AnnotationOverlay.vue, url.ts) | 7 reads | ~30370 tok |
