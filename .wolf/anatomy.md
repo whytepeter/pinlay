@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-30T01:15:49.862Z
-> Files: 179 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-31T11:03:00.039Z
+> Files: 210 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -21,7 +21,7 @@
 
 ## .claude/
 
-- `launch.json` (~57 tok)
+- `launch.json` (~81 tok)
 
 ## Not yet created (future phases)
 
@@ -35,20 +35,20 @@
 
 ## apps/api/prisma/
 
-- `schema.prisma` — Prisma schema — pinlay v1 (~1424 tok)
+- `schema.prisma` — Prisma schema — pinlay v1 (~1502 tok)
 - `seed.ts` — prisma: main (~448 tok)
 
 ## apps/api/src/
 
-- `app.module.ts` — Exports AppModule (~346 tok)
-- `main.ts` — Declares bootstrap (~735 tok)
+- `app.module.ts` — Exports AppModule (~391 tok)
+- `main.ts` — Declares bootstrap (~689 tok)
 
 ## apps/api/src/annotation/
 
-- `annotation.module.ts` — Exports AnnotationModule (~120 tok)
+- `annotation.module.ts` — Exports AnnotationModule (~126 tok)
 - `annotation.service.ts` — An assignee must be a member of the caller's workspace. Without this an (~2268 tok)
 - `pins.controller.ts` — Exports PinsController (~361 tok)
-- `sessions.controller.ts` — Exports SessionsController (~201 tok)
+- `sessions.controller.ts` — Write half of the session lifecycle: finishing/submitting a capture sitting (~285 tok)
 
 ## apps/api/src/annotation/dto/
 
@@ -68,11 +68,11 @@
 
 ## apps/api/src/auth/
 
-- `auth.controller.ts` — Mirrors the extension's `Me` shape (apps/extension/src/lib/api.ts). (~561 tok)
+- `auth.controller.ts` — Mirrors the extension's `Me` shape (apps/extension/src/lib/api.ts). (~632 tok)
 - `auth.module.ts` — Exports AuthModule (~308 tok)
-- `auth.service.ts` — Exports JwtPayload, AuthResult, AuthService (~1418 tok)
+- `auth.service.ts` — Mint a JWT for a given user + active workspace. Used by signup/login here (~1530 tok)
 - `dev-auth.guard.ts` — Dev-only auth guard. While real OAuth is pending, every request resolves (~535 tok)
-- `jwt-auth.guard.ts` — Mark an endpoint as anonymous (no auth required). (~1042 tok)
+- `jwt-auth.guard.ts` — Mark an endpoint as anonymous (no auth required). (~615 tok)
 
 ## apps/api/src/auth/dto/
 
@@ -81,21 +81,62 @@
 
 ## apps/api/src/common/
 
-- `current-user.decorator.ts` — Exports AuthenticatedUser, CurrentUser (~167 tok)
+- `current-user.decorator.ts` — Exports AuthenticatedUser, CurrentUser (~162 tok)
 
 ## apps/api/src/config/
 
-- `env.ts` — Validated environment access. (~838 tok)
+- `env.ts` — Validated environment access. (~552 tok)
+
+## apps/api/src/dashboard/
+
+- `dashboard.module.ts` — Exports DashboardModule (~104 tok)
+- `dashboard.serializers.ts` — Dashboard read DTOs — designed as the *right* API contract, not a mirror of (~1707 tok)
+- `sessions.controller.ts` — Dashboard read surface. Distinct from the extension's /api/annotation/* (~369 tok)
+- `sessions.service.ts` — Dashboard read model. The dashboard's "Session" is the API's Issue (the (~951 tok)
+
+## apps/api/src/dashboard/dto/
+
+- `list-sessions.dto.ts` — Query params for GET /api/sessions — all optional filters. (~164 tok)
 
 ## apps/api/src/health/
 
 - `health.controller.ts` — Exports HealthController (~139 tok)
 - `health.module.ts` — Exports HealthModule (~50 tok)
 
+## apps/api/src/issues/
+
+- `issue.serializers.ts` — Issue read DTOs — the dashboard's primary unit. An **Issue** is the titled (~1734 tok)
+- `issues.controller.ts` — Issue read surface — the list/detail of submitted reviews. An **Issue** is (~423 tok)
+- `issues.module.ts` — Exports IssuesModule (~95 tok)
+- `issues.service.ts` — Issue read model — the dashboard's primary unit. An Issue is the titled (~940 tok)
+
+## apps/api/src/issues/dto/
+
+- `list-issues.dto.ts` — Query params for GET /api/issues — all optional filters. (~162 tok)
+
 ## apps/api/src/prisma/
 
 - `prisma.module.ts` — Exports PrismaModule (~60 tok)
 - `prisma.service.ts` — Exports PrismaService (~133 tok)
+
+## apps/api/src/sessions/
+
+- `sessions.controller.ts` — Session read surface — the list/detail of submitted reviews. Named for the (~450 tok)
+- `sessions.module.ts` — Exports SessionsModule (~99 tok)
+- `sessions.service.ts` — Dashboard read model. The dashboard's "Session" is the API's Issue (the (~951 tok)
+
+## apps/api/src/workspace/
+
+- `members.controller.ts` — Members of the caller's ACTIVE workspace. Scoped to it implicitly via the (~423 tok)
+- `workspace.controller.ts` — Every workspace the caller belongs to — powers the switcher. (~470 tok)
+- `workspace.module.ts` — Workspace (org) domain: the workspace itself + its members. Imports AuthModule (~180 tok)
+- `workspace.service.ts` — A workspace as the switcher / settings render it. (~2718 tok)
+
+## apps/api/src/workspace/dto/
+
+- `invite-member.dto.ts` — Exports InviteMemberDto (~92 tok)
+- `update-member.dto.ts` — Exports UpdateMemberDto (~42 tok)
+- `update-workspace.dto.ts` — Exports UpdateWorkspaceDto (~114 tok)
 
 ## apps/extension/
 
@@ -114,7 +155,7 @@
 
 ## apps/extension/src/components/annotation/
 
-- `AnnotationOverlay.vue` — Vue: setup (~7627 tok)
+- `AnnotationOverlay.vue` — Vue: setup (~8192 tok)
 - `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~927 tok)
 - `AnnotationPinComposer.vue` — Vue component (~7779 tok)
 - `AnnotationPinDetail.vue` — Vue component (~5244 tok)
@@ -133,18 +174,18 @@
 
 ## apps/extension/src/components/launcher/
 
-- `ConnectPrompt.vue` — Vue: setup (~404 tok)
-- `FloatingLauncher.vue` — Vue: setup (~5516 tok)
+- `ConnectPrompt.vue` — Vue: setup (~400 tok)
+- `FloatingLauncher.vue` — Vue: setup (~5352 tok)
 - `LauncherItem.vue` — Vue: setup (~789 tok)
 
 ## apps/extension/src/entrypoints/
 
 - `background.ts` — Background service worker. (~1292 tok)
-- `content.ts` — Content script — mounts the on-page surfaces: (~3003 tok)
+- `content.ts` — Content script — mounts the on-page surfaces: (~3408 tok)
 
 ## apps/extension/src/entrypoints/popup/
 
-- `App.vue` — Vue: setup (~2973 tok)
+- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~3444 tok)
 - `index.html` — pinlay (~172 tok)
 - `main.ts` (~47 tok)
 
@@ -152,9 +193,9 @@
 
 - `anchor.ts` — Element anchoring for live annotation. (~4650 tok)
 - `annotation-state.ts` — annotation-state (~809 tok)
-- `api.ts` — API client (~1599 tok)
+- `api.ts` — API client (~1856 tok)
 - `auth.ts` — Subscribe to auth changes — fires when the token is added, updated, or cleared. (~562 tok)
-- `env.ts` — Exports WEB_APP_URL, API_URL (~48 tok)
+- `env.ts` — Exports WEB_APP_URL, API_URL (~131 tok)
 - `extension.ts` — Extension runtime helpers. (~253 tok)
 
 ## apps/extension/test/
@@ -167,6 +208,7 @@
 - `package.json` — Node.js package manifest (~181 tok)
 - `package.json` — Node.js package manifest (~181 tok)
 - `vercel.json` (~78 tok)
+- `vite.config.ts` (~195 tok)
 
 ## apps/web/ — `@pinlay/app` (the dashboard)
 
@@ -187,15 +229,22 @@
 
 ## apps/web/src/
 
-- `main.ts` (~81 tok)
+- `main.ts` (~188 tok)
 
 ## apps/web/src/app/
 
-- `router.ts` — Exports router (~422 tok)
+- `router.ts` — Exports router (~984 tok)
 
 ## apps/web/src/assets/
 
 - `main.css` — Styles: 8 rules, 45 vars (~869 tok)
+
+## apps/web/src/features/auth/
+
+- `AuthLayout.vue` — Vue: setup (~648 tok)
+- `ConnectExtensionView.vue` — Vue: login, setup (~1240 tok)
+- `LoginView.vue` — Vue: signup, setup (~886 tok)
+- `SignupView.vue` — Vue: login, setup (~1079 tok)
 
 ## apps/web/src/features/dashboard/
 
@@ -248,7 +297,7 @@
 
 ## apps/web/src/features/settings/
 
-- `SettingsPage.vue` — Vue: setup (~800 tok)
+- `SettingsPage.vue` — Vue: settings, setup (~1126 tok)
 
 ## apps/web/src/features/settings/components/
 
@@ -257,7 +306,7 @@
 - `DangerZoneSection.vue` — Vue: setup (~529 tok)
 - `FormField.vue` — Vue: setup (~178 tok)
 - `FormGroup.vue` — Vue component (~30 tok)
-- `MembersSection.vue` — Vue: setup (~2177 tok)
+- `MembersSection.vue` — Vue: setup (~2171 tok)
 - `NotificationsSection.vue` — Vue: setup (~479 tok)
 - `ProfileSection.vue` — Vue: setup (~518 tok)
 - `SectionHeading.vue` — Vue: setup (~91 tok)
@@ -273,8 +322,8 @@
 
 ## apps/web/src/features/workspace-shell/components/
 
-- `AppSidebar.vue` — Hover-expand on desktop. Stays expanded while a menu is open (so clicking the (~2362 tok)
-- `StatusBar.vue` — Vue: setup (~1288 tok)
+- `AppSidebar.vue` — Hover-expand on desktop. Stays expanded while a menu is open (so clicking the (~2895 tok)
+- `StatusBar.vue` — Vue: setup (~1719 tok)
 - `WorkspaceSwitcher.vue` — Vue: Acme Inc, setup (~1145 tok)
 
 ## apps/web/src/pages/
@@ -284,9 +333,11 @@
 
 ## apps/web/src/shared/components/
 
+- `DetailsList.vue` — REUSABLE. Fetch ONE record by id via TanStack Query; owns loading/error+retry/empty/refetching. Slots: #default="{ data, refetch, isFetching }", #loading, #error, #empty. Use for issue/pin/workspace detail. (~1204 tok)
 - `Favicon.vue` — Vue: setup (~164 tok)
 - `PageHeader.vue` — Vue: setup (~244 tok)
 - `PinPill.vue` — Vue: setup (~152 tok)
+- `QueryList.vue` — REUSABLE. THE list primitive (TanStack Query). Owns loading/error+retry/empty/refetch/pagination. mode=load-more|infinite|paged. Slots: #default/#item/#loading/#error/#empty/#load-more/#pagination. Defaults to API page shape {items,total,limit,offset}. Use for ALL lists (issues, pins, members) — don't hand-roll loading/error. (~3810 tok)
 - `SeverityChip.vue` — Vue: setup (~149 tok)
 - `SeverityDot.vue` — Vue: setup (~127 tok)
 - `SeverityHeatbar.vue` — Vue: setup (~315 tok)
@@ -297,14 +348,18 @@
 
 ## apps/web/src/shared/composables/
 
+- `useAuth.ts` — Auth state — module-level singleton (same pattern as useTheme/useSettings; (~788 tok)
 - `useBoards.ts` — Exports Board, BOARD_COLORS, useBoards (~619 tok)
 - `useShell.ts` — Mobile: off-canvas drawer open. (Desktop sidebar is hover-expand, no state.) (~114 tok)
 - `useTheme.ts` — The user's preference (light/dark/system); system follows the OS. (~404 tok)
 
 ## apps/web/src/shared/lib/
 
-- `data.ts` — Mock-first seed data so the dashboard is fully buildable before the API (~2413 tok)
+- `api.ts` — Web API client. (~1449 tok)
+- `data.ts` — Mock-first seed data (SESSIONS/PEOPLE/getPins). STILL the source for PinboardsPage/useSessions/useIssue — NOT yet swapped to apiClient. (~2413 tok)
+- `extension-bridge.ts` — Web → extension token handoff. (~508 tok)
 - `format.ts` — Compact relative time, e.g. "5m ago", "3h ago", "2d ago". (~198 tok)
+- `query-client.ts` — Shared TanStack Query QueryClient (no-retry-4xx, retry network/5xx 2×). Registered via VueQueryPlugin in main.ts. (~302 tok)
 - `severity.ts` — The highest-priority severity present (drives the card's left bar). (~204 tok)
 
 ## packages/design/

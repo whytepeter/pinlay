@@ -3,8 +3,11 @@
   "configurations": [
     {
       "name": "web",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@pinlay/web", "dev"],
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        ". ~/.nvm/nvm.sh >/dev/null && nvm use 20 >/dev/null && pnpm --filter @pinlay/web dev"
+      ],
       "port": 5173
     }
   ]

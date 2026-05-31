@@ -11,7 +11,7 @@ export interface AuthenticatedUser {
 
 /**
  * @CurrentUser() param decorator — pulls the user attached by JwtAuthGuard
- * (either via verified JWT or DEV_USER_EMAIL fallback).
+ * after verifying the request's JWT.
  */
 export const CurrentUser = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext): AuthenticatedUser => {

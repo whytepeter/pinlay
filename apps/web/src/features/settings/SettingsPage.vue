@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { Icon, Tabs, TabsList, TabsTrigger } from "@pinlay/design";
 import PageHeader from "@/shared/components/PageHeader.vue";
 import ProfileSection from "./components/ProfileSection.vue";
@@ -17,7 +18,53 @@ type SectionId =
   | "notifications"
   | "danger";
 
-const section = ref<SectionId>("profile");
+const SECTIONS: SectionId[] = [
+  "profile",
+  "workspace",
+  "members",
+  "billing",
+  "notifications",
+  "danger",
+];
+
+const route = useRoute();
+const router = useRouter();
+
+// Section lives in the URL path (`/settings/profile`, `/settings/workspace`,
+// …) so each tab is deep-linkable + bookmarkable. The router redirects bare
+// `/settings` to `/settings/profile`; an unknown slug normalises here.
+function paramOf(value: unknown): SectionId | null {
+  const v = Array.isArray(value) ? value[0] : value;
+  return SECTIONS.includes(v as SectionId) ? (v as SectionId) : null;
+}
+
+const section = computed<SectionId>({
+  get() {
+    return paramOf(route.params.section) ?? "profile";
+  },
+  set(next) {
+    if (next === section.value) return;
+    void router.replace({
+      name: "settings",
+      params: { section: next },
+    });
+  },
+});
+
+// If the URL carries an unknown section (typo, stale link), rewrite it to
+// /settings/profile so the visible tab and the URL agree.
+watch(
+  () => route.params.section,
+  (raw) => {
+    if (paramOf(raw) === null) {
+      void router.replace({
+        name: "settings",
+        params: { section: "profile" },
+      });
+    }
+  },
+  { immediate: true },
+);
 
 const NAV: { id: SectionId; label: string; icon: string; danger?: boolean }[] =
   [

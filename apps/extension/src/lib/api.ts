@@ -22,6 +22,16 @@ export interface Me {
   role: string;
 }
 
+/** Active workspace (GET /workspaces/current). */
+export interface Workspace {
+  id: string;
+  slug: string;
+  name: string;
+  plan: string;
+  role: string;
+  memberCount: number;
+}
+
 export interface WorkspaceMember {
   id: string;
   name: string;
@@ -62,16 +72,32 @@ type ApiResult<T> =
   | { ok: true; data: T }
   | { ok: false; status?: number; error: string };
 
+/**
+ * Error thrown by the API client. `status` is the HTTP status when the request
+ * reached the server (e.g. 401 = not connected / token rejected); it's
+ * undefined for transport failures (API down, offline, orphaned SW) — which is
+ * how callers distinguish "you need to connect" from "the backend is
+ * unreachable".
+ */
+export class ApiError extends Error {
+  status?: number;
+  constructor(message: string, status?: number) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 async function send<T>(msg: Record<string, unknown>): Promise<T> {
   if (!isExtensionAlive()) {
-    throw new Error("Extension context invalidated — reload the page.");
+    throw new ApiError("Extension context invalidated — reload the page.");
   }
   const res = (await chrome.runtime.sendMessage({
     type: "API_FETCH",
     ...msg,
   })) as ApiResult<T> | undefined;
-  if (!res) throw new Error("No response from background worker.");
-  if (!res.ok) throw new Error(res.error);
+  if (!res) throw new ApiError("No response from background worker.");
+  if (!res.ok) throw new ApiError(res.error, res.status);
   return res.data;
 }
 
@@ -91,6 +117,10 @@ function bufferToBase64(buffer: ArrayBuffer): string {
 
 export const api = {
   me: () => send<Me>({ path: "/auth/me", method: "GET" }),
+
+  /** The caller's active workspace — real name + plan + role (not the cuid). */
+  currentWorkspace: () =>
+    send<Workspace>({ path: "/workspaces/current", method: "GET" }),
 
   getWorkspaceMembers: () =>
     send<WorkspaceMember[]>({

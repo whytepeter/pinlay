@@ -1045,3 +1045,324 @@
 | 02:17 | Session end: 43 writes across 21 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 16 reads | ~42969 tok |
 | 02:18 | Added fingerprint-confirmation to resolveAnchor (reorder no longer returns wrong el); vitest+jsdom anchor harness 7/7=100%; fixed tsconfig vite/client + .wxt include; rebuilt ext | apps/extension/src/lib/anchor.ts, test/anchor.test.ts, vitest.config.ts, tsconfig.json | done | ~12k |
 | 02:19 | Session end: 43 writes across 21 files (current-user.decorator.ts, seed.ts, ROADMAP.md, GENERAL_SPEC.md, BACKEND_SPEC.md) | 16 reads | ~42969 tok |
+
+## Session: 2026-05-30 11:00
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 11:04
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 11:06 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | removed 13 lines | ~22 |
+| 11:06 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 6→1 lines | ~22 |
+| 11:06 | Edited apps/extension/src/entrypoints/popup/App.vue | inline fix | ~16 |
+| 11:07 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | modified persistHidden() | ~13 |
+| 11:07 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | — | ~0 |
+| 11:07 | Edited apps/extension/src/entrypoints/popup/App.vue | added optional chaining | ~31 |
+| 11:07 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | CSS: style | ~79 |
+| 11:07 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | — | ~0 |
+| 11:18 | Extension typecheck fully GREEN: removed vestigial dead code (FAB account-chrome leftovers, openInDashboard+orphaned imports), fixed menuStyle TS2769, wired onUnmounted auth-unsub leak; tests 10/10, build OK | FloatingLauncher.vue, AnnotationOverlay.vue, popup/App.vue | done | ~6k |
+| 11:18 | Session end: 8 writes across 3 files (FloatingLauncher.vue, AnnotationOverlay.vue, App.vue) | 3 reads | ~16311 tok |
+| 11:34 | Edited apps/extension/src/lib/env.ts | 1→5 lines | ~105 |
+| 11:34 | Edited apps/api/prisma/schema.prisma | 11→15 lines | ~160 |
+| 11:35 | Created apps/api/src/dashboard/dashboard.serializers.ts | — | ~1174 |
+| 11:35 | Created apps/api/src/dashboard/dto/list-sessions.dto.ts | — | ~164 |
+| 11:35 | Created apps/api/src/dashboard/sessions.service.ts | — | ~732 |
+| 11:35 | Created apps/api/src/dashboard/sessions.controller.ts | — | ~369 |
+| 11:35 | Created apps/api/src/dashboard/dashboard.module.ts | — | ~104 |
+| 11:36 | Edited apps/api/src/app.module.ts | added 1 import(s) | ~72 |
+| 11:36 | Edited apps/api/src/app.module.ts | 6→7 lines | ~35 |
+
+## Session: 2026-05-30 12:54
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 12:55
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 13:32
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 13:55
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 14:15
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 14:46
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 15:35
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 15:57
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 16:04 | Created apps/api/src/dashboard/dashboard.serializers.ts | — | ~1707 |
+| 16:04 | Created apps/api/src/dashboard/sessions.service.ts | — | ~951 |
+| 16:05 | Wired extension↔API: fixed API_URL missing /api global prefix; aligned api .env PORT 4000→8787 (repo convention); prisma generate; verified API boots (health db:ok 200, /auth/me 200 seeded dev user) | apps/extension/src/lib/env.ts, apps/api/.env | done | ~10k |
+| 16:05 | Session end: 2 writes across 2 files (dashboard.serializers.ts, sessions.service.ts) | 0 reads | ~2658 tok |
+| 16:13 | dashboard read endpoints: GET /sessions, /sessions/:id (pins embedded), /sessions/:id/pins; best-shape DTOs (embedded reporter/author/assignee, number+reference, canonical comment+derived title, statusCounts); Issue.seq migration | apps/api/src/dashboard/* + schema | E2E verified, tenant-isolated, typecheck clean | ~6000 |
+| 16:14 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added error handling | ~319 |
+| 16:15 | Session end: 3 writes across 3 files (dashboard.serializers.ts, sessions.service.ts, AnnotationOverlay.vue) | 3 reads | ~16549 tok |
+| 16:15 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | mode() → network() | ~84 |
+| 16:15 | Edited apps/extension/src/entrypoints/popup/App.vue | added 1 import(s) | ~63 |
+| 16:16 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: email, Role | ~274 |
+| 16:16 | Edited apps/extension/src/entrypoints/popup/App.vue | 4→6 lines | ~40 |
+| 16:16 | Edited apps/extension/src/entrypoints/popup/App.vue | added error handling | ~57 |
+| 16:16 | Created apps/api/src/sessions/sessions.module.ts | — | ~99 |
+| 16:17 | Edited apps/api/src/sessions/sessions.controller.ts | modified constructor() | ~166 |
+| 16:17 | Edited apps/api/src/sessions/sessions.service.ts | "./dashboard.serializers" → "./session.serializers" | ~9 |
+| 16:17 | Edited apps/api/src/app.module.ts | 2→2 lines | ~38 |
+| 16:17 | Edited apps/api/src/app.module.ts | 3→3 lines | ~14 |
+| 16:17 | Edited apps/api/src/annotation/sessions.controller.ts | modified constructor() | ~129 |
+| 16:18 | Edited apps/api/src/annotation/annotation.module.ts | 9→9 lines | ~88 |
+| 16:20 | Edited apps/api/src/auth/jwt-auth.guard.ts | modified constructor() | ~615 |
+| 16:20 | Edited apps/api/src/config/env.ts | modified validateEnv() | ~355 |
+| 16:20 | Edited apps/api/src/main.ts | 8→3 lines | ~30 |
+| 16:21 | Edited apps/api/src/config/env.ts | 4→3 lines | ~68 |
+| 16:22 | Edited apps/api/src/common/current-user.decorator.ts | 2→2 lines | ~33 |
+| 16:22 | Edited apps/extension/src/lib/api.ts | expanded (+18 lines) | ~128 |
+| 16:23 | Session end: 21 writes across 13 files (dashboard.serializers.ts, sessions.service.ts, AnnotationOverlay.vue, App.vue, sessions.module.ts) | 15 reads | ~21636 tok |
+
+## Session: 2026-05-30 16:24
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 16:27 | Edited apps/extension/src/lib/api.ts | reduced (-18 lines) | ~38 |
+| 16:33 | START dashboard API wiring (sessions list+detail+pins, members, me). NOTE: another session owns login page + extension auth/connection — DO NOT touch popup/App.vue, extension auth, or build login UI. | apps/web | in progress | ~200 |
+| 16:33 | Session end: 1 writes across 1 files (api.ts) | 7 reads | ~3898 tok |
+| 16:34 | PAUSED dashboard API wiring — waiting on auth (login/token) from the other session. Resume: build web api-client reading JWT from localStorage, wire useSessions/useIssue + members + me, adapter to component shapes, verify via preview. | apps/web | blocked | ~50 |
+| 16:34 | Session end: 1 writes across 1 files (api.ts) | 7 reads | ~3898 tok |
+| 16:34 | Created apps/web/src/shared/lib/api.ts | — | ~706 |
+| 16:35 | Created apps/web/src/shared/composables/useAuth.ts | — | ~788 |
+| 16:35 | Edited apps/web/src/shared/composables/useAuth.ts | inline fix | ~15 |
+| 16:35 | Created apps/web/src/shared/lib/extension-bridge.ts | — | ~508 |
+| 16:36 | Edited apps/extension/src/entrypoints/content.ts | added optional chaining | ~491 |
+| 16:36 | Created apps/web/src/features/auth/AuthLayout.vue | — | ~648 |
+| 16:36 | Created apps/web/src/features/auth/LoginView.vue | — | ~886 |
+| 16:37 | Created apps/web/src/features/auth/SignupView.vue | — | ~1079 |
+| 16:37 | Created apps/web/src/features/auth/ConnectExtensionView.vue | — | ~1240 |
+| 16:37 | Edited apps/web/src/app/router.ts | expanded (+22 lines) | ~296 |
+| 16:38 | Edited apps/web/src/app/router.ts | added 2 condition(s) | ~336 |
+| 16:38 | Edited apps/web/src/main.ts | 10→14 lines | ~143 |
+| 16:38 | Edited apps/web/vite.config.ts | 9→10 lines | ~75 |
+| 16:39 | Edited apps/extension/src/entrypoints/popup/App.vue | modified openDashboard() | ~134 |
+| 16:39 | Edited apps/extension/src/entrypoints/popup/App.vue | added 1 import(s) | ~47 |
+| 16:46 | Edited apps/web/src/features/settings/components/MembersSection.vue | 3→2 lines | ~8 |
+| 16:51 | Removed dev-auth (guard/env/main/.env); built web auth: api client+useAuth store+route guard+hydrate, Login/Signup/AuthLayout/ConnectExtension views, web→ext token bridge (postMessage→content-script→setAuth); popup Connect→/connect-extension; fixed web vite proxy /api strip; verified 401-without-token + login chain live | apps/api/src/auth/*, apps/api/.env*, apps/web/src/{shared/lib/api.ts,shared/lib/extension-bridge.ts,shared/composables/useAuth.ts,features/auth/*,app/router.ts,main.ts}, apps/web/vite.config.ts, apps/extension/src/{entrypoints/content.ts,entrypoints/popup/App.vue} | done; both apps build, auth chain verified | ~30k |
+| 16:52 | Session end: 17 writes across 13 files (api.ts, useAuth.ts, extension-bridge.ts, content.ts, AuthLayout.vue) | 10 reads | ~20093 tok |
+| 16:55 | Session end: 17 writes across 13 files (api.ts, useAuth.ts, extension-bridge.ts, content.ts, AuthLayout.vue) | 10 reads | ~20093 tok |
+| 16:55 | Session end: 17 writes across 13 files (api.ts, useAuth.ts, extension-bridge.ts, content.ts, AuthLayout.vue) | 10 reads | ~20093 tok |
+
+## Session: 2026-05-30 16:58
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 17:00 | Edited apps/extension/src/lib/api.ts | modified send() | ~303 |
+| 17:01 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified failure() | ~467 |
+| 17:02 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 5→6 lines | ~27 |
+| 17:02 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: banner, hover | ~385 |
+| 17:03 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added 2 import(s) | ~71 |
+| 17:03 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: type, url | ~149 |
+| 17:03 | Edited apps/extension/src/components/launcher/ConnectPrompt.vue | 6→7 lines | ~91 |
+| 17:03 | Edited apps/extension/src/components/launcher/ConnectPrompt.vue | modified openConnect() | ~82 |
+| 17:04 | Edited apps/web/src/shared/lib/api.ts | added 1 condition(s) | ~693 |
+| 17:04 | Edited apps/web/src/shared/lib/api.ts | expanded (+11 lines) | ~136 |
+
+## Session: 2026-05-30 17:13
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 19:49
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 20:52
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 21:02
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 21:05 | Created apps/web/src/shared/lib/query-client.ts | — | ~302 |
+| 21:05 | Edited apps/web/src/main.ts | 14→19 lines | ~188 |
+| 21:07 | Created apps/web/src/shared/components/QueryList.vue | — | ~3820 |
+| 21:07 | Created apps/web/src/shared/components/DetailsList.vue | — | ~1214 |
+| 21:07 | Edited apps/web/src/shared/components/QueryList.vue | inline fix | ~25 |
+| 21:07 | Edited apps/web/src/shared/components/QueryList.vue | 2→1 lines | ~11 |
+| 21:07 | Edited apps/web/src/shared/components/DetailsList.vue | 3→3 lines | ~45 |
+| 21:08 | Edited apps/web/src/shared/components/DetailsList.vue | 3→1 lines | ~10 |
+| 21:09 | Session end: 8 writes across 4 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue) | 4 reads | ~10624 tok |
+| 21:09 | Edited apps/web/src/shared/lib/api.ts | 2→4 lines | ~46 |
+| 21:10 | Session end: 9 writes across 5 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue, api.ts) | 4 reads | ~10670 tok |
+| 21:11 | Session end: 9 writes across 5 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue, api.ts) | 5 reads | ~10670 tok |
+| 21:12 | Session end: 9 writes across 5 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue, api.ts) | 5 reads | ~10670 tok |
+| 21:13 | Session end: 9 writes across 5 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue, api.ts) | 5 reads | ~10670 tok |
+| 21:15 | Session end: 9 writes across 5 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue, api.ts) | 5 reads | ~10670 tok |
+| 21:17 | QueryList + DetailsList (TanStack Query): loading/error/retry/empty/refetching, paged|infinite|load-more, full slot API; QueryClient (no-retry-4xx) + VueQueryPlugin; extended web api.ts with sessions DTOs+methods | apps/web/src/shared/{components,lib} | typecheck + build green | ~3000 |
+| 21:18 | Session end: 9 writes across 5 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue, api.ts) | 5 reads | ~10670 tok |
+| 21:19 | Session end: 9 writes across 5 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue, api.ts) | 5 reads | ~10670 tok |
+
+---
+## HANDOFF NOTE → other session (2026-05-30, dashboard/data lane)
+
+**What I added (web app):**
+- `@tanstack/vue-query` installed; `QueryClient` in `apps/web/src/shared/lib/query-client.ts`; registered via `VueQueryPlugin` in `apps/web/src/main.ts`. Defaults: no-retry on 4xx, retry network/5xx 2× w/ backoff, 30s staleTime, no refetch-on-focus.
+- `apps/web/src/shared/components/QueryList.vue` — reusable list (loading/error+retry/empty/refetch/pagination). modes: load-more|infinite|paged. Use for ALL lists (issues, pins, members).
+- `apps/web/src/shared/components/DetailsList.vue` — reusable single-record-by-id fetch, same states. Use for issue/pin/workspace detail.
+- Extended `apps/web/src/shared/lib/api.ts` `apiClient` with `sessions.{list,get,pins}` + `workspaceMembers` + DTOs (SessionSummary/SessionDetail/ApiPin/MemberRef/Paginated/ListSessionsParams). Reuse these — don't define a competing client.
+
+**Conventions to follow:** Don't hand-roll isLoading/isError/try-again in feature components — wrap fetches in QueryList/DetailsList. (Also in cerebrum Key Learnings.)
+
+**NOT done yet (open):** PinboardsPage / useSessions / IssuePage / useIssue still read mock `data.ts` (SESSIONS/getPins) — NOT swapped to apiClient/QueryList. Adapter (API best-shape DTO → component SessionListItem/PinItem, with client-side favicon/urlPath derivation + people registry for personById) is designed but not written. That's the next step in this lane.
+
+**Untouched / yours:** login page, extension auth/connection, popup/App.vue — I did not modify these.
+
+**Verified:** web typecheck + production build green. NOT yet runtime-verified against live API (needs a logged-in token).
+| 21:20 | Session end: 9 writes across 5 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue, api.ts) | 5 reads | ~10670 tok |
+| 21:23 | Edited apps/api/src/auth/auth.service.ts | modified verifyToken() | ~227 |
+| 21:23 | Edited apps/api/src/auth/auth.service.ts | signAsync() → signToken() | ~25 |
+| 21:24 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | added optional chaining | ~326 |
+| 21:24 | Created apps/api/src/workspace/workspace.service.ts | — | ~2718 |
+| 21:24 | Created apps/api/src/workspace/dto/update-workspace.dto.ts | — | ~114 |
+| 21:24 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 8→9 lines | ~50 |
+| 21:24 | Created apps/api/src/workspace/dto/invite-member.dto.ts | — | ~92 |
+| 21:24 | Created apps/api/src/workspace/dto/update-member.dto.ts | — | ~42 |
+| 21:24 | Created apps/api/src/workspace/workspace.controller.ts | — | ~470 |
+| 21:24 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | added optional chaining | ~978 |
+| 21:25 | Created apps/api/src/workspace/members.controller.ts | — | ~423 |
+| 21:25 | Created apps/api/src/workspace/workspace.module.ts | — | ~180 |
+| 21:25 | Edited apps/api/src/app.module.ts | added 1 import(s) | ~89 |
+| 21:25 | Edited apps/api/src/app.module.ts | 7→8 lines | ~41 |
+| 21:28 | Edited apps/api/src/auth/auth.controller.ts | 16→21 lines | ~200 |
+| 21:29 | Built workspace/ API module (Org+Membership domain): GET /workspaces (switcher), GET/PATCH/DELETE /workspaces/current, POST /workspaces/:id/switch (re-mints JWT), GET/POST/PATCH/DELETE /workspaces/members; AuthService.signToken() extracted; verified live | apps/api/src/workspace/*, auth.service.ts, auth.controller.ts, app.module.ts | done; build+endpoints verified | ~14k |
+| 21:30 | Session end: 24 writes across 16 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue, api.ts) | 8 reads | ~21025 tok |
+| 21:33 | Added account menu + Log out to dashboard sidebar footer (AppSidebar.vue): UserAvatar trigger → dropdown w/ identity + Settings + Log out (destructive); useAuth.logout + router push /login | apps/web AppSidebar.vue | typecheck green; verified in browser — logout clears pl_token/pl_user + redirects to /login | ~600 |
+| 21:33 | Session end: 24 writes across 16 files (query-client.ts, main.ts, QueryList.vue, DetailsList.vue, api.ts) | 8 reads | ~21025 tok |
+
+## Session: 2026-05-30 21:34
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 21:35 | Created apps/api/src/issues/issue.serializers.ts | — | ~1734 |
+| 21:36 | Created apps/api/src/issues/dto/list-issues.dto.ts | — | ~162 |
+| 21:36 | Created apps/api/src/issues/issues.service.ts | — | ~940 |
+| 21:37 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 6→5 lines | ~29 |
+
+## Session: 2026-05-30 21:38
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 21:38
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 21:38
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 22:14
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 22:40
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-30 00:08
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 11:40
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 11:43
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 11:43
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 11:44 | Created apps/api/src/issues/issues.controller.ts | — | ~423 |
+| 11:44 | Created apps/api/src/issues/issues.module.ts | — | ~95 |
+| 11:44 | Edited apps/api/src/app.module.ts | 2→2 lines | ~36 |
+| 11:44 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 2→2 lines | ~29 |
+| 11:44 | Edited apps/api/src/app.module.ts | 4→4 lines | ~20 |
+| 11:44 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | modified onLogout() | ~55 |
+| 11:44 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 13→11 lines | ~67 |
+| 11:45 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | reduced (-32 lines) | ~643 |
+| 11:45 | Edited apps/web/src/features/workspace-shell/components/StatusBar.vue | 20→25 lines | ~105 |
+| 11:45 | Edited apps/web/src/features/workspace-shell/components/StatusBar.vue | expanded (+21 lines) | ~311 |
+| 11:46 | Edited apps/web/src/features/settings/SettingsPage.vue | added 2 condition(s) | ~638 |
+| 11:47 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 5→4 lines | ~22 |
+| 11:47 | Edited apps/web/src/shared/lib/api.ts | 2→2 lines | ~42 |
+| 11:48 | Edited apps/web/src/shared/lib/api.ts | 2→2 lines | ~28 |
+| 11:48 | Edited apps/web/src/shared/lib/api.ts | 4→4 lines | ~24 |
+| 11:48 | Edited apps/web/src/shared/lib/api.ts | 3→3 lines | ~21 |
+| 11:48 | Edited apps/web/src/shared/lib/api.ts | 7→7 lines | ~37 |
+| 11:49 | Edited apps/web/src/shared/lib/api.ts | Sessions() → Issues() | ~110 |
+
+## Session: 2026-05-31 11:51
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 11:52 | Edited apps/web/src/app/router.ts | expanded (+6 lines) | ~127 |
+| 11:52 | Edited apps/web/src/features/settings/SettingsPage.vue | added nullish coalescing | ~514 |
+| 11:53 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 2→2 lines | ~26 |
+| 11:53 | Renamed API sessions/ module → issues/ (the dashboard read surface reads the Issue model): /sessions→/issues routes, Session*Dto→Issue*Dto, PinDto.sessionId→issueId; deleted old sessions/; mirrored in web api.ts client; kept /annotation/sessions/:id/submit (capture Session model). Verified live | apps/api/src/issues/*, app.module.ts, apps/web/src/shared/lib/api.ts | done; API+web build clean, routes verified | ~10k |
+| 11:53 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 4→5 lines | ~29 |
+| 11:53 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | CSS: params, section | ~95 |
+| 11:54 | Session end: 5 writes across 3 files (router.ts, SettingsPage.vue, AppSidebar.vue) | 1 reads | ~1739 tok |
+| 11:54 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | CSS: navigation | ~768 |
+| 11:54 | Edited apps/web/src/features/workspace-shell/components/StatusBar.vue | identity() → install() | ~394 |
+| 12:01 | Edited .claude/launch.json | 11→14 lines | ~80 |
+| 12:01 | Edited apps/extension/src/lib/api.ts | 8→12 lines | ~110 |
+| 12:02 | Edited apps/extension/src/lib/api.ts | expanded (+10 lines) | ~101 |
+| 12:02 | Edited apps/extension/src/entrypoints/popup/App.vue | added nullish coalescing | ~1017 |
+| 12:03 | Edited apps/extension/src/entrypoints/popup/App.vue | modified onDisconnect() | ~35 |
+
+## Session: 2026-05-31 12:03
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 12:03
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-31 12:03
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|

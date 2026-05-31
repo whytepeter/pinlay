@@ -59,11 +59,6 @@ async function bootstrap() {
 
   await app.listen(cfg.port);
   logger.log(`pinlay API listening on http://localhost:${cfg.port}/api`);
-  if (cfg.devAuthEnabled) {
-    logger.warn(
-      `DEV AUTH ENABLED — unauthenticated requests resolve to ${cfg.devUserEmail}. Never in production.`,
-    );
-  }
 }
 
 void bootstrap();

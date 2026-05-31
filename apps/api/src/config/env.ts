@@ -2,9 +2,8 @@
  * Validated environment access.
  *
  * Centralises every `process.env` read so the rest of the app never touches
- * `process.env` directly — which is how the dev-auth fallback ended up
- * ungated. Validation runs once at boot (see `validateEnv`); a misconfigured
- * production deploy fails fast instead of silently opening a hole.
+ * `process.env` directly. Validation runs once at boot (see `validateEnv`); a
+ * misconfigured production deploy fails fast instead of silently opening a hole.
  */
 
 export type NodeEnv = "development" | "test" | "production";
@@ -17,21 +16,8 @@ export interface AppEnv {
   jwtSecret: string;
   jwtExpiresIn: string;
 
-  /**
-   * Dev-auth fallback. ONLY honoured when:
-   *   nodeEnv !== "production"  AND  allowDevAuth === true  AND devUserEmail set.
-   * Production can never anonymous-auth even if DEV_USER_EMAIL leaks into the
-   * environment.
-   */
-  devAuthEnabled: boolean;
-  devUserEmail: string | null;
-
   /** Max request body size (e.g. "10mb"). Sized for base64 screenshots. */
   bodyLimit: string;
-}
-
-function bool(v: string | undefined): boolean {
-  return v === "true" || v === "1" || v === "yes";
 }
 
 /**
@@ -54,18 +40,6 @@ export function validateEnv(
     );
   }
 
-  const allowDevAuthFlag = bool(raw.ALLOW_DEV_AUTH);
-  const devUserEmail = raw.DEV_USER_EMAIL?.trim() || null;
-
-  // Hard rule: dev-auth is impossible in production, full stop. We also refuse
-  // to *start* if someone tried to turn it on in prod — fail loud, not silent.
-  if (isProd && allowDevAuthFlag) {
-    throw new Error(
-      "ALLOW_DEV_AUTH cannot be enabled in production. Remove it from the prod environment.",
-    );
-  }
-  const devAuthEnabled = !isProd && allowDevAuthFlag && !!devUserEmail;
-
   const corsOrigins = (raw.CORS_ORIGINS ?? "")
     .split(",")
     .map((s) => s.trim())
@@ -80,8 +54,6 @@ export function validateEnv(
     corsOrigins,
     jwtSecret,
     jwtExpiresIn: raw.JWT_EXPIRES_IN?.trim() || "30d",
-    devAuthEnabled,
-    devUserEmail,
     bodyLimit: raw.BODY_LIMIT?.trim() || "10mb",
   };
 }

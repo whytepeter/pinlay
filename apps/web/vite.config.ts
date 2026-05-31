@@ -13,10 +13,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      // The API mounts every route under `/api` (NestJS setGlobalPrefix), so
+      // forward the prefix as-is — do NOT strip it.
       "/api": {
         target: "http://localhost:8787",
         changeOrigin: true,
-        rewrite: (p) => p.replace(/^\/api/, ""),
       },
     },
   },

@@ -283,18 +283,6 @@ const auth = ref<StoredAuth | null>(null);
 const FAB_HIDDEN_KEY = "pl_fab_hidden";
 const hidden = ref(false);
 
-// User + workspace chips shown in the idle menu. Wire to useSettings / the
-// API later — for now we render readable placeholders so the layout is real.
-const userInitial = computed(() => "Y");
-const userLabel = computed(() => "You");
-const userSubtext = computed(() => (auth.value ? "Connected" : "Local mode"));
-const workspaceLabel = computed(() =>
-  auth.value ? "Acme Inc" : "Local workspace",
-);
-const workspaceSubtext = computed(() =>
-  auth.value ? "Pro plan" : "Not connected",
-);
-
 // ── Draggable position ───────────────────────────────────────────────────────
 const FAB_SIZE = 44;
 const MARGIN = 20;
@@ -381,9 +369,13 @@ const menuStyle = computed<Record<string, string>>(() => {
     ),
   );
   const openUp = fabPos.value.top > window.innerHeight / 2;
-  return openUp
-    ? { left: `${left}px`, bottom: `${window.innerHeight - fabPos.value.top + 8}px` }
-    : { left: `${left}px`, top: `${fabPos.value.top + FAB_SIZE + 8}px` };
+  const style: Record<string, string> = { left: `${left}px` };
+  if (openUp) {
+    style.bottom = `${window.innerHeight - fabPos.value.top + 8}px`;
+  } else {
+    style.top = `${fabPos.value.top + FAB_SIZE + 8}px`;
+  }
+  return style;
 });
 
 // ── Shared annotation state ──────────────────────────────────────────────────
@@ -471,15 +463,6 @@ function onHideLauncher() {
   hidden.value = true;
   void persistHidden(true);
 }
-function onDisconnect() {
-  if (!auth.value) return;
-  closeMenu();
-  void (async () => {
-    const { clearAuth } = await import("../../lib/auth");
-    await clearAuth();
-  })();
-}
-
 async function persistHidden(value: boolean) {
   try {
     await chrome.storage.local.set({ [FAB_HIDDEN_KEY]: value });

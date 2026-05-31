@@ -112,6 +112,20 @@ export class AuthService {
     }
   }
 
+  /**
+   * Mint a JWT for a given user + active workspace. Used by signup/login here
+   * and by the workspace switch endpoint (which re-issues a token bound to the
+   * newly-selected workspace). The single place that builds a JwtPayload.
+   */
+  async signToken(user: { id: string; email: string }, workspaceId: string): Promise<string> {
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      wsId: workspaceId,
+    };
+    return this.jwt.signAsync(payload);
+  }
+
   // ── Helpers ──────────────────────────────────────────────────────────────
   private async uniqueWorkspaceSlug(name: string): Promise<string> {
     const base =
@@ -138,12 +152,7 @@ export class AuthService {
     workspace: { id: string; slug: string; name: string; plan: string },
     role: string,
   ): Promise<AuthResult> {
-    const payload: JwtPayload = {
-      sub: user.id,
-      email: user.email,
-      wsId: workspace.id,
-    };
-    const token = await this.jwt.signAsync(payload);
+    const token = await this.signToken(user, workspace.id);
     return {
       token,
       user: {

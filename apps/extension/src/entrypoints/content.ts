@@ -52,6 +52,45 @@ export default defineContentScript({
       }
     });
 
+    // ── Web → extension token handoff ─────────────────────────────────────────
+    // The dashboard's /connect-extension page posts the session token here
+    // (window.postMessage, same-origin). We relay it to the background worker
+    // for storage, then ACK so the page can show "connected". Only messages
+    // from THIS window + our own origin are honoured.
+    window.addEventListener("message", (e: MessageEvent) => {
+      if (e.source !== window) return;
+      const data = e.data as {
+        type?: string;
+        token?: string;
+        userId?: string;
+        orgId?: string;
+      };
+      if (data?.type !== "pinlay:web-connect-extension") return;
+      if (typeof data.token !== "string" || !data.token) return;
+
+      void (async () => {
+        let result: { ok: boolean; version?: string; error?: string };
+        try {
+          const { setAuth } = await import("../lib/auth");
+          await setAuth({
+            token: data.token!,
+            orgId: data.orgId ?? "",
+            userId: data.userId,
+          });
+          result = {
+            ok: true,
+            version: chrome.runtime.getManifest().version,
+          };
+        } catch (err) {
+          result = { ok: false, error: (err as Error).message };
+        }
+        window.postMessage(
+          { type: "pinlay:extension-connected", ...result },
+          window.location.origin,
+        );
+      })();
+    });
+
     // Composer → content-script: enter region-capture mode. Mounts the
     // RegionSelector shadow UI; on selection we crop and dispatch the dataUrl
     // back via `pinlay:capture-region-result` so the composer can attach it.

@@ -9,6 +9,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Icon,
   Input,
   Label,
@@ -108,28 +113,62 @@ function submitInvite() {
 
     <div class="flex-1" />
 
-    <Tooltip>
-      <TooltipTrigger as-child>
-        <Button
-          variant="ghost"
-          size="icon"
-          :title="`Theme: ${mode}`"
-          @click="cycle"
-        >
-          <Icon :name="themeIcon[mode]" :size="16" />
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent class="capitalize">Theme: {{ mode }}</TooltipContent>
-    </Tooltip>
+    <div class="flex items-center">
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <Button
+            variant="ghost"
+            size="icon"
+            :title="`Theme: ${mode}`"
+            @click="cycle"
+          >
+            <Icon :name="themeIcon[mode]" :size="16" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent class="capitalize">Theme: {{ mode }}</TooltipContent>
+      </Tooltip>
 
-    <Tooltip>
-      <TooltipTrigger as-child>
-        <Button variant="ghost" size="icon" title="Notifications">
-          <Icon name="bell" :size="16" />
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>Notifications</TooltipContent>
-    </Tooltip>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <Button variant="ghost" size="icon" title="Notifications">
+            <Icon name="bell" :size="16" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Notifications</TooltipContent>
+      </Tooltip>
+
+      <!-- Help & install (moved from the sidebar so the footer there can stay
+         focused on identity). Full content: bug report, support, docs, and
+         the "Install extension" CTA. -->
+      <DropdownMenu>
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <DropdownMenuTrigger as-child>
+              <Button variant="ghost" size="icon" title="Help & install">
+                <Icon name="circle-help" :size="16" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" class="w-56">
+              <DropdownMenuItem>
+                <Icon name="message-square-warning" :size="14" /> Send a bug
+                report
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Icon name="life-buoy" :size="14" /> Contact support
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Icon name="book-open" :size="14" /> Docs
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Icon name="download" :size="14" /> Install browser extension
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </TooltipTrigger>
+          <TooltipContent>Help &amp; install</TooltipContent>
+        </Tooltip>
+      </DropdownMenu>
+    </div>
 
     <Dialog v-model:open="inviteOpen">
       <DialogContent>

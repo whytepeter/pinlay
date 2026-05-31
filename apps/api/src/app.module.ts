@@ -5,8 +5,10 @@ import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { PrismaModule } from "./prisma/prisma.module";
 import { HealthModule } from "./health/health.module";
 import { AuthModule } from "./auth/auth.module";
+import { WorkspaceModule } from "./workspace/workspace.module";
 import { AnnotationModule } from "./annotation/annotation.module";
 import { AttachmentsModule } from "./attachments/attachments.module";
+import { IssuesModule } from "./issues/issues.module";
 
 @Module({
   imports: [
@@ -27,8 +29,10 @@ import { AttachmentsModule } from "./attachments/attachments.module";
     PrismaModule,
     HealthModule,
     AuthModule,
+    WorkspaceModule,
     AnnotationModule,
     AttachmentsModule,
+    IssuesModule,
   ],
   providers: [
     // Applies the throttler to every route by default.

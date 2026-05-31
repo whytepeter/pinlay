@@ -1,8 +1,9 @@
 <!--
   ConnectPrompt — "connect your workspace" panel rendered when no auth is
   stored. Used by the popup (filling the body) and the floating launcher menu
-  (replacing the action list). Single button opens /extension/connect with the
-  runtime id so the web app can auto-handoff in one click.
+  (replacing the action list). The button opens the dashboard's connect page;
+  the web app posts the session token back via the content-script bridge (no
+  extension id needed).
 -->
 <template>
   <div class="px-4 py-5 text-center">
@@ -32,11 +33,11 @@ import { WEB_APP_URL } from "../../lib/env";
 import { isExtensionAlive, safeSendMessage } from "../../lib/extension";
 
 async function openConnect() {
+  const url = `${WEB_APP_URL}/connect-extension`;
   if (!isExtensionAlive()) {
-    window.open(`${WEB_APP_URL}/extension/connect`, "_blank", "noopener");
+    window.open(url, "_blank", "noopener");
     return;
   }
-  const url = `${WEB_APP_URL}/extension/connect?ext=${chrome.runtime.id}`;
   const sent = await safeSendMessage<{ ok: boolean }>({ type: "OPEN_TAB", url });
   if (!sent) window.open(url, "_blank", "noopener");
 }

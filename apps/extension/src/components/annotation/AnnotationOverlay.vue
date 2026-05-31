@@ -24,6 +24,31 @@
   <!-- Outer layer is INERT by default — pointer-events:none lets every page
        click pass through. Children opt back in. -->
   <div class="fixed inset-0 z-[2147483640] pointer-events-none">
+    <!-- Connection banner: pins aren't persisting. Shown for "disconnected"
+         (needs Connect) and "offline" (API down) — never while probing or
+         when ready. -->
+    <div
+      v-if="apiState === 'disconnected' || apiState === 'offline'"
+      class="pointer-events-auto absolute left-1/2 top-3 flex -translate-x-1/2 items-center gap-2.5 rounded-lg border border-status-stale/30 bg-card px-3 py-2 text-[12px] shadow-md"
+    >
+      <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-status-stale" />
+      <span class="text-foreground">
+        {{
+          apiState === "disconnected"
+            ? "Not connected — pins are saved locally only."
+            : "Can't reach pinlay — pins are saved locally only."
+        }}
+      </span>
+      <button
+        v-if="apiState === 'disconnected'"
+        type="button"
+        class="shrink-0 rounded-md bg-primary px-2 py-0.5 text-[11px] font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+        @click="openConnect"
+      >
+        Connect
+      </button>
+    </div>
+
     <!-- PLACE-mode capture layer: covers the page only while picking AND no
          composer is open. The second guard keeps composer clicks from being
          stolen by the layer. -->
@@ -179,11 +204,12 @@ import type { PinListRow } from "../../lib/annotation-state";
 import { describeAnchor, resolveAnchor, type PinAnchor } from "../../lib/anchor";
 import {
   api,
+  ApiError,
   type AnnotationPinRow,
   type WorkspaceMember,
 } from "../../lib/api";
-import { safeSendMessage } from "../../lib/extension";
 import { WEB_APP_URL } from "../../lib/env";
+import { safeSendMessage } from "../../lib/extension";
 import { useAnnotationState } from "../../lib/annotation-state";
 import type { Severity, Status, PinType } from "@pinlay/shared";
 import type { StoredAuth } from "../../lib/auth";
@@ -444,31 +470,57 @@ const viewingPin = computed<ExistingPin | null>(() => {
 // ── Hydrate existing pins ───────────────────────────────────────────────────
 state.setActive(true);
 
-onMounted(async () => {
-  // Auth gate disabled until apps/api lands. Without a token we skip both
-  // fetches and the overlay runs in local-only mode (drafts promote locally
-  // on submit, see onComposerSubmit). Restore the original guard
-  //   `if (!props.auth?.token || !props.browserMeta.pageUrl) return;`
-  // when the API is wired up.
-  if (!props.auth?.token || !props.browserMeta.pageUrl) return;
+// Connection state — resolved by one probe at startup. Three outcomes:
+//   "ready"         → request authenticated; pins persist to the API.
+//   "disconnected"  → 401: no/invalid token. The user must Connect (we surface
+//                     a banner + the launcher reflects it); pins still fall to
+//                     local mode so a click is never lost, but we tell them.
+//   "offline"       → transport failure (API down / no network): local mode.
+// submit/finish await `apiProbe` so a fast first pin can't race the probe.
+type ApiConnState = "probing" | "ready" | "disconnected" | "offline";
+const apiState = ref<ApiConnState>("probing");
+const apiReady = computed(() => apiState.value === "ready");
 
-  const [pinsResult, membersResult] = await Promise.allSettled([
-    api.getPagePins(props.browserMeta.pageUrl),
-    api.getWorkspaceMembers(),
-  ]);
-
-  if (pinsResult.status === "fulfilled") {
-    existingPins.value = pinsResult.value
+const apiProbe: Promise<void> = (async () => {
+  if (!props.browserMeta.pageUrl) {
+    apiState.value = "offline";
+    return;
+  }
+  try {
+    const pins = await api.getPagePins(props.browserMeta.pageUrl);
+    apiState.value = "ready";
+    existingPins.value = pins
       .map((row, i) => rowToExistingPin(row, i + 1))
       .filter((p): p is ExistingPin => p !== null);
-  } else {
-    console.warn("[pinlay] failed to load existing pins:", pinsResult.reason);
+  } catch (e) {
+    // 401 = authenticated request rejected → not connected. Anything without a
+    // status (network error, orphaned SW) = the backend is unreachable.
+    const status = e instanceof ApiError ? e.status : undefined;
+    apiState.value = status === 401 ? "disconnected" : "offline";
+    console.warn(
+      `[pinlay] API ${apiState.value} — pins will save locally:`,
+      (e as Error).message,
+    );
+    return;
   }
+  // Members are optional context (the assignee picker) — a failure here must
+  // not knock us out of API mode.
+  try {
+    members.value = await api.getWorkspaceMembers();
+  } catch {
+    /* assignee list stays empty */
+  }
+})();
 
-  if (membersResult.status === "fulfilled") {
-    members.value = membersResult.value;
-  }
-});
+// Open the dashboard's connect page (same handoff the popup uses). The web app
+// posts the session token back, the content script stores it; the user can
+// re-enter annotation to pick up API mode.
+function openConnect() {
+  void safeSendMessage({
+    type: "OPEN_TAB",
+    url: `${WEB_APP_URL}/connect-extension`,
+  });
+}
 
 watch(
   () =>
@@ -671,11 +723,6 @@ function openPin(pinId: string) {
   }
 }
 
-function openInDashboard(issueId: string) {
-  void safeSendMessage({ type: "OPEN_TAB", url: `${WEB_APP_URL}/s/${issueId}` });
-  viewingPinId.value = null;
-}
-
 // ── Inline status change ─────────────────────────────────────────────────────
 const statusUpdatingId = ref<string | null>(null);
 
@@ -704,10 +751,13 @@ async function onComposerSubmit(draft: PinDraft) {
   pin.submitting = true;
   pin.error = undefined;
 
-  // Local-only mode (no API yet): promote the draft to an existing pin
-  // without hitting the network. Delete this branch when apps/api lands —
-  // the guard above used to short-circuit with "Connect a workspace…".
-  if (!props.auth?.token) {
+  // Wait for the startup probe so a fast first pin doesn't race into local
+  // mode before we know the API is up.
+  await apiProbe;
+
+  // Local-only fallback: only when the API is unreachable. Promotes the draft
+  // to an in-memory pin without hitting the network (offline / API down).
+  if (!apiReady.value) {
     const attachments = await Promise.all(
       (draft.images ?? []).map(fileToAttachment),
     );

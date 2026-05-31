@@ -57,6 +57,11 @@ export class AuthController {
     };
   }
 
+  /**
+   * @deprecated Members moved to `GET /workspaces/members` (workspace module).
+   * Kept as a thin alias so the shipped extension build keeps working until it
+   * adopts the new path. Remove once the extension is updated + reloaded.
+   */
   @Get("workspace/members")
   async members(@CurrentUser() user: AuthenticatedUser) {
     const members = await this.prisma.workspaceMember.findMany({

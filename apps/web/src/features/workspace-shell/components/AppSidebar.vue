@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import {
   Brand,
   Button,
@@ -22,11 +22,31 @@ import {
 } from "@pinlay/design";
 import { useShell } from "@/shared/composables/useShell";
 import { BOARD_COLORS, useBoards } from "@/shared/composables/useBoards";
+import { useAuth } from "@/shared/composables/useAuth";
+import UserAvatar from "@/shared/components/UserAvatar.vue";
 import WorkspaceSwitcher from "./WorkspaceSwitcher.vue";
 
 const route = useRoute();
+const router = useRouter();
 const { mobileOpen, closeMobile } = useShell();
 const { boards, activeBoardId, boardCounts, addBoard } = useBoards();
+const { user, logout } = useAuth();
+
+const accountMenuOpen = ref(false);
+const displayName = computed(
+  () => user.value?.name || user.value?.email || "Account"
+);
+
+function goProfile() {
+  void router.push({ name: "settings", params: { section: "profile" } });
+  closeMobile();
+  accountMenuOpen.value = false;
+}
+
+async function onLogout() {
+  logout();
+  await router.push({ name: "login" });
+}
 
 /**
  * Hover-expand on desktop. Stays expanded while a menu is open (so clicking the
@@ -36,15 +56,14 @@ const { boards, activeBoardId, boardCounts, addBoard } = useBoards();
  */
 const hovered = ref(false);
 const wsMenuOpen = ref(false);
-const helpMenuOpen = ref(false);
 const newBoardOpen = ref(false);
 const expanded = computed(
   () =>
     hovered.value ||
     mobileOpen.value ||
     wsMenuOpen.value ||
-    helpMenuOpen.value ||
-    newBoardOpen.value,
+    accountMenuOpen.value ||
+    newBoardOpen.value
 );
 
 const nav = [
@@ -237,34 +256,69 @@ function isActive(to: string) {
 
     <Separator />
 
-    <!-- help / install menu -->
+    <!-- footer: account menu. Trigger shows the user; the user-info row
+         INSIDE the popover is the link to Profile. Log out lives below. -->
     <div class="p-2.5">
-      <DropdownMenu v-model:open="helpMenuOpen">
+      <DropdownMenu v-model:open="accountMenuOpen">
         <DropdownMenuTrigger as-child>
           <button
-            class="flex h-9 items-center gap-2.5 rounded-md text-left text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
-            :class="expanded ? 'w-full px-2.5' : 'size-9 justify-center'"
-            :title="!expanded ? 'Help & install' : undefined"
+            class="flex h-10 items-center gap-2.5 rounded-md text-left text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground"
+            :class="
+              expanded ? 'w-full px-2' : 'size-9 justify-center self-center'
+            "
+            :title="!expanded ? displayName : undefined"
           >
-            <Icon name="circle-help" :size="18" class="shrink-0" />
-            <span v-show="expanded" class="whitespace-nowrap text-sm">
-              Help &amp; install
+            <UserAvatar :name="displayName" :size="24" class="shrink-0" />
+            <span
+              v-show="expanded"
+              class="flex min-w-0 flex-1 flex-col leading-tight"
+            >
+              <span class="truncate text-sm font-medium text-foreground">
+                {{ displayName }}
+              </span>
+              <span
+                v-if="user?.email && user.email !== displayName"
+                class="truncate text-[11px] text-muted-foreground"
+              >
+                {{ user.email }}
+              </span>
             </span>
+            <Icon
+              v-show="expanded"
+              name="chevrons-up-down"
+              :size="14"
+              class="shrink-0 text-muted-foreground"
+            />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" side="top" class="w-56">
-          <DropdownMenuItem>
-            <Icon name="message-square-warning" :size="14" /> Send a bug report
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Icon name="life-buoy" :size="14" /> Contact support
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Icon name="book-open" :size="14" /> Docs
+          <!-- The identity row IS the navigation: clicking it takes you to
+               /settings/profile. Modelled as a DropdownMenuItem so it gets
+               keyboard nav + the standard hover/focus chrome for free. -->
+          <DropdownMenuItem class="gap-2.5 p-2" @select="goProfile">
+            <span class="flex min-w-0 flex-1 flex-col leading-tight">
+              <span class="truncate text-sm font-medium text-foreground">
+                {{ displayName }}
+              </span>
+              <span
+                v-if="user?.email"
+                class="truncate text-[11px] text-muted-foreground"
+              >
+                {{ user.email }}
+              </span>
+            </span>
+            <Icon
+              name="chevron-right"
+              :size="14"
+              class="shrink-0 text-muted-foreground"
+            />
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Icon name="download" :size="14" /> Install browser extension
+          <DropdownMenuItem
+            class="text-destructive focus:text-destructive"
+            @select="onLogout"
+          >
+            <Icon name="log-out" :size="14" /> Log out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

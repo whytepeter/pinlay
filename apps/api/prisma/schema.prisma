@@ -123,6 +123,10 @@ model Session {
 
 model Issue {
   id          String   @id @default(cuid())
+  // Human-friendly sequential number, rendered as "PL-0142" in the dashboard.
+  // Global autoincrement (not per-workspace) — simplest stable short id; the
+  // workspace scope is enforced on every read so cross-tenant ids never leak.
+  seq         Int      @unique @default(autoincrement())
   workspaceId String
   sessionId   String   @unique
   authorId    String

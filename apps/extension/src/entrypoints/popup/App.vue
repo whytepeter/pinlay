@@ -1,41 +1,55 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { Brand, Icon } from "@pinlay/design";
 import { clearAuth, getAuth, onAuthChange, type StoredAuth } from "../../lib/auth";
+import { api, type Me, type Workspace } from "../../lib/api";
+import { WEB_APP_URL } from "../../lib/env";
 
 // "Main popover launcher" — the menu the user opens from the Chrome toolbar
 // icon. Owns the account chrome (user, workspace, connect/disconnect), the
 // primary action ("Drop a pin"), and the FAB show/hide toggle. The in-page
 // FAB stays focused on the active task and does NOT carry account chrome.
 
+// Connection lifecycle drives the whole UI:
+//   "loading"      → first /auth/me in flight; show skeletons (never dummy data)
+//   "connected"    → real identity + workspace resolved
+//   "disconnected" → no/invalid token (401) → idle connect prompt
+//   "offline"      → API unreachable (network) → idle, retry-able
+type ConnState = "loading" | "connected" | "disconnected" | "offline";
+const conn = ref<ConnState>("loading");
+
 const status = ref<"idle" | "starting" | "ok" | "error">("idle");
 const auth = ref<StoredAuth | null>(null);
+const me = ref<Me | null>(null);
+const workspace = ref<Workspace | null>(null);
 const pageHost = ref<string>("");
 
-// StoredAuth currently only carries token + orgId + userId; once apps/api lands
-// we'll extend it with `user: { name, email }` and `workspace: { name, plan }`
-// and these computeds will pull from there directly.
+const isLoading = computed(() => conn.value === "loading");
+const isConnected = computed(() => conn.value === "connected");
+
+// User identity (only read when connected).
 const userInitial = computed(() => {
-  const id = auth.value?.userId?.trim();
-  if (id) return id.charAt(0).toUpperCase();
-  return "Y";
+  const source = me.value?.name?.trim() || me.value?.email?.trim();
+  return source ? source.charAt(0).toUpperCase() : "?";
 });
-const userLabel = computed(() => auth.value?.userId || "You");
-const userSubtext = computed(() =>
-  auth.value ? "Connected" : "Working in local mode",
-);
-const workspaceLabel = computed(
-  () => auth.value?.orgId || "Local workspace",
-);
-const workspaceSubtext = computed(() =>
-  auth.value ? "Synced" : "Not connected",
-);
-const connected = computed(() => !!auth.value);
+const userLabel = computed(() => me.value?.name || me.value?.email || "");
+const userEmail = computed(() => me.value?.email ?? "");
+
+// Workspace identity — the REAL name + plan, never the cuid.
+const workspaceLabel = computed(() => workspace.value?.name ?? "");
+const workspaceSubtext = computed(() => {
+  if (!workspace.value) return "";
+  const plan = workspace.value.plan;
+  const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
+  const seats = workspace.value.memberCount;
+  return `${planLabel} · ${seats} member${seats === 1 ? "" : "s"}`;
+});
 
 const FAB_HIDDEN_KEY = "pl_fab_hidden";
 const launcherHidden = ref(false);
 
 let unsubscribeAuth: (() => void) | null = null;
+onUnmounted(() => unsubscribeAuth?.());
 
 onMounted(async () => {
   try {
@@ -47,7 +61,9 @@ onMounted(async () => {
   auth.value = await getAuth();
   unsubscribeAuth = onAuthChange((next) => {
     auth.value = next;
+    void refresh();
   });
+  void refresh();
 
   // Show the active tab's host so the user has page context (knows what
   // they're about to pin on). chrome:// and the new-tab page render blank.
@@ -67,6 +83,27 @@ onMounted(async () => {
     /* ignore */
   }
 });
+
+/** Resolve identity + workspace in one pass. Distinguishes 401 (not connected)
+ *  from a transport failure (offline) so the idle UI can be specific. */
+async function refresh() {
+  // Only show the skeleton on the very first load, not on background refreshes.
+  if (!me.value) conn.value = "loading";
+  try {
+    const [meRes, wsRes] = await Promise.all([
+      api.me(),
+      api.currentWorkspace(),
+    ]);
+    me.value = meRes;
+    workspace.value = wsRes;
+    conn.value = "connected";
+  } catch (e) {
+    me.value = null;
+    workspace.value = null;
+    const status = (e as { status?: number }).status;
+    conn.value = status === 401 ? "disconnected" : "offline";
+  }
+}
 
 async function toggleLauncher() {
   launcherHidden.value = !launcherHidden.value;
@@ -92,18 +129,22 @@ async function startAnnotation() {
 }
 
 function openDashboard() {
-  chrome.tabs.create({ url: "http://localhost:5173/" });
+  chrome.tabs.create({ url: `${WEB_APP_URL}/` });
 }
 
 async function onDisconnect() {
-  if (!auth.value) return;
   await clearAuth();
+  me.value = null;
+  workspace.value = null;
+  conn.value = "disconnected";
 }
 
 function onConnect() {
-  // Auth gate disabled until apps/api lands. The connect CTA opens the
-  // dashboard where the user will eventually complete OAuth.
-  openDashboard();
+  // Open the dashboard's connect page. If the user is already signed in there,
+  // it hands the session token straight back to this extension; otherwise it
+  // routes through /login?redirect=/connect-extension and returns here after.
+  chrome.tabs.create({ url: `${WEB_APP_URL}/connect-extension` });
+  window.close();
 }
 </script>
 
