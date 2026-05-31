@@ -69,7 +69,7 @@ function submitInvite() {
 
 <template>
   <header
-    class="sticky top-0 z-20 flex h-12 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur"
+    class="sticky top-0 z-20 flex h-12 items-center gap-3 border-b border-border bg-bg-1/80 px-4 backdrop-blur"
   >
     <Button
       variant="ghost"
