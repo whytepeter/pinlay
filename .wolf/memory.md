@@ -1473,3 +1473,20 @@
 | 21:11 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 2→7 lines | ~99 |
 | 21:11 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: client | ~158 |
 | 21:12 | Session end: 45 writes across 9 files (App.vue, session-cache.ts, api.ts, AnnotationOverlay.vue, url.ts) | 7 reads | ~31215 tok |
+
+## Session: 2026-05-31 21:14
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-01 09:30
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 09:35 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: NOTE | ~141 |
+| 09:36 | Edited apps/extension/src/entrypoints/popup/App.vue | 13→10 lines | ~128 |
+| 09:36 | Edited apps/extension/src/entrypoints/popup/App.vue | 20→19 lines | ~239 |
+| 09:40 | Session end: 3 writes across 1 files (App.vue) | 1 reads | ~7740 tok |
+| 09:49 | Session end: 3 writes across 1 files (App.vue) | 2 reads | ~13092 tok |
+| 09:53 | Edited apps/extension/src/entrypoints/popup/App.vue | 19→21 lines | ~279 |
+| 09:55 | Session end: 4 writes across 1 files (App.vue) | 2 reads | ~13391 tok |

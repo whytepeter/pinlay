@@ -446,10 +446,15 @@ function onConnect() {
           </div>
         </div>
 
-        <!-- CONNECTED: real identity + workspace. -->
+        <!-- CONNECTED: real identity + workspace.
+             NOTE: no `overflow-hidden` here — the workspace-switcher dropdown
+             is absolute-positioned inside this card and gets clipped otherwise.
+             The card has no internal backgrounds that spill past its rounded
+             corners (rows are transparent + hover-only), so dropping the clip
+             is visually safe. -->
         <div
           v-else
-          class="overflow-hidden rounded-lg border border-border bg-card"
+          class="rounded-lg border border-border bg-card"
         >
           <!-- User row -->
           <div class="flex items-center gap-3 px-3 py-2.5">
@@ -572,17 +577,14 @@ function onConnect() {
                     }}
                   </span>
                 </span>
+                <!-- Active workspace is conveyed by the primary-colored
+                     avatar; the trailing check icon was visual noise on top
+                     of that. Only the per-row switching spinner remains. -->
                 <Icon
                   v-if="switchingTo === ws.id"
                   name="loader-circle"
                   :size="13"
                   class="shrink-0 animate-spin text-muted-foreground"
-                />
-                <Icon
-                  v-else-if="ws.id === workspace?.id"
-                  name="check"
-                  :size="13"
-                  class="shrink-0 text-primary"
                 />
               </button>
 
@@ -641,11 +643,12 @@ function onConnect() {
                 }}
               </span>
             </span>
-            <!-- Track 40 × 20, knob 16 with a 2px left inset. ON: translateX
-                 18px → knob's left at 20, right edge at 36 → 4px clear of the
-                 track edge. Previous 2px clearance was equal to the knob's own
-                 drop-shadow, so the shadow clipped the rounded corner and
-                 looked like overflow. -->
+            <!-- Locked math (DO NOT bump translateX past 18 on this geometry).
+                 Track h-5 w-10 (20×40) is rounded-full (r=10). The 16×16 knob
+                 with 2px inset corners the right rounded arc EXACTLY at
+                 translateX(18px) — its top-right corner (36, 2) satisfies
+                 (36-30)² + (2-10)² = 100 = r². Higher translate values look
+                 like the knob "pokes through" because corners breach the arc. -->
             <span
               :class="[
                 'relative h-5 w-10 shrink-0 rounded-full transition-colors',

@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-31T20:11:35.663Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-01T08:53:46.309Z
 > Files: 216 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -186,7 +186,7 @@
 
 ## apps/extension/src/entrypoints/popup/
 
-- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~7108 tok)
+- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~7233 tok)
 - `index.html` — pinlay (~172 tok)
 - `main.ts` (~47 tok)
 

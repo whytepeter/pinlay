@@ -3391,6 +3391,22 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-05-31T20:11:35.676Z"
+    },
+    {
+      "id": "bug-211",
+      "timestamp": "2026-06-01T08:35:44.012Z",
+      "error_message": "CSS fix: CONNECTED",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "CONNECTED: real identity + workspace. --> → real identity + workspace.",
+      "fix": "Changed CONNECTED: real identity + workspace. --> → real identity + workspace.",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-01T08:35:44.012Z"
     }
   ]
 }
