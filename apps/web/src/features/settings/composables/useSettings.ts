@@ -1,3 +1,12 @@
+// TODO(api): settings is a junk-drawer composable that bundles 5 concerns
+// against mock state — split incrementally as each backend module lands.
+//   profile      → GET /auth/me (live) + PATCH /auth/me (NOT BUILT — see HANDOFF gaps)
+//   workspace    → GET/PATCH /workspaces/current (LIVE — see apiClient.workspaces)
+//   members      → GET/POST/PATCH/DELETE /workspaces/members (LIVE)
+//   notifications → notifications/ module NOT BUILT
+//   billing/plan → PATCH /workspaces/current (plan field) + Stripe NOT BUILT
+// New code should NOT extend this composable; wire each section directly to
+// vue-query against the appropriate apiClient.workspaces.* method.
 import { reactive, ref } from "vue";
 import type { IntegrationKind, Role, User } from "@pinlay/shared";
 import { PEOPLE } from "@/shared/lib/data";

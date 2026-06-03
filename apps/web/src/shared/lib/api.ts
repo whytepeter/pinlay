@@ -56,6 +56,119 @@ export interface WorkspaceMember extends MemberRef {
   role: string;
 }
 
+/** Workspace-scoped grouping of issues. */
+export interface Board {
+  id: string;
+  workspaceId: string;
+  name: string;
+  slug: string;
+  color: string;
+  position: number;
+  issueCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Compact board chip embedded in IssueSummary / IssueDetail. */
+export interface BoardRef {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+}
+
+export interface CreateBoardInput {
+  name: string;
+  slug?: string;
+  color?: string;
+  position?: number;
+}
+
+export interface UpdateBoardInput {
+  name?: string;
+  slug?: string;
+  color?: string;
+  position?: number;
+}
+
+/** A workspace as the switcher / settings render it (mirrors WorkspaceDto). */
+export interface Workspace {
+  id: string;
+  slug: string;
+  name: string;
+  plan: string;
+  role: string;
+  memberCount: number;
+}
+
+export interface WorkspaceMemberRow {
+  id: string;
+  userId: string;
+  name: string;
+  email: string;
+  avatarUrl: string | null;
+  role: string;
+  createdAt: string;
+}
+
+/** Pending workspace invite row. Mirrors apps/api InviteDto. */
+export interface WorkspaceInviteRow {
+  id: string;
+  email: string;
+  role: string;
+  status: "pending" | "accepted" | "revoked" | "expired";
+  /** Opaque accept-by-link token. Compose the URL as `${origin}/invite/${token}`. */
+  token: string;
+  invitedBy: { id: string; name: string };
+  invitedAt: string;
+  expiresAt: string;
+}
+
+/** Public preview returned by GET /api/invites/:token. */
+export interface PublicInvitePreview {
+  workspace: { id: string; slug: string; name: string };
+  email: string;
+  role: string;
+  invitedBy: { name: string };
+  expiresAt: string;
+  hasAccount: boolean;
+}
+
+/**
+ * POST /workspaces/members/invite returns either a member (instant join when
+ * the invitee already has an account) or a pending invite. Discriminated by
+ * `kind`.
+ */
+export type InviteResult =
+  | { kind: "member"; member: WorkspaceMemberRow }
+  | { kind: "invite"; invite: WorkspaceInviteRow };
+
+export interface SwitchWorkspaceResult {
+  token: string;
+  workspace: Workspace;
+}
+
+export interface UpdateWorkspaceInput {
+  name?: string;
+  plan?: string;
+}
+
+export interface CreateWorkspaceInput {
+  name: string;
+  /** Auto-derived from name if omitted. Lowercase alphanumerics + hyphens. */
+  slug?: string;
+}
+
+export interface UpdateMeInput {
+  name?: string;
+  avatarUrl?: string | null;
+}
+
+export interface InviteMemberInput {
+  email: string;
+  role?: string;
+}
+
 export interface SeverityCounts {
   critical: number;
   high: number;
@@ -80,6 +193,7 @@ export interface IssueSummary {
   pageUrl: string;
   status: Status;
   reporter: MemberRef | null;
+  board: BoardRef | null;
   pinCount: number;
   severityCounts: SeverityCounts;
   statusCounts: StatusCounts;
@@ -123,6 +237,16 @@ export interface IssueDetail extends IssueSummary {
   pins: ApiPin[];
 }
 
+/** Single comment on a pin. Mirrors apps/api SerializedComment. */
+export interface PinCommentRow {
+  id: string;
+  pinId: string;
+  body: string;
+  author: MemberRef;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Paginated<T> {
   items: T[];
   total: number;
@@ -132,10 +256,39 @@ export interface Paginated<T> {
 
 export interface ListIssuesParams {
   status?: Status;
+  /** Only issues with at least one pin at this severity. */
+  severity?: Severity;
   pageUrl?: string;
   q?: string;
+  /**
+   * Board id to scope to, OR the literal string `"null"` to surface only
+   * unassigned issues. Omit for no board filter.
+   */
+  boardId?: string;
+  /** User id of the issue's reporter (= issue.author). */
+  reporterId?: string;
+  /**
+   * Include archived issues. Default (omitted) hides them. Has no effect
+   * when an explicit `status` is set.
+   */
+  includeArchived?: "true";
   limit?: number;
   offset?: number;
+}
+
+export interface IssueCounts {
+  all: number;
+  open: number;
+  in_progress: number;
+  resolved: number;
+  archived: number;
+}
+
+export interface UpdateIssueInput {
+  /** New board id, or `null` to unassign. Undefined leaves the assignment alone. */
+  boardId?: string | null;
+  title?: string;
+  status?: Status;
 }
 
 function qs(params: Record<string, unknown>): string {
@@ -197,8 +350,85 @@ export const apiClient = {
 
   me: () => request<Me>("/auth/me"),
 
+  updateMe: (dto: UpdateMeInput) =>
+    request<Me>("/auth/me", {
+      method: "PATCH",
+      body: JSON.stringify(dto),
+    }),
+
   workspaceMembers: () =>
     request<WorkspaceMember[]>("/auth/workspace/members"),
+
+  // ── Workspaces (switcher + settings) ─────────────────────────────────────
+  workspaces: {
+    list: () => request<Workspace[]>("/workspaces"),
+    current: () => request<Workspace>("/workspaces/current"),
+    create: (dto: CreateWorkspaceInput) =>
+      request<SwitchWorkspaceResult>("/workspaces", {
+        method: "POST",
+        body: JSON.stringify(dto),
+      }),
+    update: (dto: UpdateWorkspaceInput) =>
+      request<Workspace>("/workspaces/current", {
+        method: "PATCH",
+        body: JSON.stringify(dto),
+      }),
+    remove: () =>
+      request<void>("/workspaces/current", { method: "DELETE" }),
+    switch: (id: string) =>
+      request<SwitchWorkspaceResult>(`/workspaces/${id}/switch`, {
+        method: "POST",
+      }),
+    members: () => request<WorkspaceMemberRow[]>("/workspaces/members"),
+    invite: (dto: InviteMemberInput) =>
+      request<InviteResult>("/workspaces/members/invite", {
+        method: "POST",
+        body: JSON.stringify(dto),
+      }),
+    updateMember: (id: string, dto: { role: string }) =>
+      request<WorkspaceMemberRow>(`/workspaces/members/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(dto),
+      }),
+    removeMember: (id: string) =>
+      request<void>(`/workspaces/members/${id}`, { method: "DELETE" }),
+
+    // Pending invites — admins can list / resend / revoke them.
+    invites: () => request<WorkspaceInviteRow[]>("/workspaces/invites"),
+    resendInvite: (id: string) =>
+      request<WorkspaceInviteRow>(`/workspaces/invites/${id}/resend`, {
+        method: "POST",
+      }),
+    revokeInvite: (id: string) =>
+      request<void>(`/workspaces/invites/${id}`, { method: "DELETE" }),
+  },
+
+  // ── Public invite-by-token (accept page) ────────────────────────────────
+  invites: {
+    /** Preview an invite. Public — no auth required. */
+    lookup: (token: string) =>
+      request<PublicInvitePreview>(`/invites/${encodeURIComponent(token)}`),
+
+    /** Authenticated accept (email of caller must match invite email). */
+    accept: (token: string) =>
+      request<SwitchWorkspaceResult>(
+        `/invites/${encodeURIComponent(token)}/accept`,
+        { method: "POST" },
+      ),
+
+    /** Public signup + accept flow for invitees who don't yet have an account. */
+    acceptWithSignup: (
+      token: string,
+      input: { name: string; password: string },
+    ) =>
+      request<SwitchWorkspaceResult>(
+        `/invites/${encodeURIComponent(token)}/accept-with-signup`,
+        {
+          method: "POST",
+          body: JSON.stringify(input),
+        },
+      ),
+  },
 
   // ── Issues (dashboard read surface) ──────────────────────────────────────
   issues: {
@@ -206,7 +436,82 @@ export const apiClient = {
       request<Paginated<IssueSummary>>(
         `/issues${qs(params as Record<string, unknown>)}`,
       ),
+    /**
+     * Issue counts per status, honoring non-status filters. The `status`
+     * field of `params` is ignored server-side.
+     */
+    counts: (params: Omit<ListIssuesParams, "status" | "limit" | "offset"> = {}) =>
+      request<IssueCounts>(
+        `/issues/counts${qs(params as Record<string, unknown>)}`,
+      ),
     get: (id: string) => request<IssueDetail>(`/issues/${id}`),
     pins: (id: string) => request<ApiPin[]>(`/issues/${id}/pins`),
+    update: (id: string, patch: UpdateIssueInput) =>
+      request<IssueSummary>(`/issues/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      }),
+  },
+
+  // ── Boards (workspace-scoped issue groupings) ────────────────────────────
+  boards: {
+    list: () => request<Board[]>("/boards"),
+    create: (dto: CreateBoardInput) =>
+      request<Board>("/boards", {
+        method: "POST",
+        body: JSON.stringify(dto),
+      }),
+    update: (id: string, dto: UpdateBoardInput) =>
+      request<Board>(`/boards/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(dto),
+      }),
+    remove: (id: string) =>
+      request<void>(`/boards/${id}`, { method: "DELETE" }),
+  },
+
+  // ── Pin mutations (extension's write surface, reused by the dashboard) ──
+  pins: {
+    update: (id: string, patch: UpdatePinInput) =>
+      request<ApiPin>(`/annotation/pins/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      }),
+    remove: (id: string) =>
+      request<{ deleted: boolean }>(`/annotation/pins/${id}`, {
+        method: "DELETE",
+      }),
+
+    // Threaded comments on a single pin.
+    comments: {
+      list: (pinId: string) =>
+        request<PinCommentRow[]>(`/annotation/pins/${pinId}/comments`),
+      create: (pinId: string, body: string) =>
+        request<PinCommentRow>(`/annotation/pins/${pinId}/comments`, {
+          method: "POST",
+          body: JSON.stringify({ body }),
+        }),
+      update: (pinId: string, commentId: string, body: string) =>
+        request<PinCommentRow>(
+          `/annotation/pins/${pinId}/comments/${commentId}`,
+          { method: "PATCH", body: JSON.stringify({ body }) },
+        ),
+      remove: (pinId: string, commentId: string) =>
+        request<void>(
+          `/annotation/pins/${pinId}/comments/${commentId}`,
+          { method: "DELETE" },
+        ),
+    },
   },
 };
+
+export interface UpdatePinInput {
+  status?: Status;
+  /** Member id to assign, or null to unassign. */
+  assigneeId?: string | null;
+  comment?: string;
+  severity?: Severity;
+  /** Wire-side field name is `issueType` on the API. */
+  issueType?: PinType;
+  labels?: string[];
+}

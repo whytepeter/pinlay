@@ -18,6 +18,14 @@ export const router = createRouter({
       meta: { public: true },
     },
     {
+      // Workspace invite accept page. Public — anyone with the token can
+      // preview the invite. Accepting branches on auth state (see view).
+      path: "/invite/:token",
+      name: "invite",
+      component: () => import("@/features/auth/AcceptInviteView.vue"),
+      meta: { public: true },
+    },
+    {
       // Reached from the extension popup's "Connect". Requires auth: the guard
       // bounces unauthed users to /login?redirect=/connect-extension, and they
       // land back here after signing in.

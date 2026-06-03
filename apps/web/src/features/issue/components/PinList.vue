@@ -2,25 +2,25 @@
 import { computed } from "vue";
 import type { DisplayStatus } from "@pinlay/shared";
 import { Button, Icon } from "@pinlay/design";
-import {
-  personById,
-  type PinItem,
-  type SessionListItem,
-} from "@/shared/lib/data";
+import type { ApiPin, IssueSummary } from "@/shared/lib/api";
 import { firstName, timeAgo } from "@/shared/lib/format";
+import { issueDisplay } from "@/shared/lib/issue-display";
 import StatusChip from "@/shared/components/StatusChip.vue";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
 import PinListItem from "./PinListItem.vue";
 
 const props = defineProps<{
-  session: SessionListItem;
-  pins: PinItem[];
+  session: IssueSummary;
+  pins: ApiPin[];
   selectedIndex: number;
 }>();
 defineEmits<{ select: [number] }>();
 
-const reporter = computed(() => personById(props.session.reporterId));
+const display = computed(() => issueDisplay(props.session));
 const status = computed(() => props.session.status as DisplayStatus);
+const reporterName = computed(
+  () => props.session.reporter?.name ?? "Unknown reporter",
+);
 </script>
 
 <template>
@@ -37,8 +37,12 @@ const status = computed(() => props.session.status as DisplayStatus);
         </Button>
       </div>
       <div class="flex items-center gap-2">
-        <UserAvatar :name="reporter.name" :hue="reporter.avatarHue" :size="20" />
-        <span class="text-xs font-medium">{{ firstName(reporter.name) }}</span>
+        <UserAvatar
+          :name="reporterName"
+          :hue="display.faviconHue"
+          :size="20"
+        />
+        <span class="text-xs font-medium">{{ firstName(reporterName) }}</span>
         <span class="text-xs text-muted-foreground"
           >· {{ timeAgo(session.updatedAt) }}</span
         >

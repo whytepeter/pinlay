@@ -2,18 +2,22 @@
 import { computed } from "vue";
 import type { DisplayStatus } from "@pinlay/shared";
 import { Icon } from "@pinlay/design";
-import { personById, type SessionListItem } from "@/shared/lib/data";
+import type { IssueSummary } from "@/shared/lib/api";
 import { sevBg, topSeverity } from "@/shared/lib/severity";
+import { issueDisplay } from "@/shared/lib/issue-display";
 import Favicon from "@/shared/components/Favicon.vue";
 import SeverityHeatbar from "@/shared/components/SeverityHeatbar.vue";
 import StatusChip from "@/shared/components/StatusChip.vue";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
 
-const props = defineProps<{ session: SessionListItem }>();
+const props = defineProps<{ session: IssueSummary }>();
 
-const reporter = computed(() => personById(props.session.reporterId));
+const display = computed(() => issueDisplay(props.session));
 const top = computed(() => topSeverity(props.session.severityCounts));
 const status = computed(() => props.session.status as DisplayStatus);
+const reporterName = computed(
+  () => props.session.reporter?.name ?? "Unknown",
+);
 </script>
 
 <template>
@@ -24,13 +28,13 @@ const status = computed(() => props.session.status as DisplayStatus);
     <span class="absolute inset-y-0 left-0 w-[2px]" :class="sevBg[top]" />
 
     <span class="w-16 shrink-0 font-mono text-[11px] text-muted-foreground">{{
-      session.shortId
+      session.reference
     }}</span>
 
     <div class="flex min-w-0 flex-1 items-center gap-2">
       <Favicon
-        :label="session.faviconLabel"
-        :hue="session.faviconHue"
+        :label="display.faviconLabel"
+        :hue="display.faviconHue"
         :size="14"
       />
       <span class="truncate text-sm text-foreground">{{ session.title }}</span>
@@ -49,8 +53,8 @@ const status = computed(() => props.session.status as DisplayStatus);
     >
     <UserAvatar
       class="hide-narrow"
-      :name="reporter.name"
-      :hue="reporter.avatarHue"
+      :name="reporterName"
+      :hue="display.faviconHue"
       :size="24"
     />
     <StatusChip class="shrink-0" :status="status" />

@@ -1,11 +1,12 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-01T08:53:46.309Z
-> Files: 216 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-03T00:26:43.197Z
+> Files: 240 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
 - `.gitignore` — Git ignore rules (~144 tok)
+- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~4041 tok)
 - `HANDOFF.md` — pinlay — Handoff (~4508 tok)
 - `package.json` — Node.js package manifest (~299 tok)
 - `ROADMAP.md` — pinlay — Product Roadmap (~3286 tok)
@@ -35,25 +36,39 @@
 
 ## apps/api/prisma/
 
-- `schema.prisma` — Prisma schema — pinlay v1 (~1502 tok)
+- `schema.prisma` — Pending workspace invite. Created when an admin invites an email that (~2413 tok)
 - `seed.ts` — prisma: main (~448 tok)
+
+## apps/api/prisma/migrations/20260601160000_boards/
+
+- `migration.sql` — Boards module. Workspace-scoped groupings for issues. (~398 tok)
+
+## apps/api/prisma/migrations/20260602180000_invites/
+
+- `migration.sql` — Invites: pending workspace memberships. (~417 tok)
+
+## apps/api/prisma/migrations/20260603020000_pin_comments/
+
+- `migration.sql` — Threaded discussion attached to a single pin. Workspace scoping is (~283 tok)
 
 ## apps/api/src/
 
-- `app.module.ts` — Exports AppModule (~391 tok)
+- `app.module.ts` — Exports AppModule (~412 tok)
 - `main.ts` — Declares bootstrap (~689 tok)
 
 ## apps/api/src/annotation/
 
 - `annotation.module.ts` — Exports AnnotationModule (~126 tok)
-- `annotation.service.ts` — An assignee must be a member of the caller's workspace. Without this an (~2426 tok)
-- `pins.controller.ts` — Exports PinsController (~361 tok)
+- `annotation.service.ts` — Wire shape for a pin comment. (~3779 tok)
+- `pins.controller.ts` — Exports PinsController (~708 tok)
 - `sessions.controller.ts` — Write half of the session lifecycle: finishing/submitting a capture sitting (~285 tok)
 
 ## apps/api/src/annotation/dto/
 
+- `create-comment.dto.ts` — Exports CreateCommentDto (~48 tok)
 - `create-pin.dto.ts` — Exports CreatePinDto (~221 tok)
 - `submit-session.dto.ts` — Exports SubmitSessionDto (~72 tok)
+- `update-comment.dto.ts` — Exports UpdateCommentDto (~56 tok)
 - `update-pin.dto.ts` — Patch shape — everything optional. (~216 tok)
 
 ## apps/api/src/attachments/
@@ -68,9 +83,9 @@
 
 ## apps/api/src/auth/
 
-- `auth.controller.ts` — Mirrors the extension's `Me` shape (apps/extension/src/lib/api.ts). (~632 tok)
-- `auth.module.ts` — Exports AuthModule (~308 tok)
-- `auth.service.ts` — Mint a JWT for a given user + active workspace. Used by signup/login here (~1530 tok)
+- `auth.controller.ts` — Mirrors the extension's `Me` shape (apps/extension/src/lib/api.ts). (~757 tok)
+- `auth.module.ts` — Exports AuthModule (~397 tok)
+- `auth.service.ts` — Shape returned by GET /auth/me and PATCH /auth/me. (~2372 tok)
 - `dev-auth.guard.ts` — Dev-only auth guard. While real OAuth is pending, every request resolves (~535 tok)
 - `jwt-auth.guard.ts` — Mark an endpoint as anonymous (no auth required). (~615 tok)
 
@@ -78,6 +93,18 @@
 
 - `login.dto.ts` — Exports LoginDto (~64 tok)
 - `signup.dto.ts` — Plain-text password; hashed before storage. (~145 tok)
+- `update-me.dto.ts` — Patch the caller's profile. Email is intentionally NOT mutable — changing (~234 tok)
+
+## apps/api/src/boards/
+
+- `boards.controller.ts` — Boards — workspace-scoped issue groupings. Reads are open to all members; (~406 tok)
+- `boards.module.ts` — Boards domain: workspace-scoped issue groupings (Checkout, Marketing, …). (~162 tok)
+- `boards.service.ts` — Wire shape for a board. (~2248 tok)
+
+## apps/api/src/boards/dto/
+
+- `create-board.dto.ts` — Auto-derived from name when omitted. Lowercase alphanumerics + hyphens, (~278 tok)
+- `update-board.dto.ts` — Exports UpdateBoardDto (~169 tok)
 
 ## apps/api/src/common/
 
@@ -106,14 +133,15 @@
 
 ## apps/api/src/issues/
 
-- `issue.serializers.ts` — Issue read DTOs — the dashboard's primary unit. An **Issue** is the titled (~1734 tok)
-- `issues.controller.ts` — Issue read surface — the list/detail of submitted reviews. An **Issue** is (~423 tok)
-- `issues.module.ts` — Exports IssuesModule (~95 tok)
-- `issues.service.ts` — Issue read model — the dashboard's primary unit. An Issue is the titled (~940 tok)
+- `issue.serializers.ts` — Issue read DTOs — the dashboard's primary unit. An **Issue** is the titled (~1905 tok)
+- `issues.controller.ts` — Issue read + narrow-write surface — the list/detail of submitted reviews. (~733 tok)
+- `issues.module.ts` — Exports IssuesModule (~115 tok)
+- `issues.service.ts` — Issue read model — the dashboard's primary unit. An Issue is the titled (~2404 tok)
 
 ## apps/api/src/issues/dto/
 
-- `list-issues.dto.ts` — Query params for GET /api/issues — all optional filters. (~162 tok)
+- `list-issues.dto.ts` — Query params for GET /api/issues — all optional filters. (~403 tok)
+- `update-issue.dto.ts` — Patch surface for an issue. Each field is optional — clients send only the (~278 tok)
 
 ## apps/api/src/prisma/
 
@@ -128,16 +156,19 @@
 
 ## apps/api/src/workspace/
 
+- `invite-accept.controller.ts` — Body for POST /api/invites/:token/accept-with-signup. Email is intentionally (~731 tok)
+- `invites.controller.ts` — Pending workspace invites — sit alongside members so the Settings page can (~422 tok)
 - `members.controller.ts` — Members of the caller's ACTIVE workspace. Scoped to it implicitly via the (~423 tok)
-- `workspace.controller.ts` — Every workspace the caller belongs to — powers the switcher. (~470 tok)
-- `workspace.module.ts` — Workspace (org) domain: the workspace itself + its members. Imports AuthModule (~180 tok)
-- `workspace.service.ts` — A workspace as the switcher / settings render it. (~2718 tok)
+- `workspace.controller.ts` — Every workspace the caller belongs to — powers the switcher. (~652 tok)
+- `workspace.module.ts` — Workspace (org) domain: the workspace itself + its members + pending (~288 tok)
+- `workspace.service.ts` — Reserved subdomain-ish slugs that we never want a workspace to claim — they (~8422 tok)
 
 ## apps/api/src/workspace/dto/
 
+- `create-workspace.dto.ts` — Create a new workspace. The caller becomes the owner; the response includes (~238 tok)
 - `invite-member.dto.ts` — Exports InviteMemberDto (~92 tok)
 - `update-member.dto.ts` — Exports UpdateMemberDto (~42 tok)
-- `update-workspace.dto.ts` — Exports UpdateWorkspaceDto (~114 tok)
+- `update-workspace.dto.ts` — Workspace URL slug. Lowercase alphanumerics + hyphens, 2–60 chars, (~228 tok)
 
 ## apps/extension/
 
@@ -231,11 +262,12 @@
 
 ## apps/web/src/
 
-- `main.ts` (~188 tok)
+- `App.vue` — Vue: setup (~954 tok)
+- `main.ts` (~197 tok)
 
 ## apps/web/src/app/
 
-- `router.ts` — Exports router (~984 tok)
+- `router.ts` — Exports router (~1074 tok)
 
 ## apps/web/src/assets/
 
@@ -243,6 +275,7 @@
 
 ## apps/web/src/features/auth/
 
+- `AcceptInviteView.vue` — Public invite-accept page reached from an invite link (~2865 tok)
 - `AuthLayout.vue` — Vue: setup (~648 tok)
 - `ConnectExtensionView.vue` — Vue: login, setup (~1240 tok)
 - `LoginView.vue` — Vue: signup, setup (~886 tok)
@@ -262,40 +295,43 @@
 
 ## apps/web/src/features/integrations/composables/
 
-- `useIntegrations.ts` — Exports IntegrationCategory, IntegrationItem, useIntegrations (~852 tok)
+- `useIntegrations.ts` — TODO(api): integrations/ module is not built yet (Roadmap Phase 3). Today (~981 tok)
 
 ## apps/web/src/features/issue/
 
-- `IssuePage.vue` — Vue: setup (~1247 tok)
+- `IssuePage.vue` — Single mutation handles every issue patch (board / status / title). The (~4279 tok)
 
 ## apps/web/src/features/issue/components/
 
-- `ActivityThread.vue` — Vue: setup (~674 tok)
-- `AnchorBlock.vue` — Vue: setup (~577 tok)
-- `PinDetail.vue` — Vue: setup (~1630 tok)
-- `PinList.vue` — Vue: setup (~696 tok)
-- `PinListItem.vue` — Vue: setup (~464 tok)
+- `ActivityThread.vue` — Real activity thread for a single pin. (~2956 tok)
+- `AnchorBlock.vue` — Vue: setup (~815 tok)
+- `IssuePageSkeleton.vue` — Vue: setup (~1079 tok)
+- `PinDetail.vue` — Commit the typed label. Splits on comma so the user can paste a list. Dedup (~2720 tok)
+- `PinList.vue` — Vue: setup (~734 tok)
+- `PinListItem.vue` — Vue: setup (~458 tok)
 - `ReplyBox.vue` — Vue: setup (~337 tok)
-- `ScreenshotViewer.vue` — Vue: setup (~647 tok)
+- `ScreenshotViewer.vue` — Vue: setup (~853 tok)
 
 ## apps/web/src/features/issue/composables/
 
-- `useIssue.ts` — Exports useIssue (~550 tok)
+- `useIssue.ts` — Replace the selected pin's labels[]. Caller passes the full new list — (~1293 tok)
 
 ## apps/web/src/features/pinboards/
 
-- `PinboardsPage.vue` — Vue: setup (~781 tok)
+- `PinboardsPage.vue` — Vue: setup (~1970 tok)
 
 ## apps/web/src/features/pinboards/components/
 
 - `EmptyState.vue` — Vue: setup (~220 tok)
-- `SessionCard.vue` — Vue: setup (~743 tok)
-- `SessionFilters.vue` — Vue: setup (~1123 tok)
-- `SessionRow.vue` — Vue: setup (~601 tok)
+- `SessionCard.vue` — Vue: setup (~825 tok)
+- `SessionCardSkeleton.vue` — Vue: setup (~330 tok)
+- `SessionFilters.vue` — Vue: setup (~1148 tok)
+- `SessionRow.vue` — Vue: setup (~631 tok)
+- `SessionRowSkeleton.vue` — Vue: setup (~244 tok)
 
 ## apps/web/src/features/pinboards/composables/
 
-- `useSessions.ts` — Exports ViewMode, StatusFilter, SeverityFilter, SortMode, useSessions (~621 tok)
+- `useSessions.ts` — Stores the reporter's userId (not the workspace-member-row id). (~1376 tok)
 
 ## apps/web/src/features/settings/
 
@@ -305,18 +341,18 @@
 
 - `BillingSection.vue` — Vue: Free, setup (~1764 tok)
 - `BillingSection.vue` — Free/Pro plan-comparison cards + mock setPlan; reads workspace.plan from useSettings (~500 tok)
-- `DangerZoneSection.vue` — Vue: setup (~529 tok)
+- `DangerZoneSection.vue` — Vue: login, setup (~1469 tok)
 - `FormField.vue` — Vue: setup (~178 tok)
 - `FormGroup.vue` — Vue component (~30 tok)
-- `MembersSection.vue` — Vue: setup (~2171 tok)
+- `MembersSection.vue` — Vue: setup (~3467 tok)
 - `NotificationsSection.vue` — Vue: setup (~479 tok)
-- `ProfileSection.vue` — Vue: setup (~518 tok)
+- `ProfileSection.vue` — Vue: setup (~880 tok)
 - `SectionHeading.vue` — Vue: setup (~91 tok)
-- `WorkspaceSection.vue` — Vue: setup (~832 tok)
+- `WorkspaceSection.vue` — Vue: setup (~1689 tok)
 
 ## apps/web/src/features/settings/composables/
 
-- `useSettings.ts` — Exports MemberStatus, Member, PlanId, WorkspaceState + 3 more (~978 tok)
+- `useSettings.ts` — TODO(api): settings is a junk-drawer composable that bundles 5 concerns (~1168 tok)
 
 ## apps/web/src/features/workspace-shell/
 
@@ -324,9 +360,9 @@
 
 ## apps/web/src/features/workspace-shell/components/
 
-- `AppSidebar.vue` — Hover-expand on desktop. Stays expanded while a menu is open (so clicking the (~2895 tok)
-- `StatusBar.vue` — Vue: setup (~1719 tok)
-- `WorkspaceSwitcher.vue` — Vue: Acme Inc, setup (~1145 tok)
+- `AppSidebar.vue` — Hover-expand on desktop. Stays expanded while a menu is open (so clicking the (~5079 tok)
+- `StatusBar.vue` — Vue: settings, setup (~2749 tok)
+- `WorkspaceSwitcher.vue` — Shared post-switch reconciliation: replace the bearer token, drop every (~2289 tok)
 
 ## apps/web/src/pages/
 
@@ -350,19 +386,21 @@
 
 ## apps/web/src/shared/composables/
 
-- `useAuth.ts` — Auth state — module-level singleton (same pattern as useTheme/useSettings; (~788 tok)
-- `useBoards.ts` — Exports Board, BOARD_COLORS, useBoards (~619 tok)
+- `useAuth.ts` — Auth state — module-level singleton (same pattern as useTheme/useSettings; (~1050 tok)
+- `useBoards.ts` — Boards = workspace-scoped groupings backed by the /api/boards module. (~1364 tok)
 - `useShell.ts` — Mobile: off-canvas drawer open. (Desktop sidebar is hover-expand, no state.) (~114 tok)
 - `useTheme.ts` — The user's preference (light/dark/system); system follows the OS. (~404 tok)
 
 ## apps/web/src/shared/lib/
 
-- `api.ts` — Web API client. (~1449 tok)
+- `api.ts` — Web API client. (~3926 tok)
 - `data.ts` — Mock-first seed data (SESSIONS/PEOPLE/getPins). STILL the source for PinboardsPage/useSessions/useIssue — NOT yet swapped to apiClient. (~2413 tok)
 - `extension-bridge.ts` — Web → extension token handoff. (~508 tok)
 - `format.ts` — Compact relative time, e.g. "5m ago", "3h ago", "2d ago". (~198 tok)
+- `issue-display.ts` — Client-derived display fields for an issue summary. The API intentionally (~350 tok)
 - `query-client.ts` — Shared TanStack Query QueryClient (no-retry-4xx, retry network/5xx 2×). Registered via VueQueryPlugin in main.ts. (~302 tok)
 - `severity.ts` — The highest-priority severity present (drives the card's left bar). (~204 tok)
+- `toast.ts` — Thin wrapper over vue-sonner so the rest of the app imports one path. (~362 tok)
 
 ## packages/design/
 
@@ -417,6 +455,10 @@
 - `SelectContent.vue` — Vue: setup (~524 tok)
 - `SelectItem.vue` — Vue: setup (~392 tok)
 - `SelectTrigger.vue` — Vue: setup (~457 tok)
+
+## packages/design/src/components/ui/skeleton/
+
+- `Skeleton.vue` — Vue: setup (~96 tok)
 
 ## packages/design/src/components/ui/tabs/
 

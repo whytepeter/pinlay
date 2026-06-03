@@ -1,50 +1,35 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
-import type { Role } from "@pinlay/shared";
+import { computed, reactive } from "vue";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import {
   Badge,
   Button,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   Icon,
   Input,
-  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Skeleton,
 } from "@pinlay/design";
+import {
+  apiClient,
+  type InviteResult,
+  type WorkspaceInviteRow,
+  type WorkspaceMemberRow,
+} from "@/shared/lib/api";
+import { hashHue } from "@/shared/lib/issue-display";
+import { toast } from "@/shared/lib/toast";
+import { timeAgo } from "@/shared/lib/format";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
-import { useSettings } from "../composables/useSettings";
 import SectionHeading from "./SectionHeading.vue";
 
-const {
-  members,
-  setMemberRole,
-  removeMember,
-  inviteMember,
-  resendInvite,
-  revokeInvite,
-} = useSettings();
-
-function timeAgo(iso?: string) {
-  if (!iso) return "";
-  const ms = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(ms / 60000);
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  return `${Math.floor(h / 24)}d ago`;
-}
+type Role = "owner" | "admin" | "member" | "viewer";
 
 const ROLES: { value: Role; label: string }[] = [
   { value: "owner", label: "Owner" },
@@ -53,18 +38,132 @@ const ROLES: { value: Role; label: string }[] = [
   { value: "viewer", label: "Viewer" },
 ];
 
-const inviteOpen = ref(false);
-const invite = reactive<{ email: string; role: Role }>({
+const queryClient = useQueryClient();
+
+const membersQuery = useQuery({
+  queryKey: ["workspace", "members"],
+  queryFn: () => apiClient.workspaces.members(),
+});
+const invitesQuery = useQuery({
+  queryKey: ["workspace", "invites"],
+  queryFn: () => apiClient.workspaces.invites(),
+});
+
+const members = computed<WorkspaceMemberRow[]>(
+  () => membersQuery.data.value ?? [],
+);
+const invites = computed<WorkspaceInviteRow[]>(
+  () => invitesQuery.data.value ?? [],
+);
+
+const isLoading = computed(
+  () => membersQuery.isPending.value || invitesQuery.isPending.value,
+);
+const hasError = computed(
+  () => membersQuery.isError.value || invitesQuery.isError.value,
+);
+
+function invalidate() {
+  queryClient.invalidateQueries({ queryKey: ["workspace", "members"] });
+  queryClient.invalidateQueries({ queryKey: ["workspace", "invites"] });
+  queryClient.invalidateQueries({ queryKey: ["workspace", "current"] });
+}
+
+const inviteForm = reactive<{ email: string; role: Role }>({
   email: "",
   role: "member",
 });
 
+const inviteMutation = useMutation({
+  mutationFn: (input: { email: string; role: Role }) =>
+    apiClient.workspaces.invite(input),
+  onSuccess: (res: InviteResult) => {
+    invalidate();
+    if (res.kind === "member") {
+      toast.success(`${res.member.name} joined the workspace`);
+    } else {
+      toast.success(`Invite sent to ${res.invite.email}`);
+    }
+    inviteForm.email = "";
+    inviteForm.role = "member";
+  },
+  onError: (err: unknown) => {
+    const message = err instanceof Error ? err.message : "Couldn't send invite.";
+    toast.error(message);
+  },
+});
+
+const updateMutation = useMutation({
+  mutationFn: (input: { id: string; role: Role }) =>
+    apiClient.workspaces.updateMember(input.id, { role: input.role }),
+  onSuccess: (m) => {
+    invalidate();
+    toast.success(`Updated role for ${m.name}`);
+  },
+  onError: (err) => toast.error(err),
+});
+
+const removeMutation = useMutation({
+  mutationFn: (id: string) => apiClient.workspaces.removeMember(id),
+  onSuccess: (_, id) => {
+    const removed = members.value.find((m) => m.id === id);
+    invalidate();
+    toast.success(removed ? `Removed ${removed.name}` : "Member removed");
+  },
+  onError: (err) => toast.error(err),
+});
+
+const resendMutation = useMutation({
+  mutationFn: (id: string) => apiClient.workspaces.resendInvite(id),
+  onSuccess: (inv) => {
+    invalidate();
+    toast.success(`Invite to ${inv.email} resent`);
+  },
+  onError: (err) => toast.error(err),
+});
+
+const revokeMutation = useMutation({
+  mutationFn: (id: string) => apiClient.workspaces.revokeInvite(id),
+  onSuccess: (_, id) => {
+    const inv = invites.value.find((i) => i.id === id);
+    invalidate();
+    toast.success(inv ? `Invite to ${inv.email} revoked` : "Invite revoked");
+  },
+  onError: (err) => toast.error(err),
+});
+
 function submitInvite() {
-  if (!invite.email.trim()) return;
-  inviteMember(invite.email.trim(), invite.role);
-  invite.email = "";
-  invite.role = "member";
-  inviteOpen.value = false;
+  const email = inviteForm.email.trim();
+  if (!email || inviteMutation.isPending.value) return;
+  inviteMutation.mutate({ email, role: inviteForm.role });
+}
+
+function changeRole(m: WorkspaceMemberRow, role: Role) {
+  if (m.role === role) return;
+  updateMutation.mutate({ id: m.id, role });
+}
+
+function confirmRemove(m: WorkspaceMemberRow) {
+  if (!window.confirm(`Remove ${m.name} from this workspace?`)) return;
+  removeMutation.mutate(m.id);
+}
+
+function confirmRevoke(inv: WorkspaceInviteRow) {
+  if (!window.confirm(`Revoke the invite to ${inv.email}?`)) return;
+  revokeMutation.mutate(inv.id);
+}
+
+// TODO(api): email pipeline isn't wired yet — admins copy the accept link
+// and share it manually. Compose from window.location.origin so the link
+// matches whichever environment the admin is in (dev / preview / prod).
+async function copyInviteLink(inv: WorkspaceInviteRow) {
+  const url = `${window.location.origin}/invite/${inv.token}`;
+  try {
+    await navigator.clipboard.writeText(url);
+    toast.success("Invite link copied");
+  } catch {
+    toast.error("Couldn't copy link. Long-press the link to copy manually.");
+  }
 }
 </script>
 
@@ -81,15 +180,16 @@ function submitInvite() {
     <div class="flex flex-1 items-center gap-1">
       <Icon name="user-plus" :size="14" class="text-primary" />
       <Input
-        v-model="invite.email"
+        v-model="inviteForm.email"
         type="email"
         placeholder="Invite by email"
         class="flex-1 border-0 bg-transparent focus-visible:ring-0"
+        :disabled="inviteMutation.isPending.value"
         @keydown.enter="submitInvite"
       />
     </div>
     <div class="flex items-center gap-2">
-      <Select v-model="invite.role">
+      <Select v-model="inviteForm.role">
         <SelectTrigger class="w-[120px]">
           <SelectValue />
         </SelectTrigger>
@@ -105,17 +205,65 @@ function submitInvite() {
       </Select>
       <Button
         size="sm"
-        :disabled="!invite.email.trim()"
+        :disabled="
+          !inviteForm.email.trim() || inviteMutation.isPending.value
+        "
         class="flex-1 sm:flex-none"
         @click="submitInvite"
       >
-        Send invite
+        <Icon
+          v-if="inviteMutation.isPending.value"
+          name="loader-circle"
+          :size="14"
+          class="animate-spin"
+        />
+        {{ inviteMutation.isPending.value ? "Sending…" : "Send invite" }}
       </Button>
     </div>
   </div>
 
-  <!-- members table; row stacks on mobile -->
-  <div class="overflow-hidden rounded-lg border bg-card">
+  <!-- loading / error -->
+  <div v-if="isLoading" class="overflow-hidden rounded-lg border bg-card">
+    <div
+      class="hidden gap-4 border-b bg-muted/60 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground sm:grid sm:grid-cols-[1fr_120px_36px]"
+    >
+      <div>Member</div>
+      <div>Role</div>
+      <div />
+    </div>
+    <div
+      v-for="i in 4"
+      :key="`mem-sk-${i}`"
+      class="flex flex-col gap-3 px-4 py-3 sm:grid sm:grid-cols-[1fr_120px_36px] sm:items-center sm:gap-4"
+      :class="i !== 4 ? 'border-b' : ''"
+    >
+      <div class="flex min-w-0 items-center gap-3">
+        <Skeleton class="size-7 rounded-full" />
+        <div class="min-w-0 flex-1 space-y-1.5">
+          <Skeleton class="h-3.5 w-32" />
+          <Skeleton class="h-3 w-44" />
+        </div>
+      </div>
+      <Skeleton class="h-8 flex-1 sm:w-full sm:flex-none" />
+      <Skeleton class="size-7 rounded-md" />
+    </div>
+  </div>
+  <div
+    v-else-if="hasError"
+    class="flex items-center justify-between gap-3 rounded-lg border bg-card px-4 py-3"
+  >
+    <p class="text-sm text-destructive">Couldn't load members.</p>
+    <Button
+      variant="outline"
+      size="sm"
+      @click="() => { membersQuery.refetch(); invitesQuery.refetch(); }"
+    >
+      Try again
+    </Button>
+  </div>
+
+  <!-- table: active members + pending invites in one list, active first -->
+  <div v-else class="overflow-hidden rounded-lg border bg-card">
     <div
       class="hidden gap-4 border-b bg-muted/60 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground sm:grid sm:grid-cols-[1fr_120px_36px]"
     >
@@ -124,41 +272,20 @@ function submitInvite() {
       <div />
     </div>
 
+    <!-- active members -->
     <div
       v-for="(m, i) in members"
-      :key="m.id"
+      :key="`m-${m.id}`"
       class="flex flex-col gap-3 px-4 py-3 sm:grid sm:grid-cols-[1fr_120px_36px] sm:items-center sm:gap-4"
-      :class="i !== members.length - 1 ? 'border-b' : ''"
+      :class="
+        i !== members.length - 1 || invites.length > 0 ? 'border-b' : ''
+      "
     >
       <div class="flex min-w-0 items-center gap-3">
-        <UserAvatar
-          :name="m.name"
-          :hue="m.avatarHue"
-          :size="28"
-          :class="m.status !== 'active' ? 'opacity-60' : ''"
-        />
+        <UserAvatar :name="m.name" :hue="hashHue(m.userId)" :size="28" />
         <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2">
-            <p
-              class="truncate text-sm font-medium"
-              :class="m.status !== 'active' ? 'text-muted-foreground' : ''"
-            >
-              {{ m.name }}
-            </p>
-            <span
-              v-if="m.status === 'pending'"
-              class="inline-flex items-center gap-1 text-[10px] font-medium text-amber-600 dark:text-amber-400"
-            >
-              <span class="size-1 rounded-full bg-amber-500" />
-              Pending
-            </span>
-          </div>
-          <p class="truncate text-xs text-muted-foreground">
-            {{ m.email }}
-            <span v-if="m.status === 'pending' && m.invitedAt">
-              · invited {{ timeAgo(m.invitedAt) }}
-            </span>
-          </p>
+          <p class="truncate text-sm font-medium">{{ m.name }}</p>
+          <p class="truncate text-xs text-muted-foreground">{{ m.email }}</p>
         </div>
       </div>
 
@@ -173,7 +300,8 @@ function submitInvite() {
         <Select
           v-else
           :model-value="m.role"
-          @update:model-value="(v) => setMemberRole(m.id, v as Role)"
+          :disabled="updateMutation.isPending.value"
+          @update:model-value="(v) => changeRole(m, v as Role)"
         >
           <SelectTrigger class="flex-1 sm:w-full sm:flex-none">
             <SelectValue />
@@ -194,28 +322,16 @@ function submitInvite() {
             <Button
               variant="ghost"
               size="icon-sm"
-              :disabled="m.role === 'owner'"
+              :disabled="m.role === 'owner' || removeMutation.isPending.value"
               :title="m.role === 'owner' ? 'Owner cannot be removed' : 'More'"
             >
               <Icon name="ellipsis" :size="16" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <template v-if="m.status === 'pending'">
-              <DropdownMenuItem @click="resendInvite(m.id)">
-                <Icon name="send" :size="14" /> Resend invite
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                class="text-destructive"
-                @click="revokeInvite(m.id)"
-              >
-                <Icon name="x" :size="14" /> Revoke invite
-              </DropdownMenuItem>
-            </template>
             <DropdownMenuItem
-              v-else
               class="text-destructive"
-              @click="removeMember(m.id)"
+              @click="confirmRemove(m)"
             >
               <Icon name="user-minus" :size="14" /> Remove from workspace
             </DropdownMenuItem>
@@ -223,58 +339,73 @@ function submitInvite() {
         </DropdownMenu>
       </div>
     </div>
-  </div>
 
-  <!-- bulk-invite dialog (kept for multi-step flow) -->
-  <Dialog v-model:open="inviteOpen">
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Invite teammates</DialogTitle>
-        <DialogDescription>
-          They&rsquo;ll receive an email with a link to join the workspace.
-        </DialogDescription>
-      </DialogHeader>
-      <div class="flex flex-col gap-4 py-2">
-        <div class="grid gap-2">
-          <Label for="invite-email-dlg">Email</Label>
-          <Input
-            id="invite-email-dlg"
-            v-model="invite.email"
-            type="email"
-            placeholder="teammate@company.com"
-            @keydown.enter="submitInvite"
-          />
-        </div>
-        <div class="grid gap-2">
-          <Label for="invite-role-dlg">Role</Label>
-          <Select v-model="invite.role">
-            <SelectTrigger id="invite-role-dlg">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem
-                v-for="r in ROLES.filter((x) => x.value !== 'owner')"
-                :key="r.value"
-                :value="r.value"
-              >
-                {{ r.label }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+    <!-- pending invites — visually dimmed + Pending chip + invited-Xh-ago -->
+    <div
+      v-for="(inv, i) in invites"
+      :key="`i-${inv.id}`"
+      class="flex flex-col gap-3 px-4 py-3 sm:grid sm:grid-cols-[1fr_120px_36px] sm:items-center sm:gap-4"
+      :class="i !== invites.length - 1 ? 'border-b' : ''"
+    >
+      <div class="flex min-w-0 items-center gap-3">
+        <UserAvatar
+          :name="inv.email"
+          :hue="hashHue(inv.email)"
+          :size="28"
+          class="opacity-50"
+        />
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <p class="truncate text-sm font-medium text-muted-foreground">
+              {{ inv.email }}
+            </p>
+            <span
+              class="inline-flex items-center gap-1 text-[10px] font-medium text-amber-600 dark:text-amber-400"
+            >
+              <span class="size-1 rounded-full bg-amber-500" />
+              Pending
+            </span>
+          </div>
+          <p class="truncate text-xs text-muted-foreground">
+            Invited {{ timeAgo(inv.invitedAt) }} by {{ inv.invitedBy.name }}
+          </p>
         </div>
       </div>
-      <DialogFooter>
-        <Button variant="ghost" size="sm" @click="inviteOpen = false">
-          Cancel
-        </Button>
-        <Button
-          size="sm"
-          :disabled="!invite.email.trim()"
-          @click="submitInvite"
-        >
-          Send invite
-        </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+
+      <div class="flex items-center gap-2 sm:contents">
+        <Badge variant="secondary" class="capitalize sm:justify-self-start">
+          {{ inv.role }}
+        </Badge>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger as-child>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              :disabled="
+                resendMutation.isPending.value || revokeMutation.isPending.value
+              "
+              title="More"
+            >
+              <Icon name="ellipsis" :size="16" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem @click="copyInviteLink(inv)">
+              <Icon name="link" :size="14" /> Copy invite link
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="resendMutation.mutate(inv.id)">
+              <Icon name="send" :size="14" /> Resend invite
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              class="text-destructive"
+              @click="confirmRevoke(inv)"
+            >
+              <Icon name="x" :size="14" /> Revoke invite
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  </div>
 </template>

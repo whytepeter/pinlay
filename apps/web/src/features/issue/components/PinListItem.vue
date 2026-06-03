@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { Icon } from "@pinlay/design";
-import { personById, type PinItem } from "@/shared/lib/data";
+import type { ApiPin } from "@/shared/lib/api";
+import { hashHue } from "@/shared/lib/issue-display";
 import PinPill from "@/shared/components/PinPill.vue";
 import SeverityDot from "@/shared/components/SeverityDot.vue";
 import TypeChip from "@/shared/components/TypeChip.vue";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
 
-const props = defineProps<{ pin: PinItem; active?: boolean }>();
+const props = defineProps<{ pin: ApiPin; active?: boolean }>();
 
-const assignee = computed(() =>
-  props.pin.assigneeId ? personById(props.pin.assigneeId) : undefined
-);
+const assignee = computed(() => props.pin.assignee);
 const resolved = computed(() => props.pin.status === "resolved");
 </script>
 
@@ -45,7 +44,7 @@ const resolved = computed(() => props.pin.status === "resolved");
         v-if="assignee"
         class="ml-auto"
         :name="assignee.name"
-        :hue="assignee.avatarHue"
+        :hue="hashHue(assignee.id)"
         :size="18"
       />
     </div>

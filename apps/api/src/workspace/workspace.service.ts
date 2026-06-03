@@ -1,15 +1,59 @@
+import { randomBytes } from "node:crypto";
 import {
+  ConflictException,
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from "@nestjs/common";
-import { Role } from "@prisma/client";
+import { InviteStatus, Prisma, Role } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuthService } from "../auth/auth.service";
 import { AuthenticatedUser } from "../common/current-user.decorator";
+import { CreateWorkspaceDto } from "./dto/create-workspace.dto";
 import { UpdateWorkspaceDto } from "./dto/update-workspace.dto";
 import { InviteMemberDto } from "./dto/invite-member.dto";
 import { UpdateMemberDto } from "./dto/update-member.dto";
+
+/**
+ * Reserved subdomain-ish slugs that we never want a workspace to claim — they
+ * collide with routes the dashboard owns, or are too generic to be a tenant.
+ */
+const RESERVED_SLUGS = new Set([
+  "admin",
+  "api",
+  "app",
+  "auth",
+  "billing",
+  "dashboard",
+  "docs",
+  "help",
+  "login",
+  "logout",
+  "settings",
+  "signup",
+  "status",
+  "support",
+  "www",
+]);
+
+const SLUG_MAX_ATTEMPTS = 10;
+
+/**
+ * Lower-case, hyphen-separated slug. Strips diacritics, collapses runs of
+ * non-alphanumerics to a single hyphen, trims leading/trailing hyphens. The
+ * length cap matches the DTO constraint so a 120-char name doesn't bypass it.
+ */
+function slugify(input: string): string {
+  return input
+    .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "") // strip combining diacritics
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
 
 /** A workspace as the switcher / settings render it. */
 export interface WorkspaceDto {
@@ -33,6 +77,53 @@ export interface MemberDto {
   createdAt: string;
 }
 
+/** Pending workspace invite as the Members UI renders it. */
+export interface InviteDto {
+  id: string;
+  email: string;
+  role: Role;
+  status: InviteStatus;
+  /**
+   * Opaque accept-by-link token. Returned to admins on the workspace's own
+   * invite list so they can copy the accept URL while email is offline.
+   * Public /invites/:token endpoints address the invite by THIS value.
+   */
+  token: string;
+  invitedBy: { id: string; name: string };
+  invitedAt: string;
+  expiresAt: string;
+}
+
+/**
+ * Public preview of an invite, served from GET /api/invites/:token. The
+ * accept page shows this BEFORE the user authenticates so they know what
+ * they're being asked to join. Includes a flag for whether a pinlay account
+ * exists for the invited email so the UI can branch into sign-in vs
+ * sign-up.
+ */
+export interface PublicInvitePreview {
+  workspace: { id: string; slug: string; name: string };
+  email: string;
+  role: Role;
+  invitedBy: { name: string };
+  expiresAt: string;
+  /** True if the invited email already has a pinlay account. */
+  hasAccount: boolean;
+}
+
+/**
+ * Discriminated union of an invite POST response. When the invitee already
+ * has an account they're added directly (`kind: 'member'`); when they don't
+ * yet, a pending Invite row is created (`kind: 'invite'`). Clients render
+ * each variant differently in the Members list.
+ */
+export type InviteResult =
+  | { kind: "member"; member: MemberDto }
+  | { kind: "invite"; invite: InviteDto };
+
+const INVITE_EXPIRY_DAYS = 7;
+const INVITE_TOKEN_BYTES = 24;
+
 export interface SwitchResult {
   token: string;
   workspace: WorkspaceDto;
@@ -48,6 +139,7 @@ const ADMIN_ROLES: Role[] = [Role.owner, Role.admin];
 export class WorkspaceService {
   constructor(
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => AuthService))
     private readonly auth: AuthService,
   ) {}
 
@@ -69,6 +161,64 @@ export class WorkspaceService {
   }
 
   // ── Mutations ────────────────────────────────────────────────────────────
+  /**
+   * Create a workspace and make the caller its owner. Returns a fresh JWT
+   * bound to the new workspace so the client can switch into it in the same
+   * round-trip (same shape as `switch`).
+   *
+   * Atomicity: the workspace row + owner membership are created in a single
+   * transaction so we never leak an orphaned workspace if the membership
+   * insert fails.
+   */
+  async create(
+    user: AuthenticatedUser,
+    dto: CreateWorkspaceDto,
+  ): Promise<SwitchResult> {
+    const name = dto.name.trim();
+    const slug = await this.resolveSlug(dto.slug, name);
+
+    let created: { id: string; slug: string; name: string; plan: string };
+    try {
+      created = await this.prisma.$transaction(async (tx) => {
+        const ws = await tx.workspace.create({
+          data: { name, slug },
+          select: { id: true, slug: true, name: true, plan: true },
+        });
+        await tx.workspaceMember.create({
+          data: {
+            workspaceId: ws.id,
+            userId: user.id,
+            role: Role.owner,
+          },
+        });
+        return ws;
+      });
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002"
+      ) {
+        // Race: the slug was free at resolve time but taken before insert.
+        throw new ConflictException(
+          `A workspace with slug "${slug}" already exists.`,
+        );
+      }
+      throw err;
+    }
+
+    const token = await this.auth.signToken(
+      { id: user.id, email: user.email },
+      created.id,
+    );
+    return {
+      token,
+      workspace: this.toWorkspaceDto(
+        { ...created, _count: { members: 1 } },
+        Role.owner,
+      ),
+    };
+  }
+
   async update(
     user: AuthenticatedUser,
     dto: UpdateWorkspaceDto,
@@ -76,17 +226,47 @@ export class WorkspaceService {
     const membership = await this.requireMembership(user.workspaceId, user.id);
     this.assertAdmin(membership.role);
 
-    const workspace = await this.prisma.workspace.update({
-      where: { id: user.workspaceId },
-      data: {
-        name: dto.name ?? undefined,
-        // plan changes will route through billing once Stripe lands; allowed
-        // here for now so the settings form is functional.
-        plan: dto.plan ?? undefined,
-      },
-      include: { _count: { select: { members: true } } },
-    });
-    return this.toWorkspaceDto(workspace, membership.role);
+    const data: { name?: string; plan?: string; slug?: string } = {};
+    if (typeof dto.name === "string") data.name = dto.name.trim();
+    if (typeof dto.plan === "string") data.plan = dto.plan;
+    if (typeof dto.slug === "string") {
+      const slug = dto.slug.toLowerCase();
+      if (RESERVED_SLUGS.has(slug)) {
+        throw new ConflictException(
+          `"${slug}" is reserved. Pick a different slug.`,
+        );
+      }
+      const conflict = await this.prisma.workspace.findFirst({
+        where: { slug, NOT: { id: user.workspaceId } },
+        select: { id: true },
+      });
+      if (conflict) {
+        throw new ConflictException(
+          `A workspace with slug "${slug}" already exists.`,
+        );
+      }
+      data.slug = slug;
+    }
+
+    try {
+      const workspace = await this.prisma.workspace.update({
+        where: { id: user.workspaceId },
+        data,
+        include: { _count: { select: { members: true } } },
+      });
+      return this.toWorkspaceDto(workspace, membership.role);
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002"
+      ) {
+        // Race: slug was free during the pre-check but taken before update.
+        throw new ConflictException(
+          `That slug was just taken. Try a different one.`,
+        );
+      }
+      throw err;
+    }
   }
 
   /**
@@ -136,40 +316,399 @@ export class WorkspaceService {
   }
 
   /**
-   * Invite a member. v1: the user must already have an account (no pending-
-   * invite email flow yet — that needs an Invite table + mailer). If they
-   * exist and aren't already a member, add them; otherwise 404 so the UI can
-   * prompt. Admin only.
+   * Invite a member.
+   *
+   * Two paths:
+   *   1. Invitee already has a pinlay account → add as WorkspaceMember
+   *      directly (`kind: 'member'`). Instant join.
+   *   2. Invitee doesn't have an account yet → create a pending Invite row
+   *      (`kind: 'invite'`) that AuthService converts to a real membership
+   *      on signup with the same email.
+   *
+   * Admin only. Re-inviting an email that already has a pending invite
+   * 409s (the UI should resend instead).
    */
   async inviteMember(
     user: AuthenticatedUser,
     dto: InviteMemberDto,
-  ): Promise<MemberDto> {
+  ): Promise<InviteResult> {
     const membership = await this.requireMembership(user.workspaceId, user.id);
     this.assertAdmin(membership.role);
 
     const email = dto.email.trim().toLowerCase();
+    const role = dto.role ?? Role.member;
+
     const invitee = await this.prisma.user.findUnique({ where: { email } });
-    if (!invitee) {
-      throw new NotFoundException(
-        "No pinlay account with that email yet. Email invites are coming soon.",
+    if (invitee) {
+      const existing = await this.prisma.workspaceMember.findFirst({
+        where: { workspaceId: user.workspaceId, userId: invitee.id },
+      });
+      if (existing) {
+        throw new ConflictException("That person is already a member.");
+      }
+      const created = await this.prisma.workspaceMember.create({
+        data: {
+          workspaceId: user.workspaceId,
+          userId: invitee.id,
+          role,
+        },
+        include: { user: true },
+      });
+      return { kind: "member", member: this.toMemberDto(created) };
+    }
+
+    // Pending path — no account yet.
+    const pending = await this.prisma.invite.findFirst({
+      where: {
+        workspaceId: user.workspaceId,
+        email,
+        status: InviteStatus.pending,
+      },
+    });
+    if (pending) {
+      throw new ConflictException(
+        "An invite for that email is already pending. Resend or revoke it first.",
       );
     }
-    const existing = await this.prisma.workspaceMember.findFirst({
-      where: { workspaceId: user.workspaceId, userId: invitee.id },
-    });
-    if (existing) {
-      throw new ForbiddenException("That person is already a member.");
-    }
-    const created = await this.prisma.workspaceMember.create({
+
+    const created = await this.prisma.invite.create({
       data: {
         workspaceId: user.workspaceId,
-        userId: invitee.id,
-        role: dto.role ?? Role.member,
+        email,
+        role,
+        invitedById: user.id,
+        token: makeInviteToken(),
+        expiresAt: new Date(
+          Date.now() + INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
+        ),
       },
-      include: { user: true },
+      include: { invitedBy: { select: { id: true, name: true } } },
     });
-    return this.toMemberDto(created);
+    return { kind: "invite", invite: this.toInviteDto(created) };
+  }
+
+  /** All non-finalised invites for the active workspace. */
+  async listInvites(user: AuthenticatedUser): Promise<InviteDto[]> {
+    await this.requireMembership(user.workspaceId, user.id);
+    const invites = await this.prisma.invite.findMany({
+      where: {
+        workspaceId: user.workspaceId,
+        status: InviteStatus.pending,
+      },
+      include: { invitedBy: { select: { id: true, name: true } } },
+      orderBy: { createdAt: "asc" },
+    });
+    return invites.map((i) => this.toInviteDto(i));
+  }
+
+  /** Revoke (delete) a pending invite. Admin only. */
+  async revokeInvite(
+    user: AuthenticatedUser,
+    inviteId: string,
+  ): Promise<void> {
+    const membership = await this.requireMembership(user.workspaceId, user.id);
+    this.assertAdmin(membership.role);
+    const invite = await this.prisma.invite.findFirst({
+      where: { id: inviteId, workspaceId: user.workspaceId },
+      select: { id: true, status: true },
+    });
+    if (!invite) throw new NotFoundException("Invite not found.");
+    if (invite.status !== InviteStatus.pending) {
+      // Already accepted or revoked — idempotent OK.
+      return;
+    }
+    await this.prisma.invite.update({
+      where: { id: inviteId },
+      data: { status: InviteStatus.revoked },
+    });
+  }
+
+  /**
+   * Resend an invite — regenerates the accept-token, resets the expiry, and
+   * (eventually) re-fires the email. Returns the refreshed invite row.
+   */
+  async resendInvite(
+    user: AuthenticatedUser,
+    inviteId: string,
+  ): Promise<InviteDto> {
+    const membership = await this.requireMembership(user.workspaceId, user.id);
+    this.assertAdmin(membership.role);
+    const invite = await this.prisma.invite.findFirst({
+      where: {
+        id: inviteId,
+        workspaceId: user.workspaceId,
+        status: InviteStatus.pending,
+      },
+      select: { id: true },
+    });
+    if (!invite) {
+      throw new NotFoundException("Pending invite not found.");
+    }
+    const refreshed = await this.prisma.invite.update({
+      where: { id: inviteId },
+      data: {
+        token: makeInviteToken(),
+        expiresAt: new Date(
+          Date.now() + INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
+        ),
+      },
+      include: { invitedBy: { select: { id: true, name: true } } },
+    });
+    // TODO(email): when transactional email lands, re-send the accept link here.
+    return this.toInviteDto(refreshed);
+  }
+
+  /**
+   * Called from AuthService.signup. Converts every PENDING invite for the
+   * new user's email into a WorkspaceMember row + marks the invite accepted.
+   * Idempotent — if there's already a membership row (race) we skip without
+   * throwing.
+   */
+  async acceptPendingInvitesForEmail(
+    userId: string,
+    email: string,
+  ): Promise<void> {
+    const normalized = email.trim().toLowerCase();
+    const pending = await this.prisma.invite.findMany({
+      where: { email: normalized, status: InviteStatus.pending },
+      select: { id: true, workspaceId: true, role: true },
+    });
+    if (pending.length === 0) return;
+
+    await this.prisma.$transaction(async (tx) => {
+      for (const inv of pending) {
+        // Skip if the user is already a member (e.g. invite + manual add race).
+        const existing = await tx.workspaceMember.findFirst({
+          where: { workspaceId: inv.workspaceId, userId },
+          select: { id: true },
+        });
+        if (!existing) {
+          await tx.workspaceMember.create({
+            data: {
+              workspaceId: inv.workspaceId,
+              userId,
+              role: inv.role,
+            },
+          });
+        }
+        await tx.invite.update({
+          where: { id: inv.id },
+          data: { status: InviteStatus.accepted },
+        });
+      }
+    });
+  }
+
+  // ── Public invite-by-token endpoints ───────────────────────────────────
+  /**
+   * Look up an invite by its accept token. PUBLIC (no auth) — the recipient
+   * needs to see the invite preview before they sign in or create an
+   * account. Errors are conservative:
+   *   - not found     → 404 (token typo or never existed)
+   *   - revoked       → 410 Gone (don't leak it ever was)
+   *   - already accepted → 410 Gone
+   *   - expired       → 410 Gone (also marks the row expired as a side effect
+   *                     so the UI sees a stable state on refresh)
+   */
+  async lookupInvite(token: string): Promise<PublicInvitePreview> {
+    const invite = await this.prisma.invite.findUnique({
+      where: { token },
+      include: {
+        workspace: { select: { id: true, slug: true, name: true } },
+        invitedBy: { select: { name: true } },
+      },
+    });
+    if (!invite) throw new NotFoundException("Invite not found.");
+    if (invite.status === InviteStatus.revoked) {
+      throw new ConflictException("This invite has been revoked.");
+    }
+    if (invite.status === InviteStatus.accepted) {
+      throw new ConflictException("This invite has already been accepted.");
+    }
+    if (
+      invite.status === InviteStatus.pending &&
+      invite.expiresAt.getTime() < Date.now()
+    ) {
+      // Lazy-expire so a refresh sees the right terminal state.
+      await this.prisma.invite.update({
+        where: { id: invite.id },
+        data: { status: InviteStatus.expired },
+      });
+      throw new ConflictException("This invite has expired.");
+    }
+    if (invite.status === InviteStatus.expired) {
+      throw new ConflictException("This invite has expired.");
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { email: invite.email },
+      select: { id: true },
+    });
+    return {
+      workspace: invite.workspace,
+      email: invite.email,
+      role: invite.role,
+      invitedBy: { name: invite.invitedBy.name },
+      expiresAt: invite.expiresAt.toISOString(),
+      hasAccount: !!user,
+    };
+  }
+
+  /**
+   * Accept an invite as an authenticated user. The caller's email MUST
+   * match the invite's email — we don't let one account claim invites
+   * targeted at another address (would be a privilege-escalation vector if
+   * an admin invites a typo'd email and the wrong user clicks the link).
+   *
+   * Returns a SwitchResult so the client can adopt the workspace in one
+   * round-trip (token bound to the newly-joined workspace).
+   */
+  async acceptInviteByToken(
+    user: AuthenticatedUser,
+    token: string,
+  ): Promise<SwitchResult> {
+    const invite = await this.prisma.invite.findUnique({
+      where: { token },
+      include: {
+        workspace: { include: { _count: { select: { members: true } } } },
+      },
+    });
+    if (!invite || invite.status !== InviteStatus.pending) {
+      throw new NotFoundException("Invite not found.");
+    }
+    if (invite.expiresAt.getTime() < Date.now()) {
+      await this.prisma.invite.update({
+        where: { id: invite.id },
+        data: { status: InviteStatus.expired },
+      });
+      throw new ConflictException("This invite has expired.");
+    }
+    if (invite.email !== user.email.toLowerCase()) {
+      throw new ForbiddenException(
+        "This invite is for a different email. Log out and try the link again.",
+      );
+    }
+
+    const existing = await this.prisma.workspaceMember.findFirst({
+      where: { workspaceId: invite.workspaceId, userId: user.id },
+      select: { id: true },
+    });
+    if (!existing) {
+      await this.prisma.$transaction([
+        this.prisma.workspaceMember.create({
+          data: {
+            workspaceId: invite.workspaceId,
+            userId: user.id,
+            role: invite.role,
+          },
+        }),
+        this.prisma.invite.update({
+          where: { id: invite.id },
+          data: { status: InviteStatus.accepted },
+        }),
+      ]);
+    } else {
+      // Already a member (e.g. invited + manually added race) — still mark
+      // the invite accepted so the admin's pending list clears.
+      await this.prisma.invite.update({
+        where: { id: invite.id },
+        data: { status: InviteStatus.accepted },
+      });
+    }
+
+    const wsToken = await this.auth.signToken(
+      { id: user.id, email: user.email },
+      invite.workspaceId,
+    );
+    return {
+      token: wsToken,
+      workspace: this.toWorkspaceDto(invite.workspace, invite.role),
+    };
+  }
+
+  /**
+   * Accept an invite by signing up. PUBLIC — used by recipients who don't
+   * have a pinlay account yet. The email is locked from the invite (we
+   * never trust the body for that field). Creates User + WorkspaceMember +
+   * marks invite accepted, all transactional. No personal workspace is
+   * created — the user joins the invited workspace as their primary
+   * (industry standard for signup-via-invite: Linear/Notion/etc.).
+   *
+   * Returns SwitchResult bound to the invited workspace so the client lands
+   * directly inside it after signup.
+   */
+  async acceptInviteWithSignup(
+    token: string,
+    dto: { name: string; password: string },
+  ): Promise<SwitchResult> {
+    const invite = await this.prisma.invite.findUnique({
+      where: { token },
+      include: {
+        workspace: { include: { _count: { select: { members: true } } } },
+      },
+    });
+    if (!invite || invite.status !== InviteStatus.pending) {
+      throw new NotFoundException("Invite not found.");
+    }
+    if (invite.expiresAt.getTime() < Date.now()) {
+      await this.prisma.invite.update({
+        where: { id: invite.id },
+        data: { status: InviteStatus.expired },
+      });
+      throw new ConflictException("This invite has expired.");
+    }
+
+    const name = dto.name.trim();
+    if (!name) {
+      throw new ConflictException("Name is required.");
+    }
+    if (!dto.password || dto.password.length < 8) {
+      throw new ConflictException("Password must be at least 8 characters.");
+    }
+
+    // The endpoint is open to anonymous callers — guard against a race where
+    // the invitee has signed up directly in another tab between the page
+    // load and the form submit.
+    const existing = await this.prisma.user.findUnique({
+      where: { email: invite.email },
+      select: { id: true },
+    });
+    if (existing) {
+      throw new ConflictException(
+        "An account with this email already exists. Sign in to accept.",
+      );
+    }
+
+    // Hash outside the transaction (bcrypt is sync-blocking on the worker
+    // thread; keep the DB lock window short).
+    const passwordHash = await this.auth.hashPassword(dto.password);
+
+    const created = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: { email: invite.email, name, passwordHash },
+      });
+      await tx.workspaceMember.create({
+        data: {
+          workspaceId: invite.workspaceId,
+          userId: user.id,
+          role: invite.role,
+        },
+      });
+      await tx.invite.update({
+        where: { id: invite.id },
+        data: { status: InviteStatus.accepted },
+      });
+      return user;
+    });
+
+    const wsToken = await this.auth.signToken(
+      { id: created.id, email: created.email },
+      invite.workspaceId,
+    );
+    return {
+      token: wsToken,
+      workspace: this.toWorkspaceDto(invite.workspace, invite.role),
+    };
   }
 
   async updateMember(
@@ -206,6 +745,62 @@ export class WorkspaceService {
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────
+  /**
+   * Either validate the caller-supplied slug or derive one from the name.
+   * For derived slugs we append `-2`, `-3`, … until a free one is found.
+   * Caller-supplied slugs that conflict throw ConflictException — we don't
+   * silently rewrite what the user typed.
+   */
+  private async resolveSlug(
+    requested: string | undefined,
+    name: string,
+  ): Promise<string> {
+    if (requested) {
+      const slug = requested.toLowerCase();
+      if (RESERVED_SLUGS.has(slug)) {
+        throw new ConflictException(
+          `"${slug}" is reserved. Pick a different slug.`,
+        );
+      }
+      const existing = await this.prisma.workspace.findUnique({
+        where: { slug },
+        select: { id: true },
+      });
+      if (existing) {
+        throw new ConflictException(
+          `A workspace with slug "${slug}" already exists.`,
+        );
+      }
+      return slug;
+    }
+
+    const base = slugify(name);
+    if (!base) {
+      throw new ConflictException(
+        "Workspace name must contain letters or digits.",
+      );
+    }
+    if (!RESERVED_SLUGS.has(base)) {
+      const existing = await this.prisma.workspace.findUnique({
+        where: { slug: base },
+        select: { id: true },
+      });
+      if (!existing) return base;
+    }
+    for (let n = 2; n <= SLUG_MAX_ATTEMPTS; n++) {
+      const candidate = `${base}-${n}`;
+      if (RESERVED_SLUGS.has(candidate)) continue;
+      const existing = await this.prisma.workspace.findUnique({
+        where: { slug: candidate },
+        select: { id: true },
+      });
+      if (!existing) return candidate;
+    }
+    // Final fallback: random suffix. Collision-resistant for the bounded
+    // retry window above.
+    return `${base}-${Math.random().toString(36).slice(2, 6)}`;
+  }
+
   private async requireMembership(workspaceId: string, userId: string) {
     const membership = await this.prisma.workspaceMember.findFirst({
       where: { workspaceId, userId },
@@ -283,4 +878,35 @@ export class WorkspaceService {
       createdAt: m.createdAt.toISOString(),
     };
   }
+
+  private toInviteDto(i: {
+    id: string;
+    email: string;
+    role: Role;
+    status: InviteStatus;
+    token: string;
+    createdAt: Date;
+    expiresAt: Date;
+    invitedBy: { id: string; name: string };
+  }): InviteDto {
+    return {
+      id: i.id,
+      email: i.email,
+      role: i.role,
+      status: i.status,
+      token: i.token,
+      invitedBy: { id: i.invitedBy.id, name: i.invitedBy.name },
+      invitedAt: i.createdAt.toISOString(),
+      expiresAt: i.expiresAt.toISOString(),
+    };
+  }
+}
+
+/**
+ * URL-safe random token for the future accept-by-link flow. Long enough
+ * that even leaked tokens can't be brute-forced; uses base64url so the value
+ * can be dropped straight into a query string.
+ */
+function makeInviteToken(): string {
+  return randomBytes(INVITE_TOKEN_BYTES).toString("base64url");
 }

@@ -1,3 +1,10 @@
+// TODO(api): integrations/ module is not built yet (Roadmap Phase 3). Today
+// this composable holds the integration catalog + connected state purely in
+// a module-level ref. When the API ships, swap to:
+//   useQuery(['integrations']) → server-owned list w/ per-row connected/account
+//   useMutation(connect) → POST /integrations + OAuth handoff
+//   useMutation(disconnect) → DELETE /integrations/:id
+// See HANDOFF_WEB_INTEGRATION.md → "API gaps".
 import { computed, ref } from "vue";
 import type { IntegrationKind } from "@pinlay/shared";
 

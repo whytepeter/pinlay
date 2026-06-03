@@ -1,13 +1,16 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { Pin, Prisma } from "@prisma/client";
+import { Pin, PinComment, Prisma, Role } from "@prisma/client";
 import { normalizeUrl } from "@pinlay/shared";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreatePinDto } from "./dto/create-pin.dto";
 import { UpdatePinDto } from "./dto/update-pin.dto";
+import { CreateCommentDto } from "./dto/create-comment.dto";
+import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { SubmitSessionDto } from "./dto/submit-session.dto";
 import { AuthenticatedUser } from "../common/current-user.decorator";
 
@@ -30,6 +33,21 @@ export interface SerializedPin {
   assigneeId: string | null;
   labels: string[];
   createdAt: string;
+}
+
+/** Wire shape for a pin comment. */
+export interface SerializedComment {
+  id: string;
+  pinId: string;
+  body: string;
+  author: {
+    id: string;
+    name: string;
+    email: string;
+    avatarUrl: string | null;
+  };
+  createdAt: string;
+  updatedAt: string;
 }
 
 @Injectable()
@@ -175,6 +193,117 @@ export class AnnotationService {
     await this.prisma.pin.delete({ where: { id } });
   }
 
+  // ── Comments ─────────────────────────────────────────────────────────────
+  /**
+   * List comments on a pin, oldest first (chronological reading order). The
+   * pin is workspace-scoped via its session; a cross-tenant pinId 404s.
+   */
+  async listComments(
+    user: AuthenticatedUser,
+    pinId: string,
+  ): Promise<SerializedComment[]> {
+    await this.assertPinInWorkspace(user.workspaceId, pinId);
+    const comments = await this.prisma.pinComment.findMany({
+      where: { pinId },
+      include: { author: true },
+      orderBy: { createdAt: "asc" },
+    });
+    return comments.map(serializeComment);
+  }
+
+  async createComment(
+    user: AuthenticatedUser,
+    pinId: string,
+    dto: CreateCommentDto,
+  ): Promise<SerializedComment> {
+    await this.assertPinInWorkspace(user.workspaceId, pinId);
+    const created = await this.prisma.pinComment.create({
+      data: {
+        pinId,
+        authorId: user.id,
+        body: dto.body.trim(),
+      },
+      include: { author: true },
+    });
+    return serializeComment(created);
+  }
+
+  /**
+   * Edit a comment. Author only — admins can DELETE someone else's comment
+   * but can't impersonate by editing it.
+   */
+  async updateComment(
+    user: AuthenticatedUser,
+    pinId: string,
+    commentId: string,
+    dto: UpdateCommentDto,
+  ): Promise<SerializedComment> {
+    await this.assertPinInWorkspace(user.workspaceId, pinId);
+    const comment = await this.prisma.pinComment.findFirst({
+      where: { id: commentId, pinId },
+    });
+    if (!comment) throw new NotFoundException("Comment not found");
+    if (comment.authorId !== user.id) {
+      throw new ForbiddenException("Only the author can edit this comment.");
+    }
+    if (typeof dto.body !== "string" || !dto.body.trim()) {
+      // No-op patches return the current row (consistent with the
+      // workspace.update + auth.updateMe pattern).
+      const current = await this.prisma.pinComment.findUniqueOrThrow({
+        where: { id: commentId },
+        include: { author: true },
+      });
+      return serializeComment(current);
+    }
+    const updated = await this.prisma.pinComment.update({
+      where: { id: commentId },
+      data: { body: dto.body.trim() },
+      include: { author: true },
+    });
+    return serializeComment(updated);
+  }
+
+  /**
+   * Delete a comment. Allowed for the author or any workspace admin/owner —
+   * gives moderators a way to remove abusive content without impersonating
+   * the author for an edit.
+   */
+  async deleteComment(
+    user: AuthenticatedUser,
+    pinId: string,
+    commentId: string,
+  ): Promise<void> {
+    await this.assertPinInWorkspace(user.workspaceId, pinId);
+    const comment = await this.prisma.pinComment.findFirst({
+      where: { id: commentId, pinId },
+      select: { authorId: true },
+    });
+    if (!comment) throw new NotFoundException("Comment not found");
+    const isAuthor = comment.authorId === user.id;
+    const isAdmin = user.role === Role.owner || user.role === Role.admin;
+    if (!isAuthor && !isAdmin) {
+      throw new ForbiddenException(
+        "Only the author or a workspace admin can delete this comment.",
+      );
+    }
+    await this.prisma.pinComment.delete({ where: { id: commentId } });
+  }
+
+  /**
+   * 404s if the pin doesn't exist OR lives in another workspace. Used by
+   * every comment endpoint as the first line of defence.
+   */
+  private async assertPinInWorkspace(
+    workspaceId: string,
+    pinId: string,
+  ): Promise<void> {
+    const pin = await this.prisma.pin.findFirst({
+      where: { id: pinId, session: { workspaceId } },
+      select: { id: true },
+    });
+    if (!pin) throw new NotFoundException("Pin not found");
+  }
+
   async listPagePins(
     user: AuthenticatedUser,
     pageUrl: string,
@@ -263,4 +392,33 @@ export class AnnotationService {
       createdAt: pin.createdAt.toISOString(),
     };
   }
+}
+
+/**
+ * Standalone serializer (no `this` deps) — lifted out of the class so the
+ * comment methods don't need a private helper just to format dates.
+ */
+function serializeComment(
+  c: PinComment & {
+    author: {
+      id: string;
+      name: string;
+      email: string;
+      avatarUrl: string | null;
+    };
+  },
+): SerializedComment {
+  return {
+    id: c.id,
+    pinId: c.pinId,
+    body: c.body,
+    author: {
+      id: c.author.id,
+      name: c.author.name,
+      email: c.author.email,
+      avatarUrl: c.author.avatarUrl,
+    },
+    createdAt: c.createdAt.toISOString(),
+    updatedAt: c.updatedAt.toISOString(),
+  };
 }

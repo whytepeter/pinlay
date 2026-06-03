@@ -1,9 +1,10 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./jwt-auth.guard";
+import { WorkspaceModule } from "../workspace/workspace.module";
 
 @Module({
   imports: [
@@ -21,6 +22,10 @@ import { JwtAuthGuard } from "./jwt-auth.guard";
         },
       }),
     }),
+    // Forward-ref breaks the cycle: WorkspaceModule already imports
+    // AuthModule (for JwtAuthGuard); AuthService imports WorkspaceService to
+    // auto-accept pending invites on signup.
+    forwardRef(() => WorkspaceModule),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard],

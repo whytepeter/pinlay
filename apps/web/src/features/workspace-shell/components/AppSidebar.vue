@@ -23,13 +23,25 @@ import {
 import { useShell } from "@/shared/composables/useShell";
 import { BOARD_COLORS, useBoards } from "@/shared/composables/useBoards";
 import { useAuth } from "@/shared/composables/useAuth";
+import type { Board } from "@/shared/lib/api";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
 import WorkspaceSwitcher from "./WorkspaceSwitcher.vue";
 
 const route = useRoute();
 const router = useRouter();
 const { mobileOpen, closeMobile } = useShell();
-const { boards, activeBoardId, boardCounts, addBoard } = useBoards();
+const {
+  boards,
+  activeBoardId,
+  boardCounts,
+  addBoard,
+  updateBoard,
+  removeBoard,
+  isPending: boardsPending,
+  isError: boardsError,
+  isCreating: boardCreating,
+  isUpdating: boardUpdating,
+} = useBoards();
 const { user, logout } = useAuth();
 
 const accountMenuOpen = ref(false);
@@ -57,13 +69,20 @@ async function onLogout() {
 const hovered = ref(false);
 const wsMenuOpen = ref(false);
 const newBoardOpen = ref(false);
+const editBoardOpen = ref(false);
+// Track which row's kebab is open so its action button is visible while the
+// menu is mounted (otherwise the dropdown unmounts the moment the cursor
+// leaves the row).
+const openMenuBoardId = ref<string | null>(null);
 const expanded = computed(
   () =>
     hovered.value ||
     mobileOpen.value ||
     wsMenuOpen.value ||
     accountMenuOpen.value ||
-    newBoardOpen.value
+    newBoardOpen.value ||
+    editBoardOpen.value ||
+    openMenuBoardId.value !== null,
 );
 
 const nav = [
@@ -78,12 +97,69 @@ const newBoard = reactive<{ name: string; color: string }>({
   color: BOARD_COLORS[0]!,
 });
 
-function submitNewBoard() {
-  if (!newBoard.name.trim()) return;
-  addBoard(newBoard.name, newBoard.color);
-  newBoard.name = "";
-  newBoard.color = BOARD_COLORS[0]!;
-  newBoardOpen.value = false;
+async function submitNewBoard() {
+  if (!newBoard.name.trim() || boardCreating.value) return;
+  try {
+    await addBoard(newBoard.name, newBoard.color);
+    // Reset + close only AFTER the server confirms. On failure the dialog
+    // stays open with the typed name so the user can correct + retry — the
+    // error toast comes from useBoards' mutation.onError.
+    newBoard.name = "";
+    newBoard.color = BOARD_COLORS[0]!;
+    newBoardOpen.value = false;
+  } catch {
+    /* error toast already surfaced by the mutation; keep dialog open */
+  }
+}
+
+// ── Edit board ──────────────────────────────────────────────────────────
+const editingBoardId = ref<string | null>(null);
+const editDraft = reactive<{ name: string; color: string }>({
+  name: "",
+  color: BOARD_COLORS[0]!,
+});
+
+function openEditBoard(b: Board) {
+  editingBoardId.value = b.id;
+  editDraft.name = b.name;
+  editDraft.color = b.color;
+  editBoardOpen.value = true;
+  openMenuBoardId.value = null;
+}
+
+const editDirty = computed(() => {
+  const id = editingBoardId.value;
+  if (!id) return false;
+  const original = boards.value.find((b) => b.id === id);
+  if (!original) return false;
+  return (
+    editDraft.name.trim() !== original.name ||
+    editDraft.color !== original.color
+  );
+});
+
+async function submitEditBoard() {
+  const id = editingBoardId.value;
+  if (!id || !editDraft.name.trim() || boardUpdating.value) return;
+  if (!editDirty.value) {
+    editBoardOpen.value = false;
+    return;
+  }
+  try {
+    await updateBoard(id, {
+      name: editDraft.name.trim(),
+      color: editDraft.color,
+    });
+    editBoardOpen.value = false;
+    editingBoardId.value = null;
+  } catch {
+    /* error toast already surfaced; keep dialog open for retry */
+  }
+}
+
+function onDeleteBoard(b: Board) {
+  openMenuBoardId.value = null;
+  removeBoard(b.id);
 }
 
 function isActive(to: string) {
@@ -173,27 +249,102 @@ function isActive(to: string) {
         </button>
       </div>
       <div class="flex flex-col gap-1">
-        <RouterLink
+        <!-- loading skeleton: tiny rows so the layout doesn't jump -->
+        <template v-if="boardsPending">
+          <div
+            v-for="i in 2"
+            :key="`sk-${i}`"
+            class="flex h-8 items-center gap-3 px-2.5"
+          >
+            <span class="size-2 shrink-0 rounded-full bg-muted" />
+            <span class="h-2.5 flex-1 rounded bg-muted" />
+          </div>
+        </template>
+        <p
+          v-else-if="boardsError"
+          class="px-2.5 py-1 text-[11px] text-destructive"
+        >
+          Couldn't load boards.
+        </p>
+        <p
+          v-else-if="boards.length === 0"
+          class="px-2.5 py-1 text-[11px] text-muted-foreground/70"
+        >
+          No boards yet.
+        </p>
+        <!-- Each board row carries a hover-revealed kebab. The link still
+             spans the whole row; the kebab sits ABOVE it (z-10) so clicking
+             it doesn't navigate. -->
+        <div
           v-for="b in boards"
           :key="b.id"
-          :to="{ path: '/', query: { board: b.id } }"
-          class="flex h-8 items-center gap-3 rounded-md px-2.5 text-sm transition-colors"
-          :class="
-            activeBoardId === b.id
-              ? 'bg-sidebar-accent font-medium text-foreground'
-              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-foreground'
-          "
-          @click="closeMobile"
+          class="group relative"
         >
-          <span
-            class="size-2 shrink-0 rounded-full"
-            :style="{ background: b.color }"
-          />
-          <span class="flex-1 truncate whitespace-nowrap">{{ b.name }}</span>
-          <span class="font-mono text-[11px] text-muted-foreground/70">
-            {{ boardCounts[b.id] ?? 0 }}
-          </span>
-        </RouterLink>
+          <RouterLink
+            :to="{ path: '/', query: { board: b.slug } }"
+            class="flex h-8 items-center gap-3 rounded-md pl-2.5 pr-2 text-sm transition-colors"
+            :class="
+              activeBoardId === b.id
+                ? 'bg-sidebar-accent font-medium text-foreground'
+                : 'text-muted-foreground hover:bg-sidebar-accent hover:text-foreground'
+            "
+            @click="closeMobile"
+          >
+            <span
+              class="size-2 shrink-0 rounded-full"
+              :style="{ background: b.color }"
+            />
+            <span class="flex-1 truncate whitespace-nowrap">{{ b.name }}</span>
+            <!-- Count peeks out when the kebab isn't shown; gets visually
+                 replaced by the kebab on hover via the group selectors. -->
+            <span
+              class="font-mono text-[11px] text-muted-foreground/70"
+              :class="
+                openMenuBoardId === b.id
+                  ? 'opacity-0'
+                  : 'group-hover:opacity-0'
+              "
+            >
+              {{ boardCounts[b.id] ?? 0 }}
+            </span>
+          </RouterLink>
+
+          <!-- Kebab — absolutely positioned so it doesn't shift the row,
+               visible on hover or when its own menu is open. -->
+          <DropdownMenu
+            :open="openMenuBoardId === b.id"
+            @update:open="(o) => (openMenuBoardId = o ? b.id : null)"
+          >
+            <DropdownMenuTrigger as-child>
+              <button
+                type="button"
+                class="absolute right-1.5 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center rounded text-muted-foreground transition-opacity hover:bg-muted/60 hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                :class="
+                  openMenuBoardId === b.id
+                    ? 'opacity-100'
+                    : 'opacity-0 group-hover:opacity-100'
+                "
+                :title="`${b.name} actions`"
+                :aria-label="`${b.name} actions`"
+                @click.prevent.stop
+              >
+                <Icon name="ellipsis" :size="14" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" class="w-44">
+              <DropdownMenuItem @select="openEditBoard(b)">
+                <Icon name="pencil" :size="14" /> Rename / recolor
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                class="text-destructive"
+                @select="onDeleteBoard(b)"
+              >
+                <Icon name="trash-2" :size="14" /> Delete board
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </div>
 
@@ -214,6 +365,7 @@ function isActive(to: string) {
               v-model="newBoard.name"
               placeholder="e.g. Onboarding flow"
               autocomplete="off"
+              :disabled="boardCreating"
               @keydown.enter="submitNewBoard"
             />
           </div>
@@ -224,29 +376,112 @@ function isActive(to: string) {
                 v-for="c in BOARD_COLORS"
                 :key="c"
                 type="button"
-                class="flex size-7 items-center justify-center rounded-full transition-transform hover:scale-110"
+                class="flex size-7 items-center justify-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
                 :class="
                   newBoard.color === c
                     ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background'
                     : ''
                 "
                 :style="{ background: c }"
-                :title="c"
+                :title="`Pick ${c}`"
+                :aria-label="`Pick color ${c}`"
+                :aria-pressed="newBoard.color === c"
+                :disabled="boardCreating"
                 @click="newBoard.color = c"
               />
             </div>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="ghost" size="sm" @click="newBoardOpen = false">
+          <Button
+            variant="ghost"
+            size="sm"
+            :disabled="boardCreating"
+            @click="newBoardOpen = false"
+          >
             Cancel
           </Button>
           <Button
             size="sm"
-            :disabled="!newBoard.name.trim()"
+            :disabled="!newBoard.name.trim() || boardCreating"
             @click="submitNewBoard"
           >
-            Create board
+            <Icon
+              v-if="boardCreating"
+              name="loader-circle"
+              :size="14"
+              class="animate-spin"
+            />
+            {{ boardCreating ? "Creating…" : "Create board" }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <!-- edit board dialog (rename + recolor) -->
+    <Dialog v-model:open="editBoardOpen">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit board</DialogTitle>
+          <DialogDescription>
+            Rename or recolor this board. Issues stay where they are.
+          </DialogDescription>
+        </DialogHeader>
+        <div class="flex flex-col gap-4 py-2">
+          <div class="grid gap-2">
+            <Label for="edit-board-name">Name</Label>
+            <Input
+              id="edit-board-name"
+              v-model="editDraft.name"
+              autocomplete="off"
+              :disabled="boardUpdating"
+              @keydown.enter="submitEditBoard"
+            />
+          </div>
+          <div class="grid gap-2">
+            <Label>Color</Label>
+            <div class="flex flex-wrap gap-2">
+              <button
+                v-for="c in BOARD_COLORS"
+                :key="c"
+                type="button"
+                class="flex size-7 items-center justify-center rounded-full transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
+                :class="
+                  editDraft.color === c
+                    ? 'ring-2 ring-foreground ring-offset-2 ring-offset-background'
+                    : ''
+                "
+                :style="{ background: c }"
+                :title="`Pick ${c}`"
+                :aria-label="`Pick color ${c}`"
+                :aria-pressed="editDraft.color === c"
+                :disabled="boardUpdating"
+                @click="editDraft.color = c"
+              />
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button
+            variant="ghost"
+            size="sm"
+            :disabled="boardUpdating"
+            @click="editBoardOpen = false"
+          >
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            :disabled="!editDraft.name.trim() || !editDirty || boardUpdating"
+            @click="submitEditBoard"
+          >
+            <Icon
+              v-if="boardUpdating"
+              name="loader-circle"
+              :size="14"
+              class="animate-spin"
+            />
+            {{ boardUpdating ? "Saving…" : "Save changes" }}
           </Button>
         </DialogFooter>
       </DialogContent>

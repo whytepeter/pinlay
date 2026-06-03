@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { User } from "@pinlay/shared";
 import {
   Icon,
   Input,
@@ -15,8 +14,14 @@ import {
 } from "@pinlay/design";
 
 const props = defineProps<{
-  counts: { all: number; open: number; in_progress: number; resolved: number };
-  people: User[];
+  counts: {
+    all: number;
+    open: number;
+    in_progress: number;
+    resolved: number;
+    archived: number;
+  };
+  people: Array<{ id: string; name: string }>;
 }>();
 
 const status = defineModel<string>("status");
@@ -35,6 +40,7 @@ const statusTabs = computed(() => [
     count: props.counts.in_progress,
   },
   { label: "Resolved", value: "resolved", count: props.counts.resolved },
+  { label: "Archived", value: "archived", count: props.counts.archived },
 ]);
 </script>
 

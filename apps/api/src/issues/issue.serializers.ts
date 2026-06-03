@@ -1,4 +1,4 @@
-import { Attachment, Issue, Pin, User } from "@prisma/client";
+import { Attachment, Board, Issue, Pin, User } from "@prisma/client";
 
 /**
  * Issue read DTOs — the dashboard's primary unit. An **Issue** is the titled
@@ -27,6 +27,18 @@ export interface MemberRef {
   avatarUrl: string | null;
 }
 
+/**
+ * Compact board reference embedded in an issue payload. Only the fields the
+ * card / detail header need — id+name to label, color to paint the dot. The
+ * full Board DTO lives at /api/boards.
+ */
+export interface BoardRef {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+}
+
 export interface SeverityCounts {
   critical: number;
   high: number;
@@ -51,6 +63,7 @@ export interface IssueSummaryDto {
   pageUrl: string;
   status: Issue["status"];
   reporter: MemberRef | null;
+  board: BoardRef | null;
   pinCount: number;
   severityCounts: SeverityCounts;
   statusCounts: StatusCounts;
@@ -113,6 +126,16 @@ export function memberRef(user: User | null | undefined): MemberRef | null {
   };
 }
 
+export function boardRef(board: Board | null | undefined): BoardRef | null {
+  if (!board) return null;
+  return {
+    id: board.id,
+    name: board.name,
+    slug: board.slug,
+    color: board.color,
+  };
+}
+
 /** First non-empty line of the comment, for a list/heading convenience. */
 export function deriveTitle(comment: string): string {
   const text = comment ?? "";
@@ -145,6 +168,7 @@ export function statusCounts(pins: Pick<Pin, "status">[]): StatusCounts {
 
 type IssueForSummary = Issue & {
   author?: User | null;
+  board?: Board | null;
   pins: Pick<Pin, "severity" | "status">[];
 };
 
@@ -159,6 +183,7 @@ export function toIssueSummary(issue: IssueForSummary): IssueSummaryDto {
     pageUrl: issue.pageUrl,
     status: issue.status,
     reporter: memberRef(issue.author),
+    board: boardRef(issue.board),
     pinCount: issue.pins.length,
     severityCounts: severityCounts(issue.pins),
     statusCounts: statusCounts(issue.pins),

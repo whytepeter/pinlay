@@ -1490,3 +1490,429 @@
 | 09:49 | Session end: 3 writes across 1 files (App.vue) | 2 reads | ~13092 tok |
 | 09:53 | Edited apps/extension/src/entrypoints/popup/App.vue | 19→21 lines | ~279 |
 | 09:55 | Session end: 4 writes across 1 files (App.vue) | 2 reads | ~13391 tok |
+| 10:01 | Created HANDOFF_WEB_INTEGRATION.md | — | ~3819 |
+| 10:19 | Created HANDOFF_WEB_INTEGRATION.md — scoped doc for next session to pick up web↔API wiring: state-of-mocks table, verified API surface (workspaces/issues/auth), recommended sequence (switcher→settings→pinboards→issue-detail), vue-query patterns, gotchas (token swap on switch, useSettings junk-drawer, mock file lifecycle), API gaps to flag. Build clean | HANDOFF_WEB_INTEGRATION.md | done | ~7k |
+| 10:19 | Session end: 5 writes across 2 files (App.vue, HANDOFF_WEB_INTEGRATION.md) | 2 reads | ~17482 tok |
+
+## Session: 2026-06-01 10:28
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 10:33 | Edited apps/web/src/shared/lib/api.ts | expanded (+35 lines) | ~198 |
+| 10:33 | Edited apps/web/src/shared/lib/api.ts | expanded (+30 lines) | ~372 |
+| 10:34 | Edited apps/web/src/shared/composables/useAuth.ts | added 1 condition(s) | ~282 |
+| 10:35 | Created apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | — | ~1396 |
+| 10:36 | Created apps/web/src/features/pinboards/composables/useSessions.ts | — | ~946 |
+| 10:37 | Created apps/web/src/shared/lib/issue-display.ts | — | ~326 |
+| 10:37 | Created apps/web/src/features/pinboards/components/SessionCard.vue | — | ~720 |
+| 10:37 | Created apps/web/src/features/pinboards/components/SessionRow.vue | — | ~631 |
+| 10:38 | Edited apps/web/src/features/pinboards/components/SessionFilters.vue | 3→2 lines | ~11 |
+| 10:38 | Edited apps/web/src/features/pinboards/components/SessionFilters.vue | CSS: id, name | ~43 |
+| 10:38 | Created apps/web/src/features/pinboards/PinboardsPage.vue | — | ~816 |
+
+## Session: 2026-06-01 (web↔API integration phase 1+4)
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| now  | Added workspace types + apiClient.workspaces.{list,current,update,switch,members,invite,updateMember,removeMember,remove} | apps/web/src/shared/lib/api.ts | mirrors WorkspaceDto + MemberDto from apps/api workspace.service.ts | ~600 |
+| now  | Added useAuth.setToken(token, workspace?) for JWT swap after /workspaces/:id/switch (no re-login) | apps/web/src/shared/composables/useAuth.ts | drop-in for switcher mutation | ~150 |
+| now  | Rewrote WorkspaceSwitcher: lazy useQuery(['workspaces']) on dropdown open, useMutation(switch)→setToken+queryClient.clear()+router.push('/'), per-row spinner, removed 'Create workspace' dialog (no POST /workspaces yet) | apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | live data flows | ~900 |
+| now  | Rewrote useSessions to consume apiClient.issues.list via useQuery; server-side status+q, client-side severity/assignee/sort; dropped board filter (no API field on IssueSummary) | apps/web/src/features/pinboards/composables/useSessions.ts | counts derived from current page; isPending/isError/refetch exposed | ~500 |
+| now  | Adapted SessionCard/SessionRow to consume IssueSummary directly; derive urlPath/faviconLabel/faviconHue via shared issue-display helper; reporter from MemberRef (null-safe); dropped integration chip | apps/web/src/features/pinboards/components/{SessionCard,SessionRow}.vue | clean shape, no SessionListItem shim | ~1100 |
+| now  | Created shared/lib/issue-display.ts — IssueDisplay helper deriving urlPath/host/faviconLabel/faviconHue from pageUrl+id | apps/web/src/shared/lib/issue-display.ts | reused by card+row | ~200 |
+| now  | PinboardsPage: dropped useBoards + active-board chip + 'New session' button + PEOPLE; loading/error/empty states; assignee dropdown sourced from /workspaces/members | apps/web/src/features/pinboards/PinboardsPage.vue | full real-data path | ~700 |
+| now  | SessionFilters: people prop relaxed from User[] (zod shape) to {id,name}[] | apps/web/src/features/pinboards/components/SessionFilters.vue | accepts WorkspaceMemberRow projection | ~30 |
+| now  | Verified end-to-end in preview: login(you@pinlay.dev) → /issues 200 (3 issues PL-0001..3) → /workspaces 200 (Dev workspace, team) → /workspaces/members 200 → switcher dropdown opens, current workspace highlighted | — | zero console errors | ~150 |
+| 11:13 | Edited HANDOFF_WEB_INTEGRATION.md | inline fix | ~13 |
+| 11:13 | Edited HANDOFF_WEB_INTEGRATION.md | 13→13 lines | ~460 |
+| 11:13 | Session end: 13 writes across 10 files (api.ts, useAuth.ts, WorkspaceSwitcher.vue, useSessions.ts, issue-display.ts) | 19 reads | ~31805 tok |
+| 11:16 | Created apps/web/src/features/issue/composables/useIssue.ts | — | ~790 |
+| 11:16 | Created apps/web/src/features/issue/IssuePage.vue | — | ~1601 |
+| 11:17 | Created apps/web/src/features/issue/components/PinList.vue | — | ~734 |
+| 11:17 | Edited apps/web/src/shared/lib/issue-display.ts | modified hashHue() | ~74 |
+| 11:17 | Created apps/web/src/features/issue/components/PinListItem.vue | — | ~458 |
+| 11:17 | Created apps/web/src/features/issue/components/PinDetail.vue | — | ~1864 |
+| 11:18 | Created apps/web/src/features/issue/components/ScreenshotViewer.vue | — | ~853 |
+| 11:18 | Created apps/web/src/features/issue/components/AnchorBlock.vue | — | ~815 |
+| 11:18 | Created apps/web/src/features/issue/components/ActivityThread.vue | — | ~706 |
+| 11:20 | Edited HANDOFF_WEB_INTEGRATION.md | inline fix | ~14 |
+| 11:20 | Edited HANDOFF_WEB_INTEGRATION.md | inline fix | ~117 |
+| now  | Rewrote useIssue.ts → useQuery(['issue', id]) against apiClient.issues.get; local pins ref seeded from query data so optimistic setStatus/setAssignee stick | apps/web/src/features/issue/composables/useIssue.ts | session=IssueDetail, pins=ApiPin[]; assignee now MemberRef\|null | ~600 |
+| now  | IssuePage now handles loading/error/not-found; loads /workspaces/members and passes to PinDetail for the assignee dropdown | apps/web/src/features/issue/IssuePage.vue | favicon derived via issueDisplay; reference replaces shortId | ~1300 |
+| now  | PinList/PinListItem/PinDetail/ActivityThread/ScreenshotViewer/AnchorBlock adapted to ApiPin: pin.comment→body, pin.author/pin.assignee MemberRef, anchor as Record<string,unknown> (safe-read) | apps/web/src/features/issue/components/*.vue | exported hashHue from issue-display.ts for avatar hue derivation | ~3500 |
+| now  | ActivityThread reduced to honest minimal stub: 'pinned' + 'assigned' events derived from pin.author/pin.assignee; no API activity feed yet | apps/web/src/features/issue/components/ActivityThread.vue | mock getActivity dropped | ~600 |
+| now  | ScreenshotViewer now renders pin.attachments[0].url when image present; safe anchor metadata reads | apps/web/src/features/issue/components/ScreenshotViewer.vue | placeholder when no attachment | ~600 |
+| now  | Verified live: /issues/:id 200, detail page renders 3 pins from PL-0003 with real titles, severities, anchor selectors, assignees. Zero console errors. | — | phase 5 complete | ~150 |
+| 11:23 | Session end: 24 writes across 18 files (api.ts, useAuth.ts, WorkspaceSwitcher.vue, useSessions.ts, issue-display.ts) | 26 reads | ~46276 tok |
+| 11:25 | Edited apps/web/src/features/pinboards/composables/useSessions.ts | 5→6 lines | ~65 |
+| 11:25 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | 13→14 lines | ~42 |
+| 11:25 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | expanded (+9 lines) | ~79 |
+| 11:26 | Created apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | — | ~2097 |
+| 11:27 | Edited apps/web/src/shared/lib/api.ts | expanded (+22 lines) | ~279 |
+| 11:28 | Created apps/web/src/features/issue/composables/useIssue.ts | — | ~1030 |
+| 11:28 | Edited apps/web/src/shared/composables/useBoards.ts | modified TODO() | ~182 |
+| 11:29 | Edited apps/web/src/features/integrations/composables/useIntegrations.ts | modified TODO() | ~156 |
+| 11:29 | Edited apps/web/src/features/settings/composables/useSettings.ts | modified TODO() | ~233 |
+| now  | Fixed Refresh button feedback: exposed isFetching from useSessions; bound disabled+animate-spin to isFetching (not just isPending) so user sees refetch in-flight | apps/web/src/features/pinboards/{composables/useSessions.ts,PinboardsPage.vue} | verified: spin + disabled for ~3s during refetch | ~60 |
+| now  | Restored Create workspace dialog (removed earlier). Local-only: pushes new workspace into queryClient cache (does NOT persist; will vanish on reload). TODO(api): POST /workspaces. Dialog copy is honest about it. | apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | verified: 'Side Project' appears in dropdown after submit | ~200 |
+| now  | Added apiClient.pins.update + apiClient.pins.remove (PATCH/DELETE /annotation/pins/:id). Wired useIssue.setStatus/setAssignee with optimistic update + revert-on-error + invalidate ['issue', id] and ['issues', 'list'] on settle | apps/web/src/shared/lib/api.ts, apps/web/src/features/issue/composables/useIssue.ts | verified live: Resolve fires PATCH, server returns 200, GET /issues/:id confirms status=resolved persisted | ~400 |
+| now  | Added TODO(api) comments to useBoards (boards module not built), useIntegrations (Roadmap Phase 3), useSettings (junk-drawer notes which sections have live API vs not). WorkspaceSwitcher's create-flow has inline TODO too. | apps/web/src/shared/composables/useBoards.ts, apps/web/src/features/integrations/composables/useIntegrations.ts, apps/web/src/features/settings/composables/useSettings.ts | future sessions can grep TODO(api) | ~80 |
+| 11:38 | Session end: 33 writes across 21 files (api.ts, useAuth.ts, WorkspaceSwitcher.vue, useSessions.ts, issue-display.ts) | 30 reads | ~56152 tok |
+
+## Session: 2026-06-01 11:43
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-01 11:45
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-01 12:40
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-01 14:18
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-01 14:18
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-01 14:45
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 14:49 | Created apps/web/src/shared/lib/toast.ts | — | ~362 |
+| 14:49 | Created apps/web/src/App.vue | — | ~248 |
+| 14:50 | Edited apps/web/src/main.ts | added 1 import(s) | ~27 |
+| 14:51 | Created apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | — | ~2400 |
+| 14:52 | Created apps/web/src/features/settings/components/WorkspaceSection.vue | — | ~1142 |
+| 14:52 | Created apps/web/src/features/settings/components/MembersSection.vue | — | ~2052 |
+| 14:53 | Created apps/web/src/features/settings/components/ProfileSection.vue | — | ~549 |
+| 14:53 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | added 1 import(s) | ~76 |
+| 14:54 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | added 1 condition(s) | ~106 |
+| 14:54 | Edited apps/web/src/features/issue/IssuePage.vue | added 1 import(s) | ~47 |
+| 14:54 | Edited apps/web/src/features/issue/IssuePage.vue | added 1 condition(s) | ~54 |
+| 14:54 | Edited apps/web/src/features/issue/composables/useIssue.ts | added 1 import(s) | ~92 |
+| 14:54 | Edited apps/web/src/features/issue/composables/useIssue.ts | 9→10 lines | ~56 |
+| 14:54 | Edited apps/web/src/features/issue/composables/useIssue.ts | 9→10 lines | ~65 |
+| now  | Installed vue-sonner + Toaster mounted in App.vue; thin shared/lib/toast.ts wrapper exported as { toast } | apps/web/{src/App.vue,src/main.ts,src/shared/lib/toast.ts,package.json} | bottom-right, themed to design tokens | ~250 |
+| now  | WorkspaceSwitcher: no longer errors on local workspaces. local-* ids show 'Local' chip, click only updates the visible-active UI + info toast (no POST /workspaces/:id/switch). Create now auto-sets the new workspace as active. Inline error block replaced with toast.error in the switch mutation onError. | apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | verified: create→active+toast, switch→toast | ~400 |
+| now  | Settings → Workspace wired to GET/PATCH /workspaces/current via useQuery+useMutation. Toast on save success+error. Slug+plan+memberCount surfaced as read-only display. Dropped defaultIntegration (no API). | apps/web/src/features/settings/components/WorkspaceSection.vue | verified: rename Dev workspace → 'Workspace updated' toast | ~300 |
+| now  | Settings → Members wired to GET/POST/PATCH/DELETE /workspaces/members. useMutation × 3 (invite/setRole/remove) with success+error toasts. Dropped the pending/status mock concept (API doesn't carry it). 404 'no pinlay account' surfaces verbatim. | apps/web/src/features/settings/components/MembersSection.vue | verified: 2 owners listed, invite-nobody@example.com → API friendly-error toast | ~600 |
+| now  | Settings → Profile reads useAuth().user (live). Name/email read-only. Change-avatar button info-toasts 'Profile edits go live when /auth/me PATCH ships'. TODO(api) noted inline. | apps/web/src/features/settings/components/ProfileSection.vue | verified: shows Dev User / you@pinlay.dev | ~150 |
+| now  | Toasted transient errors at remaining surfaces: PinboardsPage (useSessions errored), IssuePage (issue detail errored), useIssue setStatus/setAssignee mutation errors revert AND toast. Inline error blocks kept as redundant fallback w/ retry button. | apps/web/src/features/{pinboards/PinboardsPage.vue,issue/IssuePage.vue,issue/composables/useIssue.ts} | — | ~100 |
+| 15:24 | Session end: 14 writes across 10 files (toast.ts, App.vue, main.ts, WorkspaceSwitcher.vue, WorkspaceSection.vue) | 8 reads | ~15072 tok |
+| 15:27 | Created apps/api/src/workspace/dto/create-workspace.dto.ts | — | ~238 |
+| 15:28 | Edited apps/api/src/workspace/workspace.service.ts | expanded (+26 lines) | ~283 |
+| 15:28 | Edited apps/api/src/workspace/workspace.service.ts | added error handling | ~514 |
+| 15:28 | Edited apps/api/src/workspace/workspace.service.ts | added 8 condition(s) | ~525 |
+| 15:29 | Edited apps/api/src/workspace/workspace.service.ts | modified slugify() | ~137 |
+| 15:29 | Edited apps/api/src/workspace/workspace.service.ts | modified slugify() | ~68 |
+| 15:30 | Edited apps/api/src/workspace/workspace.controller.ts | added 2 import(s) | ~147 |
+| 15:30 | Edited apps/api/src/workspace/workspace.controller.ts | expanded (+16 lines) | ~200 |
+| 15:31 | Created apps/api/src/auth/dto/update-me.dto.ts | — | ~234 |
+| 15:31 | Edited apps/api/src/auth/auth.service.ts | added 2 import(s) | ~128 |
+| 15:32 | Edited apps/api/src/auth/auth.service.ts | expanded (+10 lines) | ~128 |
+| 15:32 | Edited apps/api/src/auth/auth.service.ts | added 4 condition(s) | ~506 |
+| 15:32 | Edited apps/api/src/auth/auth.controller.ts | added 1 import(s) | ~159 |
+| 15:32 | Edited apps/api/src/auth/auth.controller.ts | expanded (+13 lines) | ~198 |
+| 15:33 | Edited apps/web/src/shared/lib/api.ts | 15→20 lines | ~215 |
+| 15:33 | Edited apps/web/src/shared/lib/api.ts | expanded (+11 lines) | ~90 |
+| 15:33 | Edited apps/web/src/shared/lib/api.ts | expanded (+6 lines) | ~48 |
+| 15:34 | Created apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | — | ~2190 |
+| 15:35 | Created apps/web/src/features/settings/components/ProfileSection.vue | — | ~880 |
+| 15:35 | Edited apps/web/src/shared/composables/useAuth.ts | modified applyMe() | ~244 |
+| 15:35 | Edited apps/web/src/shared/composables/useAuth.ts | persist() → applyMe() | ~29 |
+| 16:16 | Edited apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | CSS: predicate | ~264 |
+| 16:37 | Edited apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | CSS: Eager | ~80 |
+| 16:37 | Edited apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | 4→2 lines | ~38 |
+| now  | Built POST /api/workspaces (NestJS). Transactional create (workspace + owner membership), slug auto-derived from name with fallback retries, reserved-slug list (admin/api/app/auth/billing/dashboard/docs/help/login/logout/settings/signup/status/support/www), throttle 10/min. Returns {token, workspace} — same shape as switch so client adopts in one trip. | apps/api/src/workspace/{workspace.controller.ts,workspace.service.ts,dto/create-workspace.dto.ts} | verified live: 201 + workspace row + owner membership; conflict on duplicate slug | ~700 |
+| now  | Built PATCH /api/auth/me. UpdateMeDto allows name + avatarUrl (null clears); URL validated via class-validator. Email + password explicitly NOT mutable here (TODO: verification + current-password flows). Returns Me. | apps/api/src/auth/{auth.controller.ts,auth.service.ts,dto/update-me.dto.ts} | verified live: PATCH renames user, returns updated Me | ~250 |
+| now  | Wired web Create workspace to real API: apiClient.workspaces.create() returns {token, workspace}; shared adoptWorkspace() does setToken+queryClient.removeQueries(except ['workspaces'])+setQueryData(['workspaces'], …). Replaced queryClient.clear() — it unsubscribed the workspaces observer so seeded data never reached the dropdown. | apps/web/src/{shared/lib/api.ts,features/workspace-shell/components/WorkspaceSwitcher.vue} | verified live: create → toast 'Created Glown Inc' → trigger 'GGlown Incfree plan' | ~400 |
+| now  | WorkspaceSwitcher workspaces query made EAGER (was lazy on first dropdown open). Otherwise the trigger fell back to auth.user.name ('Dev User') on cold reload — looked like Dev workspace even when bound to a different one. Tightened fallback to 'Workspace' (no user-name leak). | apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | verified cold reload: 'G Glown Inc · free plan' | ~30 |
+| now  | ProfileSection editable. Wired to apiClient.updateMe via useMutation; success → auth.applyMe(me) updates in-memory user + persists. Email read-only with sub-text 'Email changes need verification (coming soon).' Avatar Change still toasts (storage pipeline pending). | apps/web/src/features/settings/components/ProfileSection.vue, apps/web/src/shared/composables/useAuth.ts (new applyMe helper) | verified live: renamed Dev User → Bright Eze → toast 'Profile updated' | ~350 |
+| 17:27 | Session end: 38 writes across 18 files (toast.ts, App.vue, main.ts, WorkspaceSwitcher.vue, WorkspaceSection.vue) | 14 reads | ~30628 tok |
+| 17:35 | Session end: 38 writes across 18 files (toast.ts, App.vue, main.ts, WorkspaceSwitcher.vue, WorkspaceSection.vue) | 14 reads | ~30628 tok |
+
+## Session: 2026-06-01 18:17
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 18:21 | Edited apps/api/prisma/schema.prisma | expanded (+25 lines) | ~244 |
+| 18:21 | Edited apps/api/prisma/schema.prisma | 20→25 lines | ~252 |
+| 18:22 | Created apps/api/prisma/migrations/20260601160000_boards/migration.sql | — | ~398 |
+| 18:29 | Created apps/api/src/boards/dto/create-board.dto.ts | — | ~278 |
+| 18:29 | Created apps/api/src/boards/dto/update-board.dto.ts | — | ~169 |
+| 18:30 | Created apps/api/src/boards/boards.service.ts | — | ~2248 |
+| 18:30 | Created apps/api/src/boards/boards.controller.ts | — | ~406 |
+| 18:30 | Created apps/api/src/boards/boards.module.ts | — | ~162 |
+| 18:31 | Edited apps/api/src/app.module.ts | added 1 import(s) | ~35 |
+| 18:31 | Edited apps/api/src/app.module.ts | 2→3 lines | ~12 |
+| 18:31 | Edited apps/api/src/issues/issue.serializers.ts | inline fix | ~20 |
+| 18:31 | Edited apps/api/src/issues/issue.serializers.ts | expanded (+12 lines) | ~115 |
+| 18:31 | Edited apps/api/src/issues/issue.serializers.ts | 3→4 lines | ~30 |
+| 18:31 | Edited apps/api/src/issues/issue.serializers.ts | added 1 condition(s) | ~123 |
+| 18:31 | Edited apps/api/src/issues/issue.serializers.ts | modified toIssueSummary() | ~209 |
+| 18:32 | Created apps/api/src/issues/dto/list-issues.dto.ts | — | ~244 |
+| 18:32 | Created apps/api/src/issues/dto/update-issue.dto.ts | — | ~148 |
+| 18:32 | Created apps/api/src/issues/issues.service.ts | — | ~1619 |
+| 18:33 | Created apps/api/src/issues/issues.controller.ts | — | ~524 |
+| 18:33 | Created apps/api/src/issues/issues.module.ts | — | ~115 |
+| 19:04 | Edited apps/web/src/shared/lib/api.ts | expanded (+35 lines) | ~199 |
+| 19:04 | Edited apps/web/src/shared/lib/api.ts | 17→18 lines | ~125 |
+| 19:05 | Edited apps/web/src/shared/lib/api.ts | expanded (+10 lines) | ~124 |
+| 19:05 | Edited apps/web/src/shared/lib/api.ts | expanded (+22 lines) | ~310 |
+| 19:05 | Created apps/web/src/shared/composables/useBoards.ts | — | ~1056 |
+| 19:06 | Edited apps/web/src/features/pinboards/composables/useSessions.ts | added 1 import(s) | ~100 |
+| 19:06 | Edited apps/web/src/features/pinboards/composables/useSessions.ts | added nullish coalescing | ~120 |
+| 19:06 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | added 2 import(s) | ~178 |
+| 19:06 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | CSS: path, query | ~112 |
+| 19:06 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | CSS: PageHeader, name | ~115 |
+| 19:07 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | expanded (+21 lines) | ~224 |
+| 19:07 | Edited apps/web/src/features/pinboards/components/SessionCard.vue | CSS: Board, background | ~124 |
+| 19:07 | Edited apps/web/src/features/issue/IssuePage.vue | 21→22 lines | ~199 |
+| 19:08 | Edited apps/web/src/features/issue/IssuePage.vue | added optional chaining | ~592 |
+| 19:08 | Edited apps/web/src/features/issue/IssuePage.vue | added optional chaining | ~781 |
+| 19:09 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | inline fix | ~32 |
+| 19:09 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | CSS: skeleton | ~433 |
+| now  | Boards Prisma model: Board { id, workspaceId, name, slug, color, position, …}; @@unique([workspaceId, slug]). Issue.boardId nullable + onDelete: SetNull (issues survive board removal). Hand-wrote migration sql (prisma migrate dev fails non-interactively) + applied via deploy. | apps/api/prisma/{schema.prisma, migrations/20260601160000_boards/migration.sql} | applied to Neon | ~250 |
+| now  | Built boards/ Nest module (CRUD): GET / list, POST / create (admin-only, slug auto-derived + collision-retry; reserved-slug check inherited from workspace pattern but board-specific list = none), PATCH /:id, DELETE /:id. Exposes assertBoardInWorkspace for IssuesService cross-tenant guard. | apps/api/src/boards/{boards.controller, boards.service, boards.module, dto/*}.ts | verified live: CRUD + cascade-set-null | ~900 |
+| now  | Wired boardId into issues: IssueSummary gains board: BoardRef \| null; ListIssuesDto.boardId filter ('null' literal = unassigned-only); PATCH /api/issues/:id with UpdateIssueDto.boardId. IssuesService.update uses BoardsService.assertBoardInWorkspace + Prisma connect/disconnect. ISSUE_SUMMARY_INCLUDE adds board:true. | apps/api/src/issues/{issue.serializers, issues.service, issues.controller, dto/list-issues.dto, dto/update-issue.dto}.ts | verified live: PATCH PL-0001 → board chip embedded in next GET | ~500 |
+| now  | Web apiClient: + apiClient.boards.{list,create,update,remove}; + apiClient.issues.update(id, {boardId}). Added Board, BoardRef, CreateBoardInput, UpdateBoardInput, UpdateIssueInput types. IssueSummary.board: BoardRef | null. ListIssuesParams.boardId optional. | apps/web/src/shared/lib/api.ts | — | ~150 |
+| now  | useBoards rewritten as a live composable: useQuery(['boards']) + useMutation create/remove. activeBoardSlug derived from ?board=URL query (slug-based, readable); activeBoardId derived (cuid the API expects). boardCounts now denormalized from b.issueCount. addBoard/removeBoard toast on success/error. window.confirm on delete. | apps/web/src/shared/composables/useBoards.ts | — | ~250 |
+| now  | PinboardsPage restores 'Filtered by [Board]' chip + clear; useSessions passes boardId to /issues. SessionCard adds a board pill (color dot + name) under the severity bar when issue.board is set. AppSidebar boards list pulls from useBoards live (loading skeleton + empty state); links now use ?board=slug. | apps/web/src/features/pinboards/PinboardsPage.vue, components/SessionCard.vue, features/workspace-shell/components/AppSidebar.vue | verified: filter narrows to 1 card after assigning PL-0001 → Checkout | ~250 |
+| now  | IssuePage adds Board chip in header: shows current board (color dot + name) or 'Add to board' default. Dropdown lists workspace boards (with check on current) + Remove from board option. useMutation with optimistic-update of ['issue', id] cache + revert-on-error; on settle invalidates ['issue', id], ['issues', 'list'], ['boards']. | apps/web/src/features/issue/IssuePage.vue | verified: PL-0001 → Checkout, header chip updates immediately | ~300 |
+| 20:18 | Session end: 37 writes across 21 files (schema.prisma, migration.sql, create-board.dto.ts, update-board.dto.ts, boards.service.ts) | 13 reads | ~25027 tok |
+| 20:20 | Edited apps/web/src/shared/composables/useBoards.ts | modified addBoard() | ~155 |
+| 20:20 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | CSS: isCreating | ~43 |
+| 20:20 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | added error handling | ~147 |
+| 20:21 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | CSS: disabled, disabled | ~596 |
+| 20:22 | Edited apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | 15→15 lines | ~119 |
+| 20:22 | Edited apps/web/src/features/settings/components/MembersSection.vue | 16→16 lines | ~120 |
+| now  | Fixed Create board dialog UX: useBoards.addBoard now returns mutateAsync's promise so AppSidebar can await. Dialog stays open during the POST, shows 'Creating…' label + spinner, inputs + color picker disabled. Resets + closes only on success; stays open with typed name on failure (error toast comes from useBoards mutation). | apps/web/src/shared/composables/useBoards.ts, apps/web/src/features/workspace-shell/components/AppSidebar.vue | verified: states stayed disabled+spinning for full ~3.6s, then closed on success | ~120 |
+| now  | Polished Create workspace + Invite member buttons with the same UX: 'Creating…' / 'Sending…' label switch + spinner while in-flight (disabled was already in place). Verified loading + recovery (failed invite surfaced the server's 404 toast). | apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue, apps/web/src/features/settings/components/MembersSection.vue | — | ~30 |
+| 20:26 | Session end: 43 writes across 23 files (schema.prisma, migration.sql, create-board.dto.ts, update-board.dto.ts, boards.service.ts) | 14 reads | ~28332 tok |
+| 20:29 | Created apps/web/src/features/workspace-shell/components/StatusBar.vue | — | ~2674 |
+| now  | StatusBar left side rewritten to live data: was reading useSettings (mock) + a 'team' array computed ONCE at setup (didn't re-render when members loaded). Now: useAuth().user for the current-user slot + useQuery(['workspace','members']) reactive — both pumped through hashHue(id) for avatar tint. Skeleton ghost-dots while pending. Overflow '+N' chip when there are more than 2 others, links to /settings/members. | apps/web/src/features/workspace-shell/components/StatusBar.vue | verified: 2 real avatars (you@pinlay.dev + whyte@pinlay.dev) with distinct hues | ~400 |
+| now  | StatusBar invite dialog uses useMutation(apiClient.workspaces.invite) — invalidates ['workspace','members'] + ['workspace','current'] on success. Loading: 'Sending…' label + spinner, all inputs (email/role/cancel/submit) disabled in-flight. Closes + resets only on success; stays open with typed email on error (server's friendly 404 toast). | apps/web/src/features/workspace-shell/components/StatusBar.vue | verified: in-flight states + toast after failure | ~150 |
+| 21:08 | Session end: 44 writes across 24 files (schema.prisma, migration.sql, create-board.dto.ts, update-board.dto.ts, boards.service.ts) | 15 reads | ~32916 tok |
+
+## Session: 2026-06-01 22:03
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-02 10:44
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-02 11:29
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 12:53 | Created apps/api/src/workspace/dto/update-workspace.dto.ts | — | ~228 |
+| 12:54 | Edited apps/api/src/workspace/workspace.service.ts | added error handling | ~456 |
+| 12:54 | Created apps/web/src/features/settings/components/WorkspaceSection.vue | — | ~1620 |
+| 12:55 | Edited apps/api/prisma/schema.prisma | expanded (+7 lines) | ~33 |
+| 12:55 | Edited apps/api/prisma/schema.prisma | modified code() | ~402 |
+| 12:55 | Edited apps/api/prisma/schema.prisma | 5→6 lines | ~64 |
+| 12:56 | Created apps/api/prisma/migrations/20260602180000_invites/migration.sql | — | ~417 |
+| 14:28 | Edited apps/api/src/workspace/workspace.service.ts | added 1 import(s) | ~62 |
+| 14:28 | Edited apps/api/src/workspace/workspace.service.ts | expanded (+24 lines) | ~248 |
+| 14:29 | Edited apps/api/src/workspace/workspace.service.ts | added 6 condition(s) | ~1725 |
+| 14:29 | Edited apps/api/src/workspace/workspace.service.ts | modified makeInviteToken() | ~338 |
+| 14:30 | Created apps/api/src/workspace/invites.controller.ts | — | ~422 |
+| 14:30 | Edited apps/api/src/workspace/workspace.module.ts | 17→21 lines | ~255 |
+| 14:31 | Created apps/api/src/auth/auth.module.ts | — | ~397 |
+| 14:31 | Edited apps/api/src/auth/auth.service.ts | 13→16 lines | ~154 |
+| 14:31 | Edited apps/api/src/auth/auth.service.ts | 4→6 lines | ~58 |
+| 14:32 | Edited apps/api/src/auth/auth.service.ts | added error handling | ~348 |
+| 14:33 | Edited apps/web/src/shared/lib/api.ts | expanded (+20 lines) | ~220 |
+| 14:33 | Edited apps/web/src/shared/lib/api.ts | expanded (+9 lines) | ~266 |
+| 14:34 | Created apps/web/src/features/settings/components/MembersSection.vue | — | ~3094 |
+| 14:34 | Edited apps/web/src/features/workspace-shell/components/StatusBar.vue | inline fix | ~18 |
+| 14:34 | Edited apps/web/src/features/workspace-shell/components/StatusBar.vue | CSS: res | ~235 |
+| 14:35 | Edited apps/web/src/features/workspace-shell/components/StatusBar.vue | 7→7 lines | ~80 |
+| 15:17 | Edited apps/api/src/workspace/workspace.service.ts | 8→10 lines | ~69 |
+| 15:18 | Edited apps/api/src/workspace/workspace.service.ts | 6→7 lines | ~56 |
+| now  | Workspace slug now editable. UpdateWorkspaceDto accepts slug (lowercase letters/digits/hyphens, 2-60 chars). Service guards reserved list + uniqueness; race-safe via P2002 catch. WorkspaceSection form: live validation, 'Old links will break' hint when dirty, 'Saving…' label on submit. | apps/api/src/workspace/{dto/update-workspace.dto.ts,workspace.service.ts}, apps/web/src/features/settings/components/WorkspaceSection.vue | verified live: rename dev → dev-renamed → dev | ~300 |
+| now  | Invite Prisma model: { id, workspaceId, email, role, status (pending|accepted|revoked|expired), token (unique base64url), invitedById, invitedAt, expiresAt }. Cascade on workspace delete; Restrict on inviter delete (preserve audit). Migration hand-written + applied to Neon. | apps/api/prisma/{schema.prisma, migrations/20260602180000_invites/migration.sql} | applied | ~200 |
+| now  | inviteMember reworked: returns discriminated { kind: 'member', member } OR { kind: 'invite', invite }. Pre-existing user → direct WorkspaceMember (same as before). Unknown email → creates pending Invite row (7-day expiry, 24-byte base64url token via node:crypto). Duplicate pending invite → 409 'already pending. Resend or revoke'. | apps/api/src/workspace/workspace.service.ts | verified: pending creation + 409 dedup | ~250 |
+| now  | New InvitesController under /api/workspaces/invites: GET list (pending only), POST :id/resend (regenerates token + bumps expiresAt; admin), DELETE :id (marks revoked; admin; idempotent). Registered in WorkspaceModule. | apps/api/src/workspace/{invites.controller.ts, workspace.module.ts} | verified: list/resend/revoke | ~200 |
+| now  | Auto-accept pending invites on signup. AuthService.signup calls WorkspaceService.acceptPendingInvitesForEmail(userId, email) after user+workspace creation. Walks pending invites for that email; creates WorkspaceMember (skips if exists via race) + marks invite accepted in one transaction. Cycle resolved via forwardRef on both modules + @Inject(forwardRef(...)) on WorkspaceService.auth. Best-effort try/catch with logger.warn — won't block signup. | apps/api/src/auth/{auth.module.ts, auth.service.ts}, apps/api/src/workspace/{workspace.module.ts, workspace.service.ts} | — | ~200 |
+| now  | Members UI now renders pending invites below active members: dimmed avatar, amber 'Pending' chip, 'Invited Xm ago by Y' caption, role badge, kebab menu with Resend/Revoke. apiClient.workspaces.invite returns InviteResult discriminated union. apiClient.workspaces.{invites, resendInvite, revokeInvite} added. StatusBar invite dialog handles both InviteResult branches with appropriate toast copy. | apps/web/src/shared/lib/api.ts, apps/web/src/features/settings/components/MembersSection.vue, apps/web/src/features/workspace-shell/components/StatusBar.vue | verified: pending rows display correctly with chip + caption + actions | ~600 |
+| 16:24 | Session end: 25 writes across 12 files (update-workspace.dto.ts, workspace.service.ts, WorkspaceSection.vue, schema.prisma, migration.sql) | 5 reads | ~20668 tok |
+| 16:26 | Edited apps/api/src/workspace/workspace.service.ts | expanded (+23 lines) | ~309 |
+| 16:26 | Edited apps/api/src/workspace/workspace.service.ts | modified toInviteDto() | ~146 |
+| 16:27 | Edited apps/api/src/workspace/workspace.service.ts | added 14 condition(s) | ~2118 |
+| 16:28 | Edited apps/api/src/auth/auth.service.ts | modified hashPassword() | ~201 |
+| 16:28 | Created apps/api/src/workspace/invite-accept.controller.ts | — | ~731 |
+| 16:28 | Edited apps/api/src/workspace/workspace.module.ts | expanded (+6 lines) | ~287 |
+| 16:29 | Edited apps/web/src/shared/lib/api.ts | expanded (+12 lines) | ~190 |
+| 16:30 | Edited apps/web/src/shared/lib/api.ts | expanded (+27 lines) | ~365 |
+| 16:30 | Edited apps/web/src/app/router.ts | expanded (+8 lines) | ~134 |
+| 16:32 | Created apps/web/src/features/auth/AcceptInviteView.vue | — | ~2865 |
+| 16:33 | Edited apps/web/src/features/settings/components/MembersSection.vue | added error handling | ~184 |
+| 16:33 | Edited apps/web/src/features/settings/components/MembersSection.vue | 11→14 lines | ~162 |
+| 16:34 | Edited HANDOFF_WEB_INTEGRATION.md | added error handling | ~459 |
+| now  | InviteDto + WorkspaceInviteRow now carry the accept token so admins can copy the invite URL. Public GET /api/invites/:token (no auth) returns PublicInvitePreview {workspace, email, role, invitedBy, expiresAt, hasAccount}. Lazy-expires pending rows past expiry on read. 404/410 mapped to NotFound/Conflict so the UI shows terminal copy. | apps/api/src/workspace/workspace.service.ts (lookupInvite), invite-accept.controller.ts | verified live | ~250 |
+| now  | POST /api/invites/:token/accept (authed): only callable when caller email matches invite email (otherwise 403); creates WorkspaceMember + marks invite accepted in transaction + mints JWT bound to invited workspace (SwitchResult shape). Idempotent on already-a-member race. | apps/api/src/workspace/workspace.service.ts (acceptInviteByToken) | — | ~150 |
+| now  | POST /api/invites/:token/accept-with-signup (public, tight 5/min throttle): body {name, password}. Email locked from invite (never trusts body for that field). Creates User + WorkspaceMember + marks invite accepted, all transactional. NO personal workspace created — user joins the invited workspace as primary (industry std for signup-via-invite). Returns SwitchResult bound to invited workspace. AuthService.hashPassword extracted so this path doesn't duplicate bcrypt config. | apps/api/src/workspace/workspace.service.ts (acceptInviteWithSignup), apps/api/src/auth/auth.service.ts (hashPassword), invite-accept.controller.ts | verified live: newcomer@example.com → signup form → lands in Dev workspace as member, sees 'Welcome to Dev workspace' toast | ~300 |
+| now  | New public route /invite/:token + AcceptInviteView. Branches: loading | 404/410 terminal | signed-in+matches → auto-accept on mount | signed-in+mismatch → log-out banner | hasAccount=true+not-signed-in → Sign in CTA (redirect back here) | hasAccount=false → name+password signup form. Workspace card shows initial avatar (hue from id), pinlay.app/<slug>, role chip. autoAcceptTried ref prevents double-fire. Mounted in AuthLayout. | apps/web/src/app/router.ts, apps/web/src/features/auth/AcceptInviteView.vue | verified: render + signup-via-invite | ~700 |
+| now  | MembersSection pending rows get 'Copy invite link' menu item — composes ${origin}/invite/${token} and writes to clipboard. Honest stand-in for the missing email pipeline. apiClient.invites.{lookup, accept, acceptWithSignup} added. | apps/web/src/features/settings/components/MembersSection.vue, apps/web/src/shared/lib/api.ts | — | ~80 |
+| now  | Documented email pipeline as TODO in HANDOFF_WEB_INTEGRATION.md. Provider TBD (Resend/Postmark/SendGrid). Templates: invite + invite-resent. Hooks: WorkspaceService.{inviteMember, resendInvite}. Fire-and-forget acceptable for v1. URL is ${WEB_APP_URL}/invite/${invite.token}. | HANDOFF_WEB_INTEGRATION.md | — | ~80 |
+| 17:41 | Session end: 38 writes across 16 files (update-workspace.dto.ts, workspace.service.ts, WorkspaceSection.vue, schema.prisma, migration.sql) | 7 reads | ~31168 tok |
+| 17:56 | Created apps/api/src/issues/dto/list-issues.dto.ts | — | ~319 |
+| 17:56 | Edited apps/api/src/issues/issues.service.ts | added 3 condition(s) | ~821 |
+| 17:57 | Edited apps/api/src/issues/issues.controller.ts | expanded (+21 lines) | ~330 |
+| 17:57 | Edited apps/web/src/shared/lib/api.ts | expanded (+11 lines) | ~160 |
+| 17:57 | Edited apps/web/src/shared/lib/api.ts | expanded (+8 lines) | ~228 |
+| 17:58 | Created apps/web/src/features/pinboards/composables/useSessions.ts | — | ~1300 |
+| 17:58 | Created apps/web/src/features/pinboards/PinboardsPage.vue | — | ~1816 |
+| now  | Pinboards feed: pushed severity + reporterId filters server-side (ListIssuesDto). Service uses pins:{some:{severity}} for severity, authorId for reporter. Shared buildWhere() between list + new counts endpoint so they stay in sync. | apps/api/src/issues/{dto/list-issues.dto.ts,issues.service.ts} | curl-verified: severity=high → 2 issues | ~150 |
+| now  | GET /api/issues/counts → {all, open, in_progress, resolved} via prisma.issue.groupBy, honors non-status filters. Route declared BEFORE :id so 'counts' isn't swallowed as an id param. Status field of query intentionally ignored — counts are per-status. | apps/api/src/issues/{issues.service.ts,issues.controller.ts} | curl-verified: counts under severity=high → {all:2,open:2,…} | ~80 |
+| now  | useSessions refactor: all filters pushed server-side (severity, reporterId, q, boardId, status). Dropped client-side severity/assignee filtering + counts derivation. Added pagination state (page, pageSize=24 default). Counts come from separate useQuery so paging doesn't refetch them. Filter changes auto-reset page to 0. Returns hasPrev/hasNext/nextPage/prevPage helpers. | apps/web/src/features/pinboards/composables/useSessions.ts, apps/web/src/shared/lib/api.ts (ListIssuesParams + IssueCounts + apiClient.issues.counts) | — | ~400 |
+| now  | PinboardsPage pagination footer: 'Showing X–Y of N' on left + Prev/'Page X of Y'/Next on right. Hidden when single-page (no noise on small workspaces). Buttons disabled at edges + during in-flight. Auto-scroll to top on page change. | apps/web/src/features/pinboards/PinboardsPage.vue | verified: pageSize=2 → 2 cards on page 1, Next → 1 card 'Showing 3-3 of 3', Next disabled | ~150 |
+| 19:06 | Session end: 45 writes across 21 files (update-workspace.dto.ts, workspace.service.ts, WorkspaceSection.vue, schema.prisma, migration.sql) | 8 reads | ~37550 tok |
+| 19:06 | Edited packages/design/src/components/ui/skeleton/Skeleton.vue | inline fix | ~18 |
+| 19:07 | Created apps/web/src/App.vue | — | ~954 |
+| 19:08 | Created apps/web/src/features/pinboards/components/SessionCardSkeleton.vue | — | ~330 |
+| 19:08 | Created apps/web/src/features/pinboards/components/SessionRowSkeleton.vue | — | ~244 |
+| 19:08 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | added 2 import(s) | ~98 |
+| 19:08 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | CSS: sm | ~102 |
+| 19:09 | Edited apps/web/src/features/pinboards/PinboardsPage.vue | expanded (+7 lines) | ~448 |
+| 19:09 | Created apps/web/src/features/issue/components/IssuePageSkeleton.vue | — | ~1079 |
+| 19:09 | Edited apps/web/src/features/issue/IssuePage.vue | added 1 import(s) | ~45 |
+| 19:10 | Edited apps/web/src/features/issue/IssuePage.vue | 3→6 lines | ~73 |
+| 19:11 | Edited apps/web/src/features/issue/IssuePage.vue | 11→7 lines | ~77 |
+| 19:11 | Edited apps/web/src/features/settings/components/WorkspaceSection.vue | inline fix | ~17 |
+| 19:11 | Edited apps/web/src/features/settings/components/WorkspaceSection.vue | expanded (+9 lines) | ~129 |
+| 19:11 | Edited apps/web/src/features/settings/components/MembersSection.vue | 15→16 lines | ~63 |
+| 19:11 | Edited apps/web/src/features/settings/components/MembersSection.vue | expanded (+18 lines) | ~255 |
+| now  | Toast UI polished: type-coloured left border (success emerald / error destructive / warning amber / info primary) + matching icon tint via Sonner's rich-colors. Tighter padding, design-token surface (card/foreground/border), close-X button enabled. Width set to 360px, gap 10. | apps/web/src/App.vue | scoped via .pl-toast class tree | ~140 |
+| now  | Skeleton default bg switched from bg-primary/10 (too violet) to bg-muted (neutral, matches loading conventions). Affects every Skeleton consumer. | packages/design/src/components/ui/skeleton/Skeleton.vue | one-line change | ~5 |
+| now  | SessionCardSkeleton + SessionRowSkeleton mirror SessionCard/SessionRow shape so layout doesn't reflow on data arrival. PinboardsPage isPending now renders 6 skeletons in the active view (grid OR list) instead of a centered spinner. | apps/web/src/features/pinboards/components/{SessionCardSkeleton,SessionRowSkeleton}.vue, PinboardsPage.vue | verified: 66 [data-slot=skeleton] elements during throttled load | ~180 |
+| now  | IssuePageSkeleton replaces the whole detail-page chrome while loading (header + 340px pin-list rail + pin-detail panel with chips, title, screenshot frame, anchor block). IssuePage swaps the full template via top-level v-if so the page doesn't jump in chunks. Inline 'Loading issue…' spinner removed. | apps/web/src/features/issue/components/IssuePageSkeleton.vue, IssuePage.vue | verified: 56 skeleton elements during throttled fetch | ~300 |
+| now  | Settings → Workspace: 4-row form-field skeleton (label + sub + input shapes) replaces inline loader. Settings → Members: 4-row table skeleton (avatar + 2-line text + role chip + kebab) replaces inline loader. | apps/web/src/features/settings/components/{WorkspaceSection,MembersSection}.vue | verified: both surface skeleton DOM during throttled load | ~120 |
+| now  | Refresh button on PinboardsPage shows 'Refresh' text on sm+ (visible) and uses sr-only on mobile (accessible). variant=outline; icon stays + spins during refetch. | apps/web/src/features/pinboards/PinboardsPage.vue | verified: 'Refresh' label visible in desktop screenshot | ~10 |
+| 19:45 | Session end: 60 writes across 27 files (update-workspace.dto.ts, workspace.service.ts, WorkspaceSection.vue, schema.prisma, migration.sql) | 11 reads | ~44936 tok |
+
+## Session: 2026-06-02 20:07
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 20:12 | Created apps/api/src/issues/dto/update-issue.dto.ts | — | ~278 |
+| 20:13 | Edited apps/api/src/issues/issues.service.ts | added 2 condition(s) | ~159 |
+| 20:14 | Edited apps/api/src/issues/dto/list-issues.dto.ts | expanded (+15 lines) | ~163 |
+| 20:14 | Edited apps/api/src/issues/issues.service.ts | modified buildWhere() | ~280 |
+| 20:15 | Edited apps/web/src/shared/lib/api.ts | 16→21 lines | ~172 |
+| 20:15 | Edited apps/web/src/shared/lib/api.ts | 4→6 lines | ~54 |
+| 20:15 | Edited apps/web/src/features/pinboards/composables/useSessions.ts | 2→7 lines | ~39 |
+| 20:15 | Edited apps/web/src/features/pinboards/composables/useSessions.ts | 8→12 lines | ~171 |
+| 20:16 | Edited apps/api/src/issues/issues.service.ts | added 2 condition(s) | ~378 |
+| 20:16 | Edited apps/web/src/shared/lib/api.ts | 6→7 lines | ~36 |
+| 20:16 | Edited apps/web/src/features/pinboards/composables/useSessions.ts | 4→4 lines | ~45 |
+| 20:17 | Edited apps/web/src/features/pinboards/components/SessionFilters.vue | CSS: archived | ~54 |
+| 20:17 | Edited apps/web/src/features/pinboards/components/SessionFilters.vue | 10→11 lines | ~109 |
+| 20:18 | Edited apps/web/src/features/issue/IssuePage.vue | expanded (+6 lines) | ~43 |
+| 20:19 | Edited apps/web/src/features/issue/IssuePage.vue | added 9 condition(s) | ~1032 |
+| 20:19 | Edited apps/web/src/features/issue/IssuePage.vue | expanded (+25 lines) | ~376 |
+| 20:20 | Edited apps/web/src/features/issue/IssuePage.vue | CSS: background, background | ~670 |
+| now  | PATCH /issues/:id now accepts title (1-200) + status (Status enum incl archived). UpdateIssueDto + service applies fields conditionally. | apps/api/src/issues/{dto/update-issue.dto.ts, issues.service.ts} | curl-verified rename + archive + restore | ~100 |
+| now  | /issues list hides archived by default (status: { not: archived }) unless ?status=archived OR ?includeArchived=true is set. ListIssuesDto adds includeArchived. /issues/counts now returns {all, open, in_progress, resolved, archived} with all=live-count, archived=standalone. | apps/api/src/issues/{dto/list-issues.dto.ts, issues.service.ts} | curl-verified archive→all:2, archived:1 | ~120 |
+| now  | Pinboards feed: 5th 'Archived' status tab (when picked, useSessions passes includeArchived=true + status=archived). IssueCounts type gains archived. SessionFilters tab list extended. | apps/web/src/features/pinboards/{composables/useSessions.ts, components/SessionFilters.vue}, apps/web/src/shared/lib/api.ts | — | ~80 |
+| now  | IssuePage header: status chip (Open/In progress/Resolved/Archived) next to Board chip, + click-to-edit title with input swap on click, commits on Enter/blur, Esc reverts. Single updateIssueMutation now handles board/title/status with optimistic update + per-field toast. | apps/web/src/features/issue/IssuePage.vue | type-checked via existing UpdateIssueInput | ~400 |
+| 20:49 | Session end: 17 writes across 7 files (update-issue.dto.ts, issues.service.ts, list-issues.dto.ts, api.ts, useSessions.ts) | 3 reads | ~9557 tok |
+
+## Session: 2026-06-02 21:20
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 21:21 | Edited apps/web/src/shared/composables/useBoards.ts | 5→6 lines | ~32 |
+| 21:21 | Edited apps/web/src/shared/composables/useBoards.ts | expanded (+10 lines) | ~182 |
+| 21:21 | Edited apps/web/src/shared/composables/useBoards.ts | modified removeBoard() | ~128 |
+| 21:21 | Edited apps/web/src/shared/composables/useBoards.ts | 5→8 lines | ~71 |
+| 21:21 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | CSS: isUpdating | ~71 |
+| 21:22 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | added 1 import(s) | ~94 |
+| 21:22 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 13→12 lines | ~59 |
+| 21:22 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | expanded (+7 lines) | ~153 |
+| 21:23 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | added 4 condition(s) | ~486 |
+| 21:24 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | expanded (+51 lines) | ~798 |
+| 21:25 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | expanded (+67 lines) | ~641 |
+| 21:26 | Created apps/web/src/features/settings/components/DangerZoneSection.vue | — | ~1469 |
+| now  | useBoards exposes updateBoard(id, patch) via mutateAsync (matches addBoard pattern). isUpdating + isRemoving refs added. | apps/web/src/shared/composables/useBoards.ts | — | ~80 |
+| now  | AppSidebar: each board row gets a hover-revealed kebab (Rename / recolor + Delete). Kebab is absolutely positioned over the issue-count chip; both toggle visibility via group-hover. New Edit-board dialog: name + color picker (same 8 swatches as Create). Save-changes button disabled while clean / pending. expanded computed now also accounts for editBoardOpen + openMenuBoardId so the sidebar stays open while the menu/dialog is up. | apps/web/src/features/workspace-shell/components/AppSidebar.vue | verified: rename Checkout → Checkout flow + color swap, toast 'Updated Checkout flow', sidebar refreshes | ~250 |
+| now  | Danger Zone wired to live API. Reads workspace via useQuery; type-to-confirm phrase derived from real slug. Owner-only — non-owners see a lock-icon notice instead of the delete button (mirrors server's owner-only guard). On success: clear all caches, auth.logout(), toast 'X deleted', push to /login. Skeleton shown during initial load. | apps/web/src/features/settings/components/DangerZoneSection.vue | wired live | ~250 |
+| 21:43 | Session end: 12 writes across 3 files (useBoards.ts, AppSidebar.vue, DangerZoneSection.vue) | 2 reads | ~9294 tok |
+
+## Session: 2026-06-02 22:06
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-02 22:38
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-02 23:54
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-02 00:34
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-02 00:51
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 00:52 | Edited apps/web/src/shared/lib/api.ts | 8→10 lines | ~80 |
+| 00:53 | Edited apps/web/src/features/issue/composables/useIssue.ts | added 1 condition(s) | ~258 |
+| 00:53 | Edited apps/web/src/features/issue/composables/useIssue.ts | 2→3 lines | ~14 |
+| 00:54 | Edited apps/web/src/features/issue/components/PinDetail.vue | CSS: setLabels | ~34 |
+| 00:54 | Edited apps/web/src/features/issue/components/PinDetail.vue | added optional chaining | ~443 |
+| 00:54 | Edited apps/web/src/features/issue/components/PinDetail.vue | reduced (-8 lines) | ~14 |
+| 00:55 | Edited apps/web/src/features/issue/components/PinDetail.vue | 10→11 lines | ~67 |
+| 00:56 | Edited apps/web/src/features/issue/components/PinDetail.vue | expanded (+47 lines) | ~555 |
+| 00:56 | Edited apps/web/src/features/issue/IssuePage.vue | 2→3 lines | ~11 |
+| 00:56 | Edited apps/web/src/features/issue/IssuePage.vue | 2→3 lines | ~28 |
+| 00:57 | Edited apps/api/prisma/schema.prisma | expanded (+21 lines) | ~310 |
+| 00:57 | Edited apps/api/prisma/schema.prisma | 6→7 lines | ~84 |
+| 00:58 | Created apps/api/prisma/migrations/20260603020000_pin_comments/migration.sql | — | ~283 |
+| 00:59 | Created apps/api/src/annotation/dto/create-comment.dto.ts | — | ~48 |
+| 00:59 | Created apps/api/src/annotation/dto/update-comment.dto.ts | — | ~56 |
+| 01:00 | Edited apps/api/src/annotation/annotation.service.ts | added 2 import(s) | ~184 |
+| 01:00 | Edited apps/api/src/annotation/annotation.service.ts | expanded (+15 lines) | ~168 |
+| 01:01 | Edited apps/api/src/annotation/annotation.service.ts | added 6 condition(s) | ~1143 |
+| 01:01 | Edited apps/api/src/annotation/annotation.service.ts | modified serializeComment() | ~205 |
+| 01:02 | Edited apps/api/src/annotation/pins.controller.ts | 16→20 lines | ~163 |
+| 01:02 | Edited apps/api/src/annotation/pins.controller.ts | expanded (+39 lines) | ~361 |
+| 01:03 | Edited apps/web/src/shared/lib/api.ts | expanded (+21 lines) | ~335 |
+| 01:03 | Edited apps/web/src/shared/lib/api.ts | expanded (+10 lines) | ~82 |
+| 01:04 | Created apps/web/src/features/issue/components/ActivityThread.vue | — | ~2956 |
+| 01:04 | Edited apps/web/src/features/issue/components/PinDetail.vue | 2→1 lines | ~10 |
+| 01:04 | Edited apps/web/src/features/issue/components/PinDetail.vue | 2→1 lines | ~14 |
+| 01:13 | Edited apps/web/src/features/issue/IssuePage.vue | setStatus() → setIssueStatus() | ~34 |
+| 01:13 | Edited apps/web/src/features/issue/IssuePage.vue | "setStatus(s)" → "setIssueStatus(s)" | ~11 |
+| now  | Pin labels editor: chip-style. Existing labels render as removable bubbles (hover-revealed X); + Add input commits on Enter, comma-splits + lowercases + dedupes via Set. UpdatePinInput exposes labels in apiClient; useIssue.setLabels does optimistic + revert via the existing updatePin mutation. PinDetail surfaces a setLabels emit; IssuePage wires it. | apps/web/src/{shared/lib/api.ts, features/issue/composables/useIssue.ts, features/issue/components/PinDetail.vue, features/issue/IssuePage.vue} | verified API: PATCH /annotation/pins/:id with labels:[bug,mobile] persists | ~250 |
+| now  | PinComment Prisma model + migration (20260603020000_pin_comments). Cascade on pin delete, restrict on author delete (preserve discussion). User.pinComments inverse relation added. Applied to Neon. | apps/api/prisma/{schema.prisma, migrations/20260603020000_pin_comments/migration.sql} | applied | ~120 |
+| now  | Pin-comments endpoints under /annotation/pins/:id/comments: GET list (chronological), POST create (1-5000 body), PATCH /:commentId (author-only edit, no-op patch returns current), DELETE /:commentId (author OR workspace admin/owner). Cross-tenant guard via pin→session→workspace (assertPinInWorkspace). AnnotationService.SerializedComment + serializeComment helper. CreateCommentDto + UpdateCommentDto. | apps/api/src/annotation/{annotation.service.ts, pins.controller.ts, dto/create-comment.dto.ts, dto/update-comment.dto.ts} | curl-verified: list+create+edit+delete roundtrip | ~280 |
+| now  | ActivityThread fully rewritten as REAL comments + composer. Synthetic 'pinned by X' + 'assigned to Y' rows still render at the top. Live comments fetched via useQuery(['pin', id, 'comments']). Composer with Cmd/Ctrl+Enter to send. Per-comment kebab: Edit (author) + Delete (author OR admin). Inline edit swaps body for a Textarea; updatedAt!==createdAt → '· edited' tag. Optimistic invalidate. Skeleton during load. ReplyBox removed from PinDetail (replaced by composer). | apps/web/src/{shared/lib/api.ts (PinCommentRow + pins.comments.* methods), features/issue/components/{ActivityThread.vue, PinDetail.vue}} | verified live: posted 'Tested from the new composer' → API confirms 1 row + DOM contains it. Renamed IssuePage's setStatus → setIssueStatus to resolve collision with useIssue's setStatus | ~700 |
+| 01:20 | Session end: 28 writes across 11 files (api.ts, useIssue.ts, PinDetail.vue, IssuePage.vue, schema.prisma) | 6 reads | ~16734 tok |
+| 01:24 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 15→17 lines | ~238 |
+| 01:24 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 15→17 lines | ~239 |
+| 01:25 | Edited apps/web/src/features/issue/components/PinDetail.vue | 8→9 lines | ~136 |
+| 01:25 | Edited apps/web/src/features/issue/components/PinDetail.vue | CSS: focus-visible, focus-visible, focus-visible | ~125 |
+| 01:25 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 11→12 lines | ~180 |
+| 01:26 | Edited apps/web/src/features/issue/composables/useIssue.ts | 11→16 lines | ~187 |

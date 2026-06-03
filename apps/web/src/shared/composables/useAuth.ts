@@ -65,10 +65,7 @@ async function hydrateAuth(): Promise<void> {
       // Revalidate in the background — don't block boot on the network.
       apiClient
         .me()
-        .then((me: Me) => {
-          user.value = me;
-          persist();
-        })
+        .then((me: Me) => applyMe(me))
         .catch(() => clear());
     }
   } catch {
@@ -82,6 +79,45 @@ function clear() {
   token.value = null;
   user.value = null;
   setApiToken(null);
+  persist();
+}
+
+/**
+ * Replace the bearer token without re-running login (e.g. after
+ * `/workspaces/:id/switch` returns a fresh JWT bound to the new workspace).
+ * Optionally accepts a workspace patch so `user.orgId` / `user.role` stay in
+ * sync with the new token.
+ */
+function setToken(
+  next: string,
+  workspace?: { id: string; role: string },
+): void {
+  token.value = next;
+  setApiToken(next);
+  if (workspace && user.value) {
+    user.value = {
+      ...user.value,
+      orgId: workspace.id,
+      role: workspace.role,
+    };
+  }
+  persist();
+}
+
+/**
+ * Replace the cached profile after a server confirmation (PATCH /auth/me,
+ * background revalidate, …). Persists so the next mount sees the new state
+ * without waiting on a network round-trip.
+ */
+function applyMe(me: Me): void {
+  user.value = {
+    id: me.id,
+    email: me.email,
+    name: me.name,
+    avatarUrl: me.avatarUrl,
+    orgId: me.orgId,
+    role: me.role,
+  };
   persist();
 }
 
@@ -102,6 +138,8 @@ export function useAuth() {
     }) {
       adoptAuthResult(await apiClient.signup(input));
     },
+    setToken,
+    applyMe,
     logout: clear,
   };
 }

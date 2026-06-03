@@ -1,29 +1,68 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type { Anchor } from "@pinlay/shared";
 import { Icon } from "@pinlay/design";
 
-const props = defineProps<{ anchor: Anchor; stale?: boolean }>();
+const props = defineProps<{
+  anchor: Record<string, unknown>;
+  stale?: boolean;
+}>();
 
 const open = ref(true);
 
+function str(v: unknown): string | null {
+  return typeof v === "string" && v.length > 0 ? v : null;
+}
+
+const selector = computed(() => str(props.anchor.selector) ?? "—");
+
 const rows = computed<[string, string][]>(() => {
   const a = props.anchor;
-  return [
-    ["Tag", a.tag],
-    ["Role", a.role ?? "—"],
-    ["CSS selector", a.selector],
-    ["XPath", a.xpath],
-    ["Text", a.textFingerprint ?? "—"],
-    [
+  const out: [string, string][] = [];
+
+  const tag = str(a.tag);
+  if (tag) out.push(["Tag", tag]);
+
+  const role = str(a.role);
+  out.push(["Role", role ?? "—"]);
+
+  const sel = str(a.selector);
+  if (sel) out.push(["CSS selector", sel]);
+
+  const xpath = str(a.xpath);
+  if (xpath) out.push(["XPath", xpath]);
+
+  const text =
+    str(a.textFingerprint) ??
+    str(a.accessibleName) ??
+    null;
+  out.push(["Text", text ?? "—"]);
+
+  const bb = a.boundingBox as
+    | { x?: unknown; y?: unknown; width?: unknown; height?: unknown }
+    | undefined;
+  if (
+    bb &&
+    typeof bb.x === "number" &&
+    typeof bb.y === "number" &&
+    typeof bb.width === "number" &&
+    typeof bb.height === "number"
+  ) {
+    out.push([
       "Bounding box",
-      `${a.boundingBox.x}, ${a.boundingBox.y} · ${a.boundingBox.width}×${a.boundingBox.height}`,
-    ],
-    [
-      "Captured",
-      `${a.viewportSize.width}×${a.viewportSize.height} @${a.devicePixelRatio}x`,
-    ],
-  ];
+      `${bb.x}, ${bb.y} · ${bb.width}×${bb.height}`,
+    ]);
+  }
+
+  const vp = a.viewportSize as
+    | { width?: unknown; height?: unknown }
+    | undefined;
+  const dpr = a.devicePixelRatio;
+  if (vp && typeof vp.width === "number" && typeof vp.height === "number") {
+    const dprPart = typeof dpr === "number" ? ` @${dpr}x` : "";
+    out.push(["Captured", `${vp.width}×${vp.height}${dprPart}`]);
+  }
+
+  return out;
 });
 </script>
 
@@ -41,7 +80,7 @@ const rows = computed<[string, string][]>(() => {
       />
       <span class="text-sm font-medium">Anchor</span>
       <span class="truncate font-mono text-[11px] text-muted-foreground">{{
-        anchor.selector
+        selector
       }}</span>
       <span
         class="ml-auto flex shrink-0 items-center gap-1 text-[11px]"

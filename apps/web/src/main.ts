@@ -7,6 +7,7 @@ import { hydrateAuth } from "./shared/composables/useAuth";
 import { queryClient } from "./shared/lib/query-client";
 import "./assets/main.css";
 import "@pinlay/design/tokens.css";
+import "vue-sonner/style.css";
 
 initTheme();
 // Restore any persisted session before mount so the router guard sees a stable

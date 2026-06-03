@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   UseGuards,
 } from "@nestjs/common";
@@ -13,6 +14,7 @@ import { AuthService } from "./auth.service";
 import { JwtAuthGuard, Public } from "./jwt-auth.guard";
 import { SignupDto } from "./dto/signup.dto";
 import { LoginDto } from "./dto/login.dto";
+import { UpdateMeDto } from "./dto/update-me.dto";
 import {
   CurrentUser,
   AuthenticatedUser,
@@ -55,6 +57,19 @@ export class AuthController {
       orgId: user.workspaceId,
       role: user.role,
     };
+  }
+
+  /**
+   * Update the caller's profile (name, avatarUrl). Email + password live on
+   * their own endpoints (TODO) — those need verification / current-password
+   * confirmation, which a generic PATCH shouldn't tunnel.
+   */
+  @Patch("me")
+  updateMe(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateMeDto,
+  ) {
+    return this.auth.updateMe(user, dto);
   }
 
   /**

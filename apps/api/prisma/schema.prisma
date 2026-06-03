@@ -55,6 +55,13 @@ enum AttachmentType {
   export
 }
 
+enum InviteStatus {
+  pending
+  accepted
+  revoked
+  expired
+}
+
 // ── Identity ────────────────────────────────────────────────────────────────
 model User {
   id           String   @id @default(cuid())
@@ -68,9 +75,11 @@ model User {
   updatedAt    DateTime @updatedAt
 
   memberships    WorkspaceMember[]
-  authoredPins   Pin[]    @relation("PinAuthor")
-  assignedPins   Pin[]    @relation("PinAssignee")
-  authoredIssues Issue[]  @relation("IssueAuthor")
+  authoredPins   Pin[]        @relation("PinAuthor")
+  assignedPins   Pin[]        @relation("PinAssignee")
+  authoredIssues Issue[]      @relation("IssueAuthor")
+  sentInvites    Invite[]     @relation("InviteAuthor")
+  pinComments    PinComment[] @relation("PinCommentAuthor")
 }
 
 model Workspace {
@@ -84,6 +93,66 @@ model Workspace {
   members  WorkspaceMember[]
   issues   Issue[]
   sessions Session[]
+  boards   Board[]
+  invites  Invite[]
+}
+
+/**
+ * Pending workspace invite. Created when an admin invites an email that
+ * doesn't yet correspond to a pinlay account. On signup with a matching
+ * email, AuthService converts pending invites → WorkspaceMember rows.
+ *
+ * A short opaque `token` powers a future accept-by-link flow (when email is
+ * wired); for now its uniqueness lets resend regenerate without colliding.
+ *
+ * Uniqueness: at most one PENDING invite per (workspaceId, email). Accepted
+ * + revoked rows are retained for audit so re-inviting after a revoke
+ * creates a new pending row alongside the historic one.
+ */
+model Invite {
+  id          String       @id @default(cuid())
+  workspaceId String
+  email       String
+  role        Role         @default(member)
+  status      InviteStatus @default(pending)
+  token       String       @unique
+  invitedById String
+  expiresAt   DateTime
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  invitedBy User      @relation("InviteAuthor", fields: [invitedById], references: [id])
+
+  // Partial unique index emulated in app code (Prisma doesn't expose
+  // partial uniques directly): we check before insert. The plain index
+  // accelerates the workspace+email lookup the check uses.
+  @@index([workspaceId, email])
+  @@index([workspaceId, status])
+}
+
+/**
+ * A Board groups related issues — typically by feature area ("Checkout",
+ * "Marketing site"). Boards are workspace-scoped; the same slug can recur
+ * across tenants. `position` is a sparse integer order so reorders only
+ * touch the dragged row (no full-list rewrite). Color is a hex string so
+ * downstream renderers can paint a dot without a token lookup.
+ */
+model Board {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  slug        String
+  color       String   @default("#7c3aed")
+  position    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  issues    Issue[]
+
+  @@unique([workspaceId, slug])
+  @@index([workspaceId, position])
 }
 
 model WorkspaceMember {
@@ -130,6 +199,9 @@ model Issue {
   workspaceId String
   sessionId   String   @unique
   authorId    String
+  // Optional grouping. SetNull on board delete so issues stay reachable
+  // (board deletion isn't a destructive op for the issues themselves).
+  boardId     String?
   title       String
   summary     String?
   pageUrl     String
@@ -140,11 +212,13 @@ model Issue {
   workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   session   Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   author    User      @relation("IssueAuthor", fields: [authorId], references: [id])
+  board     Board?    @relation(fields: [boardId], references: [id], onDelete: SetNull)
   pins      Pin[]
   attachments Attachment[]
 
   @@index([workspaceId])
   @@index([pageUrl])
+  @@index([boardId])
 }
 
 model Pin {
@@ -171,10 +245,31 @@ model Pin {
   author      User            @relation("PinAuthor", fields: [authorId], references: [id])
   assignee    User?           @relation("PinAssignee", fields: [assigneeId], references: [id])
   attachments Attachment[]
+  comments    PinComment[]
 
   @@index([sessionId])
   @@index([issueId])
   @@index([pageUrl])
+}
+
+/**
+ * Threaded discussion attached to a single pin. Workspace scoping is
+ * inherited transitively (pin → session → workspace) — comments don't carry
+ * a workspaceId of their own. Cascade on pin delete; restrict on author
+ * delete (preserve discussion history).
+ */
+model PinComment {
+  id        String   @id @default(cuid())
+  pinId     String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pin    Pin  @relation(fields: [pinId], references: [id], onDelete: Cascade)
+  author User @relation("PinCommentAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([pinId])
 }
 
 // ── Attachments ─────────────────────────────────────────────────────────────

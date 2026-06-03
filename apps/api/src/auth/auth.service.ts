@@ -1,14 +1,19 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   Logger,
   UnauthorizedException,
+  forwardRef,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { PrismaService } from "../prisma/prisma.service";
 import { SignupDto } from "./dto/signup.dto";
 import { LoginDto } from "./dto/login.dto";
+import { UpdateMeDto } from "./dto/update-me.dto";
+import { AuthenticatedUser } from "../common/current-user.decorator";
+import { WorkspaceService } from "../workspace/workspace.service";
 
 const BCRYPT_ROUNDS = 12;
 
@@ -35,6 +40,16 @@ export interface AuthResult {
   };
 }
 
+/** Shape returned by GET /auth/me and PATCH /auth/me. */
+export interface Me {
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl: string | null;
+  orgId: string;
+  role: string;
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -42,6 +57,8 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
+    @Inject(forwardRef(() => WorkspaceService))
+    private readonly workspace: WorkspaceService,
   ) {}
 
   // ── Signup ───────────────────────────────────────────────────────────────
@@ -73,6 +90,18 @@ export class AuthService {
       },
     );
 
+    // Convert any pending invites for this email into real memberships.
+    // Best-effort: a failure here shouldn't take down the signup; the user
+    // can still hit the workspace via the invite link later. Logged for
+    // diagnostics.
+    try {
+      await this.workspace.acceptPendingInvitesForEmail(user.id, email);
+    } catch (err) {
+      this.logger.warn(
+        `Failed to auto-accept pending invites for ${email}: ${String(err)}`,
+      );
+    }
+
     return this.makeAuthResult(user, workspace, role);
   }
 
@@ -101,6 +130,67 @@ export class AuthService {
       );
     }
     return this.makeAuthResult(user, membership.workspace, membership.role);
+  }
+
+  /**
+   * Hash a plaintext password with the project's bcrypt rounds. Exposed so
+   * other modules (e.g. WorkspaceService.acceptInviteWithSignup) can create
+   * users without duplicating the hashing config or importing bcrypt.
+   */
+  async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, BCRYPT_ROUNDS);
+  }
+
+  /**
+   * Patch the caller's profile. Mutable fields: `name`, `avatarUrl`. Email +
+   * password changes have their own flows (verification / current-password
+   * confirmation). Returns the full Me shape so the client can swap state
+   * without a follow-up GET /auth/me.
+   *
+   * Defensive on empty patches: returns the current Me without writing if
+   * there's nothing to change — avoids bumping `updatedAt` for a no-op.
+   */
+  async updateMe(user: AuthenticatedUser, dto: UpdateMeDto): Promise<Me> {
+    const patch: { name?: string; avatarUrl?: string | null } = {};
+    if (typeof dto.name === "string") {
+      const trimmed = dto.name.trim();
+      if (trimmed.length === 0) {
+        throw new ConflictException("Name cannot be empty.");
+      }
+      patch.name = trimmed;
+    }
+    if (dto.avatarUrl !== undefined) {
+      patch.avatarUrl = dto.avatarUrl;
+    }
+
+    let updated: {
+      id: string;
+      email: string;
+      name: string;
+      avatarUrl: string | null;
+    };
+    if (Object.keys(patch).length === 0) {
+      const current = await this.prisma.user.findUniqueOrThrow({
+        where: { id: user.id },
+        select: { id: true, email: true, name: true, avatarUrl: true },
+      });
+      updated = current;
+    } else {
+      updated = await this.prisma.user.update({
+        where: { id: user.id },
+        data: patch,
+        select: { id: true, email: true, name: true, avatarUrl: true },
+      });
+    }
+
+    return {
+      id: updated.id,
+      email: updated.email,
+      name: updated.name,
+      avatarUrl: updated.avatarUrl,
+      orgId: user.workspaceId,
+      role: user.role,
+    };
   }
 
   // ── Token verification (used by JwtAuthGuard) ───────────────────────────
