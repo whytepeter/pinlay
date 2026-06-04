@@ -63,12 +63,21 @@
     >
       <span class="h-1 w-1 rounded-full bg-card" />
     </span>
+    <!-- Yellow health band: re-found heuristically, may have moved. -->
+    <span
+      v-if="moved"
+      class="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-sev-medium ring-1 ring-white"
+      title="Re-found by content — this pin may have moved"
+    >
+      <span class="h-1 w-1 rounded-full bg-white" />
+    </span>
   </button>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import type { Severity, Status } from "@pinlay/shared";
+import type { AnchorHealth } from "../../lib/anchor";
 
 const props = defineProps<{
   index: number;
@@ -81,6 +90,8 @@ const props = defineProps<{
   status?: Status;
   /** True when the anchored element couldn't be re-resolved on this page. */
   stale?: boolean;
+  /** Resolve-health band from the live anchor lookup (drives the badge). */
+  health?: AnchorHealth;
 }>();
 
 defineEmits<{ open: [] }>();
@@ -98,4 +109,9 @@ const SEVERITY_BG: Record<Severity, string> = {
 // status dropdown.
 const pinBg = computed(() => SEVERITY_BG[props.severity]);
 const resolved = computed(() => props.status === "resolved");
+
+// Yellow "fallback" band — the pin was re-found heuristically (its structural
+// locator broke), so it likely moved. Dead/stale has its own treatment, so
+// only surface "moved" while the pin still resolves.
+const moved = computed(() => props.health === "fallback" && !props.stale);
 </script>

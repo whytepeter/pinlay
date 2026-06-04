@@ -115,7 +115,33 @@
             :stroke-width="2"
             class="mt-px shrink-0"
           />
-          <div class="flex-1">
+          <!-- Roadmap 1.3: when we found a likely match, offer one-click accept;
+               otherwise fall back to manual re-anchoring. -->
+          <div v-if="suggestion" class="flex-1">
+            <p>
+              Original element not found. Found a likely match
+              (<strong>{{ suggestionPct }}</strong> similar) — highlighted on the
+              page.
+            </p>
+            <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+              <button
+                type="button"
+                class="inline-flex items-center gap-1 rounded-md border border-status-stale/50 bg-status-stale/15 px-2 py-0.5 text-[10px] font-semibold transition-colors hover:bg-status-stale/25"
+                @click="emit('accept-suggestion')"
+              >
+                <Icon name="check" :size="10" :stroke-width="2.5" />
+                Move pin here
+              </button>
+              <button
+                type="button"
+                class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium underline-offset-2 hover:underline"
+                @click="emit('reanchor')"
+              >
+                Pick manually
+              </button>
+            </div>
+          </div>
+          <div v-else class="flex-1">
             <p>
               Original element not found on this page. Re-anchor to point it at
               the new element.
@@ -131,20 +157,20 @@
           </div>
         </div>
 
-        <!-- Title + description (derived from the comment's first line). -->
+        <!-- Title + description (derived from the comment's first line).
+             Rendered via v-html so the composer's markdown (Bold/Italic/Link)
+             shows as formatted text. Sanitization lives in renderMarkdown. -->
         <div v-if="titleText || descriptionText" class="space-y-1.5">
           <h3
             v-if="titleText"
             class="text-[14px] font-semibold leading-snug text-foreground"
-          >
-            {{ titleText }}
-          </h3>
+            v-html="renderedTitle"
+          />
           <p
             v-if="descriptionText"
-            class="whitespace-pre-wrap text-[12.5px] leading-relaxed text-muted-foreground"
-          >
-            {{ descriptionText }}
-          </p>
+            class="text-[12.5px] leading-relaxed text-muted-foreground"
+            v-html="renderedDescription"
+          />
         </div>
 
         <!-- Attachments card -->
@@ -313,7 +339,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -345,13 +371,20 @@ const props = defineProps<{
   createdAt?: string;
   updating?: boolean;
   stale?: boolean;
+  /** Fuzzy re-anchor suggestion when the pin is stale (Roadmap 1.3). */
+  suggestion?: { confidence: number } | null;
 }>();
 
 const emit = defineEmits<{
   close: [];
   reanchor: [];
+  "accept-suggestion": [];
   "change-status": [status: Status];
 }>();
+
+const suggestionPct = computed(() =>
+  props.suggestion ? `${Math.round(props.suggestion.confidence * 100)}%` : "",
+);
 
 // ── Title / description split ────────────────────────────────────────────────
 const titleText = computed(() => {
@@ -365,6 +398,47 @@ const descriptionText = computed(() => {
   const idx = c.indexOf("\n");
   return idx === -1 ? "" : c.slice(idx + 1).trim();
 });
+
+// ── Markdown rendering (Bold / Italic / Link) ────────────────────────────────
+// The composer toolbar inserts markdown source (`**bold**`, `_italic_`,
+// `[label](url)`); the detail popover renders it as actual HTML so the user
+// sees the formatted output. Plain-regex parser — no dependency. Order
+// matters: escape HTML first, then walk the patterns. URL allowlist limits
+// link hrefs to http/https/mailto so a hostile pin can't inject javascript:
+// schemes via the `[…](javascript:…)` form.
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+function safeHref(raw: string): string {
+  const trimmed = raw.trim();
+  if (/^(https?:|mailto:)/i.test(trimmed)) return trimmed;
+  return "#";
+}
+function renderMarkdown(text: string): string {
+  if (!text) return "";
+  let html = escapeHtml(text);
+  // Links first so `[**bold**](url)` works for the label.
+  html = html.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    (_m, label: string, url: string) =>
+      `<a href="${escapeHtml(safeHref(url))}" target="_blank" rel="noopener noreferrer" class="text-primary underline-offset-2 hover:underline">${label}</a>`,
+  );
+  // Bold: **text** (non-greedy, stops at the next pair of asterisks).
+  html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  // Italic: _text_ — require a word boundary on the left so we don't break
+  // snake_case identifiers like `is_active`. Right side is loose so trailing
+  // punctuation still closes the italic.
+  html = html.replace(/(^|[\s(])_([^_\n]+)_/g, "$1<em>$2</em>");
+  // Newlines → <br>.
+  html = html.replace(/\n/g, "<br>");
+  return html;
+}
+const renderedTitle = computed(() => renderMarkdown(titleText.value));
+const renderedDescription = computed(() => renderMarkdown(descriptionText.value));
 
 // ── #N pad ───────────────────────────────────────────────────────────────────
 const paddedIndex = computed(() =>
@@ -480,6 +554,30 @@ const relativeTime = computed(() => {
 
 // ── Positioning ──────────────────────────────────────────────────────────────
 const rootEl = ref<HTMLElement | null>(null);
+
+// ── Click outside to close ───────────────────────────────────────────────────
+// The X button and Esc already close the popover; this matches the standard
+// popover affordance (click off-target dismisses). We listen on document at
+// capture phase + check `composedPath()` so the rootEl reference works across
+// the shadow-root boundary (events crossing into the shadow root include the
+// real path here). Listener is attached on the NEXT animation frame so the
+// click that opened this popover (from AnnotationPin) doesn't immediately
+// close it as a "click outside" hit.
+function onDocClickOutside(e: MouseEvent) {
+  const root = rootEl.value;
+  if (!root) return;
+  if (!e.composedPath().includes(root)) {
+    emit("close");
+  }
+}
+onMounted(() => {
+  requestAnimationFrame(() => {
+    document.addEventListener("click", onDocClickOutside, true);
+  });
+});
+onBeforeUnmount(() => {
+  document.removeEventListener("click", onDocClickOutside, true);
+});
 
 // ── Lightbox preview ────────────────────────────────────────────────────────
 // `previewIdx` indexes renderedAttachments. null = closed. Gallery nav when

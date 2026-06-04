@@ -1916,3 +1916,218 @@
 | 01:25 | Edited apps/web/src/features/issue/components/PinDetail.vue | CSS: focus-visible, focus-visible, focus-visible | ~125 |
 | 01:25 | Edited apps/web/src/features/workspace-shell/components/AppSidebar.vue | 11→12 lines | ~180 |
 | 01:26 | Edited apps/web/src/features/issue/composables/useIssue.ts | 11→16 lines | ~187 |
+| 01:33 | Created HANDOFF_WEB_INTEGRATION.md | — | ~4484 |
+| now  | A11y pass: aria-labels on icon-only buttons (board kebab, label-remove X, color swatches). focus-visible rings on custom buttons (color swatches, label add/remove, board kebab). aria-pressed on color swatches. | apps/web/src/features/workspace-shell/components/AppSidebar.vue, apps/web/src/features/issue/components/PinDetail.vue | screen-reader friendly | ~60 |
+| now  | Removed orphaned ReplyBox.vue (composer moved into ActivityThread). SyncChip + DetailsList + QueryList left in place (documented reusable primitives). | apps/web/src/features/issue/components/ReplyBox.vue | deleted | ~0 |
+| now  | Fixed Vue 'Set on readonly proxy' warnings — useIssue now deep-clones query.data.pins into local ref before optimistic mutations. Was a silent bug on labels/status/assignee writes. | apps/web/src/features/issue/composables/useIssue.ts | console warnings stable at 32 historic, no new since fix | ~10 |
+| now  | Mobile spot-check at 375px: pinboards feed wraps cleanly (status tabs scroll horizontally, all 5 visible; severity/people row + search row + sort/view row), issue detail header collapses to truncated title + ⋯ menu + open-on-page icon, Pins/Detail pane toggle visible. No layout breaks. | — | screenshotted | ~0 |
+| now  | Rewrote HANDOFF_WEB_INTEGRATION.md as comprehensive doc: state-today (wired vs mock tables), full API surface per module, patterns, gotchas from this session (token swap / forwardRef cycle / Reka pointer events / Prisma migrate / readonly clone), outstanding TODOs by leverage (email pipeline, infra, modules not started). | HANDOFF_WEB_INTEGRATION.md | ~300 lines | ~120 |
+| 01:34 | Session end: 35 writes across 13 files (api.ts, useIssue.ts, PinDetail.vue, IssuePage.vue, schema.prisma) | 7 reads | ~27832 tok |
+
+## Session: 2026-06-03 01:35
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 01:41 | Edited HANDOFF_WEB_INTEGRATION.md | expanded (+16 lines) | ~1075 |
+| 01:43 | Mapped HANDOFF_WEB_INTEGRATION Outstanding TODOs onto ROADMAP phases (pre-launch plumbing / P3 integrations / P5 billing+storage / P6 notifications / anytime cleanups) + heads-up that real next work is P0–P2 extension-side | HANDOFF_WEB_INTEGRATION.md | done | ~1200 |
+| 01:43 | Session end: 1 writes across 1 files (HANDOFF_WEB_INTEGRATION.md) | 3 reads | ~13149 tok |
+
+## Session: 2026-06-03 09:43
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-03 11:27
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 11:28 | Edited HANDOFF_WEB_INTEGRATION.md | items() → number() | ~283 |
+| 12:29 | Reframed HANDOFF_WEB_INTEGRATION TL;DR to match phase mapping (dashboard+API done; gaps are P3+/P5/P6/plumbing; real next work is P0–P2 extension-side) | HANDOFF_WEB_INTEGRATION.md | done | ~400 |
+| 12:29 | Session end: 1 writes across 1 files (HANDOFF_WEB_INTEGRATION.md) | 0 reads | ~304 tok |
+| 12:29 | Session end: 1 writes across 1 files (HANDOFF_WEB_INTEGRATION.md) | 0 reads | ~304 tok |
+| 13:20 | Assessed anchor moat (Phase 1.2): anchor.ts 6-tier resolver mature, anchorHealth() done; harness passes 100% on 7 jsdom scenarios but xpath+proximity tiers unmeasured (jsdom) and dead->stale path untested | apps/extension/src/lib/anchor.ts, test/anchor.test.ts | assessed | ~3000 |
+| 13:25 | Edited apps/extension/test/anchor.test.ts | 6→8 lines | ~77 |
+| 13:25 | Edited apps/extension/test/anchor.test.ts | added 1 condition(s) | ~591 |
+| 13:26 | Edited apps/extension/test/anchor.test.ts | added 1 condition(s) | ~829 |
+
+## Session: 2026-06-03 13:32
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 13:32 | Edited apps/extension/test/anchor.test.ts | expanded (+6 lines) | ~196 |
+| 13:34 | Closed Roadmap 1.2: strengthened anchor harness — added full-deploy + subtree-move + dead-anchor scenarios; 9/9 surviving resolve (5 green/4 yellow), dead degrades to stale; report shows green/yellow bands | apps/extension/test/anchor.test.ts | 13 tests pass | ~2500 |
+| 13:38 | Edited apps/extension/src/lib/anchor.ts | modified anchorHealth() | ~155 |
+| 13:38 | Edited apps/extension/src/lib/annotation-state.ts | added 1 import(s) | ~24 |
+| 13:38 | Edited apps/extension/src/lib/annotation-state.ts | 4→6 lines | ~47 |
+| 13:38 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | added 1 import(s) | ~38 |
+| 13:38 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | 3→5 lines | ~55 |
+| 13:38 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | 3→8 lines | ~111 |
+| 13:38 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | CSS: band | ~164 |
+| 13:38 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 2→6 lines | ~87 |
+| 13:38 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | expanded (+6 lines) | ~34 |
+| 13:38 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: health, health, health | ~148 |
+| 13:38 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: health, health, health | ~154 |
+| 13:38 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | inline fix | ~18 |
+| 13:38 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 2→3 lines | ~22 |
+| 13:38 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: health | ~47 |
+| 13:42 | Built Roadmap 1.1 health badge (extension-only): threaded resolve confidence->anchorHealth through viewportPos/renderedPins/pinListRows; amber "moved" dot on AnnotationPin (yellow band) + "· moved?" in launcher list; severity marker untouched | anchor.ts, annotation-state.ts, AnnotationPin.vue, AnnotationOverlay.vue, FloatingLauncher.vue | typecheck+tests pass | ~3500 |
+| 13:42 | Session end: 15 writes across 6 files (anchor.test.ts, anchor.ts, annotation-state.ts, AnnotationPin.vue, FloatingLauncher.vue) | 4 reads | ~17509 tok |
+| 14:10 | Edited apps/extension/src/lib/anchor.ts | added nullish coalescing | ~978 |
+| 14:10 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 7→9 lines | ~46 |
+| 14:10 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: w, h | ~252 |
+| 14:10 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: confidence | ~90 |
+| 14:11 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified target() | ~227 |
+| 14:11 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added 1 condition(s) | ~367 |
+| 14:11 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | CSS: confidence | ~110 |
+| 14:11 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | CSS: 3 | ~583 |
+| 14:14 | Edited apps/extension/src/lib/anchor.ts | expanded (+6 lines) | ~117 |
+| 14:14 | Edited apps/extension/test/anchor.test.ts | 6→7 lines | ~38 |
+| 14:14 | Edited apps/extension/test/anchor.test.ts | expanded (+54 lines) | ~586 |
+| 14:18 | Edited apps/extension/test/anchor.test.ts | 7→9 lines | ~176 |
+| 15:01 | Built Roadmap 1.3 suggested re-anchor: suggestReanchor() fuzzy Jaccard matcher (attrs/text/ancestor/name weighted, threshold 0.4) in anchor.ts + 2 tests; overlay live highlight + "Did this pin move here?"; detail "~NN% similar / Move pin here / Pick manually"; shared persistReanchor() | anchor.ts, AnnotationOverlay.vue, AnnotationPinDetail.vue, anchor.test.ts | 15 tests pass, typecheck clean | ~4000 |
+| 15:01 | Session end: 27 writes across 7 files (anchor.test.ts, anchor.ts, annotation-state.ts, AnnotationPin.vue, FloatingLauncher.vue) | 5 reads | ~26576 tok |
+| 15:09 | Session end: 27 writes across 7 files (anchor.test.ts, anchor.ts, annotation-state.ts, AnnotationPin.vue, FloatingLauncher.vue) | 5 reads | ~26576 tok |
+| 15:10 | Session end: 27 writes across 7 files (anchor.test.ts, anchor.ts, annotation-state.ts, AnnotationPin.vue, FloatingLauncher.vue) | 5 reads | ~26576 tok |
+| 15:14 | Session end: 27 writes across 7 files (anchor.test.ts, anchor.ts, annotation-state.ts, AnnotationPin.vue, FloatingLauncher.vue) | 5 reads | ~26576 tok |
+| 15:44 | Session end: 27 writes across 7 files (anchor.test.ts, anchor.ts, annotation-state.ts, AnnotationPin.vue, FloatingLauncher.vue) | 6 reads | ~27084 tok |
+
+## Session: 2026-06-03 15:45
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 15:55 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: catch-all, locationPoll | ~163 |
+| 15:55 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 4→6 lines | ~80 |
+| 15:55 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added 1 condition(s) | ~105 |
+| 16:02 | Fixed cross-route pin bug (user-reported on glown.io): SPA pushState bypasses content-script monkeypatch -> livePageUrl froze -> old-route pins stale + new pins saved under wrong URL. Added 500ms normalized-URL poll fallback in AnnotationOverlay. Rebuilt extension | apps/extension/src/components/annotation/AnnotationOverlay.vue | typecheck+build pass | ~2500 |
+| 16:03 | Session end: 3 writes across 1 files (AnnotationOverlay.vue) | 3 reads | ~14447 tok |
+| 16:34 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: failed | ~363 |
+| 16:34 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | expanded (+7 lines) | ~404 |
+| 16:35 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 3→8 lines | ~123 |
+| 16:35 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added 1 condition(s) | ~324 |
+| 16:35 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added 2 condition(s) | ~215 |
+| 16:35 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | — | ~0 |
+| 16:35 | Edited apps/extension/wxt.config.ts | expanded (+11 lines) | ~115 |
+| 16:35 | Edited apps/extension/src/entrypoints/background.ts | added 3 condition(s) | ~271 |
+| 16:46 | Fixed 3 user-reported bugs + roadmap 4.1 shortcut: (1) composer submit closes after createPin, attachments upload in parallel background; (2) toolbar buttons gain proper Tailwind reset (border-0/bg-transparent/p-0) + @mousedown.prevent; (3) wrapSelection+confirmLink route through document.execCommand for undo support; (4) chrome.commands "drop-pin" Cmd/Ctrl+Shift+P -> START_ANNOTATION | AnnotationOverlay.vue, AnnotationPinComposer.vue, wxt.config.ts, background.ts | typecheck+build pass | ~3500 |
+| 16:47 | Session end: 11 writes across 4 files (AnnotationOverlay.vue, AnnotationPinComposer.vue, wxt.config.ts, background.ts) | 6 reads | ~24646 tok |
+| 17:09 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified enterPlaceMode() | ~166 |
+| 17:09 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: Note | ~78 |
+| 17:09 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: Defensive | ~87 |
+| 17:09 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified onDone() | ~183 |
+| 17:09 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified cancelFinish() | ~94 |
+| 17:09 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 7→7 lines | ~130 |
+| 17:10 | Edited apps/extension/src/entrypoints/content.ts | modified mountOverlayPassive() | ~748 |
+| 17:10 | Edited apps/extension/src/entrypoints/content.ts | added error handling | ~235 |
+| 17:13 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 3→1 lines | ~22 |
+| 17:13 | Edited apps/extension/src/entrypoints/content.ts | reduced (-7 lines) | ~33 |
+| 17:19 | Shipped Roadmap 2.1 developer overlay: AnnotationOverlay auto-mounts on every page-load (gated on auth) so existing pins render passively without clicking Drop a pin. Moved state.setActive into enter/exitPlaceMode (decouples mount from annotation session); onDone/confirmFinish stay mounted+clear sessionId; disconnected banner only shows during place mode; removed dead emit/onClose stubs | content.ts, AnnotationOverlay.vue | typecheck+build pass | ~3500 |
+| 17:19 | Session end: 21 writes across 5 files (AnnotationOverlay.vue, AnnotationPinComposer.vue, wxt.config.ts, background.ts, content.ts) | 6 reads | ~26980 tok |
+| 17:32 | Edited apps/extension/src/lib/annotation-state.ts | expanded (+8 lines) | ~168 |
+| 17:32 | Edited apps/extension/src/lib/annotation-state.ts | modified setActive() | ~87 |
+| 17:32 | Edited apps/extension/src/lib/annotation-state.ts | modified useAnnotationState() | ~226 |
+| 17:32 | Edited apps/extension/src/entrypoints/content.ts | added 3 condition(s) | ~578 |
+| 17:33 | Edited apps/extension/src/entrypoints/content.ts | modified mountOverlayPassive() | ~429 |
+| 17:33 | Edited apps/extension/src/entrypoints/content.ts | 15→19 lines | ~273 |
+| 17:33 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 5→8 lines | ~107 |
+| 17:33 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | expanded (+17 lines) | ~270 |
+| 17:34 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | modified onStartIdleAnnotation() | ~108 |
+| 17:34 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified filter() | ~122 |
+| 17:35 | Edited apps/extension/src/entrypoints/popup/App.vue | expanded (+11 lines) | ~185 |
+| 17:35 | Edited apps/extension/src/entrypoints/popup/App.vue | added nullish coalescing | ~271 |
+| 17:35 | Edited apps/extension/src/entrypoints/popup/App.vue | added 1 condition(s) | ~174 |
+| 17:35 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: hover, Icon | ~419 |
+| 17:37 | Edited apps/extension/src/components/launcher/LauncherItem.vue | expanded (+28 lines) | ~354 |
+| 17:37 | Edited apps/extension/src/components/launcher/LauncherItem.vue | inline fix | ~19 |
+| 18:24 | Redesigned Roadmap 2.1 per user feedback: pins HIDDEN by default; added opt-in "View pins (N)" button on FAB idle menu + popup (mirrors Drop a pin). content.ts init now PROBES only (no DOM injection); overlay mounts on user click. annotation-state gained viewing+viewablePinCount refs independent of active. Extended LauncherItem icon union with eye/eye-off. | annotation-state.ts, content.ts, FloatingLauncher.vue, LauncherItem.vue, popup/App.vue, AnnotationOverlay.vue | typecheck+build pass | ~4500 |
+| 18:24 | Session end: 37 writes across 9 files (AnnotationOverlay.vue, AnnotationPinComposer.vue, wxt.config.ts, background.ts, content.ts) | 9 reads | ~44546 tok |
+
+## Session: 2026-06-03 19:11
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-03 20:27
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-03 23:23
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 23:24 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 5→6 lines | ~110 |
+| 23:25 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 7→7 lines | ~87 |
+| 23:25 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | button() → overlay() | ~290 |
+| 23:25 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | modified onOpenPinList() | ~72 |
+| 23:25 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | CSS: pinlay, detail | ~136 |
+| 23:25 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 3→5 lines | ~74 |
+| 23:26 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | modified toggleMenu() | ~95 |
+| 23:26 | Edited apps/extension/src/entrypoints/content.ts | added optional chaining | ~280 |
+| 23:26 | Edited apps/extension/src/entrypoints/content.ts | added nullish coalescing | ~749 |
+| 23:29 | Refined Roadmap 2.1 per user: removed Hide pins from FAB; FAB "View pins" now opens in-menu pin browser (menuView=pins) not the on-page overlay; popup keeps overlay toggle. Lifted pin-list template above annotationActive gate; row click mounts-then-jumps via new pinlay:view-pin-then-jump event with microtask delay; init probe populates pinRows too | FloatingLauncher.vue, content.ts | typecheck+build pass | ~3000 |
+| 23:29 | Session end: 9 writes across 2 files (FloatingLauncher.vue, content.ts) | 2 reads | ~12154 tok |
+
+## Session: 2026-06-04 09:46
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-04 10:53
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 11:27 | Edited apps/extension/src/entrypoints/popup/App.vue | 3→3 lines | ~30 |
+| 11:27 | Edited apps/extension/src/entrypoints/popup/App.vue | page() → pins() | ~249 |
+| 12:42 | Popup UI polish: dropped redundant "on this page" from labels (host is already in header); replaced "(N)" baked into title with a count pill on right side (bg-primary-soft when viewing, bg-muted when not); shorter subtitles ("Anchored to their elements" / "Currently shown on the page") | popup/App.vue | typecheck+build pass | ~600 |
+| 12:42 | Session end: 2 writes across 1 files (App.vue) | 1 reads | ~8444 tok |
+
+## Session: 2026-06-04 15:52
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 18:33 | Edited apps/extension/src/entrypoints/content.ts | added error handling | ~471 |
+| 18:33 | Edited apps/extension/src/entrypoints/content.ts | added nullish coalescing | ~524 |
+| 18:34 | Edited apps/extension/src/entrypoints/popup/App.vue | added 8 condition(s) | ~496 |
+| 18:34 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: open, resolved, all | ~198 |
+| 18:35 | Edited apps/extension/src/entrypoints/popup/App.vue | modified toggleViewPins() | ~260 |
+| 18:36 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: row, disabled, disabled | ~954 |
+| 18:37 | Edited apps/extension/src/entrypoints/popup/App.vue | reduced (-28 lines) | ~198 |
+| 18:38 | Edited apps/extension/src/entrypoints/popup/App.vue | added optional chaining | ~477 |
+| 18:39 | Edited apps/extension/src/entrypoints/popup/App.vue | reduced (-11 lines) | ~236 |
+| 18:40 | Edited apps/extension/src/entrypoints/popup/App.vue | removed 79 lines | ~157 |
+| 19:00 | Edited apps/extension/src/entrypoints/popup/App.vue | expanded (+128 lines) | ~1373 |
+| 19:00 | Edited apps/extension/src/entrypoints/popup/App.vue | 7→8 lines | ~45 |
+| 19:01 | Edited apps/extension/src/entrypoints/popup/App.vue | reduced (-7 lines) | ~64 |
+| 21:29 | Popup redesign per user mockups: View pins card with status breakdown ("3 open · 1 resolved") + count badge; side-by-side toggle row (Hide pins | Floating launcher) with violet-tinted active state; consolidated single-row account (user avatar + name + workspace · members + switcher chevron, dropdown preserved); Removed ACCOUNT/PREFERENCES section headers + old Floating launcher row. Added new Pins sub-view (header w/ back+ button, Open/Resolved/All filter tabs, pin rows w/ title+desc+time, footer). content.ts GET_PAGE_PIN_STATE now refetches on demand and returns counts + formatted popup pin list. | popup/App.vue, content.ts | typecheck+build pass | ~5000 |
+| 21:30 | Session end: 13 writes across 2 files (content.ts, App.vue) | 3 reads | ~22307 tok |
+| 21:35 | Edited apps/extension/src/entrypoints/popup/App.vue | inline fix | ~3 |
+| 21:37 | Session end: 14 writes across 2 files (content.ts, App.vue) | 4 reads | ~22482 tok |
+
+## Session: 2026-06-04 21:42
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 21:44 | Edited apps/extension/src/entrypoints/popup/App.vue | inline fix | ~21 |
+| 21:44 | Edited apps/extension/src/entrypoints/popup/App.vue | expanded (+6 lines) | ~116 |
+| 21:45 | Edited apps/extension/src/entrypoints/popup/App.vue | modified if() | ~67 |
+| 21:45 | Edited apps/extension/src/entrypoints/popup/App.vue | added error handling | ~504 |
+| 21:45 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: quirk | ~145 |
+| 21:45 | Edited apps/extension/src/entrypoints/popup/index.html | "w-[320px] bg-background t" → "w-[320px] bg-white text-f" | ~17 |
+| 21:46 | Edited apps/extension/src/entrypoints/popup/App.vue | card() → area() | ~1051 |
+| 21:46 | Edited apps/extension/src/entrypoints/popup/App.vue | 39→40 lines | ~503 |
+| 21:55 | Popup UX polish per user feedback: (1) loading skeleton + error/Try-again card for the View pins area (was popping in out of nowhere); fetchPinState() extracted as reusable retry function; (2) chrome popup adaptive height fix — watcher on view forces a body height reset (0 -> auto across two ticks) so the popup re-measures when returning from the Pins sub-view; (3) body bg flipped from --background (#fafafa) to bg-white (#fff) for pure white in light mode; (4) Hide pins + Floating launcher toggle buttons bumped rounded-xl -> rounded-full (pill shape) for more pronounced roundness. | popup/App.vue, popup/index.html | extension typecheck+build pass | ~3500 |
+| 21:56 | Session end: 8 writes across 2 files (App.vue, index.html) | 0 reads | ~2597 tok |
+| 22:02 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | inline fix | ~22 |
+| 22:02 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | added 2 condition(s) | ~613 |
+| 22:02 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 15→15 lines | ~176 |
+| 22:03 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | CSS: e | ~291 |
+| 22:04 | AnnotationPinDetail: (1) click outside the popover now closes it — document click listener at capture phase + composedPath check works across the shadow-root boundary, attached one rAF after mount so the opening click does NOT immediately re-close; (2) bold/italic/link markdown now renders in the popover via v-html — small regex parser (escape HTML, links first with http/https/mailto allowlist, then **bold**, then _italic_ with word-boundary guard so snake_case survives, then \n -> <br>) | AnnotationPinDetail.vue | typecheck+build pass | ~1800 |
+| 22:05 | Session end: 12 writes across 3 files (App.vue, index.html, AnnotationPinDetail.vue) | 1 reads | ~9423 tok |
+| 22:08 | Edited apps/extension/src/entrypoints/popup/App.vue | added error handling | ~429 |
+| 22:08 | Edited apps/extension/src/entrypoints/popup/App.vue | added 2 condition(s) | ~235 |
+| 22:08 | Edited apps/extension/src/entrypoints/popup/App.vue | added 5 condition(s) | ~611 |
+| 22:09 | Edited apps/extension/src/entrypoints/popup/App.vue | added optional chaining | ~527 |
+| 22:44 | Edited apps/extension/src/entrypoints/popup/App.vue | 13→13 lines | ~143 |
+| 22:44 | Edited apps/extension/src/entrypoints/popup/App.vue | expanded (+8 lines) | ~99 |
+| 22:45 | Edited apps/api/src/annotation/annotation.service.ts | added 3 condition(s) | ~522 |
+| 22:46 | Edited apps/api/src/annotation/pins.controller.ts | 4→8 lines | ~60 |

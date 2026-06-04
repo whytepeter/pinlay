@@ -114,11 +114,12 @@
              <ConnectPrompt v-if="!auth" /> here + flip the v-else-if below
              back to v-if to restore. -->
 
-        <!-- Menu only opens while annotation is active. When idle the FAB
-             click dispatches start-annotation directly (single-action UX). -->
-        <template v-if="annotationActive">
-          <!-- PINS sub-view: list of pins on the page, with a back button. -->
-          <template v-if="menuView === 'pins'">
+        <!-- PINS sub-view — reachable from BOTH idle (View pins) and
+             annotation-active (View pins) menus. Lifted above the
+             annotation-active gate so the in-menu pin browser works any
+             time we have pin data. The overlay does NOT need to be mounted
+             for the list to render; clicking a row will mount it on demand. -->
+        <template v-if="menuView === 'pins'">
             <div class="flex items-center gap-1.5 px-1.5 pb-1.5 pt-1">
               <button
                 type="button"
@@ -183,15 +184,19 @@
                   >
                     <span class="capitalize">{{ row.statusLabel }}</span>
                     <span v-if="row.stale" class="text-status-stale">· stale</span>
+                    <span
+                      v-else-if="row.health === 'fallback'"
+                      class="text-sev-medium"
+                    >· moved?</span>
                   </span>
                 </span>
               </button>
             </div>
-          </template>
+        </template>
 
-          <!-- MAIN annotation controls. -->
-          <template v-else>
-            <p
+        <!-- ANNOTATION controls — shown while a session is in progress. -->
+        <template v-else-if="annotationActive">
+          <p
               class="flex items-center justify-between px-2.5 pb-1.5 pt-1 text-[10px] font-semibold uppercase tracking-[0.06em] text-muted-foreground"
             >
               <span>Annotation</span>
@@ -229,7 +234,6 @@
               description="Exit annotation"
               @click="onDoneAnnotation"
             />
-          </template>
         </template>
 
         <!-- IDLE — primary action + hide. Account chrome lives on the
@@ -240,6 +244,18 @@
             label="Drop a pin"
             description="Click an element to start"
             @click="onStartIdleAnnotation"
+          />
+
+          <!-- Roadmap 2.1 — View pins opens the in-menu pin browser.
+               It does NOT mount the on-page overlay (that's a popup-only
+               affordance). Clicking a row in the list mounts the overlay
+               and jumps to that pin. -->
+          <LauncherItem
+            v-if="viewablePinCount > 0"
+            icon="eye"
+            :label="`View pins (${viewablePinCount})`"
+            description="Browse pins on this page"
+            @click="onOpenPinList"
           />
 
           <div class="my-1 border-t border-border" />
@@ -384,6 +400,11 @@ const annotationActive = annotationState.active;
 const annotationMode = annotationState.mode;
 const pinCount = annotationState.pinCount;
 const pinRows = annotationState.pinRows;
+// Roadmap 2.1 — `viewing` is whether the on-page overlay is mounted (drives
+// onJumpToPin's mount-then-jump path). `viewablePinCount` gates the idle
+// "View pins (N)" item.
+const viewing = annotationState.viewing;
+const viewablePinCount = annotationState.viewablePinCount;
 
 const menuView = ref<"main" | "pins">("main");
 const pinFilter = ref("");
@@ -444,8 +465,9 @@ const fabStyle = computed<Record<string, string>>(() => {
 
 function toggleMenu() {
   // Always toggle — both idle and annotation states have a menu.
-  // Idle menu = Drop a pin + user/workspace chips + Hide launcher + Disconnect.
-  // Annotation menu = Start / Cancel / View pins / Done.
+  //   Idle menu        = Drop a pin · (View pins (N) when pins exist) · Hide launcher
+  //   PINS sub-view    = list of pins for the page (idle or annotation)
+  //   Annotation menu  = Start / Cancel pinning · View pins · Done
   menuOpen.value = !menuOpen.value;
 }
 function closeMenu() {
@@ -457,6 +479,12 @@ function closeMenu() {
 function onStartIdleAnnotation() {
   closeMenu();
   window.dispatchEvent(new CustomEvent("pinlay:start-annotation"));
+}
+// Open the in-menu pin browser (PINS sub-view). Does NOT mount the on-page
+// overlay; that's a separate affordance owned by the popup. The pin data
+// comes from the content-script init probe (`state.pinRows`).
+function onOpenPinList() {
+  menuView.value = "pins";
 }
 function onHideLauncher() {
   closeMenu();
@@ -486,7 +514,16 @@ function onDoneAnnotation() {
 }
 function onJumpToPin(id: string) {
   // Keep the list open while jumping so the user can browse + jump quickly.
-  annotationState.requestJump(id);
+  // If the on-page overlay is mounted, fire requestJump directly. Otherwise
+  // (browsing from idle), mount-then-jump via a content-script handler so
+  // the overlay's watcher exists by the time the jump fires.
+  if (viewing.value) {
+    annotationState.requestJump(id);
+  } else {
+    window.dispatchEvent(
+      new CustomEvent("pinlay:view-pin-then-jump", { detail: { id } }),
+    );
+  }
 }
 
 function onDocClick() {

@@ -454,6 +454,9 @@ export function resolveAnchor(
   return weak;
 }
 
+/** Coarse health band for the resolve-health badge (Roadmap 1.1). */
+export type AnchorHealth = "ok" | "fallback" | "dead";
+
 /**
  * Map a resolve result to a coarse health tier for the dashboard badge:
  *   - `ok`        — found via a structural locator (stable-attr / selector / xpath)
@@ -462,10 +465,95 @@ export function resolveAnchor(
  */
 export function anchorHealth(
   confidence: AnchorConfidence | null,
-): "ok" | "fallback" | "dead" {
+): AnchorHealth {
   if (confidence === null) return "dead";
   if (confidence === "stable-attr" || confidence === "selector" || confidence === "xpath") {
     return "ok";
   }
   return "fallback";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Suggested re-anchor (Roadmap 1.3)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Minimum similarity for a "did this pin move here?" suggestion to be shown.
+ * Tuned for *recall*: a stale anchor only reaches here once the structural
+ * locators are dead AND the exact fingerprints miss, so the survivors are
+ * moderate matches by nature. The user always confirms against the live
+ * highlight before it's applied, so a lower bar costs nothing.
+ */
+const MIN_SUGGEST_CONFIDENCE = 0.4;
+
+export interface ReanchorSuggestion {
+  el: Element;
+  /** 0..1 similarity to the stored anchor hints. */
+  confidence: number;
+}
+
+function tokenSet(s: string | null | undefined): Set<string> {
+  return new Set((s ?? "").split(/\s+/).filter(Boolean));
+}
+
+/** Jaccard overlap of two token sets (1 when both empty, 0 when one is empty). */
+function setSimilarity(a: Set<string>, b: Set<string>): number {
+  if (a.size === 0 && b.size === 0) return 1;
+  if (a.size === 0 || b.size === 0) return 0;
+  let inter = 0;
+  for (const x of a) if (b.has(x)) inter++;
+  return inter / (a.size + b.size - inter);
+}
+
+/** `name=value` parts of an attribute fingerprint (drops the leading tag). */
+function fingerprintParts(fp: string | undefined): Set<string> {
+  const parts = (fp ?? "").split("|");
+  parts.shift();
+  return new Set(parts.filter(Boolean));
+}
+
+function ancestorParts(s: string | undefined): Set<string> {
+  return new Set((s ?? "").split(">").filter(Boolean));
+}
+
+/**
+ * Fuzzy "did this pin move here?" suggestion for a DEAD anchor.
+ *
+ * Where {@link resolveAnchor} demands an *exact* fingerprint match, this scores
+ * every same-tag candidate by weighted *similarity* across the stored hints
+ * (attributes, text, ancestor frame, accessible name) and returns the closest
+ * one — so a refactor that reworded a label, swapped a class, or moved the
+ * element can still propose the right target with a confidence the UI surfaces
+ * as "~NN% match". Only meaningful once `resolveAnchor` returned null; returns
+ * null when nothing clears {@link MIN_SUGGEST_CONFIDENCE}.
+ */
+export function suggestReanchor(anchor: PinAnchor): ReanchorSuggestion | null {
+  const want = {
+    attrs: fingerprintParts(anchor.attributeFingerprint),
+    text: tokenSet(anchor.textFingerprint),
+    anc: ancestorParts(anchor.ancestorFingerprint),
+    name: tokenSet(anchor.accessibleName),
+  };
+  const weight = {
+    attrs: anchor.attributeFingerprint ? 0.4 : 0,
+    text: anchor.textFingerprint && anchor.textFingerprint.length >= 2 ? 0.35 : 0,
+    anc: anchor.ancestorFingerprint ? 0.15 : 0,
+    name: anchor.accessibleName ? 0.1 : 0,
+  };
+  const totalWeight = weight.attrs + weight.text + weight.anc + weight.name;
+  if (totalWeight === 0) return null; // nothing stored to match against
+
+  let best: ReanchorSuggestion | null = null;
+  for (const el of tagCandidates(anchor.tag)) {
+    const score =
+      weight.attrs *
+        setSimilarity(want.attrs, fingerprintParts(describeAttributeFingerprint(el))) +
+      weight.text * setSimilarity(want.text, tokenSet(describeTextFingerprint(el))) +
+      weight.anc *
+        setSimilarity(want.anc, ancestorParts(describeAncestorFingerprint(el))) +
+      weight.name * setSimilarity(want.name, tokenSet(describeAccessibleName(el)));
+    const confidence = score / totalWeight;
+    if (!best || confidence > best.confidence) best = { el, confidence };
+  }
+  return best && best.confidence >= MIN_SUGGEST_CONFIDENCE ? best : null;
 }

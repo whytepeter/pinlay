@@ -306,18 +306,47 @@ export class AnnotationService {
 
   async listPagePins(
     user: AuthenticatedUser,
-    pageUrl: string,
+    query: { pageUrl?: string; host?: string },
   ): Promise<SerializedPin[]> {
-    // Same normalization applied at write time — guarantees a match regardless
-    // of how the client formatted its URL (tracking params, trailing slash,
-    // host case, fragment, query-param ordering).
-    const normalized = normalizeUrl(pageUrl);
+    // Browse-view callers (popup pin list, FAB pin browser) pass `host` so the
+    // user can see pins from any path on the same site (e.g. /search while on
+    // /). The on-page overlay still passes the exact pageUrl since pins are
+    // anchored to elements on a specific page.
+    const where: {
+      session: { workspaceId: string };
+      status: { notIn: string[] };
+      pageUrl?: string;
+      OR?: Array<Record<string, unknown>>;
+    } = {
+      session: { workspaceId: user.workspaceId },
+      status: { notIn: ["archived"] },
+    };
+
+    if (query.host) {
+      const host = query.host.trim().toLowerCase();
+      if (!host) return [];
+      // Match `https?://host/...`, `https?://host` (no path), and
+      // `https?://host:port`. Subdomain isolation: a hostile pageUrl like
+      // `https://glown.io.evil.com/...` does NOT match because the next char
+      // after the host must be `/`, `:`, or end-of-string.
+      where.OR = [
+        { pageUrl: { startsWith: `https://${host}/` } },
+        { pageUrl: { startsWith: `http://${host}/` } },
+        { pageUrl: { startsWith: `https://${host}:` } },
+        { pageUrl: { startsWith: `http://${host}:` } },
+        { pageUrl: `https://${host}` },
+        { pageUrl: `http://${host}` },
+      ];
+    } else if (query.pageUrl) {
+      // Same normalization applied at write time — guarantees a match
+      // regardless of how the client formatted its URL.
+      where.pageUrl = normalizeUrl(query.pageUrl);
+    } else {
+      return [];
+    }
+
     const pins = await this.prisma.pin.findMany({
-      where: {
-        pageUrl: normalized,
-        session: { workspaceId: user.workspaceId },
-        status: { notIn: ["archived"] },
-      },
+      where,
       orderBy: [{ sessionId: "asc" }, { index: "asc" }],
     });
     return pins.map((p) => this.serialize(p));

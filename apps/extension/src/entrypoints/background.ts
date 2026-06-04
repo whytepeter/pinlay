@@ -135,4 +135,19 @@ export default defineBackground(() => {
     }
     return false;
   });
+
+  // Roadmap 4.1: keyboard-driven pin drop. Reuses the same START_ANNOTATION
+  // path as the popup CTA + FAB menu — content.ts mounts the overlay then
+  // jumps straight to PLACE mode. Escape inside the overlay already cascades
+  // (cancel composer → close detail → exit place → exit annotation).
+  if (chrome.commands?.onCommand) {
+    chrome.commands.onCommand.addListener((command) => {
+      if (command !== "drop-pin") return;
+      chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+        if (tab?.id != null) {
+          chrome.tabs.sendMessage(tab.id, { type: "START_ANNOTATION" });
+        }
+      });
+    });
+  }
 });

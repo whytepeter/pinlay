@@ -24,6 +24,17 @@ export default defineConfig({
     action: {
       default_title: "pinlay — drop a pin",
     },
+    // Roadmap 4.1: quick-pin keyboard shortcut. Users can rebind at
+    // chrome://extensions/shortcuts if the default conflicts.
+    commands: {
+      "drop-pin": {
+        suggested_key: {
+          default: "Ctrl+Shift+P",
+          mac: "Command+Shift+P",
+        },
+        description: "Drop a pin on this page",
+      },
+    },
     externally_connectable: {
       matches: [
         "http://localhost:5173/*",

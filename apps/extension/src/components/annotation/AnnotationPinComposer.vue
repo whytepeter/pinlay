@@ -85,25 +85,32 @@
           <div class="flex items-center gap-0.5 border-b border-border px-1.5 py-1">
             <button
               type="button"
-              class="pl-md-btn"
+              class="inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               title="Bold (⌘B)"
+              @mousedown.prevent
               @click="wrapSelection('**', '**')"
             >
               <Icon name="bold" :size="12" :stroke-width="2.25" />
             </button>
             <button
               type="button"
-              class="pl-md-btn"
-              title="Italic"
+              class="inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              title="Italic (⌘I)"
+              @mousedown.prevent
               @click="wrapSelection('_', '_')"
             >
               <Icon name="italic" :size="12" :stroke-width="2" />
             </button>
             <button
               type="button"
-              class="pl-md-btn"
-              :class="linkOpen && 'bg-muted text-foreground'"
-              title="Insert link"
+              :class="[
+                'inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border-0 p-0 transition-colors hover:bg-muted hover:text-foreground',
+                linkOpen
+                  ? 'bg-muted text-foreground'
+                  : 'bg-transparent text-muted-foreground',
+              ]"
+              title="Insert link (⌘K)"
+              @mousedown.prevent
               @click="openLinkPopover"
             >
               <Icon name="link" :size="12" :stroke-width="2" />
@@ -158,6 +165,11 @@
             @keydown.meta.enter.prevent="onSubmit"
             @keydown.ctrl.enter.prevent="onSubmit"
             @keydown.meta.b.prevent="wrapSelection('**', '**')"
+            @keydown.ctrl.b.prevent="wrapSelection('**', '**')"
+            @keydown.meta.i.prevent="wrapSelection('_', '_')"
+            @keydown.ctrl.i.prevent="wrapSelection('_', '_')"
+            @keydown.meta.k.prevent="openLinkPopover"
+            @keydown.ctrl.k.prevent="openLinkPopover"
           />
         </div>
 
@@ -692,22 +704,35 @@ function dataUrlToFile(dataUrl: string, filename: string): File | null {
 // ── Markdown editor helpers ──────────────────────────────────────────────────
 const commentEl = ref<HTMLTextAreaElement | null>(null);
 
+/**
+ * Wrap (or seed) the current selection with markdown delimiters. Routed via
+ * `document.execCommand('insertText')` — going through the textarea's native
+ * edit pipeline is what keeps the change on the **undo stack**. A direct
+ * `description.value = …` mutation bypasses that pipeline and silently breaks
+ * Cmd+Z for the user.
+ */
 function wrapSelection(before: string, after: string) {
   const el = commentEl.value;
   if (!el) return;
   const start = el.selectionStart ?? description.value.length;
   const end = el.selectionEnd ?? description.value.length;
   const sel = description.value.slice(start, end) || "text";
-  description.value =
-    description.value.slice(0, start) +
-    before +
-    sel +
-    after +
-    description.value.slice(end);
+  const replacement = before + sel + after;
+
+  el.focus();
+  el.setSelectionRange(start, end);
+  const inserted = document.execCommand("insertText", false, replacement);
+  if (!inserted) {
+    // Older engines or unfocused state — fall back to a direct mutation so the
+    // button still works (undo just won't roll this back).
+    description.value =
+      description.value.slice(0, start) +
+      replacement +
+      description.value.slice(end);
+  }
   void nextTick(() => {
     el.focus();
-    el.selectionStart = start + before.length;
-    el.selectionEnd = start + before.length + sel.length;
+    el.setSelectionRange(start + before.length, start + before.length + sel.length);
   });
 }
 
@@ -736,10 +761,24 @@ function confirmLink() {
     return;
   }
   const label = linkText.value.trim() || "link";
-  description.value =
-    description.value.slice(0, linkSel.start) +
-    `[${label}](${url})` +
-    description.value.slice(linkSel.end);
+  const replacement = `[${label}](${url})`;
+  const el = commentEl.value;
+  if (el) {
+    el.focus();
+    el.setSelectionRange(linkSel.start, linkSel.end);
+    const inserted = document.execCommand("insertText", false, replacement);
+    if (!inserted) {
+      description.value =
+        description.value.slice(0, linkSel.start) +
+        replacement +
+        description.value.slice(linkSel.end);
+    }
+  } else {
+    description.value =
+      description.value.slice(0, linkSel.start) +
+      replacement +
+      description.value.slice(linkSel.end);
+  }
   linkOpen.value = false;
   void nextTick(() => commentEl.value?.focus());
 }
@@ -798,23 +837,3 @@ function onSubmit() {
 }
 </script>
 
-<style scoped>
-/* Pinlay tokens are direct hex/oklch values — use var(--…) directly,
-   NOT hsl(var(--…)) which would produce hsl(#hex) and be invalid. */
-.pl-md-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 1.25rem;
-  width: 1.25rem;
-  border-radius: 0.25rem;
-  color: var(--muted-foreground);
-  transition:
-    background-color 0.12s,
-    color 0.12s;
-}
-.pl-md-btn:hover {
-  background: var(--muted);
-  color: var(--foreground);
-}
-</style>

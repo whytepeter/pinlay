@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { Brand, Icon } from "@pinlay/design";
 import { clearAuth, getAuth, onAuthChange, setAuth, type StoredAuth } from "../../lib/auth";
 import { api, type Me, type Workspace } from "../../lib/api";
@@ -29,6 +29,148 @@ const me = ref<Me | null>(null);
 const workspace = ref<Workspace | null>(null);
 const pageHost = ref<string>("");
 
+// Roadmap 2.1 — pin-related state synced from the active tab's content script.
+// `pageCounts` drives the View pins card breakdown ("3 open · 1 resolved").
+// `popupPinList` is the data backing the Pins sub-view.
+const activeTabId = ref<number | null>(null);
+const pagePinCount = ref(0);
+const pageViewing = ref(false);
+const pageCounts = ref<{ open: number; resolved: number; all: number }>({
+  open: 0,
+  resolved: 0,
+  all: 0,
+});
+
+interface PopupPinRow {
+  id: string;
+  index: number;
+  title: string;
+  description: string;
+  status: string;
+  severity: string;
+  createdAt: string;
+  resolved: boolean;
+}
+const popupPinList = ref<PopupPinRow[]>([]);
+
+// Async lifecycle for the pin probe.
+//   `pinsLoading` drives the skeleton — but only when we have NO data to
+//   show. If we have cached pins (or already-loaded ones), refetch silently
+//   in the background so the UI never flashes back to a skeleton.
+//   `pinsError` powers the Try again card on a hard failure.
+const pinsLoading = ref(true);
+const pinsError = ref<string | null>(null);
+
+// Cache pin state in chrome.storage.local so opening the popup on a URL the
+// user has visited before shows the View pins card immediately — no skeleton
+// flash, then the fresh fetch quietly reconciles.
+const PIN_CACHE_PREFIX = "pl_pin_cache_v1:";
+const PIN_CACHE_MAX_AGE_MS = 30 * 60 * 1000; // 30m hard cap
+
+interface PinCacheEntry {
+  counts: { open: number; resolved: number; all: number };
+  pins: PopupPinRow[];
+  viewablePinCount: number;
+  viewing: boolean;
+  ts: number;
+}
+
+async function readPinCache(url: string): Promise<PinCacheEntry | null> {
+  try {
+    const key = PIN_CACHE_PREFIX + url;
+    const r = await chrome.storage.local.get(key);
+    const entry = r[key] as PinCacheEntry | undefined;
+    if (!entry) return null;
+    if (Date.now() - entry.ts > PIN_CACHE_MAX_AGE_MS) return null;
+    return entry;
+  } catch {
+    return null;
+  }
+}
+async function writePinCache(url: string, entry: Omit<PinCacheEntry, "ts">) {
+  try {
+    await chrome.storage.local.set({
+      [PIN_CACHE_PREFIX + url]: { ...entry, ts: Date.now() },
+    });
+  } catch {
+    /* ignore */
+  }
+}
+
+// Track the active tab's URL so fetchPinState can also persist to cache.
+const activeTabUrl = ref<string | null>(null);
+
+// Popup view state — main screen vs Pins sub-view.
+const view = ref<"main" | "pins">("main");
+const pinFilter = ref<"open" | "resolved" | "all">("open");
+const filteredPinList = computed(() => {
+  if (pinFilter.value === "all") return popupPinList.value;
+  if (pinFilter.value === "resolved") {
+    return popupPinList.value.filter((p) => p.resolved);
+  }
+  return popupPinList.value.filter((p) => !p.resolved);
+});
+const filteredPinLabel = computed(() => {
+  const n = filteredPinList.value.length;
+  return `${n} ${pinFilter.value} pin${n === 1 ? "" : "s"}`;
+});
+
+// Infinite scroll for the Pins sub-view. Render the first PAGE_SIZE rows;
+// an IntersectionObserver on the sentinel below the list bumps the count
+// when the user scrolls to the bottom. Resets to PAGE_SIZE on filter change
+// or whenever the sub-view re-opens so we don't leak prior pagination.
+const POPUP_PIN_PAGE_SIZE = 15;
+const popupVisibleCount = ref(POPUP_PIN_PAGE_SIZE);
+const visiblePopupPinList = computed(() =>
+  filteredPinList.value.slice(0, popupVisibleCount.value),
+);
+const hasMorePinsToShow = computed(
+  () => popupVisibleCount.value < filteredPinList.value.length,
+);
+const popupSentinelEl = ref<HTMLDivElement | null>(null);
+let popupSentinelObserver: IntersectionObserver | null = null;
+function attachPopupSentinel() {
+  popupSentinelObserver?.disconnect();
+  popupSentinelObserver = null;
+  if (view.value !== "pins" || !popupSentinelEl.value) return;
+  popupSentinelObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries[0]?.isIntersecting) {
+        popupVisibleCount.value = Math.min(
+          popupVisibleCount.value + POPUP_PIN_PAGE_SIZE,
+          filteredPinList.value.length,
+        );
+      }
+    },
+    { threshold: 0.1 },
+  );
+  popupSentinelObserver.observe(popupSentinelEl.value);
+}
+watch([popupSentinelEl, view], () => {
+  void nextTick(() => attachPopupSentinel());
+});
+watch(pinFilter, () => {
+  popupVisibleCount.value = POPUP_PIN_PAGE_SIZE;
+});
+
+// Compact relative time — "just now" / "5m" / "3h" / "2d". For longer spans
+// fall back to the ISO date. Mirrors the dashboard's timeAgo but smaller.
+function relativeTime(iso: string): string {
+  if (!iso) return "";
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "";
+  const diff = Date.now() - then;
+  const s = Math.floor(diff / 1000);
+  if (s < 60) return "just now";
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h`;
+  const d = Math.floor(h / 24);
+  if (d < 30) return `${d}d`;
+  return new Date(iso).toLocaleDateString();
+}
+
 const isLoading = computed(() => conn.value === "loading");
 const isConnected = computed(() => conn.value === "connected");
 // We render real identity whenever we HAVE it — including while offline with a
@@ -45,17 +187,10 @@ const userInitial = computed(() => {
   return source ? source.charAt(0).toUpperCase() : "?";
 });
 const userLabel = computed(() => me.value?.name || me.value?.email || "");
-const userEmail = computed(() => me.value?.email ?? "");
 
-// Workspace identity — the REAL name + plan, never the cuid.
+// Workspace name — referenced inline alongside member count in the
+// consolidated account row.
 const workspaceLabel = computed(() => workspace.value?.name ?? "");
-const workspaceSubtext = computed(() => {
-  if (!workspace.value) return "";
-  const plan = workspace.value.plan;
-  const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
-  const seats = workspace.value.memberCount;
-  return `${planLabel} · ${seats} member${seats === 1 ? "" : "s"}`;
-});
 
 const FAB_HIDDEN_KEY = "pl_fab_hidden";
 const launcherHidden = ref(false);
@@ -179,6 +314,29 @@ onMounted(async () => {
         /* malformed URL — leave host empty */
       }
     }
+    // Hydrate from cache so the View pins card paints IMMEDIATELY on revisit
+    // — no skeleton flash. Loading flag flips off as soon as we have cached
+    // data; the actual refetch happens silently in the background and
+    // reconciles into state when it returns.
+    if (tab?.url) {
+      activeTabUrl.value = tab.url;
+      const cached = await readPinCache(tab.url);
+      if (cached) {
+        pageCounts.value = cached.counts;
+        popupPinList.value = cached.pins;
+        pagePinCount.value = cached.viewablePinCount;
+        pageViewing.value = cached.viewing;
+        pinsLoading.value = false;
+      }
+    }
+    if (tab?.id != null) {
+      activeTabId.value = tab.id;
+      await fetchPinState();
+    } else {
+      // No active tab — nothing to load; clear the loading flag so the UI
+      // moves past the skeleton.
+      pinsLoading.value = false;
+    }
   } catch {
     /* ignore */
   }
@@ -240,6 +398,119 @@ async function startAnnotation() {
   }
 }
 
+// Fetch pin state from the active tab's content script. Drives the View pins
+// card's loading skeleton + error/retry surface. Surfaces a friendly error
+// message when the content script can't respond (chrome:// pages, network
+// failure, orphaned content script after extension reload).
+async function fetchPinState() {
+  if (activeTabId.value == null) {
+    pinsLoading.value = false;
+    return;
+  }
+  // Only show the skeleton when there's NOTHING on screen yet — if we
+  // hydrated from cache, the user already sees pins and we shouldn't flash
+  // back to a loading state on revalidate.
+  const hasDataAlready =
+    pageCounts.value.all > 0 || popupPinList.value.length > 0;
+  if (!hasDataAlready) pinsLoading.value = true;
+  pinsError.value = null;
+  try {
+    const res = (await chrome.tabs.sendMessage(activeTabId.value, {
+      type: "GET_PAGE_PIN_STATE",
+    })) as
+      | {
+          ok?: boolean;
+          viewablePinCount?: number;
+          viewing?: boolean;
+          counts?: { open: number; resolved: number; all: number };
+          pins?: PopupPinRow[];
+        }
+      | undefined;
+    if (res?.ok) {
+      pagePinCount.value = res.viewablePinCount ?? 0;
+      pageViewing.value = !!res.viewing;
+      pageCounts.value = res.counts ?? { open: 0, resolved: 0, all: 0 };
+      popupPinList.value = res.pins ?? [];
+      // Persist for stale-while-revalidate on the next popup open.
+      if (activeTabUrl.value) {
+        void writePinCache(activeTabUrl.value, {
+          counts: pageCounts.value,
+          pins: popupPinList.value,
+          viewablePinCount: pagePinCount.value,
+          viewing: pageViewing.value,
+        });
+      }
+    } else {
+      // Surface the retry card only if we have nothing to show. With cached
+      // data, prefer silence — the user sees the real-but-stale list.
+      if (!hasDataAlready) {
+        pinsError.value = "Couldn't load pins from this page.";
+      }
+    }
+  } catch (err) {
+    // No content script on this URL (chrome://, web store, etc.) → fail
+    // silently. Real network/runtime errors get the retry card.
+    const msg = (err as Error)?.message ?? "";
+    if (/Receiving end does not exist|No tab with id|cannot access/i.test(msg)) {
+      // Not an error worth surfacing — just no pinlay on this page.
+      if (!hasDataAlready) {
+        pageCounts.value = { open: 0, resolved: 0, all: 0 };
+        popupPinList.value = [];
+      }
+    } else if (!hasDataAlready) {
+      pinsError.value = msg || "Couldn't load pins from this page.";
+    }
+  } finally {
+    pinsLoading.value = false;
+  }
+}
+
+// Roadmap 2.1 — toggle the developer overlay on the active tab (Hide pins
+// button). Stays open on success so the user can continue using the popup.
+async function toggleViewPins() {
+  if (activeTabId.value == null) return;
+  const next = !pageViewing.value;
+  try {
+    await chrome.tabs.sendMessage(activeTabId.value, {
+      type: next ? "VIEW_PINS" : "HIDE_PINS",
+    });
+    pageViewing.value = next;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Pins sub-view navigation.
+function openPinsView() {
+  view.value = "pins";
+}
+function closePinsView() {
+  view.value = "main";
+}
+
+// Chrome popup quirk: the window grows to fit content but doesn't always
+// SHRINK when content gets smaller (e.g. leaving the Pins sub-view back to
+// the shorter main view). Force a body reflow by zeroing the height then
+// letting it re-measure on the next frame.
+watch(view, async () => {
+  await nextTick();
+  document.body.style.height = "0px";
+  await nextTick();
+  document.body.style.height = "";
+});
+
+// Drop a pin from the Pins sub-view's "+" button — same path as the main
+// CTA but doesn't go through the loading guard (sub-view is only visible
+// when we have data, so we know we're connected).
+async function startAnnotationFromList() {
+  try {
+    await chrome.runtime.sendMessage({ type: "START_ANNOTATION" });
+    window.close();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 function openDashboard() {
   chrome.tabs.create({ url: `${WEB_APP_URL}/` });
 }
@@ -263,12 +534,148 @@ function onConnect() {
 
 <template>
   <div class="w-[320px] font-sans">
+    <!-- ── Pins sub-view (Roadmap 2.1) ───────────────────────────────────
+         Browse pins on this page with status filter + drop-pin shortcut.
+         Reachable from the main view's "View pins" card. -->
+    <template v-if="view === 'pins'">
+      <header
+        class="flex items-center gap-1.5 border-b border-border px-3 py-2.5"
+      >
+        <button
+          type="button"
+          class="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          aria-label="Back to main"
+          @click="closePinsView"
+        >
+          <Icon name="chevron-left" :size="14" :stroke-width="2" />
+        </button>
+        <h2 class="flex-1 text-center text-[13px] font-semibold text-foreground">
+          Pins on this page
+        </h2>
+        <button
+          type="button"
+          class="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          aria-label="Drop a new pin"
+          @click="startAnnotationFromList"
+        >
+          <Icon name="plus" :size="14" :stroke-width="2" />
+        </button>
+      </header>
+
+      <!-- Filter tabs (Open / Resolved / All) — dark pill = active. -->
+      <div class="flex items-center gap-1.5 border-b border-border px-3 py-2">
+        <button
+          v-for="opt in [
+            { id: 'open' as const, label: 'Open', count: pageCounts.open },
+            { id: 'resolved' as const, label: 'Resolved', count: pageCounts.resolved },
+            { id: 'all' as const, label: 'All', count: pageCounts.all },
+          ]"
+          :key="opt.id"
+          type="button"
+          :class="[
+            'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors',
+            pinFilter === opt.id
+              ? 'bg-foreground text-background'
+              : 'bg-muted/60 text-muted-foreground hover:bg-muted',
+          ]"
+          @click="pinFilter = opt.id"
+        >
+          {{ opt.label }}
+          <span
+            :class="[
+              'inline-flex items-center justify-center text-[10.5px] font-semibold tabular-nums',
+              pinFilter === opt.id ? 'opacity-70' : 'opacity-60',
+            ]"
+          >
+            {{ opt.count }}
+          </span>
+        </button>
+      </div>
+
+      <!-- Pin rows — infinite scroll via the sentinel below. -->
+      <div class="max-h-[360px] overflow-y-auto">
+        <p
+          v-if="filteredPinList.length === 0"
+          class="px-3 py-10 text-center text-[12px] text-muted-foreground"
+        >
+          No {{ pinFilter === "all" ? "" : pinFilter + " " }}pins on this page.
+        </p>
+        <div
+          v-for="row in visiblePopupPinList"
+          :key="row.id"
+          class="flex items-start gap-3 border-b border-border px-3 py-2.5 last:border-b-0"
+        >
+          <span
+            :class="[
+              'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold tabular-nums',
+              row.resolved
+                ? 'bg-status-resolved/15 text-status-resolved'
+                : 'bg-primary-soft text-primary',
+            ]"
+          >
+            {{ row.index }}
+          </span>
+          <span class="flex min-w-0 flex-1 flex-col gap-1">
+            <span class="flex items-start gap-2">
+              <span class="flex-1 text-[13px] font-semibold leading-snug text-foreground">
+                {{ row.title }}
+              </span>
+              <span
+                v-if="row.resolved"
+                class="inline-flex shrink-0 items-center rounded-md bg-status-resolved/15 px-1.5 py-0.5 text-[10px] font-medium text-status-resolved"
+              >
+                Resolved
+              </span>
+            </span>
+            <span
+              v-if="row.description"
+              class="text-[12px] leading-snug text-muted-foreground line-clamp-2"
+            >
+              {{ row.description }}
+            </span>
+            <span
+              v-if="row.createdAt"
+              class="flex items-center gap-1 text-[11px] text-muted-foreground/80"
+            >
+              <Icon name="clock" :size="11" :stroke-width="2" />
+              {{ relativeTime(row.createdAt) }}
+            </span>
+          </span>
+        </div>
+        <!-- IntersectionObserver sentinel — bumps the rendered count when
+             scrolled into view. Removed once everything is on screen. -->
+        <div
+          v-if="hasMorePinsToShow"
+          ref="popupSentinelEl"
+          class="h-2"
+          aria-hidden="true"
+        />
+      </div>
+
+      <!-- Sub-view footer -->
+      <div
+        class="flex items-center justify-between border-t border-border bg-muted/30 px-3 py-2"
+      >
+        <span class="text-[11px] text-muted-foreground">{{ filteredPinLabel }}</span>
+        <button
+          type="button"
+          class="flex items-center gap-1 rounded-md px-1.5 py-1 text-[11.5px] font-medium text-foreground transition-colors hover:text-primary"
+          @click="openDashboard"
+        >
+          Open dashboard
+          <Icon name="arrow-up-right" :size="11" :stroke-width="2" />
+        </button>
+      </div>
+    </template>
+
+    <!-- ── Main view (default) ─────────────────────────────────────────── -->
+    <template v-else>
     <!-- ── Header — brand + page context + connection pill ───────────────── -->
     <header
       class="flex items-center gap-2.5 border-b border-border bg-gradient-to-b from-primary/[0.06] to-transparent px-4 py-3"
     >
       <div
-        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
       >
         <Brand :size="20" />
       </div>
@@ -337,7 +744,7 @@ function onConnect() {
         v-if="isLoading || hasIdentity"
         type="button"
         :disabled="status === 'starting' || !isConnected"
-        class="group flex items-center gap-2.5 rounded-lg bg-primary px-3 py-2.5 text-left text-primary-foreground shadow-[0_2px_8px_color-mix(in_oklab,var(--primary)_25%,transparent)] transition-[transform,box-shadow,background-color] hover:bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none"
+        class="group flex items-center gap-2.5 rounded-xl bg-primary px-3 py-2.5 text-left text-primary-foreground shadow-[0_2px_8px_color-mix(in_oklab,var(--primary)_25%,transparent)] transition-[transform,box-shadow,background-color] hover:bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none"
         @click="startAnnotation"
       >
         <span
@@ -347,7 +754,7 @@ function onConnect() {
         </span>
         <span class="flex-1">
           <span class="block text-[13px] font-semibold leading-tight">
-            Drop a pin on this page
+            Drop a pin
           </span>
           <span class="block text-[11px] leading-tight text-white/75">
             {{
@@ -368,42 +775,160 @@ function onConnect() {
         />
       </button>
 
-      <!-- ── Account ─────────────────────────────────────────────────────── -->
-      <section class="flex flex-col">
-        <p
-          class="px-1 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-muted-foreground"
-        >
-          Account
-        </p>
+      <!-- ── View pins area (Roadmap 2.1) ─────────────────────────────────
+           Three mutually exclusive states:
+           1. Loading skeleton while the content script's pin probe runs.
+           2. Error card with Try again when the probe fails.
+           3. View pins card with status breakdown + count, when the URL
+              has pins. (Silent when zero pins — that's the "no work" case.)
+           The skeleton avoids the previous pop-in where the View pins card
+           appeared "out of the blue" after the async fetch resolved. -->
+      <!-- 1. Loading skeleton — shape mirrors the real View pins card. -->
+      <div
+        v-if="pinsLoading"
+        class="flex items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2"
+        aria-busy="true"
+      >
+        <span class="h-9 w-9 shrink-0 animate-pulse rounded-md bg-muted" />
+        <span class="flex min-w-0 flex-1 flex-col gap-1.5">
+          <span class="h-2.5 w-20 animate-pulse rounded bg-muted" />
+          <span class="h-2 w-28 animate-pulse rounded bg-muted/70" />
+        </span>
+        <span class="h-6 w-8 animate-pulse rounded-full bg-muted" />
+      </div>
 
-        <!-- LOADING: skeleton with the same shape as the real rows so the
-             layout doesn't jump when data arrives. Never shows placeholder
-             text like "Local" — silence is honest. -->
-        <div
-          v-if="isLoading"
-          class="overflow-hidden rounded-lg border border-border bg-card"
-          aria-busy="true"
+      <!-- 2. Error + Try again — friendly retry surface. -->
+      <button
+        v-else-if="pinsError"
+        type="button"
+        class="group flex items-center gap-2.5 rounded-xl border border-status-stale/30 bg-status-stale/5 px-3 py-2 text-left transition-colors hover:bg-status-stale/10"
+        @click="fetchPinState"
+      >
+        <span
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-status-stale/15 text-status-stale"
         >
-          <div
-            v-for="i in 2"
-            :key="i"
-            class="flex items-center gap-3 px-3 py-2.5"
-            :class="i === 2 ? 'border-t border-border' : ''"
-          >
-            <span class="h-8 w-8 shrink-0 animate-pulse rounded-full bg-muted" />
-            <span class="flex min-w-0 flex-1 flex-col gap-1.5">
-              <span class="h-2.5 w-24 animate-pulse rounded bg-muted" />
-              <span class="h-2 w-32 animate-pulse rounded bg-muted/70" />
-            </span>
-          </div>
+          <Icon name="alert-triangle" :size="15" :stroke-width="2" />
+        </span>
+        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span class="text-[13px] font-semibold leading-tight text-foreground">
+            Couldn't load pins
+          </span>
+          <span class="truncate text-[11px] leading-tight text-muted-foreground">
+            {{ pinsError }}
+          </span>
+        </span>
+        <span
+          class="inline-flex items-center gap-1 rounded-md bg-card px-2 py-1 text-[11px] font-medium text-foreground transition-colors group-hover:bg-background"
+        >
+          <Icon name="refresh-cw" :size="11" :stroke-width="2" />
+          Try again
+        </span>
+      </button>
+
+      <!-- 3. View pins card — happy path. -->
+      <button
+        v-else-if="pageCounts.all > 0"
+        type="button"
+        class="group flex items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2 text-left text-foreground transition-colors hover:bg-muted/40"
+        @click="openPinsView"
+      >
+        <span
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground"
+        >
+          <Icon name="message-square" :size="15" :stroke-width="2" />
+        </span>
+        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span class="text-[13px] font-semibold leading-tight">
+            View pins
+          </span>
+          <span class="text-[11px] leading-tight text-muted-foreground">
+            <template v-if="pageCounts.open > 0">
+              {{ pageCounts.open }} open
+            </template>
+            <template v-if="pageCounts.open > 0 && pageCounts.resolved > 0">
+              ·
+            </template>
+            <template v-if="pageCounts.resolved > 0">
+              {{ pageCounts.resolved }} resolved
+            </template>
+            <template v-if="pageCounts.open === 0 && pageCounts.resolved === 0">
+              {{ pageCounts.all }} on this page
+            </template>
+          </span>
+        </span>
+        <span
+          class="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary-soft px-2 text-[11px] font-semibold text-primary tabular-nums"
+        >
+          {{ pageCounts.all }}
+        </span>
+      </button>
+
+      <!-- ── Toggle row: Hide pins | Floating launcher ───────────────────
+           Two equal-width pill toggles (rounded-full for a stronger pill
+           silhouette than the cards above). Each reflects ON/OFF visually
+           (violet-tinted = currently on, neutral = off). -->
+      <div v-if="hasIdentity" class="grid grid-cols-2 gap-2">
+        <!-- Hide / Show on-page pins. Disabled if there's nothing to hide
+             AND we don't have a "viewing" overlay state to flip back from. -->
+        <button
+          type="button"
+          :disabled="!pageViewing && pageCounts.all === 0"
+          :class="[
+            'flex items-center justify-center gap-1.5 rounded-full border px-3 py-2 text-[12px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-55',
+            pageViewing
+              ? 'border-primary/35 bg-primary-soft text-primary hover:bg-primary-soft/80'
+              : 'border-border bg-card text-foreground hover:bg-muted/50',
+          ]"
+          @click="toggleViewPins"
+        >
+          <Icon
+            :name="pageViewing ? 'eye-off' : 'eye'"
+            :size="13"
+            :stroke-width="2"
+          />
+          {{ pageViewing ? "Hide pins" : "Show pins" }}
+        </button>
+        <!-- Floating launcher (FAB) visibility — global preference. -->
+        <button
+          type="button"
+          :class="[
+            'flex items-center justify-center gap-1.5 rounded-full border px-3 py-2 text-[12px] font-medium transition-colors',
+            !launcherHidden
+              ? 'border-primary/35 bg-primary-soft text-primary hover:bg-primary-soft/80'
+              : 'border-border bg-card text-foreground hover:bg-muted/50',
+          ]"
+          @click="toggleLauncher"
+        >
+          <Icon name="map-pin" :size="13" :stroke-width="2" />
+          Floating launcher
+        </button>
+      </div>
+
+      <!-- ── Identity / workspace switcher ─────────────────────────────────
+           Single consolidated row (user primary, workspace secondary, switcher
+           chevron). Section header dropped — the row stands on its own. -->
+      <!-- LOADING: skeleton matches the single-row shape so the layout
+           doesn't jump when data arrives. -->
+      <div
+        v-if="isLoading"
+        class="overflow-hidden rounded-xl border border-border bg-card"
+        aria-busy="true"
+      >
+        <div class="flex items-center gap-3 px-3 py-2.5">
+          <span class="h-9 w-9 shrink-0 animate-pulse rounded-full bg-muted" />
+          <span class="flex min-w-0 flex-1 flex-col gap-1.5">
+            <span class="h-2.5 w-24 animate-pulse rounded bg-muted" />
+            <span class="h-2 w-32 animate-pulse rounded bg-muted/70" />
+          </span>
         </div>
+      </div>
 
         <!-- IDLE: only when we have NO identity at all (disconnected from a
              cold start). If we're offline but cached, we render the connected
              block below — the header pill shows staleness. -->
         <div
           v-else-if="showIdlePrompt"
-          class="overflow-hidden rounded-lg border border-border bg-card"
+          class="overflow-hidden rounded-xl border border-border bg-card"
         >
           <div class="flex flex-col items-center gap-2.5 px-4 py-4 text-center">
             <span
@@ -446,44 +971,16 @@ function onConnect() {
           </div>
         </div>
 
-        <!-- CONNECTED: real identity + workspace.
-             NOTE: no `overflow-hidden` here — the workspace-switcher dropdown
-             is absolute-positioned inside this card and gets clipped otherwise.
-             The card has no internal backgrounds that spill past its rounded
-             corners (rows are transparent + hover-only), so dropping the clip
-             is visually safe. -->
+        <!-- CONNECTED: consolidated identity row — user avatar + name
+             primary, workspace + member count secondary, switcher chevron
+             on the right. Single row replaces the previous two-row stack.
+             NOTE: no `overflow-hidden` here — the switcher dropdown is
+             absolute-positioned inside this card and gets clipped otherwise. -->
         <div
           v-else
-          class="rounded-lg border border-border bg-card"
+          ref="switcherRootEl"
+          class="relative rounded-xl border border-border bg-card"
         >
-          <!-- User row -->
-          <div class="flex items-center gap-3 px-3 py-2.5">
-            <span
-              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
-              :style="{ background: 'oklch(0.55 0.16 264)' }"
-            >
-              {{ userInitial }}
-            </span>
-            <span class="flex min-w-0 flex-1 flex-col gap-0">
-              <span
-                class="truncate text-[12.5px] font-medium leading-tight text-foreground"
-              >
-                {{ userLabel }}
-              </span>
-              <span
-                class="truncate text-[10.5px] leading-tight text-muted-foreground"
-              >
-                {{ userEmail }}
-              </span>
-            </span>
-          </div>
-
-          <div class="border-t border-border" />
-
-          <!-- Workspace row + floating switcher. Wrapper is `relative` so the
-               dropdown can anchor to it; the dropdown is absolute-positioned
-               with z-10 to float over later siblings (Preferences). -->
-          <div ref="switcherRootEl" class="relative">
             <button
               type="button"
               :disabled="!isConnected"
@@ -492,21 +989,29 @@ function onConnect() {
               aria-haspopup="listbox"
               @click="toggleSwitcher"
             >
+              <!-- User avatar (D for Dev User). Primary identity in this
+                   consolidated row — workspace info moves to the subtitle. -->
               <span
-                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/8 text-primary"
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold text-white"
+                :style="{ background: 'oklch(0.55 0.16 264)' }"
               >
-                <Icon name="building-2" :size="14" :stroke-width="2" />
+                {{ userInitial }}
               </span>
               <span class="flex min-w-0 flex-1 flex-col gap-0">
                 <span
-                  class="truncate text-[12.5px] font-medium leading-tight text-foreground"
+                  class="truncate text-[13px] font-semibold leading-tight text-foreground"
                 >
-                  {{ workspaceLabel }}
+                  {{ userLabel }}
                 </span>
                 <span
-                  class="truncate text-[10.5px] leading-tight text-muted-foreground"
+                  class="truncate text-[11px] leading-tight text-muted-foreground"
                 >
-                  {{ workspaceSubtext }}
+                  {{ workspaceLabel }}
+                  <template v-if="workspace?.memberCount">
+                    · {{ workspace.memberCount }} member{{
+                      workspace.memberCount === 1 ? "" : "s"
+                    }}
+                  </template>
                 </span>
               </span>
               <Icon
@@ -524,7 +1029,7 @@ function onConnect() {
             <div
               v-if="switcherOpen"
               role="listbox"
-              class="absolute left-2 right-2 top-full z-10 mt-1 max-h-64 overflow-y-auto rounded-lg border border-border bg-popover p-1 shadow-lg ring-1 ring-black/5"
+              class="absolute left-2 right-2 top-full z-10 mt-1 max-h-64 overflow-y-auto rounded-xl border border-border bg-popover p-1 shadow-lg ring-1 ring-black/5"
             >
               <!-- Loading state -->
               <div
@@ -597,76 +1102,11 @@ function onConnect() {
                 No workspaces yet.
               </div>
             </div>
-          </div>
         </div>
-      </section>
+      <!-- The standalone Preferences > Floating launcher row was removed —
+           the toggle moved into the Hide pins | Floating launcher row at
+           the top of the connected layout. -->
 
-      <!-- ── Preferences ─────────────────────────────────────────────────── -->
-      <!-- A user preference makes no sense before the user is signed in.
-           Visible whenever we have identity (incl. cached-offline) so a brief
-           blip doesn't make settings vanish. Hidden during loading + on the
-           cold idle prompt. -->
-      <section v-if="hasIdentity" class="flex flex-col">
-        <p
-          class="px-1 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-muted-foreground"
-        >
-          Preferences
-        </p>
-        <div class="overflow-hidden rounded-lg border border-border bg-card">
-          <button
-            type="button"
-            class="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-muted/40"
-            @click="toggleLauncher"
-          >
-            <span
-              class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground"
-            >
-              <Icon
-                :name="launcherHidden ? 'eye-off' : 'eye'"
-                :size="14"
-                :stroke-width="1.9"
-              />
-            </span>
-            <span class="flex min-w-0 flex-1 flex-col gap-0">
-              <span
-                class="truncate text-[12.5px] font-medium leading-tight text-foreground"
-              >
-                Floating launcher
-              </span>
-              <span
-                class="truncate text-[10.5px] leading-tight text-muted-foreground"
-              >
-                {{
-                  launcherHidden
-                    ? "Hidden on this page"
-                    : "Visible on every page"
-                }}
-              </span>
-            </span>
-            <!-- Locked math (DO NOT bump translateX past 18 on this geometry).
-                 Track h-5 w-10 (20×40) is rounded-full (r=10). The 16×16 knob
-                 with 2px inset corners the right rounded arc EXACTLY at
-                 translateX(18px) — its top-right corner (36, 2) satisfies
-                 (36-30)² + (2-10)² = 100 = r². Higher translate values look
-                 like the knob "pokes through" because corners breach the arc. -->
-            <span
-              :class="[
-                'relative h-5 w-10 shrink-0 rounded-full transition-colors',
-                launcherHidden ? 'bg-muted' : 'bg-primary',
-              ]"
-            >
-              <span
-                class="absolute top-0.5 left-0.5 block h-4 w-4 rounded-full bg-white shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-transform"
-                :style="{
-                  transform: launcherHidden
-                    ? 'translateX(0)'
-                    : 'translateX(18px)',
-                }"
-              />
-            </span>
-          </button>
-        </div>
-      </section>
 
       <!-- ── Footer ──────────────────────────────────────────────────────── -->
       <div
@@ -705,5 +1145,6 @@ function onConnect() {
         </button>
       </div>
     </div>
+    </template>
   </div>
 </template>

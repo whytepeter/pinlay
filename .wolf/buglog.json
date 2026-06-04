@@ -4271,6 +4271,792 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-03T00:26:43.224Z"
+    },
+    {
+      "id": "bug-266",
+      "timestamp": "2026-06-03T00:41:33.057Z",
+      "error_message": "Significant refactor of ",
+      "file": "HANDOFF_WEB_INTEGRATION.md",
+      "root_cause": "11 lines replaced/restructured",
+      "fix": "Rewrote 23→39 lines (11 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T00:41:33.057Z"
+    },
+    {
+      "id": "bug-267",
+      "timestamp": "2026-06-03T10:28:19.228Z",
+      "error_message": "Significant refactor of ",
+      "file": "HANDOFF_WEB_INTEGRATION.md",
+      "root_cause": "5 lines replaced/restructured",
+      "fix": "Rewrote 12→18 lines (5 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T10:28:19.228Z"
+    },
+    {
+      "id": "bug-268",
+      "timestamp": "2026-06-03T12:26:34.144Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/test/anchor.test.ts",
+      "root_cause": "8 lines replaced/restructured",
+      "fix": "Rewrote 41→70 lines (8 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T12:26:34.144Z"
+    },
+    {
+      "id": "bug-269",
+      "timestamp": "2026-06-03T12:38:47.549Z",
+      "error_message": "CSS fix: pin",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "pin: Pin): { x: number → Pin,",
+      "fix": "Changed pin: Pin): { x: number → Pin,",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 3,
+      "last_seen": "2026-06-03T12:38:53.376Z"
+    },
+    {
+      "id": "bug-270",
+      "timestamp": "2026-06-03T12:38:55.226Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "Had \"openPin(r.pin.id)\"",
+      "fix": "Changed to \"r.health\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T12:38:55.226Z"
+    },
+    {
+      "id": "bug-271",
+      "timestamp": "2026-06-03T13:10:34.768Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/lib/anchor.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T13:10:34.768Z"
+    },
+    {
+      "id": "bug-272",
+      "timestamp": "2026-06-03T13:10:53.501Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "No early return/throw for edge case: !pin || !detailPos.value.stale",
+      "fix": "Added guard clause: if (!pin || !detailPos.value.stale)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T13:10:53.501Z"
+    },
+    {
+      "id": "bug-273",
+      "timestamp": "2026-06-03T13:11:08.650Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 20→42 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T13:11:08.650Z"
+    },
+    {
+      "id": "bug-274",
+      "timestamp": "2026-06-03T13:14:49.507Z",
+      "error_message": "Type error",
+      "file": "apps/extension/src/lib/anchor.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T13:14:49.507Z"
+    },
+    {
+      "id": "bug-275",
+      "timestamp": "2026-06-03T13:14:59.459Z",
+      "error_message": "Type error",
+      "file": "apps/extension/test/anchor.test.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T13:14:59.459Z"
+    },
+    {
+      "id": "bug-276",
+      "timestamp": "2026-06-03T14:55:19.200Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T14:55:19.200Z"
+    },
+    {
+      "id": "bug-277",
+      "timestamp": "2026-06-03T14:59:14.360Z",
+      "error_message": "Pins dropped on one SPA route show as element not found on a different route, and new pins are saved under the previous route URL (reported on glown.io vs glown.io/search).",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "The overlay detects SPA navigation by monkey-patching history.pushState/replaceState at overlay mount. But SPA routers (Nuxt/Vue Router/React Router) capture history.pushState at page load, before our patch installs, so their navigations call the saved original and bypass the patch; popstate/hashchange do not fire on pushState. livePageUrl stayed frozen at the mount-time URL, so existing pins from the old route rendered as element-not-found and new pins persisted with the stale pageUrl.",
+      "fix": "Added a 500ms normalized-URL polling fallback (setInterval(onLocationMaybeChanged,500)) in onMounted, cleared in onBeforeUnmount, alongside the existing popstate/hashchange/patched-pushState listeners. Polling reliably catches every navigation style regardless of how the host SPA routes.",
+      "tags": [
+        "extension",
+        "spa",
+        "history-api",
+        "pushstate",
+        "anchor",
+        "url-scoping",
+        "content-script",
+        "monkeypatch",
+        "stale-pin"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T14:59:14.360Z"
+    },
+    {
+      "id": "bug-278",
+      "timestamp": "2026-06-03T15:34:40.276Z",
+      "error_message": "Wrong operator: ?? should be &&",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "Used \"??\" instead of \"&&\"",
+      "fix": "Changed operator ?? → &&",
+      "tags": [
+        "auto-detected",
+        "operator-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T15:34:40.276Z"
+    },
+    {
+      "id": "bug-279",
+      "timestamp": "2026-06-03T15:34:56.609Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 25→32 lines (6 removed) | Also: before +; sel +",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-06-03T15:35:08.106Z"
+    },
+    {
+      "id": "bug-280",
+      "timestamp": "2026-06-03T15:35:34.121Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/background.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T15:35:34.121Z"
+    },
+    {
+      "id": "bug-281",
+      "timestamp": "2026-06-03T15:46:38.125Z",
+      "error_message": "Dropping a pin takes a noticeable time after clicking Submit (the composer hangs in submitting state).",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "onComposerSubmit awaited api.createPin and THEN ran a `for (const img of draft.images) await api.uploadAttachment(...)` loop serially, keeping the composer in submitting state until every attachment uploaded. With 1 screenshot this is 2 RTTs back-to-back; with N images it is N+1 serial RTTs.",
+      "fix": "Close the composer + push the persisted pin as soon as createPin returns (the pin id is already known). Fire attachment uploads in parallel via Promise.all in the background; failures log a warning rather than blocking the dialog.",
+      "tags": [
+        "extension",
+        "performance",
+        "ux",
+        "composer",
+        "attachments",
+        "optimistic-ui",
+        "serial-await"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T15:46:38.125Z"
+    },
+    {
+      "id": "bug-282",
+      "timestamp": "2026-06-03T15:46:38.125Z",
+      "error_message": "Markdown toolbar buttons (Bold/Italic/Link) in the pin composer render with default browser button chrome (gray bevel) instead of the intended icon-button style.",
+      "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "root_cause": "The .pl-md-btn scoped CSS class set display/size/color but did not reset native <button> defaults (background, border, padding). Browsers paint their default button chrome under the icons, masking the intended look. Also violates the project rule against hand-written component CSS.",
+      "fix": "Replaced .pl-md-btn with explicit Tailwind utility classes including the missing button resets (border-0, bg-transparent, p-0, cursor-pointer). Removed the scoped <style> block. Also added @mousedown.prevent so clicking the toolbar does not steal focus from the textarea (otherwise execCommand fails).",
+      "tags": [
+        "extension",
+        "css",
+        "tailwind",
+        "shadow-dom",
+        "button-reset",
+        "composer",
+        "markdown-toolbar"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T15:46:38.125Z"
+    },
+    {
+      "id": "bug-283",
+      "timestamp": "2026-06-03T15:46:38.125Z",
+      "error_message": "Cmd/Ctrl+Z in the pin composer description textarea does not undo changes made via the Bold/Italic/Link toolbar buttons.",
+      "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "root_cause": "wrapSelection() and confirmLink() mutated description.value directly. A direct v-model mutation bypasses the textarea native edit pipeline, so the change is never added to the browser undo stack — Cmd+Z then jumps over the toolbar action.",
+      "fix": "Route the replacement through document.execCommand(\"insertText\", false, replacement) after focusing the textarea and setSelectionRange(). execCommand goes through the native edit pipeline so the change IS undoable. Keep a direct-mutation fallback for older engines/unfocused state.",
+      "tags": [
+        "extension",
+        "ux",
+        "textarea",
+        "undo",
+        "execCommand",
+        "markdown-toolbar",
+        "composer"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T15:46:38.125Z"
+    },
+    {
+      "id": "bug-284",
+      "timestamp": "2026-06-03T16:09:37.778Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "5 lines replaced/restructured",
+      "fix": "Rewrote 13→17 lines (5 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T16:09:37.778Z"
+    },
+    {
+      "id": "bug-285",
+      "timestamp": "2026-06-03T16:09:56.343Z",
+      "error_message": "CSS fix: banner",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "banner: pins aren't persisting. Shown for \"disconnected\" → pins aren't persisting. Only shown while an",
+      "fix": "Changed banner: pins aren't persisting. Shown for \"disconnected\" → pins aren't persisting. Only shown while an",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T16:09:56.343Z"
+    },
+    {
+      "id": "bug-286",
+      "timestamp": "2026-06-03T16:10:46.007Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/extension/src/entrypoints/content.ts",
+      "root_cause": "No early return/throw for edge case: annotationUi",
+      "fix": "Added guard clause: if (annotationUi)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T16:10:46.007Z"
+    },
+    {
+      "id": "bug-287",
+      "timestamp": "2026-06-03T16:10:50.327Z",
+      "error_message": "Missing error handling in collectBrowserMetaFromPage",
+      "file": "apps/extension/src/entrypoints/content.ts",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T16:10:50.327Z"
+    },
+    {
+      "id": "bug-288",
+      "timestamp": "2026-06-03T16:13:35.093Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/content.ts",
+      "root_cause": "7 lines replaced/restructured",
+      "fix": "Rewrote 11→4 lines (7 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T16:13:35.093Z"
+    },
+    {
+      "id": "bug-289",
+      "timestamp": "2026-06-03T16:33:12.461Z",
+      "error_message": "Missing import: ../lib/api, @pinlay/shared, ../lib/annotation-state",
+      "file": "apps/extension/src/entrypoints/content.ts",
+      "root_cause": "Module(s) not imported: ../lib/api, @pinlay/shared, ../lib/annotation-state",
+      "fix": "Added import(s) for ../lib/api, @pinlay/shared, ../lib/annotation-state",
+      "tags": [
+        "auto-detected",
+        "missing-import",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T16:33:12.461Z"
+    },
+    {
+      "id": "bug-290",
+      "timestamp": "2026-06-03T16:34:16.838Z",
+      "error_message": "CSS fix: pinlay",
+      "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
+      "root_cause": "pinlay: start-annotation\")) → hide-pins\"))",
+      "fix": "Changed pinlay: start-annotation\")) → hide-pins\"))",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T16:34:16.838Z"
+    },
+    {
+      "id": "bug-291",
+      "timestamp": "2026-06-03T16:35:22.561Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check) | Also: if (tab?.id != null) {; activeTabId.value = tab.id;",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-06-03T16:35:28.633Z"
+    },
+    {
+      "id": "bug-292",
+      "timestamp": "2026-06-03T16:35:33.122Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "No early return/throw for edge case: activeTabId.value == null",
+      "fix": "Added guard clause: if (activeTabId.value == null)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T16:35:33.122Z"
+    },
+    {
+      "id": "bug-293",
+      "timestamp": "2026-06-03T16:35:51.549Z",
+      "error_message": "CSS fix: group-hover",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "group-hover: translate-x-0.5\" → text-foreground\"",
+      "fix": "Changed group-hover: translate-x-0.5\" → text-foreground\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T16:35:51.549Z"
+    },
+    {
+      "id": "bug-294",
+      "timestamp": "2026-06-03T16:37:21.434Z",
+      "error_message": "CSS fix: icon",
+      "file": "apps/extension/src/components/launcher/LauncherItem.vue",
+      "root_cause": "icon: \"annotate\" | \"check\" | \"close\" | \"list\" → \"annotate\" | \"check\" | \"close\" | \"list\" | \"eye\" | \"eye-off\"",
+      "fix": "Changed icon: \"annotate\" | \"check\" | \"close\" | \"list\" → \"annotate\" | \"check\" | \"close\" | \"list\" | \"eye\" | \"eye-off\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-03T16:37:21.434Z"
+    },
+    {
+      "id": "bug-295",
+      "timestamp": "2026-06-03T22:25:52.614Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 8→6 lines (6 removed) | Also: // Idle menu = Drop a pin + user/workspace chips +; // Annotation menu = Start / Cancel / View pins / ",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-06-03T22:26:03.684Z"
+    },
+    {
+      "id": "bug-296",
+      "timestamp": "2026-06-03T22:26:32.804Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/content.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check) | Also: //; // The probe ALSO populates `state.pinRows` so the FAB's in-",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-06-03T22:26:58.252Z"
+    },
+    {
+      "id": "bug-297",
+      "timestamp": "2026-06-04T10:27:44.099Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 9→20 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T10:27:44.099Z"
+    },
+    {
+      "id": "bug-298",
+      "timestamp": "2026-06-04T17:33:08.298Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "apps/extension/src/entrypoints/content.ts",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T17:33:08.298Z"
+    },
+    {
+      "id": "bug-299",
+      "timestamp": "2026-06-04T17:33:32.278Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/content.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T17:33:32.278Z"
+    },
+    {
+      "id": "bug-300",
+      "timestamp": "2026-06-04T17:34:33.151Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "No early return/throw for edge case: pinFilter.value === \"all\"",
+      "fix": "Added guard clause: if (pinFilter.value === \"all\")",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T17:34:33.151Z"
+    },
+    {
+      "id": "bug-301",
+      "timestamp": "2026-06-04T17:35:03.467Z",
+      "error_message": "CSS fix: type",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "type: next ? \"VIEW_PINS\" : \"HIDE_PINS\", → \"START_ANNOTATION\"",
+      "fix": "Changed type: next ? \"VIEW_PINS\" : \"HIDE_PINS\", → \"START_ANNOTATION\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 4,
+      "last_seen": "2026-06-04T17:39:43.699Z"
+    },
+    {
+      "id": "bug-302",
+      "timestamp": "2026-06-04T17:38:10.857Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T17:38:10.857Z"
+    },
+    {
+      "id": "bug-303",
+      "timestamp": "2026-06-04T17:40:30.206Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "60 lines replaced/restructured",
+      "fix": "Rewrote 79→14 lines (60 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T17:40:30.206Z"
+    },
+    {
+      "id": "bug-304",
+      "timestamp": "2026-06-04T18:01:05.346Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "9 lines replaced/restructured",
+      "fix": "Rewrote 12→5 lines (9 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T18:01:05.346Z"
+    },
+    {
+      "id": "bug-305",
+      "timestamp": "2026-06-04T20:45:16.134Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "21 lines replaced/restructured",
+      "fix": "Rewrote 27→8 lines (21 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T20:45:16.134Z"
+    },
+    {
+      "id": "bug-306",
+      "timestamp": "2026-06-04T20:45:25.922Z",
+      "error_message": "Missing error handling in function",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T20:45:25.922Z"
+    },
+    {
+      "id": "bug-307",
+      "timestamp": "2026-06-04T20:45:46.531Z",
+      "error_message": "Missing await",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-06-04T20:46:32.222Z"
+    },
+    {
+      "id": "bug-308",
+      "timestamp": "2026-06-04T20:45:58.506Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/extension/src/entrypoints/popup/index.html",
+      "root_cause": "Had \"w-[320px] bg-background text-foreground antialias",
+      "fix": "Changed to \"w-[320px] bg-white text-foreground antialiased\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "html"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T20:45:58.506Z"
+    },
+    {
+      "id": "bug-309",
+      "timestamp": "2026-06-04T21:03:20.409Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "root_cause": "No early return/throw for edge case: !root",
+      "fix": "Added guard clause: if (!root)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T21:03:20.409Z"
+    },
+    {
+      "id": "bug-310",
+      "timestamp": "2026-06-04T21:08:01.559Z",
+      "error_message": "Missing error handling in function",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T21:08:01.559Z"
+    },
+    {
+      "id": "bug-311",
+      "timestamp": "2026-06-04T21:09:22.486Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T21:09:22.486Z"
+    },
+    {
+      "id": "bug-312",
+      "timestamp": "2026-06-04T21:45:41.418Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/api/src/annotation/annotation.service.ts",
+      "root_cause": "No early return/throw for edge case: query.host",
+      "fix": "Added guard clause: if (query.host)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T21:45:41.418Z"
+    },
+    {
+      "id": "bug-313",
+      "timestamp": "2026-06-04T21:46:16.283Z",
+      "error_message": "Wrong return value",
+      "file": "apps/api/src/annotation/pins.controller.ts",
+      "root_cause": "Was returning: this.annotation.listPagePins(user, pageUrl);",
+      "fix": "Now returns: this.annotation.listPagePins(user, { pageUrl, host",
+      "tags": [
+        "auto-detected",
+        "return-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-04T21:46:16.283Z"
     }
   ]
 }

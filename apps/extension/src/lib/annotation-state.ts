@@ -15,6 +15,7 @@
  *     across two Vue trees.
  */
 import { computed, ref } from "vue";
+import type { AnchorHealth } from "./anchor";
 
 export type AnnotationOverlayMode = "view" | "place";
 
@@ -26,12 +27,22 @@ export interface PinListRow {
   statusLabel: string;
   dotBg: string;
   stale: boolean;
+  /** Live resolve-health band (ok = green, fallback = yellow, dead = red). */
+  health: AnchorHealth;
 }
 
 const active = ref(false);
 const mode = ref<AnnotationOverlayMode>("view");
 const pinCount = ref(0);
 const pinRows = ref<PinListRow[]>([]);
+// Roadmap 2.1 — pins are HIDDEN by default. The user opts into the developer
+// overlay via "View pins" (FAB + popup) when the page has pins to show.
+//
+//   `viewing`            — overlay is mounted right now (passive view or place)
+//   `viewablePinCount`   — pins the API knows about for this URL; drives the
+//                          "View pins (N)" affordance even before mount.
+const viewing = ref(false);
+const viewablePinCount = ref(0);
 
 // Imperative bridge — launcher fires intents (counter bumps), overlay watches.
 const placeRequested = ref(0);
@@ -47,6 +58,13 @@ function setActive(next: boolean) {
     pinCount.value = 0;
     pinRows.value = [];
   }
+}
+
+function setViewing(next: boolean) {
+  viewing.value = next;
+}
+function setViewablePinCount(n: number) {
+  viewablePinCount.value = Math.max(0, n);
 }
 
 function setMode(next: AnnotationOverlayMode) {
@@ -83,6 +101,8 @@ export function useAnnotationState() {
     mode: computed(() => mode.value),
     pinCount: computed(() => pinCount.value),
     pinRows: computed(() => pinRows.value),
+    viewing: computed(() => viewing.value),
+    viewablePinCount: computed(() => viewablePinCount.value),
     placeRequested: computed(() => placeRequested.value),
     cancelRequested: computed(() => cancelRequested.value),
     exitRequested: computed(() => exitRequested.value),
@@ -93,6 +113,8 @@ export function useAnnotationState() {
     setMode,
     setPinCount,
     setPinRows,
+    setViewing,
+    setViewablePinCount,
 
     requestPlace,
     requestCancel,

@@ -24,11 +24,11 @@
   <!-- Outer layer is INERT by default — pointer-events:none lets every page
        click pass through. Children opt back in. -->
   <div class="fixed inset-0 z-[2147483640] pointer-events-none">
-    <!-- Connection banner: pins aren't persisting. Shown for "disconnected"
-         (needs Connect) and "offline" (API down) — never while probing or
-         when ready. -->
+    <!-- Connection banner: pins aren't persisting. Only shown while an
+         annotation session is active — silent in passive developer-overlay
+         view so we don't nag every page load. -->
     <div
-      v-if="apiState === 'disconnected' || apiState === 'offline'"
+      v-if="(apiState === 'disconnected' || apiState === 'offline') && mode === 'place'"
       class="pointer-events-auto absolute left-1/2 top-3 flex -translate-x-1/2 items-center gap-2.5 rounded-lg border border-status-stale/30 bg-card px-3 py-2 text-[12px] shadow-md"
     >
       <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-status-stale" />
@@ -86,8 +86,31 @@
       :status="pinStatus(r.pin)"
       :state="r.pin.state"
       :stale="r.stale"
+      :health="r.health"
       @open="openPin(r.pin.id)"
     />
+
+    <!-- Suggested re-anchor target (Roadmap 1.3): live highlight over the
+         element we think the stale pin moved to. -->
+    <div
+      v-if="suggestionRect"
+      class="absolute pointer-events-none rounded-sm"
+      :style="{
+        left: suggestionRect.x + 'px',
+        top: suggestionRect.y + 'px',
+        width: suggestionRect.w + 'px',
+        height: suggestionRect.h + 'px',
+        background: 'color-mix(in oklab, var(--sev-medium) 12%, transparent)',
+        outline: '2px dashed var(--sev-medium)',
+        outlineOffset: '1px',
+      }"
+    >
+      <span
+        class="absolute -top-5 left-0 whitespace-nowrap rounded bg-sev-medium px-1.5 py-0.5 text-[10px] font-semibold text-white"
+      >
+        Did this pin move here?
+      </span>
+    </div>
 
     <!-- Composer for a freshly-dropped pin. -->
     <AnnotationPinComposer
@@ -118,8 +141,12 @@
       :created-at="viewingPin.createdAt"
       :updating="statusUpdatingId === viewingPin.id"
       :stale="detailPos.stale"
+      :suggestion="
+        reanchorSuggestion ? { confidence: reanchorSuggestion.confidence } : null
+      "
       @close="viewingPinId = null"
       @reanchor="startReanchor(viewingPin.id)"
+      @accept-suggestion="acceptSuggestion"
       @change-status="onChangeStatus(viewingPin.id, $event)"
     />
 
@@ -201,7 +228,15 @@ import AnnotationPin from "./AnnotationPin.vue";
 import AnnotationPinComposer, { type PinDraft } from "./AnnotationPinComposer.vue";
 import AnnotationPinDetail from "./AnnotationPinDetail.vue";
 import type { PinListRow } from "../../lib/annotation-state";
-import { describeAnchor, resolveAnchor, type PinAnchor } from "../../lib/anchor";
+import {
+  anchorHealth,
+  describeAnchor,
+  resolveAnchor,
+  suggestReanchor,
+  type AnchorHealth,
+  type PinAnchor,
+  type ReanchorSuggestion,
+} from "../../lib/anchor";
 import {
   api,
   ApiError,
@@ -228,8 +263,6 @@ const props = defineProps<{
   auth: StoredAuth | null;
 }>();
 
-const emit = defineEmits<{ close: [] }>();
-
 // ── Shared state w/ launcher ────────────────────────────────────────────────
 const state = useAnnotationState();
 
@@ -241,11 +274,18 @@ function enterPlaceMode() {
   viewingPinId.value = null;
   mode.value = "place";
   state.setMode("place");
+  // Mark the annotation session active — flips the FAB into annotation
+  // controls. The overlay itself may have been mounted passively (view mode)
+  // long before this; "active" tracks the SESSION, not the mount.
+  state.setActive(true);
 }
 function exitPlaceMode() {
   hover.value = null;
   mode.value = "view";
   state.setMode("view");
+  // End of session — but the overlay stays mounted so pins keep rendering
+  // passively. FAB returns to idle.
+  state.setActive(false);
 }
 
 // Close the composer but STAY in place mode so the user can drop another pin
@@ -345,7 +385,9 @@ function onViewportChange() {
   });
 }
 
-function viewportPos(pin: Pin): { x: number; y: number; stale: boolean } {
+function viewportPos(
+  pin: Pin,
+): { x: number; y: number; stale: boolean; health: AnchorHealth } {
   const anchor = pin.anchor;
   const resolved = resolveAnchor(anchor);
   if (resolved) {
@@ -354,12 +396,14 @@ function viewportPos(pin: Pin): { x: number; y: number; stale: boolean } {
       x: r.left + anchor.offset.xPct * r.width,
       y: r.top + anchor.offset.yPct * r.height,
       stale: false,
+      health: anchorHealth(resolved.confidence),
     };
   }
   return {
     x: pin.pageX - window.scrollX,
     y: pin.pageY - window.scrollY,
     stale: true,
+    health: "dead",
   };
 }
 
@@ -368,12 +412,16 @@ interface RenderedPin {
   x: number;
   y: number;
   stale: boolean;
+  health: AnchorHealth;
 }
 const renderedPins = computed<RenderedPin[]>(() => {
   void viewportTick.value;
   return visiblePins.value.map((pin) => {
-    const { x, y, stale } = viewportPos(pin);
-    return { pin, x, y, stale: pin.kind === "existing" && stale };
+    const { x, y, stale, health } = viewportPos(pin);
+    // Health/stale only mean something for persisted pins — a draft is being
+    // placed live on the element under the cursor, so it's always healthy.
+    const existing = pin.kind === "existing";
+    return { pin, x, y, stale: existing && stale, health: existing ? health : "ok" };
   });
 });
 
@@ -381,7 +429,7 @@ const composerPos = computed(() => {
   void viewportTick.value;
   return composingPin.value
     ? viewportPos(composingPin.value)
-    : { x: 0, y: 0, stale: false };
+    : { x: 0, y: 0, stale: false, health: "ok" as AnchorHealth };
 });
 
 // Short, dev-tools-style label of the clicked element shown in the composer
@@ -395,7 +443,26 @@ const detailPos = computed(() => {
   void viewportTick.value;
   return viewingPin.value
     ? viewportPos(viewingPin.value)
-    : { x: 0, y: 0, stale: false };
+    : { x: 0, y: 0, stale: false, health: "ok" as AnchorHealth };
+});
+
+// ── Suggested re-anchor (Roadmap 1.3) ────────────────────────────────────────
+// When the viewed pin is dead (stale), fuzzily propose where it likely moved.
+const reanchorSuggestion = computed<ReanchorSuggestion | null>(() => {
+  void viewportTick.value;
+  const pin = viewingPin.value;
+  if (!pin || !detailPos.value.stale) return null;
+  return suggestReanchor(pin.anchor);
+});
+
+// Live highlight box over the suggested element (better than a static thumbnail
+// — it's the actual element on the actual page).
+const suggestionRect = computed(() => {
+  void viewportTick.value;
+  const s = reanchorSuggestion.value;
+  if (!s) return null;
+  const r = s.el.getBoundingClientRect();
+  return { x: r.left, y: r.top, w: r.width, h: r.height };
 });
 
 // ── Pin-list rows ────────────────────────────────────────────────────────────
@@ -426,6 +493,7 @@ const pinListRows = computed<PinListRow[]>(() =>
         ? (STATUS_DOT_BG[status] ?? "bg-muted")
         : SEVERITY_DOT_BG[pinSeverity(r.pin)],
       stale: r.stale,
+      health: r.health,
     };
   }),
 );
@@ -469,7 +537,9 @@ const viewingPin = computed<ExistingPin | null>(() => {
 });
 
 // ── Hydrate existing pins ───────────────────────────────────────────────────
-state.setActive(true);
+// Note: `state.setActive(true)` lives in enterPlaceMode now, not here.
+// The overlay can be mounted passively (developer-overlay view) without
+// making the FAB look like an annotation session is in progress.
 
 // Connection state — resolved by one probe at startup. Three outcomes:
 //   "ready"         → request authenticated; pins persist to the API.
@@ -507,6 +577,9 @@ const apiProbe: Promise<void> = (async () => {
     existingPins.value = pins
       .map((row, i) => rowToExistingPin(row, i + 1))
       .filter((p): p is ExistingPin => p !== null);
+    // Keep the FAB/popup's "View pins (N)" affordance in sync — the count
+    // may have drifted since the content-script init probe (Roadmap 2.1).
+    state.setViewablePinCount(existingPins.value.length);
   } catch (e) {
     // 401 = authenticated request rejected → not connected. Anything without a
     // status (network error, orphaned SW) = the backend is unreachable.
@@ -561,6 +634,13 @@ watch(
 // unmount so we don't leak across re-mounts.
 const _origPushState = history.pushState.bind(history);
 const _origReplaceState = history.replaceState.bind(history);
+// SPA routers (Nuxt/Vue Router/React Router) typically capture
+// `history.pushState` at page load — BEFORE our monkey-patch installs — so
+// their navigations call the saved original and bypass us entirely, and
+// `popstate`/`hashchange` don't fire on pushState. A cheap normalized-URL poll
+// is the reliable catch-all: without it, pins from the old route linger as
+// "element not found" and new pins save under the stale URL.
+let locationPoll: ReturnType<typeof setInterval> | undefined;
 
 function onLocationMaybeChanged() {
   // Compare normalized → normalized so `?utm_source=foo` and `?utm_source=bar`
@@ -605,14 +685,20 @@ onMounted(() => {
   window.addEventListener("popstate", onLocationMaybeChanged);
   window.addEventListener("hashchange", onLocationMaybeChanged);
   patchHistoryForLocationEvents();
+  // Catch-all for SPA navigations the patch/events miss (see note above).
+  locationPoll = setInterval(onLocationMaybeChanged, 500);
 });
 
 onBeforeUnmount(() => {
+  // Defensive: if the overlay is ever unmounted mid-session, make sure the
+  // FAB returns to idle. In the normal passive-overlay lifecycle this is a
+  // no-op (active was already cleared by exitPlaceMode).
   state.setActive(false);
   window.removeEventListener("scroll", onViewportChange, true);
   window.removeEventListener("resize", onViewportChange);
   window.removeEventListener("popstate", onLocationMaybeChanged);
   window.removeEventListener("hashchange", onLocationMaybeChanged);
+  if (locationPoll) clearInterval(locationPoll);
   // Restore originals — leaving patched globals after unmount would corrupt
   // the page's history API for the host site.
   history.pushState = _origPushState;
@@ -758,18 +844,18 @@ function startReanchor(pinId: string) {
   state.setMode("place");
 }
 
-async function applyReanchor(pinId: string, anchor: PinAnchor, e: MouseEvent) {
-  const pin = existingPins.value.find((p) => p.id === pinId);
-  reanchoringPinId.value = null;
-  exitPlaceMode();
-  if (!pin) return;
-
+async function persistReanchor(
+  pin: ExistingPin,
+  anchor: PinAnchor,
+  clientX: number,
+  clientY: number,
+) {
   pin.anchor = anchor;
-  pin.pageX = e.clientX + window.scrollX;
-  pin.pageY = e.clientY + window.scrollY;
+  pin.pageX = clientX + window.scrollX;
+  pin.pageY = clientY + window.scrollY;
 
   try {
-    await api.updatePin(pinId, {
+    await api.updatePin(pin.id, {
       anchor: anchor as unknown as Record<string, unknown>,
       offsetX: anchor.offset.xPct,
       offsetY: anchor.offset.yPct,
@@ -777,6 +863,28 @@ async function applyReanchor(pinId: string, anchor: PinAnchor, e: MouseEvent) {
   } catch (err) {
     console.warn("[pinlay] failed to persist re-anchor:", (err as Error).message);
   }
+}
+
+async function applyReanchor(pinId: string, anchor: PinAnchor, e: MouseEvent) {
+  const pin = existingPins.value.find((p) => p.id === pinId);
+  reanchoringPinId.value = null;
+  exitPlaceMode();
+  if (!pin) return;
+  await persistReanchor(pin, anchor, e.clientX, e.clientY);
+}
+
+// Roadmap 1.3: accept the fuzzy suggestion — re-anchor the viewed pin to the
+// proposed element (keeping the pin's original click offset) without entering
+// manual PLACE mode.
+async function acceptSuggestion() {
+  const pin = viewingPin.value;
+  const s = reanchorSuggestion.value;
+  if (!pin || !s) return;
+  const r = s.el.getBoundingClientRect();
+  const clientX = r.left + pin.anchor.offset.xPct * r.width;
+  const clientY = r.top + pin.anchor.offset.yPct * r.height;
+  const anchor = describeAnchor(s.el, clientX, clientY);
+  await persistReanchor(pin, anchor, clientX, clientY);
 }
 
 // ── Pin click handlers (VIEW) ───────────────────────────────────────────────
@@ -876,15 +984,28 @@ async function onComposerSubmit(draft: PinDraft) {
     sessionId.value = res.sessionId;
     issueId.value = res.issueId;
 
-    for (const img of draft.images ?? []) {
-      await api
-        .uploadAttachment({
-          blob: img,
-          filename: img.name || `image-${Date.now()}.png`,
-          type: "screenshot",
-          issueId: res.issueId,
-        })
-        .catch(() => null);
+    // Close the composer + show the persisted pin AS SOON AS createPin returns.
+    // Attachments upload in the background in parallel; making the user wait on
+    // serial N×RTT uploads just to dismiss the composer is the visible delay.
+    if (draft.images && draft.images.length > 0) {
+      void Promise.all(
+        draft.images.map((img) =>
+          api
+            .uploadAttachment({
+              blob: img,
+              filename: img.name || `image-${Date.now()}.png`,
+              type: "screenshot",
+              issueId: res.issueId,
+            })
+            .catch((err) => {
+              console.warn(
+                "[pinlay] background attachment upload failed:",
+                (err as Error).message,
+              );
+              return null;
+            }),
+        ),
+      );
     }
 
     composingPinId.value = null;
@@ -984,15 +1105,19 @@ const priorPinsCount = computed(
 function onDone() {
   if (composingPin.value) onComposerCancel();
 
-  // Show the title popover whenever any pin has been dropped this sitting —
-  // not gated on `sessionId.value`, because in local-only mode (no API yet)
-  // sessionId stays null but the user still wants the naming flow.
-  if (existingPins.value.length > 0) {
+  // Show the title popover only when THIS sitting created at least one pin
+  // (i.e. there's a session to name). With the developer-overlay change the
+  // overlay may already be showing pins from previous sittings — we don't
+  // want Done to prompt a review for those.
+  if (sessionPinCount.value > 0) {
     reviewTitle.value = defaultReviewTitle();
     finishing.value = true;
     return;
   }
-  emit("close");
+  // No new pins this sitting → just leave place mode. The overlay stays
+  // mounted so any existing pins remain visible (Roadmap 2.1 — developer
+  // overlay). FAB returns to idle via exitPlaceMode.
+  exitPlaceMode();
 }
 
 function defaultReviewTitle(): string {
@@ -1024,7 +1149,12 @@ async function confirmFinish() {
     }
   }
   finishing.value = false;
-  emit("close");
+  // End the annotation session but DON'T unmount the overlay — the developer-
+  // overlay view keeps showing pins on the page (Roadmap 2.1). Reset session
+  // ids so the next pin drop opens a fresh session/issue server-side.
+  sessionId.value = null;
+  issueId.value = null;
+  exitPlaceMode();
 }
 
 function cancelFinish() {

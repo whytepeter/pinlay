@@ -1,12 +1,12 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-03T00:26:43.197Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-04T21:46:16.271Z
 > Files: 240 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
 - `.gitignore` — Git ignore rules (~144 tok)
-- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~4041 tok)
+- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~4659 tok)
 - `HANDOFF.md` — pinlay — Handoff (~4508 tok)
 - `package.json` — Node.js package manifest (~299 tok)
 - `ROADMAP.md` — pinlay — Product Roadmap (~3286 tok)
@@ -59,8 +59,8 @@
 ## apps/api/src/annotation/
 
 - `annotation.module.ts` — Exports AnnotationModule (~126 tok)
-- `annotation.service.ts` — Wire shape for a pin comment. (~3779 tok)
-- `pins.controller.ts` — Exports PinsController (~708 tok)
+- `annotation.service.ts` — Wire shape for a pin comment. (~4109 tok)
+- `pins.controller.ts` — Exports PinsController (~724 tok)
 - `sessions.controller.ts` — Write half of the session lifecycle: finishing/submitting a capture sitting (~285 tok)
 
 ## apps/api/src/annotation/dto/
@@ -175,7 +175,7 @@
 - `package.json` — Node.js package manifest (~258 tok)
 - `tsconfig.json` — TypeScript configuration (~77 tok)
 - `vitest.config.ts` — /*.test.ts"], (~46 tok)
-- `wxt.config.ts` — pinlay extension — WXT + Vue 3 + Tailwind v4. (~323 tok)
+- `wxt.config.ts` — pinlay extension — WXT + Vue 3 + Tailwind v4. (~420 tok)
 
 ## apps/extension/public/
 
@@ -187,10 +187,10 @@
 
 ## apps/extension/src/components/annotation/
 
-- `AnnotationOverlay.vue` — Vue: setup (~9057 tok)
-- `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~927 tok)
-- `AnnotationPinComposer.vue` — Vue component (~7779 tok)
-- `AnnotationPinDetail.vue` — Vue component (~5244 tok)
+- `AnnotationOverlay.vue` — Vue: setup (~10584 tok)
+- `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1143 tok)
+- `AnnotationPinComposer.vue` — Vue component (~8193 tok)
+- `AnnotationPinDetail.vue` — Vue component (~6439 tok)
 
 ## apps/extension/src/components/capture/
 
@@ -207,24 +207,24 @@
 ## apps/extension/src/components/launcher/
 
 - `ConnectPrompt.vue` — Vue: setup (~400 tok)
-- `FloatingLauncher.vue` — Vue: setup (~5352 tok)
-- `LauncherItem.vue` — Vue: setup (~789 tok)
+- `FloatingLauncher.vue` — Vue: setup (~5826 tok)
+- `LauncherItem.vue` — Vue: setup (~1061 tok)
 
 ## apps/extension/src/entrypoints/
 
-- `background.ts` — Background service worker. (~1292 tok)
-- `content.ts` — Content script — mounts the on-page surfaces: (~3408 tok)
+- `background.ts` — Background service worker. (~1477 tok)
+- `content.ts` — Content script — mounts the on-page surfaces: (~5740 tok)
 
 ## apps/extension/src/entrypoints/popup/
 
-- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~7233 tok)
-- `index.html` — pinlay (~172 tok)
+- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~11751 tok)
+- `index.html` — pinlay (~170 tok)
 - `main.ts` (~47 tok)
 
 ## apps/extension/src/lib/
 
-- `anchor.ts` — Element anchoring for live annotation. (~4650 tok)
-- `annotation-state.ts` — annotation-state (~809 tok)
+- `anchor.ts` — Element anchoring for live annotation. (~5704 tok)
+- `annotation-state.ts` — annotation-state (~1065 tok)
 - `api.ts` — API client (~1991 tok)
 - `auth.ts` — Subscribe to auth changes — fires when the token is added, updated, or cleared. (~562 tok)
 - `env.ts` — Exports WEB_APP_URL, API_URL (~131 tok)
@@ -233,7 +233,7 @@
 
 ## apps/extension/test/
 
-- `anchor.test.ts` — Anchor-resilience harness (Roadmap 1.2). (~1850 tok)
+- `anchor.test.ts` — Anchor-resilience harness (Roadmap 1.2). (~3486 tok)
 
 ## apps/web/
 

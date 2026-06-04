@@ -32,14 +32,67 @@ export default defineContentScript({
     let markupUi: Awaited<ReturnType<typeof createShadowRootUi>> | null = null;
 
     // ── Listeners FIRST (before any awaits) ───────────────────────────────────
-    chrome.runtime.onMessage.addListener((msg) => {
+    chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       if (msg?.type === "START_ANNOTATION") {
         void (async () => {
           const { getAuth } = await import("../lib/auth");
           const auth = await getAuth();
           await startAnnotation(auth);
         })();
+        return false;
       }
+      if (msg?.type === "VIEW_PINS") {
+        void (async () => {
+          const { getAuth } = await import("../lib/auth");
+          const auth = await getAuth();
+          await mountOverlayPassive(auth);
+        })();
+        return false;
+      }
+      if (msg?.type === "HIDE_PINS") {
+        unmountOverlay();
+        return false;
+      }
+      // Popup → tab: full pin-state snapshot for the popup's main + sub-view.
+      // We REFETCH on demand so the popup always sees current data — the init
+      // probe could be minutes stale by the time the user opens the popup.
+      // Also writes back to state so the FAB picks up the fresh count.
+      if (msg?.type === "GET_PAGE_PIN_STATE") {
+        void (async () => {
+          try {
+            const { getAuth } = await import("../lib/auth");
+            const auth = await getAuth();
+            if (!auth?.token) {
+              sendResponse({
+                ok: true,
+                viewablePinCount: 0,
+                viewing: false,
+                counts: { open: 0, resolved: 0, all: 0 },
+                pins: [],
+              });
+              return;
+            }
+            const { api } = await import("../lib/api");
+            const { normalizeUrl } = await import("@pinlay/shared");
+            const raw = await api.getPagePins(normalizeUrl(location.href));
+            const { useAnnotationState } = await import("../lib/annotation-state");
+            const state = useAnnotationState();
+            state.setViewablePinCount(raw.length);
+            state.setPinRows(raw.map((p, i) => formatProbedPinRow(p, i + 1)));
+            sendResponse({
+              ok: true,
+              viewablePinCount: raw.length,
+              viewing: state.viewing.value,
+              counts: countByStatus(raw),
+              pins: raw.map((p, i) => formatPopupPinRow(p, i + 1)),
+            });
+          } catch {
+            sendResponse({ ok: false });
+          }
+        })();
+        return true; // async
+      }
+      return false;
     });
 
     window.addEventListener("pinlay:start-annotation", async () => {
@@ -49,6 +102,27 @@ export default defineContentScript({
         await startAnnotation(auth);
       } catch {
         // Orphaned content script (extension reloaded)
+      }
+    });
+
+    // FAB "View pins" in the pin-list sub-view → mount overlay AND jump to
+    // a specific pin. Single event so the launcher doesn't have to sequence
+    // mount + requestJump itself (the overlay's `jumpRequested` watcher only
+    // exists after the overlay's setup runs).
+    window.addEventListener("pinlay:view-pin-then-jump", async (e) => {
+      const detail = (e as CustomEvent<{ id: string }>).detail;
+      if (!detail?.id) return;
+      try {
+        const { getAuth } = await import("../lib/auth");
+        const auth = await getAuth();
+        await mountOverlayPassive(auth);
+        // Yield one microtask so the overlay's watchers are registered
+        // before the counter bump that triggers them.
+        await new Promise<void>((r) => setTimeout(r, 0));
+        const { useAnnotationState } = await import("../lib/annotation-state");
+        useAnnotationState().requestJump(detail.id);
+      } catch {
+        /* orphaned content script */
       }
     });
 
@@ -126,22 +200,28 @@ export default defineContentScript({
       }
     }
 
-    // ── Annotation overlay (on demand) ────────────────────────────────────────
-    async function startAnnotation(auth: Awaited<ReturnType<typeof import("../lib/auth").getAuth>>) {
-      // Both entry points (popup "Drop a pin" CTA and FAB idle "Drop a pin"
-      // item) semantically mean "I want to place a pin right now", not "mount
-      // the overlay and wait." Either drop the user straight into place mode
-      // (overlay already up) or do so right after mount.
+    // ── Annotation overlay ────────────────────────────────────────────────────
+    // Two entry points:
+    //   • mountOverlayPassive(auth)  — Roadmap 2.1 developer overlay. Mounts
+    //     the overlay on page load so existing pins for this URL render LIVE
+    //     on their anchored elements, without the user clicking "Drop a pin".
+    //     The overlay stays in view mode — no crosshair, no place capture
+    //     layer, FAB stays idle. Cheap when there are no pins (the overlay
+    //     renders nothing).
+    //   • startAnnotation(auth)      — popup CTA / FAB "Drop a pin" / Cmd+⇧+P.
+    //     Ensures the overlay is mounted, then fires `requestPlace()` to
+    //     enter PLACE mode (which is what flips the FAB into annotation
+    //     controls).
+    async function mountOverlayPassive(
+      auth: Awaited<ReturnType<typeof import("../lib/auth").getAuth>>,
+    ) {
       const { useAnnotationState } = await import("../lib/annotation-state");
       const state = useAnnotationState();
-
       if (annotationUi) {
-        state.requestPlace();
+        state.setViewing(true);
         return;
       }
-
       const meta = collectBrowserMetaFromPage();
-
       annotationUi = await createShadowRootUi(ctx, {
         name: "pinlay-annotation",
         position: "modal",
@@ -155,10 +235,6 @@ export default defineContentScript({
           const app = createApp(AnnotationOverlay, {
             browserMeta: meta,
             auth,
-            onClose: () => {
-              annotationUi?.remove();
-              annotationUi = null;
-            },
           });
           app.mount(container);
           return app;
@@ -168,9 +244,26 @@ export default defineContentScript({
         },
       });
       annotationUi.mount();
+      state.setViewing(true);
+    }
 
+    function unmountOverlay() {
+      annotationUi?.remove();
+      annotationUi = null;
+      // Fire-and-forget state update (state import is dynamic so this is async).
+      void import("../lib/annotation-state").then(({ useAnnotationState }) => {
+        useAnnotationState().setViewing(false);
+      });
+    }
+
+    async function startAnnotation(
+      auth: Awaited<ReturnType<typeof import("../lib/auth").getAuth>>,
+    ) {
+      const { useAnnotationState } = await import("../lib/annotation-state");
+      const state = useAnnotationState();
+      await mountOverlayPassive(auth);
       // Overlay watchers are registered during the synchronous setup() that
-      // ran inside app.mount() above, so the counter bump below will fire the
+      // ran inside app.mount(), so this counter bump fires the
       // `placeRequested` watcher on the next reactive flush.
       state.requestPlace();
     }
@@ -322,6 +415,108 @@ export default defineContentScript({
       if (!ctx2d) throw new Error("2d context unavailable");
       ctx2d.drawImage(img, x, y, w, h, 0, 0, w, h);
       return canvas.toDataURL("image/png");
+    }
+
+    // ── Probe page pins on init (Roadmap 2.1, opt-in view model) ─────────────
+    // Pins are HIDDEN by default. We only PROBE the API on page load so the
+    // FAB + popup can show a "View pins (N)" affordance when this URL has
+    // pins to show. The overlay itself is NOT mounted until the user clicks
+    // View pins (or Drop a pin).
+    //
+    // The probe ALSO populates `state.pinRows` so the FAB's in-menu pin
+    // browser (View pins → list) can render without the overlay being
+    // mounted. Live signals (`stale`, `health`) require DOM resolution and
+    // get filled in later by the overlay; we default to "ok" here.
+    void (async () => {
+      try {
+        const { getAuth } = await import("../lib/auth");
+        const auth = await getAuth();
+        if (!auth?.token) return;
+        const { api } = await import("../lib/api");
+        const { normalizeUrl } = await import("@pinlay/shared");
+        const pins = await api.getPagePins(normalizeUrl(location.href));
+        const { useAnnotationState } = await import("../lib/annotation-state");
+        const state = useAnnotationState();
+        state.setViewablePinCount(pins.length);
+        state.setPinRows(pins.map((p, i) => formatProbedPinRow(p, i + 1)));
+      } catch {
+        // Network/orphan/401 — leave the count at 0, button just stays hidden.
+      }
+    })();
+
+    // Format an API pin into the popup's richer pin-list row (sub-view).
+    // Splits the comment into title (first line) + description (rest) for the
+    // popup's two-line row layout. Author/reporter is omitted — the
+    // /annotation/pins endpoint doesn't ship that field, and crossing over to
+    // /issues for it would change the data path significantly. Easy to add
+    // later when the API surfaces it on the pin row.
+    function formatPopupPinRow(
+      pin: { id: string; comment?: string | null; status?: string | null; severity?: string | null; createdAt?: string },
+      index: number,
+    ) {
+      const comment = (pin.comment ?? "").trim();
+      const nl = comment.indexOf("\n");
+      const title = (nl === -1 ? comment : comment.slice(0, nl)).trim();
+      const description = nl === -1 ? "" : comment.slice(nl + 1).trim();
+      const status = pin.status ?? "open";
+      return {
+        id: pin.id,
+        index,
+        title: title || "Untitled pin",
+        description,
+        status,
+        severity: pin.severity ?? "medium",
+        createdAt: pin.createdAt ?? "",
+        resolved: status === "resolved",
+      };
+    }
+
+    // Status → (open / resolved / all). Counts "in_progress" as open (it's
+    // not the resolved state and the user thinks of it as "still in flight").
+    function countByStatus(pins: { status?: string | null }[]) {
+      let open = 0;
+      let resolved = 0;
+      for (const p of pins) {
+        if (p.status === "resolved") resolved++;
+        else open++;
+      }
+      return { open, resolved, all: pins.length };
+    }
+
+    // Format an API pin into the launcher's PinListRow shape. Mirrors the
+    // overlay's row builder (severity/status dot maps) but without the
+    // health/stale signals that need a mounted DOM resolver.
+    function formatProbedPinRow(
+      pin: { id: string; comment?: string | null; status?: string | null; severity?: string | null },
+      index: number,
+    ) {
+      const STATUS_DOT: Record<string, string> = {
+        open: "bg-status-open",
+        in_progress: "bg-status-progress",
+        resolved: "bg-status-resolved",
+        draft: "bg-muted",
+        archived: "bg-muted",
+      };
+      const SEV_DOT: Record<string, string> = {
+        low: "bg-sev-low",
+        medium: "bg-sev-medium",
+        high: "bg-sev-high",
+        critical: "bg-sev-critical",
+      };
+      const title = (pin.comment ?? "").split("\n")[0].trim();
+      const status = pin.status ?? "";
+      const sev = pin.severity ?? "";
+      return {
+        id: pin.id,
+        index,
+        title: title || "Untitled pin",
+        statusLabel: status ? status.replace(/_/g, " ") : "draft",
+        dotBg: status
+          ? (STATUS_DOT[status] ?? "bg-muted")
+          : (SEV_DOT[sev] ?? "bg-muted"),
+        stale: false,
+        health: "ok" as const,
+      };
     }
 
     // Browser metadata collected from the content-script side.

@@ -1,199 +1,224 @@
 # Handoff — Web App Integration
 
-> Scope: wire `apps/web` to the real backend, replacing mock composables one
-> domain at a time. The API is live and verified; the web client is wired but
-> only used by auth today. Everything else still reads from
-> `shared/lib/data.ts` mocks.
+> Scope: this doc is the contract between the API session and the web/UI
+> session. It tracks what's wired, what's still mock, what each endpoint
+> returns, and the conventions to follow when you wire something new.
 
-_Last updated: 2026-06-01 (phases 1, 4, 5 landed)_
-
-## TL;DR for the next session
-
-1. The API surface you'll consume is **done and verified** (workspace, issues, members, auth).
-2. The web client (`apiClient`) is **done and verified for auth**; it has typed methods for issues + workspace members, but **no consumer in views yet**.
-3. **TanStack Query is installed + configured** with sensible defaults — use `useQuery` / `useMutation` for all new wiring; don't roll bespoke loading state.
-4. **Start with the workspace switcher** (highest user impact, smallest change, pattern already exists in the extension popup), then settings, then the issues feed.
-5. Do **NOT** touch dashboard analytics — `[v1]`, not on the table.
+_Last updated: 2026-06-03 — workspace/boards/invites/issues all wired end-to-end._
 
 ---
 
-## State today (be honest)
+## TL;DR
 
-### What's wired to real API
-- `useAuth.ts` (`shared/composables/`) — login, signup, hydrate, `/auth/me` revalidate, persisted token, route guard. Done.
-- `ConnectExtensionView.vue` — the popup's "Connect" landing page. Done.
-- `apiClient` (`shared/lib/api.ts`) — typed methods for: `login`, `signup`, `me`, `workspaceMembers`, `issues.{list,get,pins}`. Auth bearer auto-attached via `setApiToken`.
+The dashboard now drives the API live for every surface that ships an
+endpoint — auth, workspace, members, invites, boards, issues, pins, comments,
+labels are all real. **The dashboard + API are essentially done.**
 
-### What still uses mocks
-| Surface | Composable | Mock source | API to wire |
-|---|---|---|---|
-| ~~Sidebar workspace switcher~~ | ✅ wired to `GET /workspaces` + `POST /workspaces/:id/switch` (2026-06-01). Token swap via `useAuth.setToken`. Create-workspace dialog removed pending `POST /workspaces`. |
-| Settings → Profile | `useSettings().profile` | `PEOPLE[0]` from `data.ts` | `GET /auth/me`, `PATCH /auth/me` *(not built yet — see "API gaps")* |
-| Settings → Workspace | `useSettings().workspace` | `reactive({name, slug, plan, …})` | `GET/PATCH /workspaces/current` |
-| Settings → Members | `useSettings().members` | hardcoded `ref<Member[]>` | `GET /workspaces/members`, `POST invite`, `PATCH role`, `DELETE` |
-| Settings → Notifications | `useSettings().notifications` | `reactive(…)` | **API missing** — defer |
-| Settings → Billing | `useSettings().setPlan` | sets `workspace.plan` locally | `PATCH /workspaces/current` (plan field) + Stripe later |
-| ~~Pinboards feed (`/`)~~ | ✅ wired to `GET /issues` via `useQuery` (2026-06-01). Server-side `status`+`q`, client-side severity/assignee. Cards now consume `IssueSummary` directly via `shared/lib/issue-display.ts`. Assignee dropdown reads `/workspaces/members`. |
-| ~~Issue detail (`/s/:id`)~~ | ✅ wired to `GET /issues/:id` (2026-06-01). Embeds pins in one round-trip. Detail components consume `ApiPin` directly (`comment`→body, `author`/`assignee` MemberRef). Assignee dropdown reads `/workspaces/members`. Pin status/assignee mutations are LOCAL-ONLY for now — wire `PATCH /annotation/pins/:id` when the action surface is needed. ActivityThread shows only pinned/assignee (no activity API yet). |
-| Sidebar boards | `useBoards()` (`shared/composables/`) | local `ref<Board[]>` | **API missing** — boards/ module not built. Board filter on feed is now a no-op against real data. |
-| Integrations | `useIntegrations()` | hardcoded array | **API missing** — Roadmap Phase 3 |
+The remaining web/API gaps are **not the next work** — per `ROADMAP.md` they
+land at **Phase 3+** (integrations / Linear sync), **Phase 5** (billing, object
+storage), or **Phase 6** (notifications), plus **pre-launch plumbing** with no
+phase number (email pipeline, audit logging, throttle). The roadmap's actual
+next work — **Phase 0** validation → **Phase 1** anchor moat → **Phase 2**
+developer overlay — is *extension-side* and lives outside this doc. See
+"Outstanding TODOs" for the full phase mapping.
 
-### Infrastructure already in place (don't re-do)
-- **TanStack Query** (`@tanstack/vue-query`) — plugged in via `main.ts`. Defaults in `shared/lib/query-client.ts`: `staleTime 30s`, `gcTime 5m`, no refetch-on-focus, retry 2× with exponential backoff but **no retry on 4xx** (auth/validation are permanent).
-- **`QueryList.vue`** and **`DetailsList.vue`** (`shared/components/`) — generic query-bound list + detail shells with built-in loading/error/empty states. Use these.
-- **`ApiError`** class — surfaces HTTP status on `.status`. Catch it to distinguish 401 (re-login) from 5xx (transient).
-- **Auth guard** — every non-public route bounces to `/login?redirect=…` if `!isAuthenticated`. Already enforced.
-- **Vite proxy** — `/api/*` → `http://localhost:8787` in dev. Don't change.
+The handoff structure below mirrors a typical session:
+1. **State today** — what's wired vs what's mock.
+2. **API surface** — every endpoint, grouped by module.
+3. **Patterns** — the conventions to follow.
+4. **Gotchas** — things that bit during this session.
+5. **Outstanding TODOs** — remaining web/API work, mapped to roadmap phases.
 
 ---
 
-## API surface available (verified live)
+## State today
 
-### Workspace (`apps/api/src/workspace/`)
-```
-GET    /api/workspaces             → Workspace[]   list mine (switcher)
-GET    /api/workspaces/current     → Workspace     active ws (incl. memberCount + role)
-PATCH  /api/workspaces/current     → Workspace     {name?, plan?} (admin only)
-POST   /api/workspaces/:id/switch  → {token, workspace}  re-mints JWT — client must
-                                                          replace stored token
-DELETE /api/workspaces/current     → 204           owner only; cascades
+### ✅ Wired to real API
+| Surface | Composable / view | Endpoints |
+|---|---|---|
+| Login + signup | `useAuth.ts` | `/auth/login`, `/auth/signup`, `/auth/me`, `PATCH /auth/me` |
+| Profile (Settings) | `ProfileSection.vue` | `GET /auth/me` + `PATCH /auth/me` |
+| Workspace switcher | `WorkspaceSwitcher.vue` | `GET /workspaces`, `POST /workspaces`, `POST /workspaces/:id/switch` |
+| Settings → Workspace | `WorkspaceSection.vue` | `GET/PATCH /workspaces/current` (name + slug) |
+| Settings → Members | `MembersSection.vue` | `GET /workspaces/members`, invite/update/remove, `GET/POST resend/DELETE /workspaces/invites` |
+| Settings → Danger Zone | `DangerZoneSection.vue` | `DELETE /workspaces/current` (owner-only) |
+| StatusBar invite | `StatusBar.vue` | shares `POST /workspaces/members/invite` |
+| Pinboards feed | `useSessions.ts` + `PinboardsPage.vue` | `GET /issues`, `GET /issues/counts`, all filters server-side, paginated |
+| Issue detail | `useIssue.ts` + `IssuePage.vue` | `GET /issues/:id`, `PATCH /issues/:id` (board / status / title) |
+| Pin mutations | `useIssue.ts` | `PATCH /annotation/pins/:id` (status / assignee / labels) |
+| Pin comments | `ActivityThread.vue` | `GET/POST/PATCH/DELETE /annotation/pins/:id/comments[/:commentId]` |
+| Boards (sidebar + assignment) | `useBoards.ts`, `AppSidebar.vue` | full CRUD under `/boards`; assignment via `PATCH /issues/:id` |
+| Accept invite (public) | `AcceptInviteView.vue` (`/invite/:token`) | `GET /invites/:token`, `POST /invites/:token/accept[-with-signup]` |
 
-GET    /api/workspaces/members     → Member[]
-POST   /api/workspaces/members/invite     → Member  (admin only)
-PATCH  /api/workspaces/members/:id        → Member  {role}
-DELETE /api/workspaces/members/:id        → 204
-```
+### 🟡 Still mock
+| Surface | Composable | Why |
+|---|---|---|
+| Settings → Notifications | `useSettings.ts` (junk-drawer) | API not built |
+| Settings → Billing | `useSettings.ts` | needs Stripe |
+| Integrations page | `useIntegrations.ts` | Roadmap Phase 3 |
 
-`Workspace = { id, slug, name, plan, role, memberCount }`
-`Member = { id, userId, name, email, avatarUrl, role, createdAt }`
+### Infrastructure (don't re-do)
+- **TanStack vue-query** plugged in via `main.ts`. Defaults in `shared/lib/query-client.ts`: `staleTime 30s`, `gcTime 5m`, no refetch-on-focus, retry 2× with exponential backoff but **no retry on 4xx**.
+- **vue-sonner** mounted in `App.vue` with type-coloured left borders + close button. Wrapper in `shared/lib/toast.ts` (`toast.success/error/info/warn`).
+- **`Skeleton`** primitive uses `bg-muted` (neutral). Dedicated skeletons exist for `SessionCard`, `SessionRow`, `IssuePage`, settings sections.
+- **Auth guard** in `apps/web/src/app/router.ts` — every non-public route bounces to `/login?redirect=…`.
 
-### Issues (`apps/api/src/issues/`)
-```
-GET /api/issues?status=&pageUrl=&q=&limit=&offset=  → Paginated<IssueSummary>
-GET /api/issues/:id                                 → IssueDetail (summary + pins[])
-GET /api/issues/:id/pins                            → ApiPin[]
-```
+---
+
+## API surface
+
+All paths prefixed `/api`. Auth via `Authorization: Bearer <jwt>` unless flagged **public**.
 
 ### Auth (`apps/api/src/auth/`)
 ```
-POST /api/auth/{signup,login}  → AuthResult
-GET  /api/auth/me              → Me
-GET  /api/auth/workspace/members  → [DEPRECATED]  alias of /workspaces/members
+POST /auth/signup     → AuthResult        public; auto-accepts pending invites for the email
+POST /auth/login      → AuthResult        public, 5/min/IP
+GET  /auth/me         → Me
+PATCH /auth/me        → Me                {name?, avatarUrl?} (null clears avatar)
+```
+
+### Workspaces (`apps/api/src/workspace/`)
+```
+GET    /workspaces                → Workspace[]           list mine, drives switcher
+POST   /workspaces                → SwitchResult          create + auto-switch (admin? caller becomes owner)
+GET    /workspaces/current        → Workspace             active ws (incl. memberCount + role)
+PATCH  /workspaces/current        → Workspace             {name?, slug?, plan?} (admin only; slug uniqueness + reserved-list)
+DELETE /workspaces/current        → 204                   owner only; cascades
+POST   /workspaces/:id/switch     → SwitchResult          re-mints JWT bound to :id
+
+GET    /workspaces/members        → MemberDto[]
+POST   /workspaces/members/invite → InviteResult          discriminated: {kind:'member',member} | {kind:'invite',invite}
+PATCH  /workspaces/members/:id    → MemberDto             {role}
+DELETE /workspaces/members/:id    → 204
+
+GET    /workspaces/invites              → InviteDto[]     pending only
+POST   /workspaces/invites/:id/resend   → InviteDto       regenerates token + expiry
+DELETE /workspaces/invites/:id          → 204             revoke (idempotent)
+```
+
+`Workspace = { id, slug, name, plan, role, memberCount }`
+`InviteDto = { id, email, role, status, token, invitedBy, invitedAt, expiresAt }`
+
+### Invite accept (public, `apps/api/src/workspace/invite-accept.controller.ts`)
+```
+GET  /invites/:token                       → PublicInvitePreview  public, 30/min/IP
+POST /invites/:token/accept                → SwitchResult         authed; caller email must match
+POST /invites/:token/accept-with-signup    → SwitchResult         public, 5/min/IP, body {name, password}
+```
+
+The accept-with-signup endpoint creates a User bound to the invite email and skips creating a personal workspace — the user lands in the invited workspace as primary. AuthService.signup also auto-accepts pending invites if a user signs up via the normal flow with a matching email.
+
+### Issues (`apps/api/src/issues/`)
+```
+GET    /issues                  → Paginated<IssueSummary>  filters: status, severity, reporterId, boardId, q, pageUrl, includeArchived, limit, offset
+GET    /issues/counts           → IssueCounts              {all, open, in_progress, resolved, archived} honouring non-status filters
+GET    /issues/:id              → IssueDetail              summary + pins[]
+GET    /issues/:id/pins         → ApiPin[]                 fallback for partial loads
+PATCH  /issues/:id              → IssueSummary             {boardId?, title?, status?}
+```
+
+`IssueSummary` embeds `board: BoardRef | null` and `reporter: MemberRef | null`. Archived issues are hidden from the default feed; opt in via `?status=archived` or `?includeArchived=true`.
+
+### Boards (`apps/api/src/boards/`)
+```
+GET    /boards                  → Board[]                  workspace-scoped, ordered by position
+POST   /boards                  → Board                    admin; auto-slug from name with collision retry
+PATCH  /boards/:id              → Board                    {name?, slug?, color?, position?}
+DELETE /boards/:id              → 204                      issues stay (Issue.boardId SetNull)
+```
+
+### Annotation (extension write surface + dashboard reads)
+```
+POST   /annotation/pins                            → {pin, sessionId, issueId}
+GET    /annotation/pins?pageUrl=                   → ApiPin[]
+PATCH  /annotation/pins/:id                        → ApiPin   {status?, assigneeId?, labels?, severity?, issueType?, comment?, anchor?}
+DELETE /annotation/pins/:id                        → {deleted:true}
+
+GET    /annotation/pins/:id/comments               → PinCommentRow[]   oldest first
+POST   /annotation/pins/:id/comments               → PinCommentRow     body 1-5000
+PATCH  /annotation/pins/:id/comments/:commentId    → PinCommentRow     author-only
+DELETE /annotation/pins/:id/comments/:commentId    → 204               author OR admin/owner
+
+POST   /annotation/sessions/:id/submit             → Issue             extension finalises a sitting
+```
+
+### Attachments / Health
+```
+POST /attachments → AttachmentDto   inline base64 for v1
+GET  /health      → {ok, db, latencyMs, uptime, version}
 ```
 
 ---
 
-## Recommended sequence
+## Patterns to follow
 
-### 1. Workspace switcher in the sidebar (start here)
-**Why first:** highest visible impact, smallest change, exact pattern already exists in `apps/extension/src/entrypoints/popup/App.vue` (lines that handle `loadWorkspaces`, `chooseWorkspace`, `switchWorkspace`).
-
-- File: `apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue`
-- Current: hardcoded `workspaces` ref + `current` ref; "Create workspace" dialog is also mock.
-- Wire:
-  - On mount or on dropdown open → `useQuery(['workspaces'], () => apiClient.workspaces.list())`
-  - Add `apiClient.workspaces.{list, current, switch, update}` to `shared/lib/api.ts` (the methods don't exist yet — types are easy to mirror from the extension's `lib/api.ts`).
-  - On select → `useMutation(({id}) => apiClient.workspaces.switch(id))`; on success: call `useAuth().setToken(res.token)` (you'll need to add a small helper to `useAuth` to swap the token), invalidate all queries (`queryClient.clear()` or selectively), navigate to `/`.
-  - "Create workspace" Dialog → leave mocked OR remove for now (no `POST /workspaces` endpoint yet — that's a separate API gap).
-- **Token-swap on switch is the only tricky bit**: the server returns a new JWT bound to the new workspace. The client must replace `localStorage["pl_token"]` AND call `setApiToken()` so subsequent requests carry the new token. The extension already does this — mirror it.
-
-### 2. Settings → Workspace section
-- File: `apps/web/src/features/settings/components/WorkspaceSection.vue`
-- Current: reads `useSettings().workspace` (mock), `updateWorkspace(next)` mutates the local reactive object.
-- Wire:
-  - Query: `useQuery(['workspace', 'current'], () => apiClient.workspaces.current())`
-  - Mutation: `useMutation((dto) => apiClient.workspaces.update(dto))` → on success: `invalidateQueries(['workspace', 'current'])` and `['workspaces']` (so the sidebar reflects the rename).
-  - **Don't touch `useSettings` yet** — it's a junk-drawer composable that bundles 5 concerns. The clean refactor: split it into `useWorkspace`, `useProfile`, `useMembers`, `useNotifications`. Do that opportunistically as you wire each section.
-
-### 3. Settings → Members section
-- File: `apps/web/src/features/settings/components/MembersSection.vue`
-- Current: reads `useSettings().members`, all mutations local.
-- Wire:
-  - Query: `useQuery(['workspace', 'members'], () => apiClient.workspaces.members())`
-  - Invite: `useMutation(({email, role}) => apiClient.workspaces.invite({email, role}))` → invalidate `['workspace', 'members']`.
-  - Role change: `useMutation((id, role) => apiClient.workspaces.updateMember(id, {role}))`
-  - Remove: `useMutation((id) => apiClient.workspaces.removeMember(id))`
-- **Server enforces**: admin-only for mutations; can't demote/remove the last owner (returns 403). Show those errors inline; don't optimistic-update destructive ops.
-- **Pending status**: the spec'd "pending invite" status doesn't exist server-side yet. Today `POST invite` requires the invitee to already have an account (returns 404 otherwise). Surface that 404 with a friendly "No pinlay account with that email yet — email invites coming soon" message (the API already returns that text).
-
-### 4. Pinboards feed (`/`)
-- File: `apps/web/src/features/pinboards/PinboardsPage.vue` + `composables/useSessions.ts`
-- Current: filters mock `SESSIONS` from `data.ts` in-memory.
-- Wire:
-  - Refactor `useSessions()` to return a `useQuery` driven by reactive filter refs:
-    ```ts
-    const params = computed(() => ({ status, q, limit, offset }));
-    const query = useQuery({
-      queryKey: ['issues', 'list', params],
-      queryFn: () => apiClient.issues.list(params.value),
-    });
-    ```
-  - `Paginated<IssueSummary>` returns `{ items, total, limit, offset }` — use it for paginated controls.
-  - The list rows render via `SessionCard` / `SessionRow` — those still reference `SessionListItem` (the mock shape with `boardId`, `integration`, `reporter.avatarHue`). You'll need to either: (a) adapt `IssueSummary` → the existing card shape with a small mapper, or (b) update the cards to consume `IssueSummary` directly (cleaner, no shim). Recommended: option (b) — most fields map 1:1 (`title`, `pinCount`, `severityCounts`, `status`, `createdAt`). `reporter` is now `{id,name,email,avatarUrl}` not `avatarHue` — derive hue from `id` if needed.
-
-### 5. Issue detail (`/s/:id`)
-- File: `apps/web/src/features/issue/IssuePage.vue` + `composables/useIssue.ts`
-- Current: `SESSIONS.find(id) + getPins(severityCounts)` mocks.
-- Wire:
-  - `useQuery({ queryKey: ['issue', id], queryFn: () => apiClient.issues.get(id) })` returns `IssueDetail` which already embeds `pins[]`. **One round-trip, not a waterfall** — don't fetch `/issues/:id/pins` separately; it's a fallback for partial loads.
-  - For status/assignee/resolve mutations: the API doesn't have `PATCH /issues/:id` or pin-level mutations exposed yet under `/issues/*` — pin mutations are under `/annotation/pins/:id` (PATCH/DELETE). Use those.
+- **One composable per domain, not per page.** `useAuth`, `useIssue`, `useSessions`, `useBoards`. `useSettings` is the legacy junk-drawer — don't extend it, split section-by-section as each domain gets wired.
+- **vue-query for ALL server state.** No `ref + fetch`. The retry/cache defaults are already right.
+- **Mutations invalidate, don't manually re-fetch.** `queryClient.invalidateQueries({ queryKey: [...] })` after a mutation; vue-query does the rest.
+- **Optimistic update only for safe writes.** Title rename, status flip → optimistic. Deletes, role demotions, workspace switches → wait for server confirmation.
+- **Dialogs stay open until the server acks.** Pattern: button shows `Sending…`/`Creating…` + spinner, all inputs disabled, close + reset ONLY on success. Errors keep the dialog open with the user's input. See `WorkspaceSwitcher`, `MembersSection`, `AppSidebar` (board create/edit), `StatusBar` (invite).
+- **Skeletons mirror the real layout** so loading doesn't reflow. `SessionCardSkeleton`/`SessionRowSkeleton` for the feed; `IssuePageSkeleton` for the full detail; inline form-field skeletons for settings.
+- **Toasts for transient state, inline copy for terminal state.** Errors that should auto-dismiss → `toast.error(err)`. Permanent "not found" / "couldn't load" → inline.
+- **Reka portal `to=` in shadow-DOM only.** This isn't a concern in the web app (the design-package primitives use plain Reka portals against `document.body`); only matters in the extension where the same components mount in a shadow root.
 
 ---
 
-## Patterns to follow (and break only with reason)
+## Gotchas worth knowing (from this session)
 
-- **One composable per domain, not per page.** `useWorkspace`, `useMembers`, `useIssues`, `useIssue` — not `useSettings` (which we inherited). When you split the junk-drawer composable, document the migration in cerebrum so the next person doesn't re-bundle it.
-- **vue-query for ALL server state.** No `ref + fetch` rolls. The retry/cache/refetch defaults are already right.
-- **Mutations invalidate, don't manually re-fetch.** `queryClient.invalidateQueries(['workspace', 'members'])` after `inviteMember()`. Vue Query handles the rest.
-- **Use `QueryList`/`DetailsList`** — generic shells with loading/error/empty already wired. Saves you re-doing skeletons per page.
-- **Optimistic-update only safe writes.** Renames, status flips → optimistic. Deletes, role demotions → wait for server confirmation; 403s here are real (last-owner guard, admin-only).
-- **`IssueSummary.id` is the cuid, `reference` is "PL-0042".** Routes use `id`; UI displays `reference`. Don't mix.
+- **Token swap on workspace switch / create.** Both `/switch` and `POST /workspaces` re-mint a JWT bound to the target workspace. The web client calls `auth.setToken(token, {id, role})` then `queryClient.removeQueries({ predicate: q => q.queryKey[0] !== 'workspaces' })` — note the predicate: we DROP every other cache but KEEP the workspaces query observer alive so a `setQueryData` afterwards reaches the dropdown. **Don't replace this with `queryClient.clear()`** — it unsubscribes the workspaces observer and the seeded data never paints.
+- **`queryClient.clear()` unsubscribes existing observers.** Use `removeQueries({predicate})` when you need to keep one query alive.
+- **vue-query's cached data is readonly.** `useIssue` deep-clones pins into a local ref so optimistic mutations (status / assignee / labels) don't trigger Vue's "Set on readonly proxy" warnings. If you add a new composable that mirrors server data for optimistic edits, clone before assigning.
+- **Reka DropdownMenuTrigger needs a real PointerEvent in synthetic tests.** Native `click()` doesn't open the menu. Use `dispatchEvent(new PointerEvent('pointerdown', {pointerType: 'mouse', isPrimary: true}))` + `pointerup` + `click`. Real browser clicks are unaffected.
+- **Forward-ref circular dep between Auth + Workspace.** AuthModule imports WorkspaceModule (for invite auto-accept) and WorkspaceModule imports AuthModule (for JwtAuthGuard + signToken). Both ends use `forwardRef(() => Other)` in `imports`, and the service constructor injecting across the cycle MUST also use `@Inject(forwardRef(() => Other))`. See `AuthService` and `WorkspaceService`.
+- **`issue.author` IS the reporter** in IssueSummary (we just label it that way for the UI). API field is `authorId` on the DB; serializer renames it to `reporter` because `author` is more confusing in a dashboard context.
+- **Prisma `migrate dev` is interactive and hangs in this shell.** Always hand-write `prisma/migrations/<timestamp>_<name>/migration.sql` + `prisma migrate deploy`. Last three migrations followed this pattern: `20260601160000_boards`, `20260602180000_invites`, `20260603020000_pin_comments`.
+- **`PinComment` doesn't carry workspaceId.** Scoping is transitive (pin → session → workspace). The service's `assertPinInWorkspace` walks that path; don't optimise to a direct `workspaceId` join.
+- **`includeArchived` is a query STRING** (`"true"`) not a boolean — class-validator's `@IsBooleanString()` parses it. Counts endpoint always passes `includeArchived=true` server-side because we want the full breakdown regardless of the caller's view.
+- **bcrypt hashing is exposed via `AuthService.hashPassword(...)`** so other modules (e.g. `WorkspaceService.acceptInviteWithSignup`) can hash without importing bcrypt + duplicating the rounds config.
+- **Issue tab counts can drift from feed totals when filters are applied.** `IssueCounts.all` excludes archived; the badge in PageHeader uses `total` (which respects ALL filters). Don't try to make them match — they answer different questions.
+- **`useIssue` returns `setStatus` for pin-level status.** If IssuePage also needs an issue-level setStatus (it does now), name the local one `setIssueStatus` to avoid the collision. Same gotcha applies to any future per-pin vs per-issue mutation pair.
 
 ---
 
-## Gotchas worth knowing
+## Outstanding TODOs (mapped to the roadmap)
 
-- **Token swap on workspace switch** — the new JWT must overwrite the old in `localStorage` AND `setApiToken()` must be called. The extension popup does this correctly; mirror it.
-- **`useSettings` is a junk drawer** — bundles profile + workspace + members + notifications + plan. Split incrementally; don't touch the parts you're not wiring.
-- **`shared/lib/data.ts` mocks** — keep this file intact during transition. Only stop *importing* from it as each composable gets wired. Delete the file in one PR at the end.
-- **Boards** (`useBoards`) — no API exists for these yet. Leave as mock. The `?board=` filter on `/` is purely client-side today.
-- **CORS** — `chrome-extension://*` is in the API's allowlist; the dashboard at `localhost:5173` is too. If you add a new origin, update `apps/api/.env` `CORS_ORIGINS`.
-- **Node version** — this shell sometimes defaults to Node 16 (nvm); `nvm use 20` before `pnpm` against `apps/api`. The other apps don't care.
-- **API runs from compiled dist in `start` mode**, source in `dev` mode. For dev, always use `pnpm dev:api`. The other session's seed user `you@pinlay.dev / pinlay-dev` is the dev account.
+> Slotted into `ROADMAP.md` phases, not raw leverage. **Read this first:** the
+> roadmap's actual next work — **Phase 0** (validation, no code) → **Phase 1**
+> (anchor moat) → **Phase 2** (developer overlay) — is *extension-side* and does
+> **not** appear in this doc. The dashboard + API are essentially done.
+> Everything below lands at **Phase 3 or later**, plus pre-launch plumbing that
+> has no phase number. **None of it is the wedge** — don't let the length of this
+> list pull effort away from the anchor + overlay work.
 
-## API gaps to flag if you need them
-Future modules that aren't built yet (don't surprise yourself):
-- ~~`POST /workspaces`~~ ✅ (2026-06-02)
-- ~~`PATCH /auth/me`~~ ✅ (2026-06-02)
-- ~~Boards module~~ ✅ (2026-06-01)
-- ~~Pending-invite flow~~ ✅ (2026-06-02) — invite model + accept-by-link + auto-accept-on-signup
-- Notifications module entirely
-- Integrations module entirely
+### Pre-launch plumbing — no roadmap phase (gating, not differentiating)
 
-### Email pipeline — **invite emails aren't sent yet**
+**Email pipeline — invite emails aren't sent yet.** The whole invite flow (model, accept endpoints, accept page, signup-via-invite, auto-accept-on-signup) is **complete** but **no email actually leaves the API**. Admins currently use the "Copy invite link" menu item on the pending row and share the URL manually (Slack DM / paste / etc). Fine through Phase 0 user tests — not a blocker.
 
-The invite *flow* is complete (model, accept endpoints, dedicated accept
-page at `/invite/:token`, signup-via-invite, auto-accept-on-signup-with-matching-email)
-but no transactional email leaves the API. Admins copy the accept link via
-the "Copy invite link" menu item on the pending row and share it manually
-(Slack DM / paste / etc.).
+To finish: pick a transactional provider (Resend / Postmark / SendGrid), add `MAIL_*` env vars to `apps/api/src/config/env.ts`, write a thin `MailService` (typed payload + HTML+text template via React Email or MJML), fire it from `WorkspaceService.inviteMember` (after creating the pending Invite row) and `WorkspaceService.resendInvite` (after regenerating). The token is in `InviteDto.token`; the URL is `${WEB_APP_URL}/invite/${token}`. Fire-and-forget with a try/catch + logger.warn is fine for v1 — no queue required. Templates: **invite** + **invite-resent**.
 
-To finish: pick a transactional provider (Resend / Postmark / SendGrid), add
-`MAIL_*` env vars to `apps/api/config/env.ts`, write a thin `MailService`
-that takes a typed payload and renders an HTML+text template (React Email
-or MJML both fine), fire it from:
-  - `WorkspaceService.inviteMember` (after creating the pending Invite row)
-  - `WorkspaceService.resendInvite` (after regenerating token+expiry)
-A queue isn't required for v1 — fire-and-forget with a `try/catch + warn`
-is fine. Templates needed: **invite** + **invite-resent** (and later
-**workspace-deleted / role-changed** if you want a notification surface).
-The token to embed in the email is already in `InviteDto.token`; the URL is
-`${WEB_APP_URL}/invite/${token}`.
+- **Email verification on signup** + **password reset flow** — both gated on the email pipeline above.
+- **Audit logging** on auth events (login/signup/password-change/workspace-delete). Pre-launch hardening.
+- **Per-account login throttle** (today's throttle is per-IP only). Mitigates credential stuffing from rotated IPs.
 
-Until that lands the manual-share path stays as the canonical UX — don't
-pretend an email was sent when it wasn't.
+### Phase 3 — Retention Loop (`ROADMAP.md` §Phase 3) — highest-leverage item *in this doc*
 
-If a gap blocks something you're building, flag it to the API session — don't paper over with mocks.
+- **Integrations module.** **Linear two-way sync is THE Phase 3 deliverable** (status + comment round-trip, mapping config, loop guard) — without it week-2 retention is zero. **PR linking + auto-resolve** (GitHub/GitLab) ships alongside (Phase 3.2). The Settings → Integrations page and `useIntegrations.ts` are mock today. Jira / Slack / other OAuth are *not* Phase 3 — they come later. Note: even this, the most valuable web/API item here, still sits **behind Phase 1–2**.
+
+### Phase 5 — Paid expansion / Team tier (`ROADMAP.md` §Phase 5) — post-PMF
+
+- **Billing module** — Stripe subscription, seat counts, plan changes via the existing `PATCH /workspaces/current` plan field. Roadmap is explicit: "now — and *only* now" — do **not** build before the anchor moat has pulled users in.
+- **Move attachments off inline base64 to object storage** (R2 / S3 / Vercel Blob). Schema already separates `Attachment.url`, so the migration is just the upload pipeline + URL format. Only becomes load-bearing when **screen clips** land (Phase 5.3) — no urgency before then.
+
+### Phase 6 — Collab & scale (`ROADMAP.md` §6.3) — post-PMF
+
+- **Notifications module** — preferences matrix (event × channel), dispatch infra, fan-out to email/in-app. Settings → Notifications UI is mock. Depends on the email pipeline above.
+
+### Anytime — small UI cleanups (no phase, low-pri)
+
+- **`SyncChip` and `useBoards`-imported `SESSIONS` ref** are still in the codebase but unused — leftover from the pre-API era. Safe to delete in a sweep PR.
+- **`DetailsList` / `QueryList`** primitives exist but no current consumer. The cerebrum documents them as the recommended way to do future lists — leave for now.
+- **Mobile issue detail Pin/Detail tab toggle** works but the click handler is finicky in Reka tabs (may need a `key` change to force re-render). Low-pri.
+- **`useIssue`'s `pins` ref deep-clone** is shallow on most fields (`{...p, labels: [...p.labels]}`). If new ApiPin fields become writeable + nested, extend the clone.
 
 ---
 
@@ -210,24 +235,21 @@ pnpm dev:web       # → http://localhost:5173 (Vite)
 B=http://localhost:8787/api
 TOKEN=$(curl -s -X POST "$B/auth/login" -H 'Content-Type: application/json' \
   -d '{"email":"you@pinlay.dev","password":"pinlay-dev"}' | jq -r .token)
-curl -s "$B/workspaces" -H "Authorization: Bearer $TOKEN" | jq
-curl -s "$B/issues" -H "Authorization: Bearer $TOKEN" | jq '.items[0]'
+curl -s "$B/workspaces"          -H "Authorization: Bearer $TOKEN" | jq
+curl -s "$B/issues"              -H "Authorization: Bearer $TOKEN" | jq '.items[0]'
+curl -s "$B/issues/counts"       -H "Authorization: Bearer $TOKEN" | jq
+curl -s "$B/boards"              -H "Authorization: Bearer $TOKEN" | jq
+curl -s "$B/workspaces/members"  -H "Authorization: Bearer $TOKEN" | jq
 ```
 
-If those return data, the API is fine — any wiring failure is on the web side.
+If those all return data, the API is fine — any wiring failure is on the web side.
 
 ---
 
-## Cerebrum entries to read before touching things
-- "API module structure (decided + started 2026-05-30)" — explains the workspace/ + issues/ + sessions→issues rename.
-- "Real auth + extension connect flow (2026-05-30)" — explains `useAuth`, the route guard, token persistence.
-- "Workspace switcher in the extension popup (2026-05-30)" — the exact pattern to mirror in `WorkspaceSwitcher.vue`.
-- "URL normalization for pin matching (2026-05-30)" — explains `normalizeUrl` from `@pinlay/shared`, in case you need to canonicalize URLs in the dashboard.
-- "@pinlay/shared now ships a dist" — conditional-exports setup, in case you import shared runtime code into the web.
-
-## When you're done with a phase
-- Append to `.wolf/memory.md` (one-liner)
+## When you finish a phase
+- Append a one-liner to `.wolf/memory.md`
 - Update `.wolf/cerebrum.md` Key Learnings if you discovered a pattern
-- Delete the corresponding row from the "still uses mocks" table at the top of this doc
+- Remove the matching row from the "still mock" table in this doc
+- Move new TODOs into the "Outstanding TODOs" section here
 
 Good luck. The hard architectural calls are made — this is mostly typing now.

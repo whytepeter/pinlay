@@ -30,8 +30,12 @@ export class PinsController {
   }
 
   @Get()
-  list(@CurrentUser() user: AuthenticatedUser, @Query("pageUrl") pageUrl: string) {
-    return this.annotation.listPagePins(user, pageUrl);
+  list(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query("pageUrl") pageUrl: string,
+    @Query("host") host: string,
+  ) {
+    return this.annotation.listPagePins(user, { pageUrl, host });
   }
 
   @Patch(":id")
