@@ -32,6 +32,12 @@ export interface SerializedPin {
   status: Pin["status"];
   assigneeId: string | null;
   labels: string[];
+  /**
+   * URL the pin lives on (normalized at write time). Returned so host-grouped
+   * browse views (popup + FAB pin list) can show which page each pin sits on
+   * and navigate the user there on click.
+   */
+  pageUrl: string;
   createdAt: string;
 }
 
@@ -102,14 +108,18 @@ export class AnnotationService {
     // vice versa). One source of truth — same function used on read below.
     const pageUrl = normalizeUrl(dto.pageUrl);
 
-    // Lazily create the Session on the first pin of a sitting. Same goes
-    // for an Issue once `submitSession` is called.
+    // Lazily create the Session on the first pin of a sitting. We ALSO
+    // eagerly create an Issue with a placeholder title — without this the
+    // dashboard's `/issues` query (which joins Pin → Issue) wouldn't see
+    // pins from sittings the user hasn't clicked Done on. `submitSession`
+    // becomes a rename — the work is never "lost" in a draft state.
     const session = dto.sessionId
       ? await this.prisma.session.findFirst({
           where: {
             id: dto.sessionId,
             workspaceId: user.workspaceId,
           },
+          include: { issue: true },
         })
       : await this.prisma.session.create({
           data: {
@@ -118,9 +128,35 @@ export class AnnotationService {
             pageUrl,
             status: "draft",
           },
+          include: { issue: true },
         });
 
     if (!session) throw new NotFoundException("Session not found");
+
+    // Ensure an Issue exists for this session. Use the caller's explicit
+    // `dto.issueId` when supplied, otherwise the session's existing issue,
+    // otherwise create a placeholder. Default title surfaces the host so
+    // it's recognizable in the dashboard before the user renames.
+    let issueId: string | null = dto.issueId ?? session.issue?.id ?? null;
+    if (!issueId) {
+      let host = pageUrl;
+      try {
+        host = new URL(pageUrl).host;
+      } catch {
+        /* keep raw url as title fallback */
+      }
+      const created = await this.prisma.issue.create({
+        data: {
+          workspaceId: user.workspaceId,
+          sessionId: session.id,
+          authorId: user.id,
+          title: `Untitled review · ${host}`,
+          pageUrl,
+          status: "open",
+        },
+      });
+      issueId = created.id;
+    }
 
     const nextIndex = await this.prisma.pin.count({
       where: { sessionId: session.id },
@@ -129,7 +165,7 @@ export class AnnotationService {
     const pin = await this.prisma.pin.create({
       data: {
         sessionId: session.id,
-        issueId: dto.issueId ?? null,
+        issueId,
         authorId: user.id,
         assigneeId: dto.assigneeId ?? null,
         index: nextIndex + 1,
@@ -312,14 +348,10 @@ export class AnnotationService {
     // user can see pins from any path on the same site (e.g. /search while on
     // /). The on-page overlay still passes the exact pageUrl since pins are
     // anchored to elements on a specific page.
-    const where: {
-      session: { workspaceId: string };
-      status: { notIn: string[] };
-      pageUrl?: string;
-      OR?: Array<Record<string, unknown>>;
-    } = {
+    // Cast to Prisma's Status union so the array isn't widened to string[].
+    const baseWhere = {
       session: { workspaceId: user.workspaceId },
-      status: { notIn: ["archived"] },
+      status: { notIn: ["archived"] as Pin["status"][] },
     };
 
     if (query.host) {
@@ -329,27 +361,34 @@ export class AnnotationService {
       // `https?://host:port`. Subdomain isolation: a hostile pageUrl like
       // `https://glown.io.evil.com/...` does NOT match because the next char
       // after the host must be `/`, `:`, or end-of-string.
-      where.OR = [
-        { pageUrl: { startsWith: `https://${host}/` } },
-        { pageUrl: { startsWith: `http://${host}/` } },
-        { pageUrl: { startsWith: `https://${host}:` } },
-        { pageUrl: { startsWith: `http://${host}:` } },
-        { pageUrl: `https://${host}` },
-        { pageUrl: `http://${host}` },
-      ];
-    } else if (query.pageUrl) {
-      // Same normalization applied at write time — guarantees a match
-      // regardless of how the client formatted its URL.
-      where.pageUrl = normalizeUrl(query.pageUrl);
-    } else {
-      return [];
+      const pins = await this.prisma.pin.findMany({
+        where: {
+          ...baseWhere,
+          OR: [
+            { pageUrl: { startsWith: `https://${host}/` } },
+            { pageUrl: { startsWith: `http://${host}/` } },
+            { pageUrl: { startsWith: `https://${host}:` } },
+            { pageUrl: { startsWith: `http://${host}:` } },
+            { pageUrl: `https://${host}` },
+            { pageUrl: `http://${host}` },
+          ],
+        },
+        orderBy: [{ sessionId: "asc" }, { index: "asc" }],
+      });
+      return pins.map((p) => this.serialize(p));
     }
 
-    const pins = await this.prisma.pin.findMany({
-      where,
-      orderBy: [{ sessionId: "asc" }, { index: "asc" }],
-    });
-    return pins.map((p) => this.serialize(p));
+    if (query.pageUrl) {
+      // Same normalization applied at write time — guarantees a match
+      // regardless of how the client formatted its URL.
+      const pins = await this.prisma.pin.findMany({
+        where: { ...baseWhere, pageUrl: normalizeUrl(query.pageUrl) },
+        orderBy: [{ sessionId: "asc" }, { index: "asc" }],
+      });
+      return pins.map((p) => this.serialize(p));
+    }
+
+    return [];
   }
 
   // ── Sessions ─────────────────────────────────────────────────────────────
@@ -373,6 +412,10 @@ export class AnnotationService {
       return { submitted: false, issueId: null };
     }
 
+    // Normal path: the Issue was eagerly created by `createPin` on the
+    // first pin of the sitting, so this is just a rename + summary. The
+    // create branch handles legacy sessions whose pins predate eager
+    // Issue creation (still in the DB with `Pin.issueId = null`).
     const issue = session.issue
       ? await this.prisma.issue.update({
           where: { id: session.issue.id },
@@ -418,6 +461,7 @@ export class AnnotationService {
       status: pin.status,
       assigneeId: pin.assigneeId,
       labels: pin.labels,
+      pageUrl: pin.pageUrl,
       createdAt: pin.createdAt.toISOString(),
     };
   }

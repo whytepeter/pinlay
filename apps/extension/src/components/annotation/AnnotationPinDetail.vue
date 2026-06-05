@@ -157,21 +157,16 @@
           </div>
         </div>
 
-        <!-- Title + description (derived from the comment's first line).
-             Rendered via v-html so the composer's markdown (Bold/Italic/Link)
-             shows as formatted text. Sanitization lives in renderMarkdown. -->
-        <div v-if="titleText || descriptionText" class="space-y-1.5">
-          <h3
-            v-if="titleText"
-            class="text-[14px] font-semibold leading-snug text-foreground"
-            v-html="renderedTitle"
-          />
-          <p
-            v-if="descriptionText"
-            class="text-[12.5px] leading-relaxed text-muted-foreground"
-            v-html="renderedDescription"
-          />
-        </div>
+        <!-- Comment body — single block, normal weight by default. Markdown
+             (bold/italic/link) is rendered via v-html. `<strong>` is styled
+             as semibold (600) so emphasized words clearly stand out
+             against the normal body. Whitespace preserved so the composer's
+             line breaks survive. -->
+        <p
+          v-if="commentText"
+          class="whitespace-pre-wrap text-[13px] font-normal leading-relaxed text-foreground [&_strong]:font-semibold"
+          v-html="renderedComment"
+        />
 
         <!-- Attachments card -->
         <div
@@ -386,18 +381,9 @@ const suggestionPct = computed(() =>
   props.suggestion ? `${Math.round(props.suggestion.confidence * 100)}%` : "",
 );
 
-// ── Title / description split ────────────────────────────────────────────────
-const titleText = computed(() => {
-  const c = (props.comment ?? "").trim();
-  if (!c) return "";
-  const idx = c.indexOf("\n");
-  return idx === -1 ? c : c.slice(0, idx).trim();
-});
-const descriptionText = computed(() => {
-  const c = (props.comment ?? "").trim();
-  const idx = c.indexOf("\n");
-  return idx === -1 ? "" : c.slice(idx + 1).trim();
-});
+// The pin is just a comment — no separate title/description. Trimmed copy
+// for the renderer; the body section's `v-if` reads this directly.
+const commentText = computed(() => (props.comment ?? "").trim());
 
 // ── Markdown rendering (Bold / Italic / Link) ────────────────────────────────
 // The composer toolbar inserts markdown source (`**bold**`, `_italic_`,
@@ -437,8 +423,7 @@ function renderMarkdown(text: string): string {
   html = html.replace(/\n/g, "<br>");
   return html;
 }
-const renderedTitle = computed(() => renderMarkdown(titleText.value));
-const renderedDescription = computed(() => renderMarkdown(descriptionText.value));
+const renderedComment = computed(() => renderMarkdown(commentText.value));
 
 // ── #N pad ───────────────────────────────────────────────────────────────────
 const paddedIndex = computed(() =>

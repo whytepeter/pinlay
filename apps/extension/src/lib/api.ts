@@ -56,6 +56,9 @@ export interface AnnotationPinRow {
   status: Status;
   assigneeId: string | null;
   labels: string[];
+  /** URL the pin lives on. Always present from the API. Used by host-grouped
+   *  browse views to show + navigate to the right page on click. */
+  pageUrl: string;
   createdAt: string;
 }
 
@@ -182,10 +185,22 @@ export const api = {
       method: "DELETE",
     }),
 
-  /** All pins on a page (across sessions), for the overlay's re-render. */
+  /** All pins on a single page (URL-exact). Used by the overlay's re-render
+   *  — pins are anchored to elements on a SPECIFIC page so this must stay
+   *  exact, not host-grouped. */
   getPagePins: (pageUrl: string) =>
     send<AnnotationPinRow[]>({
       path: `/annotation/pins?pageUrl=${encodeURIComponent(pageUrl)}`,
+      method: "GET",
+    }),
+
+  /** All pins across every path of a host (Roadmap 2.1 host grouping). Used
+   *  by the browse views (popup pin sub-view + FAB pin list) so a user on
+   *  glown.io/ can see pins from glown.io/search too. Each row includes its
+   *  own pageUrl so the click handler can navigate to the right page. */
+  getHostPins: (host: string) =>
+    send<AnnotationPinRow[]>({
+      path: `/annotation/pins?host=${encodeURIComponent(host)}`,
       method: "GET",
     }),
 

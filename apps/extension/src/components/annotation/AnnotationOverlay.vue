@@ -49,6 +49,46 @@
       </button>
     </div>
 
+    <!-- First-pin coach card (Roadmap 7.1) — fires the first time a fresh
+         user enters PLACE mode. Stays visible while they compose (so they
+         have time to read) and auto-dismisses when the first pin lands. -->
+    <div
+      v-if="showOnboarding && mode === 'place'"
+      class="pointer-events-auto absolute left-1/2 top-3 z-[1] flex w-[320px] -translate-x-1/2 items-start gap-3 rounded-xl border border-primary/25 bg-card px-3.5 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.16)]"
+    >
+      <span
+        class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.75"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-4 w-4"
+        >
+          <path d="M12 2 C8 2 5 5 5 9 C5 14 12 22 12 22 C12 22 19 14 19 9 C19 5 16 2 12 2Z" />
+          <circle cx="12" cy="9" r="2.5" />
+        </svg>
+      </span>
+      <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+        <p class="text-[13px] font-semibold leading-tight text-foreground">
+          Click any element to pin it
+        </p>
+        <p class="text-[11.5px] leading-snug text-muted-foreground">
+          Hover to highlight, click to attach a note. Press <kbd class="rounded bg-muted px-1 py-0.5 font-mono text-[10px] text-foreground">Esc</kbd> to cancel.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="-mr-1 -mt-1 rounded-md px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        @click="dismissOnboarding"
+      >
+        Got it
+      </button>
+    </div>
+
     <!-- PLACE-mode capture layer: covers the page only while picking AND no
          composer is open. The second guard keeps composer clicks from being
          stolen by the layer. -->
@@ -278,6 +318,9 @@ function enterPlaceMode() {
   // controls. The overlay itself may have been mounted passively (view mode)
   // long before this; "active" tracks the SESSION, not the mount.
   state.setActive(true);
+  // First-pin coach card (Roadmap 7.1) — fires the first time a fresh user
+  // enters PLACE mode. Storage is checked async so the UI never blocks.
+  void maybeShowOnboarding();
 }
 function exitPlaceMode() {
   hover.value = null;
@@ -498,7 +541,14 @@ const pinListRows = computed<PinListRow[]>(() =>
   }),
 );
 
-function onJumpToPin(pinId: string) {
+async function onJumpToPin(pinId: string) {
+  // Wait for the initial pin fetch to finish — the deep-link path
+  // (#pinlay-pin=<id> on page-load) bumps requestJump BEFORE the overlay's
+  // apiProbe has populated existingPins, which used to silently no-op when
+  // the pin wasn't found yet. await + nextTick gives the reactive flush a
+  // beat to land before we look up the pin.
+  await apiProbe;
+  await nextTick();
   const pin = visiblePins.value.find((p) => p.id === pinId);
   if (!pin) return;
   const resolved = resolveAnchor(pin.anchor);
@@ -537,6 +587,41 @@ const viewingPin = computed<ExistingPin | null>(() => {
 });
 
 // ── Hydrate existing pins ───────────────────────────────────────────────────
+// ── First-pin onboarding coach card (Roadmap 7.1) ────────────────────────────
+// Shows on a fresh install the first time the user enters PLACE mode. Auto-
+// dismisses when the first pin lands (or the user clicks Got it). Tracked in
+// chrome.storage.local so it's once-per-user, not once-per-page.
+const ONBOARDING_KEY = "pl_first_pin_onboarded";
+const showOnboarding = ref(false);
+let onboardingChecked = false;
+async function maybeShowOnboarding() {
+  if (onboardingChecked) return;
+  onboardingChecked = true;
+  try {
+    const r = await chrome.storage.local.get(ONBOARDING_KEY);
+    if (!r[ONBOARDING_KEY]) showOnboarding.value = true;
+  } catch {
+    /* storage unavailable — silently skip */
+  }
+}
+async function dismissOnboarding() {
+  showOnboarding.value = false;
+  try {
+    await chrome.storage.local.set({ [ONBOARDING_KEY]: true });
+  } catch {
+    /* ignore */
+  }
+}
+// Auto-dismiss when the first pin lands — the user's clearly figured it out.
+watch(
+  () => existingPins.value.length,
+  (now, prev) => {
+    if (showOnboarding.value && now > (prev ?? 0)) {
+      void dismissOnboarding();
+    }
+  },
+);
+
 // Note: `state.setActive(true)` lives in enterPlaceMode now, not here.
 // The overlay can be mounted passively (developer-overlay view) without
 // making the FAB look like an annotation session is in progress.
@@ -623,7 +708,7 @@ watch(pinListRows, (rows) => state.setPinRows(rows), { immediate: true });
 watch(
   () => state.jumpRequested.value,
   (v, prev) => {
-    if (v !== prev) onJumpToPin(state.jumpTargetId.value);
+    if (v !== prev) void onJumpToPin(state.jumpTargetId.value);
   },
 );
 
@@ -820,8 +905,11 @@ async function onPlaceClick(e: MouseEvent) {
     anchor,
     draft: {
       comment: "",
-      severity: "medium",
-      issueType: "visual" as PinType,
+      // Roadmap 4.2 — defaults persist across pins within a sitting so a
+      // user filing five Copy fixes doesn't have to pick the template each
+      // time. First pin uses the system default (medium / visual).
+      severity: lastTemplateDefaults.value.severity,
+      issueType: lastTemplateDefaults.value.issueType,
       images: [],
       assigneeId: null,
       labels: [],
@@ -833,6 +921,14 @@ async function onPlaceClick(e: MouseEvent) {
   composingPinId.value = id;
   hover.value = null;
 }
+
+// Last template (severity + type) used in this sitting. Persists for the
+// lifetime of the overlay so a streak of pins of the same kind don't each
+// need a template click. Reset only on remount.
+const lastTemplateDefaults = ref<{ severity: Severity; issueType: PinType }>({
+  severity: "medium",
+  issueType: "visual",
+});
 
 // ── Re-anchor a stale pin ────────────────────────────────────────────────────
 const reanchoringPinId = ref<string | null>(null);
@@ -927,6 +1023,13 @@ async function onComposerSubmit(draft: PinDraft) {
   pin.draft = draft;
   pin.submitting = true;
   pin.error = undefined;
+
+  // Roadmap 4.2 — remember the template (severity + type) for the next pin
+  // in this sitting. Set BEFORE the await so it sticks even if submit fails.
+  lastTemplateDefaults.value = {
+    severity: draft.severity,
+    issueType: draft.issueType,
+  };
 
   // Wait for the startup probe so a fast first pin doesn't race into local
   // mode before we know the API is up.

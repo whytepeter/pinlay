@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-04T21:46:16.271Z
-> Files: 240 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-05T20:30:58.754Z
+> Files: 241 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -51,6 +51,10 @@
 
 - `migration.sql` — Threaded discussion attached to a single pin. Workspace scoping is (~283 tok)
 
+## apps/api/scripts/
+
+- `backfill-issues.ts` — One-off backfill: create an Issue row for every Session that has Pins but (~510 tok)
+
 ## apps/api/src/
 
 - `app.module.ts` — Exports AppModule (~412 tok)
@@ -59,7 +63,7 @@
 ## apps/api/src/annotation/
 
 - `annotation.module.ts` — Exports AnnotationModule (~126 tok)
-- `annotation.service.ts` — Wire shape for a pin comment. (~4109 tok)
+- `annotation.service.ts` — URL the pin lives on (normalized at write time). Returned so host-grouped (~4646 tok)
 - `pins.controller.ts` — Exports PinsController (~724 tok)
 - `sessions.controller.ts` — Write half of the session lifecycle: finishing/submitting a capture sitting (~285 tok)
 
@@ -187,10 +191,10 @@
 
 ## apps/extension/src/components/annotation/
 
-- `AnnotationOverlay.vue` — Vue: setup (~10584 tok)
+- `AnnotationOverlay.vue` — Vue: setup (~11724 tok)
 - `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1143 tok)
-- `AnnotationPinComposer.vue` — Vue component (~8193 tok)
-- `AnnotationPinDetail.vue` — Vue component (~6439 tok)
+- `AnnotationPinComposer.vue` — Vue component (~9993 tok)
+- `AnnotationPinDetail.vue` — Vue component (~6327 tok)
 
 ## apps/extension/src/components/capture/
 
@@ -207,25 +211,25 @@
 ## apps/extension/src/components/launcher/
 
 - `ConnectPrompt.vue` — Vue: setup (~400 tok)
-- `FloatingLauncher.vue` — Vue: setup (~5826 tok)
+- `FloatingLauncher.vue` — Vue: setup (~6396 tok)
 - `LauncherItem.vue` — Vue: setup (~1061 tok)
 
 ## apps/extension/src/entrypoints/
 
 - `background.ts` — Background service worker. (~1477 tok)
-- `content.ts` — Content script — mounts the on-page surfaces: (~5740 tok)
+- `content.ts` — Content script — mounts the on-page surfaces: (~6844 tok)
 
 ## apps/extension/src/entrypoints/popup/
 
-- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~11751 tok)
+- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~13322 tok)
 - `index.html` — pinlay (~170 tok)
 - `main.ts` (~47 tok)
 
 ## apps/extension/src/lib/
 
 - `anchor.ts` — Element anchoring for live annotation. (~5704 tok)
-- `annotation-state.ts` — annotation-state (~1065 tok)
-- `api.ts` — API client (~1991 tok)
+- `annotation-state.ts` — annotation-state (~1113 tok)
+- `api.ts` — API client (~2202 tok)
 - `auth.ts` — Subscribe to auth changes — fires when the token is added, updated, or cleared. (~562 tok)
 - `env.ts` — Exports WEB_APP_URL, API_URL (~131 tok)
 - `extension.ts` — Extension runtime helpers. (~253 tok)

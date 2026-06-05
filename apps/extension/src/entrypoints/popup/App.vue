@@ -48,6 +48,7 @@ interface PopupPinRow {
   description: string;
   status: string;
   severity: string;
+  pageUrl: string;
   createdAt: string;
   resolved: boolean;
 }
@@ -270,6 +271,8 @@ onUnmounted(() => {
   unsubscribeAuth?.();
   document.removeEventListener("pointerdown", onDocPointerDown);
   document.removeEventListener("keydown", onDocKeydown);
+  popupSizeObserver?.disconnect();
+  if (popupResizeFrame) cancelAnimationFrame(popupResizeFrame);
 });
 
 onMounted(async () => {
@@ -488,16 +491,115 @@ function closePinsView() {
   view.value = "main";
 }
 
-// Chrome popup quirk: the window grows to fit content but doesn't always
-// SHRINK when content gets smaller (e.g. leaving the Pins sub-view back to
-// the shorter main view). Force a body reflow by zeroing the height then
-// letting it re-measure on the next frame.
-watch(view, async () => {
-  await nextTick();
-  document.body.style.height = "0px";
-  await nextTick();
-  document.body.style.height = "";
+// Chrome popup quirk: the window grows to fit body content but doesn't
+// always SHRINK when content gets smaller — async data loads, the loading
+// skeleton swapping for the real card, leaving the Pins sub-view, etc. all
+// leave a tall popup with empty space below the actual content.
+//
+// Fix: pin the body's explicit height to whatever the popup root reports
+// (offsetHeight). A ResizeObserver re-runs whenever Vue mutates the DOM, so
+// any state change that affects layout is caught — not just view swaps.
+// Debounced via rAF so a single observer batch doesn't cascade into many
+// reflows.
+const popupRootEl = ref<HTMLDivElement | null>(null);
+let popupSizeObserver: ResizeObserver | null = null;
+let popupResizeFrame = 0;
+function syncPopupHeight() {
+  const el = popupRootEl.value;
+  if (!el) return;
+  if (popupResizeFrame) cancelAnimationFrame(popupResizeFrame);
+  popupResizeFrame = requestAnimationFrame(() => {
+    const h = el.offsetHeight;
+    if (h > 0) document.body.style.height = `${h}px`;
+  });
+}
+watch(popupRootEl, (el) => {
+  popupSizeObserver?.disconnect();
+  popupSizeObserver = null;
+  if (!el) return;
+  popupSizeObserver = new ResizeObserver(() => syncPopupHeight());
+  popupSizeObserver.observe(el);
+  // Run once now so the initial render sizes the popup to actual content
+  // (the popup's initial paint can land taller than the eventual content).
+  void nextTick(() => syncPopupHeight());
 });
+
+// Render the composer's saved markdown (bold/italic/link) as HTML for the
+// sub-view rows. Mirrors AnnotationPinDetail's renderer so both surfaces
+// show formatted text rather than raw `**…**`/`_…_` characters.
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+function safeHref(raw: string): string {
+  const t = raw.trim();
+  return /^(https?:|mailto:)/i.test(t) ? t : "#";
+}
+function renderMarkdown(text: string): string {
+  if (!text) return "";
+  let html = escapeHtml(text);
+  html = html.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    (_m, label: string, url: string) =>
+      `<a href="${escapeHtml(safeHref(url))}" target="_blank" rel="noopener noreferrer" class="text-primary underline-offset-2 hover:underline">${label}</a>`,
+  );
+  html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/(^|[\s(])_([^_\n]+)_/g, "$1<em>$2</em>");
+  html = html.replace(/\n/g, "<br>");
+  return html;
+}
+
+// Roadmap 2.1 — same-host display path. Show "/" for the root, "/search"
+// for a sub-path; ignore query params and hash so the rows stay tidy.
+function displayPath(url: string): string {
+  if (!url) return "";
+  try {
+    const u = new URL(url);
+    return u.pathname || "/";
+  } catch {
+    return url;
+  }
+}
+function isSameTabUrl(url: string): boolean {
+  if (!url || !activeTabUrl.value) return false;
+  try {
+    const a = new URL(url);
+    const b = new URL(activeTabUrl.value);
+    // Ignore query + hash so /search and /search?q=x both treat as "same page".
+    return a.host === b.host && a.pathname === b.pathname;
+  } catch {
+    return url === activeTabUrl.value;
+  }
+}
+
+// Click handler for a pin row in the sub-view. If the pin lives on a
+// different URL than the current tab, navigate the tab to that URL with
+// `#pinlay-pin=<id>` — the content script reads the hash on page-load and
+// mounts the overlay + jumps to the pin. Same-URL clicks just mount the
+// overlay and jump.
+async function onClickPopupPinRow(row: PopupPinRow) {
+  if (activeTabId.value == null) return;
+  try {
+    if (isSameTabUrl(row.pageUrl)) {
+      await chrome.tabs.sendMessage(activeTabId.value, { type: "VIEW_PINS" });
+      await chrome.tabs.sendMessage(activeTabId.value, {
+        type: "JUMP_TO_PIN",
+        id: row.id,
+      });
+    } else if (row.pageUrl) {
+      const sep = row.pageUrl.includes("#") ? "&" : "#";
+      await chrome.tabs.update(activeTabId.value, {
+        url: `${row.pageUrl}${sep}pinlay-pin=${row.id}`,
+      });
+    }
+    window.close();
+  } catch (err) {
+    console.error("[pinlay] navigate-to-pin failed:", err);
+  }
+}
 
 // Drop a pin from the Pins sub-view's "+" button — same path as the main
 // CTA but doesn't go through the loading guard (sub-view is only visible
@@ -523,6 +625,11 @@ async function onDisconnect() {
   conn.value = "disconnected";
 }
 
+function onCreateAccount() {
+  chrome.tabs.create({ url: `${WEB_APP_URL}/signup?redirect=/connect-extension` });
+  window.close();
+}
+
 function onConnect() {
   // Open the dashboard's connect page. If the user is already signed in there,
   // it hands the session token straight back to this extension; otherwise it
@@ -533,7 +640,7 @@ function onConnect() {
 </script>
 
 <template>
-  <div class="w-[320px] font-sans">
+  <div ref="popupRootEl" class="w-[320px] font-sans">
     <!-- ── Pins sub-view (Roadmap 2.1) ───────────────────────────────────
          Browse pins on this page with status filter + drop-pin shortcut.
          Reachable from the main view's "View pins" card. -->
@@ -600,10 +707,12 @@ function onConnect() {
         >
           No {{ pinFilter === "all" ? "" : pinFilter + " " }}pins on this page.
         </p>
-        <div
+        <button
           v-for="row in visiblePopupPinList"
           :key="row.id"
-          class="flex items-start gap-3 border-b border-border px-3 py-2.5 last:border-b-0"
+          type="button"
+          class="flex w-full items-start gap-3 border-b border-border px-3 py-2.5 text-left transition-colors last:border-b-0 hover:bg-muted/30"
+          @click="onClickPopupPinRow(row)"
         >
           <span
             :class="[
@@ -617,9 +726,10 @@ function onConnect() {
           </span>
           <span class="flex min-w-0 flex-1 flex-col gap-1">
             <span class="flex items-start gap-2">
-              <span class="flex-1 text-[13px] font-semibold leading-snug text-foreground">
-                {{ row.title }}
-              </span>
+              <span
+                class="flex-1 text-[13px] font-medium leading-snug text-foreground [&_strong]:font-semibold"
+                v-html="renderMarkdown(row.title)"
+              />
               <span
                 v-if="row.resolved"
                 class="inline-flex shrink-0 items-center rounded-md bg-status-resolved/15 px-1.5 py-0.5 text-[10px] font-medium text-status-resolved"
@@ -629,19 +739,25 @@ function onConnect() {
             </span>
             <span
               v-if="row.description"
-              class="text-[12px] leading-snug text-muted-foreground line-clamp-2"
-            >
-              {{ row.description }}
-            </span>
-            <span
-              v-if="row.createdAt"
-              class="flex items-center gap-1 text-[11px] text-muted-foreground/80"
-            >
-              <Icon name="clock" :size="11" :stroke-width="2" />
-              {{ relativeTime(row.createdAt) }}
+              class="text-[12px] font-normal leading-snug text-muted-foreground line-clamp-2 [&_strong]:font-semibold [&_strong]:text-foreground"
+              v-html="renderMarkdown(row.description)"
+            />
+            <span class="flex items-center gap-2 text-[11px] text-muted-foreground/80">
+              <span
+                v-if="row.pageUrl && !isSameTabUrl(row.pageUrl)"
+                class="inline-flex items-center gap-0.5 rounded bg-muted px-1.5 py-0.5 font-mono text-[10px] text-foreground/70"
+                :title="row.pageUrl"
+              >
+                <Icon name="external-link" :size="9" :stroke-width="2" />
+                {{ displayPath(row.pageUrl) }}
+              </span>
+              <span v-if="row.createdAt" class="flex items-center gap-1">
+                <Icon name="clock" :size="11" :stroke-width="2" />
+                {{ relativeTime(row.createdAt) }}
+              </span>
             </span>
           </span>
-        </div>
+        </button>
         <!-- IntersectionObserver sentinel — bumps the rendered count when
              scrolled into view. Removed once everything is on screen. -->
         <div
@@ -783,9 +899,11 @@ function onConnect() {
               has pins. (Silent when zero pins — that's the "no work" case.)
            The skeleton avoids the previous pop-in where the View pins card
            appeared "out of the blue" after the async fetch resolved. -->
-      <!-- 1. Loading skeleton — shape mirrors the real View pins card. -->
+      <!-- 1. Loading skeleton — shape mirrors the real View pins card.
+           Suppressed when we know there's no identity (idle empty state) —
+           otherwise the skeleton briefly flashes above the hero. -->
       <div
-        v-if="pinsLoading"
+        v-if="pinsLoading && !showIdlePrompt"
         class="flex items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2"
         aria-busy="true"
       >
@@ -923,51 +1041,86 @@ function onConnect() {
         </div>
       </div>
 
-        <!-- IDLE: only when we have NO identity at all (disconnected from a
-             cold start). If we're offline but cached, we render the connected
-             block below — the header pill shows staleness. -->
+        <!-- IDLE: not connected (or offline cold-start). Renders as the
+             FULL popup body — Drop a pin, View pins, and the toggle row
+             are already gated on hasIdentity above, so we just need the
+             hero empty state here. -->
         <div
           v-else-if="showIdlePrompt"
-          class="overflow-hidden rounded-xl border border-border bg-card"
+          class="flex flex-col gap-3.5"
         >
-          <div class="flex flex-col items-center gap-2.5 px-4 py-4 text-center">
+          <!-- Hero icon + heading + lede. -->
+          <div class="flex flex-col items-center gap-3 pt-2 text-center">
             <span
-              class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary"
+              class="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary"
             >
               <Icon
-                :name="conn === 'offline' ? 'cloud-off' : 'link'"
-                :size="18"
-                :stroke-width="2"
+                :name="conn === 'offline' ? 'cloud-off' : 'plug'"
+                :size="22"
+                :stroke-width="1.75"
               />
             </span>
-            <span class="flex flex-col gap-0.5">
-              <span class="text-[13px] font-semibold leading-tight text-foreground">
+            <div class="flex flex-col gap-1">
+              <h2 class="text-[15px] font-semibold leading-tight text-foreground">
                 {{
                   conn === "offline"
                     ? "Can't reach pinlay"
-                    : "Connect your workspace"
+                    : "You're not connected"
                 }}
-              </span>
-              <span class="text-[11px] leading-snug text-muted-foreground">
+              </h2>
+              <p class="px-2 text-[12px] leading-snug text-muted-foreground">
                 {{
                   conn === "offline"
-                    ? "The API isn't responding. Check your connection and retry."
-                    : "Sign in to save pins, sync with your team, and route to your tracker."
+                    ? "The pinlay API isn't responding. Check your connection and try again."
+                    : "Sign in to drop pins on this page and share feedback with your workspace."
                 }}
-              </span>
-            </span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Primary CTAs: Connect / Create an account (offline → Try again). -->
+          <div class="flex flex-col gap-2">
             <button
               type="button"
-              class="mt-1 inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-[12px] font-medium text-primary-foreground shadow-[0_1px_2px_color-mix(in_oklab,var(--primary)_25%,transparent)] transition-colors hover:bg-primary-hover"
+              class="rounded-xl bg-primary px-3 py-2.5 text-[13px] font-semibold text-primary-foreground shadow-[0_2px_8px_color-mix(in_oklab,var(--primary)_22%,transparent)] transition-colors hover:bg-primary-hover"
               @click="conn === 'offline' ? refresh() : onConnect()"
             >
-              <Icon
-                :name="conn === 'offline' ? 'refresh-cw' : 'log-in'"
-                :size="13"
-                :stroke-width="2.25"
-              />
-              {{ conn === "offline" ? "Try again" : "Connect workspace" }}
+              {{ conn === "offline" ? "Try again" : "Connect to Pinlay" }}
             </button>
+            <button
+              v-if="conn !== 'offline'"
+              type="button"
+              class="rounded-xl border border-border bg-card px-3 py-2.5 text-[13px] font-semibold text-foreground transition-colors hover:bg-muted/50"
+              @click="onCreateAccount"
+            >
+              Create an account
+            </button>
+          </div>
+
+          <!-- What you can do — short value prop while signed-out. -->
+          <div class="rounded-xl bg-muted/40 p-3">
+            <p
+              class="pb-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground"
+            >
+              What you can do
+            </p>
+            <ul class="flex flex-col gap-1.5">
+              <li
+                v-for="bullet in [
+                  'Pin any element with a click',
+                  'Leave notes for your team in context',
+                  'Track open feedback across pages',
+                ]"
+                :key="bullet"
+                class="flex items-start gap-2 text-[12px] leading-snug text-foreground"
+              >
+                <span
+                  class="mt-1.5 inline-block h-1 w-1 shrink-0 rounded-full bg-primary"
+                  aria-hidden="true"
+                />
+                {{ bullet }}
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -1109,7 +1262,9 @@ function onConnect() {
 
 
       <!-- ── Footer ──────────────────────────────────────────────────────── -->
+      <!-- Hidden in the not-connected hero — the CTA above is enough. -->
       <div
+        v-if="!showIdlePrompt"
         class="-mx-3 -mb-3 mt-1 flex items-center justify-between border-t border-border bg-muted/30 px-3 py-2"
       >
         <!-- During loading, render a quiet placeholder rather than the wrong
@@ -1118,22 +1273,13 @@ function onConnect() {
              identity to clear, even if the network is down). -->
         <span v-if="isLoading" class="h-5 w-16" />
         <button
-          v-else-if="hasIdentity"
+          v-else
           type="button"
           class="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[11.5px] font-medium text-destructive transition-colors hover:bg-destructive/10"
           @click="onDisconnect"
         >
           <Icon name="log-out" :size="12" :stroke-width="2" />
           Disconnect
-        </button>
-        <button
-          v-else
-          type="button"
-          class="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[11.5px] font-medium text-foreground transition-colors hover:bg-muted"
-          @click="onConnect"
-        >
-          <Icon name="log-in" :size="12" :stroke-width="2" />
-          Connect
         </button>
 
         <button

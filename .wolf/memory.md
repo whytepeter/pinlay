@@ -2131,3 +2131,118 @@
 | 22:44 | Edited apps/extension/src/entrypoints/popup/App.vue | expanded (+8 lines) | ~99 |
 | 22:45 | Edited apps/api/src/annotation/annotation.service.ts | added 3 condition(s) | ~522 |
 | 22:46 | Edited apps/api/src/annotation/pins.controller.ts | 4→8 lines | ~60 |
+
+## Session: 2026-06-05 09:20
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 09:50 | Edited apps/extension/src/lib/api.ts | expanded (+12 lines) | ~233 |
+| 09:52 | Edited apps/api/src/annotation/annotation.service.ts | expanded (+6 lines) | ~158 |
+| 09:52 | Edited apps/api/src/annotation/annotation.service.ts | modified serialize() | ~136 |
+| 09:52 | Edited apps/extension/src/lib/api.ts | 14→17 lines | ~134 |
+| 09:53 | Edited apps/extension/src/entrypoints/content.ts | modified formatPopupPinRow() | ~382 |
+| 09:53 | Edited apps/extension/src/entrypoints/content.ts | modified formatProbedPinRow() | ~151 |
+| 09:54 | Edited apps/extension/src/entrypoints/content.ts | modified replace() | ~106 |
+| 09:55 | Edited apps/extension/src/entrypoints/content.ts | 14→17 lines | ~267 |
+| 09:56 | Edited apps/extension/src/entrypoints/content.ts | added 2 condition(s) | ~623 |
+| 09:56 | Edited apps/extension/src/lib/annotation-state.ts | 6→9 lines | ~95 |
+| 09:56 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: pageUrl | ~52 |
+| 09:57 | Edited apps/extension/src/entrypoints/popup/App.vue | added error handling | ~504 |
+| 09:57 | Edited apps/extension/src/entrypoints/content.ts | added 1 condition(s) | ~179 |
+| 09:58 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: hover | ~587 |
+| 09:59 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | expanded (+9 lines) | ~483 |
+| 10:00 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | added error handling | ~387 |
+| 10:01 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 1→4 lines | ~23 |
+| 10:53 | Edited apps/api/src/annotation/annotation.service.ts | modified if() | ~434 |
+| 10:55 | Edited apps/api/src/annotation/annotation.service.ts | 4→5 lines | ~62 |
+| 11:01 | Roadmap 2.1 host grouping (full vertical): BACKEND added host query param to GET /annotation/pins (subdomain-isolated host match — startsWith(https?://host/), :, or exact); pin serializer now ships pageUrl. EXTENSION api.getHostPins(host) + AnnotationPinRow.pageUrl. CONTENT.TS init probe + GET_PAGE_PIN_STATE now use getHostPins(location.host) so FAB+popup show host-wide pins; #pinlay-pin=<id> hash deep-link reads on init, mounts overlay, requestJump; JUMP_TO_PIN message routes from popup. POPUP shows path chip (external-link icon) + click navigates via chrome.tabs.update with #pinlay-pin or VIEW_PINS+JUMP_TO_PIN for same-page. FAB row shows path; onJumpToPin checks same/cross-URL and sets location.href accordingly. The on-page overlay still uses URL-exact getPagePins. | annotation.service.ts, pins.controller.ts, extension api.ts, annotation-state.ts, content.ts, popup/App.vue, FloatingLauncher.vue | typecheck+build pass, host endpoint live | ~5000 |
+| 11:02 | Session end: 19 writes across 6 files (api.ts, annotation.service.ts, content.ts, annotation-state.ts, App.vue) | 4 reads | ~23095 tok |
+
+## Session: 2026-06-05 12:50
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-05 15:07
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-06-05 18:01
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 18:13 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified onJumpToPin() | ~211 |
+| 18:13 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 6→6 lines | ~35 |
+| 18:13 | Edited apps/extension/src/entrypoints/content.ts | 17→21 lines | ~345 |
+| 18:13 | Edited apps/extension/src/entrypoints/content.ts | modified grouped() | ~212 |
+| 18:14 | Edited apps/extension/src/entrypoints/content.ts | added error handling | ~298 |
+| 18:41 | Fixes per user feedback: (a) host list now sorts current-URL pins first (stable sort by pathname so /search bubbles to top when on /search) — applied in both content.ts init probe and GET_PAGE_PIN_STATE; (b) deep-link bug: overlay.onJumpToPin made async and now `await apiProbe` + nextTick before lookup so #pinlay-pin=<id> cross-URL navigation actually opens the pin (was silently no-op-ing because requestJump fired before existingPins was populated). | content.ts, AnnotationOverlay.vue | typecheck+build pass | ~1500 |
+| 18:41 | Session end: 5 writes across 2 files (AnnotationOverlay.vue, content.ts) | 1 reads | ~11703 tok |
+| 18:57 | Session end: 5 writes across 2 files (AnnotationOverlay.vue, content.ts) | 1 reads | ~11703 tok |
+| 19:00 | Session end: 5 writes across 2 files (AnnotationOverlay.vue, content.ts) | 1 reads | ~11703 tok |
+| 19:01 | Session end: 5 writes across 2 files (AnnotationOverlay.vue, content.ts) | 1 reads | ~11703 tok |
+| 19:04 | Session end: 5 writes across 2 files (AnnotationOverlay.vue, content.ts) | 1 reads | ~11703 tok |
+| 19:08 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | wrapSelection() → input() | ~454 |
+| 19:08 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 18→18 lines | ~239 |
+| 19:09 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | expanded (+7 lines) | ~117 |
+| 19:10 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added 3 condition(s) | ~1250 |
+| 19:10 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | trim() → htmlToMarkdown() | ~133 |
+| 19:10 | Edited apps/extension/src/entrypoints/popup/App.vue | added 1 condition(s) | ~330 |
+| 19:10 | Edited apps/extension/src/entrypoints/popup/App.vue | 18→18 lines | ~208 |
+| 19:11 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 4→7 lines | ~111 |
+| 19:11 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | CSS: s | ~174 |
+| 19:17 | Pin composer WYSIWYG + markdown rendering everywhere: composer textarea replaced with contenteditable div — Bold/Italic/Link buttons + Cmd+B/I/K call document.execCommand on the live selection so formatting shows IN the editor (no more raw **text** visible). Paste strips formatting to plain text (Notion/Docs etc). htmlToMarkdown DOM-walker converts back to markdown on submit so storage + API contract are unchanged. Popup pin sub-view now v-html renderMarkdown on title + description. FAB title gets stripMarkdown for clean one-line. Placeholder rendered as an overlay span (no scoped CSS). | AnnotationPinComposer.vue, popup/App.vue, FloatingLauncher.vue | typecheck+build pass | ~3000 |
+| 19:17 | Session end: 14 writes across 5 files (AnnotationOverlay.vue, content.ts, AnnotationPinComposer.vue, App.vue, FloatingLauncher.vue) | 2 reads | ~23329 tok |
+| 19:22 | Edited apps/extension/src/entrypoints/popup/App.vue | "w-[320px] font-sans" → "popupRootEl" | ~15 |
+| 19:23 | Edited apps/extension/src/entrypoints/popup/App.vue | added optional chaining | ~381 |
+| 19:23 | Edited apps/extension/src/entrypoints/popup/App.vue | added 1 condition(s) | ~72 |
+| 19:24 | Popup adaptive-height fix: replaced the view-only height-reset watcher with a ResizeObserver on the popup root that pins `body.style.height` to the actual content height. Fires on EVERY content change (initial paint, loading->loaded transition, view swap, etc) instead of just view swaps. rAF-debounced to avoid cascading reflows; observer disconnected on unmount. | popup/App.vue | typecheck+build pass | ~600 |
+| 19:24 | Session end: 17 writes across 5 files (AnnotationOverlay.vue, content.ts, AnnotationPinComposer.vue, App.vue, FloatingLauncher.vue) | 3 reads | ~36741 tok |
+| 19:26 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added error handling | ~544 |
+| 19:26 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 15→18 lines | ~250 |
+| 19:26 | Edited apps/extension/src/entrypoints/popup/App.vue | 4→4 lines | ~52 |
+| 19:26 | Edited apps/extension/src/entrypoints/popup/App.vue | 5→5 lines | ~72 |
+| 19:29 | Two fixes: (1) link insertion in composer — `execCommand("insertHTML"|"createLink")` was silently failing because the popover URL input stole focus and the saved selection range became invalid; replaced with direct DOM manipulation (createElement + Range.insertNode + extractContents for selection-wrap). Caret moves after the anchor on insert. (2) font weights in pin detail viewer + popup pin sub-view: explicit font-normal on body text + Tailwind selector `[&_strong]:font-medium` so markdown bold reads as medium (500) instead of full bold (700) — softer emphasis. Title keeps [&_strong]:font-bold since titles are already semibold. | AnnotationPinComposer.vue, AnnotationPinDetail.vue, popup/App.vue | typecheck+build pass | ~1500 |
+| 19:29 | Session end: 21 writes across 6 files (AnnotationOverlay.vue, content.ts, AnnotationPinComposer.vue, App.vue, FloatingLauncher.vue) | 3 reads | ~37725 tok |
+| 19:32 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | CSS: ladder | ~268 |
+| 19:32 | Edited apps/extension/src/entrypoints/popup/App.vue | 4→4 lines | ~53 |
+| 19:33 | Session end: 23 writes across 6 files (AnnotationOverlay.vue, content.ts, AnnotationPinComposer.vue, App.vue, FloatingLauncher.vue) | 3 reads | ~38068 tok |
+| 19:36 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | reduced (-9 lines) | ~56 |
+| 19:36 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 2→1 lines | ~20 |
+| 19:36 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | reduced (-9 lines) | ~147 |
+| 19:47 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | CSS: failed, Fallback | ~665 |
+| 19:56 | Session end: 27 writes across 6 files (AnnotationOverlay.vue, content.ts, AnnotationPinComposer.vue, App.vue, FloatingLauncher.vue) | 3 reads | ~39020 tok |
+
+## Session: 2026-06-05 20:15
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 20:24 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | medium() → semibold() | ~145 |
+| 20:24 | Edited apps/extension/src/entrypoints/popup/App.vue | 5→5 lines | ~72 |
+| 20:27 | Session end: 2 writes across 2 files (AnnotationPinDetail.vue, App.vue) | 0 reads | ~233 tok |
+| 20:29 | Session end: 2 writes across 2 files (AnnotationPinDetail.vue, App.vue) | 1 reads | ~4472 tok |
+| 20:30 | Edited apps/api/src/annotation/annotation.service.ts | added error handling | ~712 |
+| 20:31 | Edited apps/api/src/annotation/annotation.service.ts | modified update() | ~231 |
+| 20:32 | Created apps/api/scripts/backfill-issues.ts | — | ~510 |
+| 20:37 | Session end: 5 writes across 4 files (AnnotationPinDetail.vue, App.vue, annotation.service.ts, backfill-issues.ts) | 1 reads | ~6251 tok |
+| 20:44 | Session end: 5 writes across 4 files (AnnotationPinDetail.vue, App.vue, annotation.service.ts, backfill-issues.ts) | 1 reads | ~6251 tok |
+| 20:55 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: url, url | ~67 |
+| 20:56 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: CTAs | ~916 |
+| 20:57 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: Not-connected | ~524 |
+| 20:58 | Edited apps/extension/src/entrypoints/popup/App.vue | 4→6 lines | ~98 |
+| 21:00 | Session end: 9 writes across 4 files (AnnotationPinDetail.vue, App.vue, annotation.service.ts, backfill-issues.ts) | 2 reads | ~21438 tok |
+| 21:02 | Edited apps/extension/src/entrypoints/popup/App.vue | reduced (-15 lines) | ~85 |
+| 21:03 | Edited apps/extension/src/entrypoints/popup/App.vue | modified onCreateAccount() | ~42 |
+| 21:04 | Session end: 11 writes across 4 files (AnnotationPinDetail.vue, App.vue, annotation.service.ts, backfill-issues.ts) | 2 reads | ~21574 tok |
+| 21:10 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | modified enterPlaceMode() | ~151 |
+| 21:10 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | added error handling | ~319 |
+| 21:11 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: hover, hover | ~498 |
+| 21:13 | Session end: 14 writes across 5 files (AnnotationPinDetail.vue, App.vue, annotation.service.ts, backfill-issues.ts, AnnotationOverlay.vue) | 3 reads | ~33298 tok |
+| 21:18 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 6→7 lines | ~133 |
+| 21:20 | Session end: 15 writes across 5 files (AnnotationPinDetail.vue, App.vue, annotation.service.ts, backfill-issues.ts, AnnotationOverlay.vue) | 3 reads | ~33440 tok |
+| 21:27 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | added optional chaining | ~428 |
+| 21:28 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | CSS: hover, Icon | ~271 |
+| 21:30 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | 20→23 lines | ~203 |
+| 21:30 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | expanded (+8 lines) | ~123 |
+| 21:30 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | CSS: severity, issueType | ~111 |

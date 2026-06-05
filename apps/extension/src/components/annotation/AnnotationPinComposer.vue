@@ -80,6 +80,28 @@
 
       <!-- ── BODY ──────────────────────────────────────────────────── -->
       <div class="space-y-3 p-3">
+        <!-- Templates (Roadmap 4.2) — one-click presets for severity + type
+             so common cases drop in immediately. Active template gets the
+             primary-soft pill treatment. -->
+        <div class="flex flex-wrap gap-1">
+          <button
+            v-for="t in TEMPLATES"
+            :key="t.id"
+            type="button"
+            :title="`${t.label} (${t.severity} severity)`"
+            :class="[
+              'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10.5px] font-medium transition-colors',
+              isActiveTemplate(t)
+                ? 'border-primary/40 bg-primary-soft text-primary'
+                : 'border-border bg-card text-foreground/75 hover:bg-muted/60',
+            ]"
+            @click="applyTemplate(t)"
+          >
+            <Icon :name="t.icon" :size="10" :stroke-width="2" />
+            {{ t.label }}
+          </button>
+        </div>
+
         <!-- Description (with mini markdown toolbar) -->
         <div class="relative rounded-md border border-border bg-background focus-within:ring-1 focus-within:ring-ring">
           <div class="flex items-center gap-0.5 border-b border-border px-1.5 py-1">
@@ -88,7 +110,7 @@
               class="inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               title="Bold (⌘B)"
               @mousedown.prevent
-              @click="wrapSelection('**', '**')"
+              @click="applyBold"
             >
               <Icon name="bold" :size="12" :stroke-width="2.25" />
             </button>
@@ -97,7 +119,7 @@
               class="inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               title="Italic (⌘I)"
               @mousedown.prevent
-              @click="wrapSelection('_', '_')"
+              @click="applyItalic"
             >
               <Icon name="italic" :size="12" :stroke-width="2" />
             </button>
@@ -154,23 +176,38 @@
             </div>
           </div>
 
-          <textarea
-            ref="commentEl"
-            v-model="description"
-            rows="3"
-            maxlength="2000"
-            autofocus
-            placeholder="What's wrong here? Paste a Figma link or @mention a teammate."
-            class="block w-full resize-none border-0 bg-transparent px-2.5 py-2 text-[12.5px] leading-relaxed placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0"
-            @keydown.meta.enter.prevent="onSubmit"
-            @keydown.ctrl.enter.prevent="onSubmit"
-            @keydown.meta.b.prevent="wrapSelection('**', '**')"
-            @keydown.ctrl.b.prevent="wrapSelection('**', '**')"
-            @keydown.meta.i.prevent="wrapSelection('_', '_')"
-            @keydown.ctrl.i.prevent="wrapSelection('_', '_')"
-            @keydown.meta.k.prevent="openLinkPopover"
-            @keydown.ctrl.k.prevent="openLinkPopover"
-          />
+          <!-- WYSIWYG editor: contenteditable div so the Bold/Italic/Link
+               buttons apply real formatting INSIDE the input (no more raw
+               **markdown** characters visible). On submit we convert the
+               HTML back to markdown for storage so the wire shape doesn't
+               change and existing pins still render. -->
+          <div class="relative">
+            <span
+              v-if="isEditorEmpty"
+              class="pointer-events-none absolute left-2.5 top-2 select-none text-[12.5px] leading-relaxed text-muted-foreground/60"
+              aria-hidden="true"
+            >
+              What's wrong here? Paste a Figma link or @mention a teammate.
+            </span>
+            <div
+              ref="commentEl"
+              contenteditable="true"
+              role="textbox"
+              aria-multiline="true"
+              aria-label="Pin description"
+              class="block max-h-[200px] min-h-[60px] w-full resize-none overflow-y-auto border-0 bg-transparent px-2.5 py-2 text-[12.5px] leading-relaxed text-foreground outline-none focus:outline-none focus:ring-0"
+              @input="onEditorInput"
+              @paste="onEditorPaste"
+              @keydown.meta.enter.prevent="onSubmit"
+              @keydown.ctrl.enter.prevent="onSubmit"
+              @keydown.meta.b.prevent.stop="applyBold"
+              @keydown.ctrl.b.prevent.stop="applyBold"
+              @keydown.meta.i.prevent.stop="applyItalic"
+              @keydown.ctrl.i.prevent.stop="applyItalic"
+              @keydown.meta.k.prevent.stop="openLinkPopover"
+              @keydown.ctrl.k.prevent.stop="openLinkPopover"
+            />
+          </div>
         </div>
 
         <!-- Severity -->
@@ -524,10 +561,17 @@ const issueType = ref<PinType>("visual");
 const images = ref<File[]>([]);
 const assigneeId = ref<string | null>(null);
 
+// `description` holds the contenteditable's innerHTML. Strip tags + entities
+// for the canSubmit check so an empty editor (just `<br>` etc) doesn't count.
+const isEditorEmpty = computed(() => {
+  const text = description.value
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .trim();
+  return text === "";
+});
 const canSubmit = computed(
-  () =>
-    (description.value.trim().length > 0 || images.value.length > 0) &&
-    !props.submitting,
+  () => (!isEditorEmpty.value || images.value.length > 0) && !props.submitting,
 );
 
 const paddedIndex = computed(() => String(props.index).padStart(2, "0"));
@@ -571,6 +615,37 @@ const SEVERITIES: {
     activeBg: "bg-sev-low/10",
   },
 ];
+
+// ── Templates (Roadmap 4.2) ──────────────────────────────────────────────────
+// Pre-fill severity + type so common cases drop in one click. The active
+// template is highlighted when the current severity+type match — a visual
+// hint at what kind of pin this is shaping up to be. Clicking focuses the
+// description editor so the user can start typing immediately.
+interface PinTemplate {
+  id: string;
+  label: string;
+  icon: string;
+  severity: Severity;
+  type: PinType;
+}
+const TEMPLATES: PinTemplate[] = [
+  { id: "visual", label: "Visual", icon: "eye", severity: "medium", type: "visual" },
+  { id: "copy", label: "Copy", icon: "type", severity: "low", type: "copy" },
+  { id: "broken", label: "Broken", icon: "alert-triangle", severity: "high", type: "broken" },
+  { id: "crash", label: "Crash", icon: "zap", severity: "critical", type: "broken" },
+  { id: "a11y", label: "A11y", icon: "accessibility", severity: "medium", type: "a11y" },
+  { id: "idea", label: "Idea", icon: "lightbulb", severity: "low", type: "other" },
+];
+function isActiveTemplate(t: PinTemplate): boolean {
+  return severity.value === t.severity && issueType.value === t.type;
+}
+function applyTemplate(t: PinTemplate) {
+  severity.value = t.severity;
+  issueType.value = t.type;
+  // Focus the description editor so typing can resume immediately. nextTick
+  // so any reactive Tailwind class swaps land before the focus moves.
+  void nextTick(() => commentEl.value?.focus());
+}
 
 // ── Type (short labels) ──────────────────────────────────────────────────────
 const ISSUE_TYPES: { value: PinType; label: string }[] = [
@@ -701,55 +776,61 @@ function dataUrlToFile(dataUrl: string, filename: string): File | null {
   }
 }
 
-// ── Markdown editor helpers ──────────────────────────────────────────────────
-const commentEl = ref<HTMLTextAreaElement | null>(null);
+// ── WYSIWYG editor helpers ───────────────────────────────────────────────────
+// The description editor is a contenteditable div (NOT a textarea). Toolbar
+// buttons + Cmd+B/I/K call document.execCommand on the live selection, so the
+// user sees BOLD/italic/links applied IN PLACE — no raw `**text**` showing
+// through. We keep storage as markdown (htmlToMarkdown on submit) so existing
+// pins still render and the API contract is unchanged.
+const commentEl = ref<HTMLDivElement | null>(null);
 
-/**
- * Wrap (or seed) the current selection with markdown delimiters. Routed via
- * `document.execCommand('insertText')` — going through the textarea's native
- * edit pipeline is what keeps the change on the **undo stack**. A direct
- * `description.value = …` mutation bypasses that pipeline and silently breaks
- * Cmd+Z for the user.
- */
-function wrapSelection(before: string, after: string) {
-  const el = commentEl.value;
-  if (!el) return;
-  const start = el.selectionStart ?? description.value.length;
-  const end = el.selectionEnd ?? description.value.length;
-  const sel = description.value.slice(start, end) || "text";
-  const replacement = before + sel + after;
-
-  el.focus();
-  el.setSelectionRange(start, end);
-  const inserted = document.execCommand("insertText", false, replacement);
-  if (!inserted) {
-    // Older engines or unfocused state — fall back to a direct mutation so the
-    // button still works (undo just won't roll this back).
-    description.value =
-      description.value.slice(0, start) +
-      replacement +
-      description.value.slice(end);
-  }
-  void nextTick(() => {
-    el.focus();
-    el.setSelectionRange(start + before.length, start + before.length + sel.length);
-  });
+function syncFromEditor() {
+  if (!commentEl.value) return;
+  description.value = commentEl.value.innerHTML;
+}
+function onEditorInput() {
+  syncFromEditor();
+}
+// Strip formatting on paste — pasting from Notion/Docs would otherwise drop
+// fonts, sizes, and other styles into our minimal Bold/Italic/Link world.
+function onEditorPaste(e: ClipboardEvent) {
+  const text = e.clipboardData?.getData("text/plain");
+  if (text == null) return;
+  e.preventDefault();
+  document.execCommand("insertText", false, text);
+  syncFromEditor();
 }
 
-// Link popover
+function applyBold() {
+  commentEl.value?.focus();
+  document.execCommand("bold");
+  syncFromEditor();
+}
+function applyItalic() {
+  commentEl.value?.focus();
+  document.execCommand("italic");
+  syncFromEditor();
+}
+
+// Link popover — saves the current selection so the popover's inputs can
+// take focus without losing the user's place. confirmLink restores the
+// range then runs createLink (or inserts a labeled anchor when there's no
+// selection to wrap).
 const linkOpen = ref(false);
 const linkText = ref("");
 const linkUrl = ref("");
 const linkUrlEl = ref<HTMLInputElement | null>(null);
-let linkSel = { start: 0, end: 0 };
+let linkSelRange: Range | null = null;
 
 function openLinkPopover() {
-  const el = commentEl.value;
-  linkSel = {
-    start: el?.selectionStart ?? description.value.length,
-    end: el?.selectionEnd ?? description.value.length,
-  };
-  linkText.value = description.value.slice(linkSel.start, linkSel.end);
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount > 0) {
+    linkSelRange = sel.getRangeAt(0).cloneRange();
+    linkText.value = sel.toString();
+  } else {
+    linkSelRange = null;
+    linkText.value = "";
+  }
   linkUrl.value = "";
   linkOpen.value = true;
   void nextTick(() => linkUrlEl.value?.focus());
@@ -760,30 +841,127 @@ function confirmLink() {
     linkOpen.value = false;
     return;
   }
-  const label = linkText.value.trim() || "link";
-  const replacement = `[${label}](${url})`;
-  const el = commentEl.value;
-  if (el) {
-    el.focus();
-    el.setSelectionRange(linkSel.start, linkSel.end);
-    const inserted = document.execCommand("insertText", false, replacement);
-    if (!inserted) {
-      description.value =
-        description.value.slice(0, linkSel.start) +
-        replacement +
-        description.value.slice(linkSel.end);
-    }
-  } else {
-    description.value =
-      description.value.slice(0, linkSel.start) +
-      replacement +
-      description.value.slice(linkSel.end);
+  const editor = commentEl.value;
+  if (!editor) {
+    linkOpen.value = false;
+    return;
   }
+
+  // Validate the saved range still belongs to the editor — if focus moved
+  // away and back, or Vue re-rendered, the original Range can become
+  // detached and `Range.insertNode` would either no-op or throw.
+  let range = linkSelRange;
+  if (range) {
+    const startOk = editor.contains(range.startContainer)
+      || range.startContainer === editor;
+    const endOk = editor.contains(range.endContainer)
+      || range.endContainer === editor;
+    if (!startOk || !endOk) range = null;
+  }
+
+  // Build the <a> element. Direct DOM construction is more reliable than
+  // `execCommand('createLink'|'insertHTML')`, which fails silently when the
+  // saved range loses validity across focus changes (esp. in shadow DOM).
+  const a = document.createElement("a");
+  a.href = url;
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+
+  const labelOverride = linkText.value.trim();
+  let inserted = false;
+
+  try {
+    if (range && !range.collapsed) {
+      if (labelOverride) {
+        range.deleteContents();
+        a.textContent = labelOverride;
+        range.insertNode(a);
+      } else {
+        a.appendChild(range.extractContents());
+        range.insertNode(a);
+      }
+      inserted = true;
+    } else if (range) {
+      // Caret-only selection — insert label-or-url at the cursor.
+      a.textContent = labelOverride || url;
+      range.insertNode(a);
+      inserted = true;
+    }
+  } catch (err) {
+    console.warn("[pinlay] link Range.insertNode failed:", err);
+  }
+
+  if (!inserted) {
+    // Fallback: no saved range or insertNode failed → append at end. Always
+    // succeeds, so the user's link never silently disappears.
+    if (!a.textContent) a.textContent = labelOverride || url;
+    editor.appendChild(a);
+  }
+
+  // Move the caret to just after the inserted anchor so the next keystroke
+  // doesn't extend it. Use the editor's root selection (works across the
+  // shadow-DOM boundary in Chrome).
+  editor.focus();
+  try {
+    const after = document.createRange();
+    after.setStartAfter(a);
+    after.collapse(true);
+    const sel = window.getSelection();
+    sel?.removeAllRanges();
+    sel?.addRange(after);
+  } catch {
+    /* Selection placement is best-effort — the link is already inserted. */
+  }
+
+  syncFromEditor();
   linkOpen.value = false;
-  void nextTick(() => commentEl.value?.focus());
 }
 function cancelLink() {
   linkOpen.value = false;
+}
+
+/**
+ * Convert the editor's HTML back to markdown for storage. Walks the DOM so
+ * nested tags compose correctly (e.g. `<strong><em>foo</em></strong>`
+ * becomes `**_foo_**`). Anything outside the {strong,em,a,br,div,p} set is
+ * unwrapped to its text content — the editor never produces other tags, but
+ * pasted markup would otherwise leak through.
+ */
+function htmlToMarkdown(html: string): string {
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+
+  function walk(node: Node): string {
+    if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? "";
+    if (node.nodeType !== Node.ELEMENT_NODE) return "";
+    const el = node as Element;
+    const inner = Array.from(el.childNodes).map(walk).join("");
+    const tag = el.tagName.toLowerCase();
+    switch (tag) {
+      case "strong":
+      case "b":
+        return inner.length ? `**${inner}**` : "";
+      case "em":
+      case "i":
+        return inner.length ? `_${inner}_` : "";
+      case "a": {
+        const href = el.getAttribute("href") ?? "";
+        return `[${inner}](${href})`;
+      }
+      case "br":
+        return "\n";
+      case "div":
+      case "p":
+        return inner + "\n";
+      default:
+        return inner;
+    }
+  }
+  return Array.from(tmp.childNodes)
+    .map(walk)
+    .join("")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 // ── Positioning ──────────────────────────────────────────────────────────────
@@ -827,7 +1005,9 @@ const popoverStyle = computed<Record<string, string>>(() => {
 function onSubmit() {
   if (!canSubmit.value) return;
   emit("submit", {
-    comment: description.value.trim(),
+    // Convert HTML to markdown so the API contract + existing pins are
+    // unaffected — the editor is WYSIWYG but storage stays markdown.
+    comment: htmlToMarkdown(description.value),
     severity: severity.value,
     issueType: issueType.value,
     images: images.value.slice(),

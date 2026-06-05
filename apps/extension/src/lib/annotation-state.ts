@@ -29,6 +29,9 @@ export interface PinListRow {
   stale: boolean;
   /** Live resolve-health band (ok = green, fallback = yellow, dead = red). */
   health: AnchorHealth;
+  /** URL the pin lives on (Roadmap 2.1 host grouping). Used by the FAB
+   *  pin-list click handler to decide same-page vs cross-URL navigation. */
+  pageUrl?: string;
 }
 
 const active = ref(false);

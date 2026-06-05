@@ -53,6 +53,17 @@ export default defineContentScript({
         unmountOverlay();
         return false;
       }
+      // Popup → tab: jump to a specific pin (overlay assumed mounted via
+      // VIEW_PINS in the same click). One tick so the overlay's watcher is
+      // registered before the counter bump.
+      if (msg?.type === "JUMP_TO_PIN" && typeof msg.id === "string") {
+        void (async () => {
+          await new Promise<void>((r) => setTimeout(r, 0));
+          const { useAnnotationState } = await import("../lib/annotation-state");
+          useAnnotationState().requestJump(msg.id);
+        })();
+        return false;
+      }
       // Popup → tab: full pin-state snapshot for the popup's main + sub-view.
       // We REFETCH on demand so the popup always sees current data — the init
       // probe could be minutes stale by the time the user opens the popup.
@@ -73,8 +84,15 @@ export default defineContentScript({
               return;
             }
             const { api } = await import("../lib/api");
-            const { normalizeUrl } = await import("@pinlay/shared");
-            const raw = await api.getPagePins(normalizeUrl(location.href));
+            // Host-grouped fetch (Roadmap 2.1) — the browse views show pins
+            // across every path of this site so the user can navigate from
+            // glown.io to a pin on glown.io/search. The on-page overlay
+            // still uses URL-exact fetch in its own apiProbe.
+            const fetched = await api.getHostPins(location.host);
+            // Pins on the CURRENT path float to the top — popup/FAB lists
+            // mirror the user's immediate context. Stable sort preserves
+            // the server's sessionId/index order within each group.
+            const raw = sortCurrentFirst(fetched);
             const { useAnnotationState } = await import("../lib/annotation-state");
             const state = useAnnotationState();
             state.setViewablePinCount(raw.length);
@@ -433,8 +451,13 @@ export default defineContentScript({
         const auth = await getAuth();
         if (!auth?.token) return;
         const { api } = await import("../lib/api");
-        const { normalizeUrl } = await import("@pinlay/shared");
-        const pins = await api.getPagePins(normalizeUrl(location.href));
+        // Host-grouped (Roadmap 2.1): the FAB count + list show every pin on
+        // this site, not just this exact URL, so the user can navigate from
+        // / to /search etc.
+        const fetched = await api.getHostPins(location.host);
+        // Same sort as the GET_PAGE_PIN_STATE path — pins on the current
+        // URL appear first so the FAB list matches the user's context.
+        const pins = sortCurrentFirst(fetched);
         const { useAnnotationState } = await import("../lib/annotation-state");
         const state = useAnnotationState();
         state.setViewablePinCount(pins.length);
@@ -444,14 +467,58 @@ export default defineContentScript({
       }
     })();
 
+    // ── Hash deep-link: #pinlay-pin=<id> (Roadmap 2.2) ───────────────────────
+    // A pin row clicked in the popup/FAB for a DIFFERENT URL than the current
+    // tab navigates here with the pin id in the hash. We mount the overlay
+    // and jump to the pin on page-load — single seam for cross-URL
+    // navigation. Hash is consumed (history.replaceState) so it doesn't
+    // stick around in the URL bar.
+    void (async () => {
+      const m = location.hash.match(/pinlay-pin=([\w-]+)/);
+      if (!m) return;
+      const pinId = m[1];
+      // Clean the hash before any handlers run so we don't loop on
+      // history events.
+      try {
+        history.replaceState(
+          null,
+          "",
+          location.pathname + location.search,
+        );
+      } catch {
+        /* ignore */
+      }
+      try {
+        const { getAuth } = await import("../lib/auth");
+        const auth = await getAuth();
+        if (!auth?.token) return;
+        await mountOverlayPassive(auth);
+        // Two ticks so the overlay's apiProbe + watcher setup completes
+        // before we bump the jump counter.
+        await new Promise<void>((r) => setTimeout(r, 250));
+        const { useAnnotationState } = await import("../lib/annotation-state");
+        useAnnotationState().requestJump(pinId);
+      } catch {
+        /* orphaned */
+      }
+    })();
+
     // Format an API pin into the popup's richer pin-list row (sub-view).
     // Splits the comment into title (first line) + description (rest) for the
-    // popup's two-line row layout. Author/reporter is omitted — the
-    // /annotation/pins endpoint doesn't ship that field, and crossing over to
-    // /issues for it would change the data path significantly. Easy to add
-    // later when the API surfaces it on the pin row.
+    // popup's two-line row layout. `pageUrl` is carried through so the popup
+    // can show the path + navigate cross-URL on click (Roadmap 2.1 host
+    // grouping). Author/reporter is omitted — the /annotation/pins endpoint
+    // doesn't ship that field; crossing over to /issues would reshape the
+    // data path. Easy to add later.
     function formatPopupPinRow(
-      pin: { id: string; comment?: string | null; status?: string | null; severity?: string | null; createdAt?: string },
+      pin: {
+        id: string;
+        comment?: string | null;
+        status?: string | null;
+        severity?: string | null;
+        pageUrl?: string | null;
+        createdAt?: string;
+      },
       index: number,
     ) {
       const comment = (pin.comment ?? "").trim();
@@ -466,9 +533,32 @@ export default defineContentScript({
         description,
         status,
         severity: pin.severity ?? "medium",
+        pageUrl: pin.pageUrl ?? "",
         createdAt: pin.createdAt ?? "",
         resolved: status === "resolved",
       };
+    }
+
+    // Stable-sort pins on the current path to the top of the host-grouped
+    // list. Matches by pathname only — query/hash are ignored so /search and
+    // /search?q=x are treated as the same "context".
+    function sortCurrentFirst<T extends { pageUrl?: string | null }>(rows: T[]): T[] {
+      const here = location.pathname;
+      return [...rows].sort((a, b) => {
+        const aHere = sameAsCurrentPath(a.pageUrl);
+        const bHere = sameAsCurrentPath(b.pageUrl);
+        if (aHere && !bHere) return -1;
+        if (!aHere && bHere) return 1;
+        return 0;
+      });
+      function sameAsCurrentPath(url: string | null | undefined): boolean {
+        if (!url) return false;
+        try {
+          return new URL(url).pathname === here;
+        } catch {
+          return false;
+        }
+      }
     }
 
     // Status → (open / resolved / all). Counts "in_progress" as open (it's
@@ -485,9 +575,16 @@ export default defineContentScript({
 
     // Format an API pin into the launcher's PinListRow shape. Mirrors the
     // overlay's row builder (severity/status dot maps) but without the
-    // health/stale signals that need a mounted DOM resolver.
+    // health/stale signals that need a mounted DOM resolver. `pageUrl` rides
+    // along so the FAB list can show the path + navigate on click.
     function formatProbedPinRow(
-      pin: { id: string; comment?: string | null; status?: string | null; severity?: string | null },
+      pin: {
+        id: string;
+        comment?: string | null;
+        status?: string | null;
+        severity?: string | null;
+        pageUrl?: string | null;
+      },
       index: number,
     ) {
       const STATUS_DOT: Record<string, string> = {
@@ -516,6 +613,7 @@ export default defineContentScript({
           : (SEV_DOT[sev] ?? "bg-muted"),
         stale: false,
         health: "ok" as const,
+        pageUrl: pin.pageUrl ?? "",
       };
     }
 

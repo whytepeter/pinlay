@@ -166,7 +166,7 @@
                 :key="row.id"
                 type="button"
                 class="flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-secondary"
-                @click="onJumpToPin(row.id)"
+                @click="onJumpToPin(row)"
               >
                 <span
                   class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
@@ -175,9 +175,12 @@
                   {{ row.index }}
                 </span>
                 <span class="min-w-0 flex-1">
+                  <!-- Single-line FAB title — strip markdown markers for a
+                       clean truncation. Bold/italic visuals belong in the
+                       detail popover, not the one-liner. -->
                   <span
                     class="block truncate text-[12px] font-medium text-foreground"
-                    >{{ row.title || "Untitled pin" }}</span
+                    >{{ stripMarkdown(row.title) || "Untitled pin" }}</span
                   >
                   <span
                     class="mt-0.5 flex items-center gap-1 text-[10px] text-muted-foreground"
@@ -188,6 +191,15 @@
                       v-else-if="row.health === 'fallback'"
                       class="text-sev-medium"
                     >· moved?</span>
+                    <!-- Cross-URL pin marker (Roadmap 2.1 host grouping). -->
+                    <span
+                      v-if="row.pageUrl && !isSameRowUrl(row.pageUrl)"
+                      class="inline-flex items-center gap-0.5 text-foreground/70"
+                      :title="row.pageUrl"
+                    >
+                      ·
+                      <span class="font-mono">{{ displayRowPath(row.pageUrl) }}</span>
+                    </span>
                   </span>
                 </span>
               </button>
@@ -288,7 +300,10 @@ import LauncherItem from "./LauncherItem.vue";
 // ConnectPrompt import removed while the auth gate is disabled. Restore
 // `import ConnectPrompt from "./ConnectPrompt.vue";` when apps/api lands.
 import { getAuth, onAuthChange, type StoredAuth } from "../../lib/auth";
-import { useAnnotationState } from "../../lib/annotation-state";
+import {
+  useAnnotationState,
+  type PinListRow,
+} from "../../lib/annotation-state";
 
 const menuOpen = ref(false);
 const auth = ref<StoredAuth | null>(null);
@@ -512,16 +527,57 @@ function onDoneAnnotation() {
   closeMenu();
   annotationState.requestExit();
 }
-function onJumpToPin(id: string) {
-  // Keep the list open while jumping so the user can browse + jump quickly.
-  // If the on-page overlay is mounted, fire requestJump directly. Otherwise
-  // (browsing from idle), mount-then-jump via a content-script handler so
-  // the overlay's watcher exists by the time the jump fires.
+// Strip markdown markers (**bold**, _italic_, [text](url)) for the FAB's
+// single-line title display. Inline formatting tags would survive `truncate`
+// but compound with the row's already-bold weight and clutter a one-liner.
+// The detail popover renders the real markdown.
+function stripMarkdown(s: string): string {
+  if (!s) return "";
+  return s
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/(^|[\s(])_([^_\n]+)_/g, "$1$2")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1");
+}
+
+// Roadmap 2.1 host grouping — path display + same-page check. Path-only
+// match so /search and /search?q=x both treat as "same page" (query/hash
+// stripped).
+function displayRowPath(url: string): string {
+  if (!url) return "";
+  try {
+    return new URL(url).pathname || "/";
+  } catch {
+    return url;
+  }
+}
+function isSameRowUrl(url: string): boolean {
+  if (!url) return false;
+  try {
+    const a = new URL(url);
+    return a.host === location.host && a.pathname === location.pathname;
+  } catch {
+    return false;
+  }
+}
+
+function onJumpToPin(row: PinListRow) {
+  // Cross-URL pin → navigate the tab to the pin's pageUrl with
+  // `#pinlay-pin=<id>`. Content.ts reads that hash on page-load, mounts the
+  // overlay, and jumps. Same-URL pin keeps the existing path.
+  if (row.pageUrl && !isSameRowUrl(row.pageUrl)) {
+    const sep = row.pageUrl.includes("#") ? "&" : "#";
+    location.href = `${row.pageUrl}${sep}pinlay-pin=${row.id}`;
+    return;
+  }
+  // Same URL — keep the list open while jumping so the user can browse +
+  // jump quickly. If the overlay is mounted, fire requestJump directly.
+  // Otherwise (browsing from idle) mount-then-jump via the content-script
+  // handler so the overlay's watcher exists by the time the jump fires.
   if (viewing.value) {
-    annotationState.requestJump(id);
+    annotationState.requestJump(row.id);
   } else {
     window.dispatchEvent(
-      new CustomEvent("pinlay:view-pin-then-jump", { detail: { id } }),
+      new CustomEvent("pinlay:view-pin-then-jump", { detail: { id: row.id } }),
     );
   }
 }
