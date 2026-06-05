@@ -49,6 +49,64 @@
       </button>
     </div>
 
+    <!-- Pin dedup prompt (Roadmap 4.3) — appears when the user clicks an
+         element that already has a pin. Offers to open the existing one;
+         "Drop anyway" forces a new pin at the same spot. -->
+    <div
+      v-if="dedupPrompt"
+      class="pointer-events-auto absolute left-1/2 top-3 z-[2] flex w-[340px] -translate-x-1/2 items-start gap-3 rounded-xl border border-primary/30 bg-card px-3.5 py-3 shadow-[0_8px_24px_rgba(0,0,0,0.16)]"
+    >
+      <span
+        class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-4 w-4"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 8 v4 M12 16 h.01" />
+        </svg>
+      </span>
+      <div class="flex min-w-0 flex-1 flex-col gap-2">
+        <div class="flex flex-col gap-0.5">
+          <p class="text-[13px] font-semibold leading-tight text-foreground">
+            There's already a pin here
+          </p>
+          <p class="text-[11.5px] leading-snug text-muted-foreground">
+            Comment on the existing one instead of filing a duplicate.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button
+            type="button"
+            class="inline-flex items-center gap-1 rounded-md bg-primary px-2.5 py-1 text-[11.5px] font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
+            @click="dedupOpenExisting"
+          >
+            Open it
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 text-[11.5px] font-medium text-foreground transition-colors hover:bg-muted/50"
+            @click="dedupDropAnyway"
+          >
+            Drop anyway
+          </button>
+          <button
+            type="button"
+            class="ml-auto rounded-md px-2 py-1 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            @click="dedupCancel"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- First-pin coach card (Roadmap 7.1) — fires the first time a fresh
          user enters PLACE mode. Stays visible while they compose (so they
          have time to read) and auto-dismisses when the first pin lands. -->
@@ -180,6 +238,8 @@
       :author="viewingPin.author"
       :created-at="viewingPin.createdAt"
       :updating="statusUpdatingId === viewingPin.id"
+      :deleting="deletingPinId === viewingPin.id"
+      :can-delete="canDeletePin(viewingPin)"
       :stale="detailPos.stale"
       :suggestion="
         reanchorSuggestion ? { confidence: reanchorSuggestion.confidence } : null
@@ -188,6 +248,7 @@
       @reanchor="startReanchor(viewingPin.id)"
       @accept-suggestion="acceptSuggestion"
       @change-status="onChangeStatus(viewingPin.id, $event)"
+      @delete="onDeletePin(viewingPin.id)"
     />
 
     <!-- Finish-review dialog — names the grouped issue on Done. -->
@@ -390,6 +451,8 @@ interface ExistingPin {
   state: "submitted";
   comment: string;
   issueType: string | null;
+  /** Reporter — for the author-only Delete affordance. */
+  authorId?: string;
   attachments?: PinAttachment[];
   author?: { name: string; avatarHue?: number };
   createdAt?: string;
@@ -810,6 +873,8 @@ function rowToExistingPin(row: AnnotationPinRow, index: number): ExistingPin | n
     state: "submitted",
     comment: row.comment,
     issueType: row.issueType ?? null,
+    authorId: row.authorId,
+    createdAt: row.createdAt,
   };
 }
 
@@ -894,6 +959,21 @@ async function onPlaceClick(e: MouseEvent) {
     return;
   }
 
+  // Roadmap 4.3 — pin dedup. If an existing pin lives on this exact element,
+  // offer "Open it" instead of letting the user file a duplicate. They can
+  // still force a new pin via "Drop anyway". Skips when the existing one is
+  // resolved (the user is clicking a LIVE element — same element, same pin)
+  // so dead/stale pins don't block a brand-new pin on a re-used spot.
+  const duplicate = findExistingPinOnElement(el);
+  if (duplicate) {
+    dedupPrompt.value = { existingId: duplicate.id, anchor, event: cloneClickEvent(e) };
+    return;
+  }
+
+  dropNewPin(anchor, e);
+}
+
+function dropNewPin(anchor: PinAnchor, e: MouseEvent) {
   const id = `pin-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
   const newIndex = visiblePins.value.length + 1;
   const pin: DraftPin = {
@@ -905,11 +985,8 @@ async function onPlaceClick(e: MouseEvent) {
     anchor,
     draft: {
       comment: "",
-      // Roadmap 4.2 — defaults persist across pins within a sitting so a
-      // user filing five Copy fixes doesn't have to pick the template each
-      // time. First pin uses the system default (medium / visual).
-      severity: lastTemplateDefaults.value.severity,
-      issueType: lastTemplateDefaults.value.issueType,
+      severity: "medium",
+      issueType: "visual" as PinType,
       images: [],
       assigneeId: null,
       labels: [],
@@ -922,13 +999,47 @@ async function onPlaceClick(e: MouseEvent) {
   hover.value = null;
 }
 
-// Last template (severity + type) used in this sitting. Persists for the
-// lifetime of the overlay so a streak of pins of the same kind don't each
-// need a template click. Reset only on remount.
-const lastTemplateDefaults = ref<{ severity: Severity; issueType: PinType }>({
-  severity: "medium",
-  issueType: "visual",
-});
+// ── Pin dedup (Roadmap 4.3) ──────────────────────────────────────────────────
+// When the user clicks an element that already has a pin, we prompt them to
+// open the existing one rather than file a duplicate. The pending click is
+// stashed so "Drop anyway" can proceed without re-clicking.
+interface DedupPrompt {
+  existingId: string;
+  anchor: PinAnchor;
+  event: { clientX: number; clientY: number };
+}
+const dedupPrompt = ref<DedupPrompt | null>(null);
+
+function findExistingPinOnElement(target: Element): ExistingPin | null {
+  for (const pin of existingPins.value) {
+    const resolved = resolveAnchor(pin.anchor);
+    if (resolved && resolved.el === target) return pin;
+  }
+  return null;
+}
+
+// Stash only the coords — the MouseEvent itself can't outlive the handler.
+function cloneClickEvent(e: MouseEvent): { clientX: number; clientY: number } {
+  return { clientX: e.clientX, clientY: e.clientY };
+}
+
+function dedupOpenExisting() {
+  const p = dedupPrompt.value;
+  if (!p) return;
+  dedupPrompt.value = null;
+  exitPlaceMode();
+  void onJumpToPin(p.existingId);
+}
+function dedupDropAnyway() {
+  const p = dedupPrompt.value;
+  if (!p) return;
+  dedupPrompt.value = null;
+  // Synthesize a MouseEvent-shaped object — dropNewPin only reads clientX/Y.
+  dropNewPin(p.anchor, p.event as unknown as MouseEvent);
+}
+function dedupCancel() {
+  dedupPrompt.value = null;
+}
 
 // ── Re-anchor a stale pin ────────────────────────────────────────────────────
 const reanchoringPinId = ref<string | null>(null);
@@ -1016,6 +1127,35 @@ async function onChangeStatus(pinId: string, status: Status) {
   }
 }
 
+// ── Delete pin ───────────────────────────────────────────────────────────────
+const deletingPinId = ref<string | null>(null);
+
+// Author-only on the extension: the API also lets workspace admins delete,
+// but checking the user's role here would require an extra /auth/me round-
+// trip — admins can still delete via the dashboard.
+function canDeletePin(pin: ExistingPin): boolean {
+  const me = props.auth?.userId;
+  return !!me && !!pin.authorId && pin.authorId === me;
+}
+
+async function onDeletePin(pinId: string) {
+  const pin = existingPins.value.find((p) => p.id === pinId);
+  if (!pin) return;
+  deletingPinId.value = pinId;
+  try {
+    await api.deletePin(pinId);
+    existingPins.value = existingPins.value.filter((p) => p.id !== pinId);
+    reindexPins();
+    // Close the popover and refresh FAB/popup counts.
+    if (viewingPinId.value === pinId) viewingPinId.value = null;
+    state.setViewablePinCount(existingPins.value.length);
+  } catch (e) {
+    console.warn("[pinlay] failed to delete pin:", (e as Error).message);
+  } finally {
+    deletingPinId.value = null;
+  }
+}
+
 // ── Composer events ─────────────────────────────────────────────────────────
 async function onComposerSubmit(draft: PinDraft) {
   const pin = composingPin.value;
@@ -1023,13 +1163,6 @@ async function onComposerSubmit(draft: PinDraft) {
   pin.draft = draft;
   pin.submitting = true;
   pin.error = undefined;
-
-  // Roadmap 4.2 — remember the template (severity + type) for the next pin
-  // in this sitting. Set BEFORE the await so it sticks even if submit fails.
-  lastTemplateDefaults.value = {
-    severity: draft.severity,
-    issueType: draft.issueType,
-  };
 
   // Wait for the startup probe so a fast first pin doesn't race into local
   // mode before we know the API is up.

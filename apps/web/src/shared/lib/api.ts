@@ -451,6 +451,9 @@ export const apiClient = {
         method: "PATCH",
         body: JSON.stringify(patch),
       }),
+    /** Delete an issue (and its pins by cascade). Author or admin only. */
+    remove: (id: string) =>
+      request<void>(`/issues/${id}`, { method: "DELETE" }),
   },
 
   // ── Boards (workspace-scoped issue groupings) ────────────────────────────

@@ -1,5 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { Prisma, Role } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuthenticatedUser } from "../common/current-user.decorator";
 import { BoardsService } from "../boards/boards.service";
@@ -241,6 +245,26 @@ export class IssuesService {
       include: ISSUE_SUMMARY_INCLUDE,
     });
     return toIssueSummary(updated);
+  }
+
+  /**
+   * Delete an issue (and the pins under it via Prisma cascade). Same policy
+   * as deletePin — issue author OR workspace owner/admin only.
+   */
+  async remove(user: AuthenticatedUser, id: string): Promise<void> {
+    const existing = await this.prisma.issue.findFirst({
+      where: { id, workspaceId: user.workspaceId },
+      select: { id: true, authorId: true },
+    });
+    if (!existing) throw new NotFoundException("Issue not found");
+    const isAuthor = existing.authorId === user.id;
+    const isAdmin = user.role === Role.owner || user.role === Role.admin;
+    if (!isAuthor && !isAdmin) {
+      throw new ForbiddenException(
+        "Only the issue's author or a workspace admin can delete this issue.",
+      );
+    }
+    await this.prisma.issue.delete({ where: { id } });
   }
 }
 

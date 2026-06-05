@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-05T20:30:58.754Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-05T22:05:28.582Z
 > Files: 241 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -63,7 +63,7 @@
 ## apps/api/src/annotation/
 
 - `annotation.module.ts` — Exports AnnotationModule (~126 tok)
-- `annotation.service.ts` — URL the pin lives on (normalized at write time). Returned so host-grouped (~4646 tok)
+- `annotation.service.ts` — Reporter — used by the extension/dashboard to decide whether to show (~4854 tok)
 - `pins.controller.ts` — Exports PinsController (~724 tok)
 - `sessions.controller.ts` — Write half of the session lifecycle: finishing/submitting a capture sitting (~285 tok)
 
@@ -138,9 +138,9 @@
 ## apps/api/src/issues/
 
 - `issue.serializers.ts` — Issue read DTOs — the dashboard's primary unit. An **Issue** is the titled (~1905 tok)
-- `issues.controller.ts` — Issue read + narrow-write surface — the list/detail of submitted reviews. (~733 tok)
+- `issues.controller.ts` — Issue read + narrow-write surface — the list/detail of submitted reviews. (~836 tok)
 - `issues.module.ts` — Exports IssuesModule (~115 tok)
-- `issues.service.ts` — Issue read model — the dashboard's primary unit. An Issue is the titled (~2404 tok)
+- `issues.service.ts` — Issue read model — the dashboard's primary unit. An Issue is the titled (~2642 tok)
 
 ## apps/api/src/issues/dto/
 
@@ -191,10 +191,10 @@
 
 ## apps/extension/src/components/annotation/
 
-- `AnnotationOverlay.vue` — Vue: setup (~11724 tok)
+- `AnnotationOverlay.vue` — Vue component (~13027 tok)
 - `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1143 tok)
-- `AnnotationPinComposer.vue` — Vue component (~9993 tok)
-- `AnnotationPinDetail.vue` — Vue component (~6327 tok)
+- `AnnotationPinComposer.vue` — Vue component (~9386 tok)
+- `AnnotationPinDetail.vue` — Vue component (~7175 tok)
 
 ## apps/extension/src/components/capture/
 
@@ -229,7 +229,7 @@
 
 - `anchor.ts` — Element anchoring for live annotation. (~5704 tok)
 - `annotation-state.ts` — annotation-state (~1113 tok)
-- `api.ts` — API client (~2202 tok)
+- `api.ts` — API client (~2230 tok)
 - `auth.ts` — Subscribe to auth changes — fires when the token is added, updated, or cleared. (~562 tok)
 - `env.ts` — Exports WEB_APP_URL, API_URL (~131 tok)
 - `extension.ts` — Extension runtime helpers. (~253 tok)
@@ -303,14 +303,14 @@
 
 ## apps/web/src/features/issue/
 
-- `IssuePage.vue` — Single mutation handles every issue patch (board / status / title). The (~4279 tok)
+- `IssuePage.vue` — Single mutation handles every issue patch (board / status / title). The (~4935 tok)
 
 ## apps/web/src/features/issue/components/
 
 - `ActivityThread.vue` — Real activity thread for a single pin. (~2956 tok)
 - `AnchorBlock.vue` — Vue: setup (~815 tok)
 - `IssuePageSkeleton.vue` — Vue: setup (~1079 tok)
-- `PinDetail.vue` — Commit the typed label. Splits on comma so the user can paste a list. Dedup (~2720 tok)
+- `PinDetail.vue` — Whether the current user can delete this pin (author or admin). (~3019 tok)
 - `PinList.vue` — Vue: setup (~734 tok)
 - `PinListItem.vue` — Vue: setup (~458 tok)
 - `ReplyBox.vue` — Vue: setup (~337 tok)
@@ -397,7 +397,7 @@
 
 ## apps/web/src/shared/lib/
 
-- `api.ts` — Web API client. (~3926 tok)
+- `api.ts` — Web API client. (~3973 tok)
 - `data.ts` — Mock-first seed data (SESSIONS/PEOPLE/getPins). STILL the source for PinboardsPage/useSessions/useIssue — NOT yet swapped to apiClient. (~2413 tok)
 - `extension-bridge.ts` — Web → extension token handoff. (~508 tok)
 - `format.ts` — Compact relative time, e.g. "5m ago", "3h ago", "2d ago". (~198 tok)

@@ -5457,6 +5457,166 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-05T20:30:02.680Z"
+    },
+    {
+      "id": "bug-339",
+      "timestamp": "2026-06-05T20:35:35.071Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 12→5 lines (6 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-05T20:35:35.071Z"
+    },
+    {
+      "id": "bug-340",
+      "timestamp": "2026-06-05T20:35:40.726Z",
+      "error_message": "CSS fix: severity, issueType",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "severity: lastTemplateDefaults.value.severity, → \"medium\",; issueType: lastTemplateDefaults.value.issueType, → \"visual\" as PinType,",
+      "fix": "Changed severity: lastTemplateDefaults.value.severity, → \"medium\",; issueType: lastTemplateDefaults.value.issueType, → \"visual\" as PinType,",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-05T20:35:40.726Z"
+    },
+    {
+      "id": "bug-341",
+      "timestamp": "2026-06-05T20:55:56.506Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "No early return/throw for edge case: resolved && resolved.el === target",
+      "fix": "Added guard clause: if (resolved && resolved.el === target)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-05T20:55:56.506Z"
+    },
+    {
+      "id": "bug-342",
+      "timestamp": "2026-06-05T21:06:55.444Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-05T21:06:55.444Z"
+    },
+    {
+      "id": "bug-343",
+      "timestamp": "2026-06-05T21:11:36.047Z",
+      "error_message": "Missing error handling in function",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-05T21:11:36.047Z"
+    },
+    {
+      "id": "bug-344",
+      "timestamp": "2026-06-05T21:18:05.587Z",
+      "error_message": "Missing await",
+      "file": "apps/api/src/issues/issues.controller.ts",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-05T21:18:05.587Z"
+    },
+    {
+      "id": "bug-345",
+      "timestamp": "2026-06-05T21:20:14.911Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/api/src/issues/issues.service.ts",
+      "root_cause": "No early return/throw for edge case: !existing",
+      "fix": "Added guard clause: if (!existing)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-05T21:20:14.911Z"
+    },
+    {
+      "id": "bug-346",
+      "timestamp": "2026-06-05T21:31:25.806Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-05T21:31:25.806Z"
+    },
+    {
+      "id": "bug-347",
+      "timestamp": "2026-06-05T21:51:25.759Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/features/issue/IssuePage.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-05T21:51:25.759Z"
+    },
+    {
+      "id": "bug-348",
+      "timestamp": "2026-06-05T21:52:58.032Z",
+      "error_message": "CSS fix: md",
+      "file": "apps/web/src/features/issue/IssuePage.vue",
+      "root_cause": "md: hidden\" title=\"More\"> → hidden\" />",
+      "fix": "Changed md: hidden\" title=\"More\"> → hidden\" />",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-05T21:52:58.032Z"
     }
   ]
 }

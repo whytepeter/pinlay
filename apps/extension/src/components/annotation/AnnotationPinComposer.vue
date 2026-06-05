@@ -80,28 +80,6 @@
 
       <!-- ── BODY ──────────────────────────────────────────────────── -->
       <div class="space-y-3 p-3">
-        <!-- Templates (Roadmap 4.2) — one-click presets for severity + type
-             so common cases drop in immediately. Active template gets the
-             primary-soft pill treatment. -->
-        <div class="flex flex-wrap gap-1">
-          <button
-            v-for="t in TEMPLATES"
-            :key="t.id"
-            type="button"
-            :title="`${t.label} (${t.severity} severity)`"
-            :class="[
-              'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10.5px] font-medium transition-colors',
-              isActiveTemplate(t)
-                ? 'border-primary/40 bg-primary-soft text-primary'
-                : 'border-border bg-card text-foreground/75 hover:bg-muted/60',
-            ]"
-            @click="applyTemplate(t)"
-          >
-            <Icon :name="t.icon" :size="10" :stroke-width="2" />
-            {{ t.label }}
-          </button>
-        </div>
-
         <!-- Description (with mini markdown toolbar) -->
         <div class="relative rounded-md border border-border bg-background focus-within:ring-1 focus-within:ring-ring">
           <div class="flex items-center gap-0.5 border-b border-border px-1.5 py-1">
@@ -570,8 +548,10 @@ const isEditorEmpty = computed(() => {
     .trim();
   return text === "";
 });
+// Comment is required — images alone don't justify a pin. The Submit
+// button stays disabled until the editor has non-whitespace content.
 const canSubmit = computed(
-  () => (!isEditorEmpty.value || images.value.length > 0) && !props.submitting,
+  () => !isEditorEmpty.value && !props.submitting,
 );
 
 const paddedIndex = computed(() => String(props.index).padStart(2, "0"));
@@ -615,37 +595,6 @@ const SEVERITIES: {
     activeBg: "bg-sev-low/10",
   },
 ];
-
-// ── Templates (Roadmap 4.2) ──────────────────────────────────────────────────
-// Pre-fill severity + type so common cases drop in one click. The active
-// template is highlighted when the current severity+type match — a visual
-// hint at what kind of pin this is shaping up to be. Clicking focuses the
-// description editor so the user can start typing immediately.
-interface PinTemplate {
-  id: string;
-  label: string;
-  icon: string;
-  severity: Severity;
-  type: PinType;
-}
-const TEMPLATES: PinTemplate[] = [
-  { id: "visual", label: "Visual", icon: "eye", severity: "medium", type: "visual" },
-  { id: "copy", label: "Copy", icon: "type", severity: "low", type: "copy" },
-  { id: "broken", label: "Broken", icon: "alert-triangle", severity: "high", type: "broken" },
-  { id: "crash", label: "Crash", icon: "zap", severity: "critical", type: "broken" },
-  { id: "a11y", label: "A11y", icon: "accessibility", severity: "medium", type: "a11y" },
-  { id: "idea", label: "Idea", icon: "lightbulb", severity: "low", type: "other" },
-];
-function isActiveTemplate(t: PinTemplate): boolean {
-  return severity.value === t.severity && issueType.value === t.type;
-}
-function applyTemplate(t: PinTemplate) {
-  severity.value = t.severity;
-  issueType.value = t.type;
-  // Focus the description editor so typing can resume immediately. nextTick
-  // so any reactive Tailwind class swaps land before the focus moves.
-  void nextTick(() => commentEl.value?.focus());
-}
 
 // ── Type (short labels) ──────────────────────────────────────────────────────
 const ISSUE_TYPES: { value: PinType; label: string }[] = [

@@ -3,8 +3,8 @@
   "started": "2026-06-05T19:15:00.687Z",
   "files_read": {
     "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts": {
-      "count": 4,
-      "tokens": 4565,
+      "count": 6,
+      "tokens": 4646,
       "first_read": "2026-06-05T19:28:40.522Z"
     },
     "/Users/apple/Documents/code/pinlay/apps/extension/src/entrypoints/popup/App.vue": {
@@ -13,14 +13,59 @@
       "first_read": "2026-06-05T19:50:38.123Z"
     },
     "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue": {
-      "count": 3,
-      "tokens": 11656,
+      "count": 9,
+      "tokens": 12906,
       "first_read": "2026-06-05T20:09:39.816Z"
     },
     "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinComposer.vue": {
       "count": 2,
       "tokens": 9357,
       "first_read": "2026-06-05T20:25:51.138Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinDetail.vue": {
+      "count": 4,
+      "tokens": 7030,
+      "first_read": "2026-06-05T21:06:30.263Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/api/src/issues/issues.controller.ts": {
+      "count": 2,
+      "tokens": 733,
+      "first_read": "2026-06-05T21:15:57.130Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/api/src/issues/issues.service.ts": {
+      "count": 1,
+      "tokens": 2404,
+      "first_read": "2026-06-05T21:18:38.800Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/api/src/issues/issue.serializers.ts": {
+      "count": 1,
+      "tokens": 1905,
+      "first_read": "2026-06-05T21:20:47.928Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/extension/src/lib/auth.ts": {
+      "count": 1,
+      "tokens": 562,
+      "first_read": "2026-06-05T21:27:09.472Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/web/src/shared/lib/api.ts": {
+      "count": 2,
+      "tokens": 3973,
+      "first_read": "2026-06-05T21:35:24.003Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/IssuePage.vue": {
+      "count": 5,
+      "tokens": 4738,
+      "first_read": "2026-06-05T21:46:40.586Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/web/src/shared/composables/useAuth.ts": {
+      "count": 1,
+      "tokens": 1050,
+      "first_read": "2026-06-05T21:50:51.182Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/components/PinDetail.vue": {
+      "count": 3,
+      "tokens": 2720,
+      "first_read": "2026-06-05T21:58:29.606Z"
     }
   },
   "files_written": [
@@ -143,19 +188,253 @@
       "action": "edit",
       "tokens": 119,
       "at": "2026-06-05T20:30:58.779Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "action": "edit",
+      "tokens": 26,
+      "at": "2026-06-05T20:35:26.037Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "action": "edit",
+      "tokens": 23,
+      "at": "2026-06-05T20:35:31.123Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 46,
+      "at": "2026-06-05T20:35:35.069Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 143,
+      "at": "2026-06-05T20:35:40.723Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 23,
+      "at": "2026-06-05T20:35:44.264Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "action": "edit",
+      "tokens": 64,
+      "at": "2026-06-05T20:46:44.565Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 431,
+      "at": "2026-06-05T20:53:33.164Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 432,
+      "at": "2026-06-05T20:55:56.504Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 692,
+      "at": "2026-06-05T20:56:29.942Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "action": "edit",
+      "tokens": 404,
+      "at": "2026-06-05T21:06:55.443Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "action": "edit",
+      "tokens": 512,
+      "at": "2026-06-05T21:08:11.529Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "action": "edit",
+      "tokens": 58,
+      "at": "2026-06-05T21:08:39.869Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "action": "edit",
+      "tokens": 178,
+      "at": "2026-06-05T21:08:43.339Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 138,
+      "at": "2026-06-05T21:10:16.991Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 235,
+      "at": "2026-06-05T21:11:36.045Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+      "action": "edit",
+      "tokens": 249,
+      "at": "2026-06-05T21:14:44.681Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+      "action": "edit",
+      "tokens": 201,
+      "at": "2026-06-05T21:14:50.549Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+      "action": "edit",
+      "tokens": 145,
+      "at": "2026-06-05T21:14:54.781Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/api/src/issues/issues.controller.ts",
+      "action": "edit",
+      "tokens": 40,
+      "at": "2026-06-05T21:17:45.786Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/api/src/issues/issues.controller.ts",
+      "action": "edit",
+      "tokens": 147,
+      "at": "2026-06-05T21:18:05.583Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/api/src/issues/issues.service.ts",
+      "action": "edit",
+      "tokens": 40,
+      "at": "2026-06-05T21:20:09.928Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/api/src/issues/issues.service.ts",
+      "action": "edit",
+      "tokens": 263,
+      "at": "2026-06-05T21:20:14.909Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/lib/api.ts",
+      "action": "edit",
+      "tokens": 162,
+      "at": "2026-06-05T21:26:40.391Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 129,
+      "at": "2026-06-05T21:29:46.175Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 107,
+      "at": "2026-06-05T21:30:25.482Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 51,
+      "at": "2026-06-05T21:31:22.251Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+      "action": "edit",
+      "tokens": 136,
+      "at": "2026-06-05T21:31:25.803Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "action": "edit",
+      "tokens": 66,
+      "at": "2026-06-05T21:31:49.699Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "action": "edit",
+      "tokens": 52,
+      "at": "2026-06-05T21:31:51.950Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/lib/api.ts",
+      "action": "edit",
+      "tokens": 98,
+      "at": "2026-06-05T21:35:46.531Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/IssuePage.vue",
+      "action": "edit",
+      "tokens": 43,
+      "at": "2026-06-05T21:51:19.074Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/IssuePage.vue",
+      "action": "edit",
+      "tokens": 364,
+      "at": "2026-06-05T21:51:25.757Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/IssuePage.vue",
+      "action": "edit",
+      "tokens": 312,
+      "at": "2026-06-05T21:52:58.030Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/components/PinDetail.vue",
+      "action": "edit",
+      "tokens": 61,
+      "at": "2026-06-05T22:01:53.874Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/components/PinDetail.vue",
+      "action": "edit",
+      "tokens": 103,
+      "at": "2026-06-05T22:01:58.414Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/components/PinDetail.vue",
+      "action": "edit",
+      "tokens": 364,
+      "at": "2026-06-05T22:02:04.506Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/IssuePage.vue",
+      "action": "edit",
+      "tokens": 112,
+      "at": "2026-06-05T22:05:24.151Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/IssuePage.vue",
+      "action": "edit",
+      "tokens": 193,
+      "at": "2026-06-05T22:05:28.596Z"
     }
   ],
   "edit_counts": {
-    "apps/extension/src/components/annotation/AnnotationPinDetail.vue": 1,
+    "apps/extension/src/components/annotation/AnnotationPinDetail.vue": 7,
     "apps/extension/src/entrypoints/popup/App.vue": 7,
-    "apps/api/src/annotation/annotation.service.ts": 2,
+    "apps/api/src/annotation/annotation.service.ts": 5,
     "apps/api/scripts/backfill-issues.ts": 1,
-    "apps/extension/src/components/annotation/AnnotationOverlay.vue": 7,
-    "apps/extension/src/components/annotation/AnnotationPinComposer.vue": 2
+    "apps/extension/src/components/annotation/AnnotationOverlay.vue": 19,
+    "apps/extension/src/components/annotation/AnnotationPinComposer.vue": 5,
+    "apps/api/src/issues/issues.controller.ts": 2,
+    "apps/api/src/issues/issues.service.ts": 2,
+    "apps/extension/src/lib/api.ts": 1,
+    "apps/web/src/shared/lib/api.ts": 1,
+    "apps/web/src/features/issue/IssuePage.vue": 5,
+    "apps/web/src/features/issue/components/PinDetail.vue": 3
   },
-  "anatomy_hits": 4,
+  "anatomy_hits": 13,
   "anatomy_misses": 0,
-  "repeated_reads_warned": 9,
+  "repeated_reads_warned": 28,
   "cerebrum_warnings": 0,
-  "stop_count": 9
+  "stop_count": 16
 }

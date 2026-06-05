@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { useAuth } from "@/shared/composables/useAuth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { toast } from "@/shared/lib/toast";
 import {
@@ -126,6 +127,56 @@ const updateIssueMutation = useMutation({
 
 function setBoard(boardId: string | null) {
   updateIssueMutation.mutate({ boardId });
+}
+
+// ── Delete issue ────────────────────────────────────────────────────────────
+// Author-or-admin only — gating UI here AND the API enforces it. Cascades
+// the issue's pins server-side. After delete, route back to the pinboards
+// list and invalidate the affected caches.
+const { user } = useAuth();
+const router = useRouter();
+const canDeleteIssue = computed(() => {
+  if (!user.value || !session.value) return false;
+  return session.value.reporter?.id === user.value.id;
+});
+const deleteIssueMutation = useMutation({
+  mutationFn: () => apiClient.issues.remove(issueId.value),
+  onSuccess: () => {
+    toast.success("Issue deleted");
+    queryClient.removeQueries({ queryKey: ["issue", issueId.value] });
+    queryClient.invalidateQueries({ queryKey: ["issues", "list"] });
+    queryClient.invalidateQueries({ queryKey: ["issues", "counts"] });
+    void router.push("/");
+  },
+  onError: (err) => toast.error(err),
+});
+// Per-pin delete — also author-only on the dashboard (API checks too).
+function canDeletePin(pin: { author?: { id: string } | null }): boolean {
+  return !!user.value && !!pin.author && pin.author.id === user.value.id;
+}
+const deletePinMutation = useMutation({
+  mutationFn: (pinId: string) => apiClient.pins.remove(pinId),
+  onSuccess: () => {
+    toast.success("Pin deleted");
+    queryClient.invalidateQueries({ queryKey: ["issue", issueId.value] });
+    queryClient.invalidateQueries({ queryKey: ["issues", "list"] });
+  },
+  onError: (err) => toast.error(err),
+});
+function onDeletePin(pinId: string) {
+  deletePinMutation.mutate(pinId);
+}
+
+function onDeleteIssue() {
+  if (!session.value) return;
+  if (
+    !window.confirm(
+      `Delete "${session.value.title}"? This permanently removes the issue and its pins. This can't be undone.`,
+    )
+  ) {
+    return;
+  }
+  deleteIssueMutation.mutate();
 }
 function setIssueStatus(s: Status) {
   if (session.value?.status === s) return;
@@ -395,17 +446,27 @@ function openOnPage() {
 
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
-            <Button variant="ghost" size="icon-sm" class="md:hidden" title="More">
+            <Button variant="ghost" size="icon-sm" title="More">
               <Icon name="ellipsis" :size="16" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem @click="copyLink"
+            <DropdownMenuItem class="md:hidden" @click="copyLink"
               ><Icon name="link" :size="14" /> Copy link</DropdownMenuItem
             >
-            <DropdownMenuItem
+            <DropdownMenuItem class="md:hidden"
               ><Icon name="external-link" :size="14" /> View in Linear</DropdownMenuItem
             >
+            <DropdownMenuSeparator v-if="canDeleteIssue" class="md:hidden" />
+            <DropdownMenuItem
+              v-if="canDeleteIssue"
+              class="text-destructive focus:bg-destructive/10 focus:text-destructive"
+              :disabled="deleteIssueMutation.isPending.value"
+              @click="onDeleteIssue"
+            >
+              <Icon name="trash-2" :size="14" />
+              Delete issue
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -466,11 +527,13 @@ function openOnPage() {
           :index="selectedIndex"
           :total="pins.length"
           :members="members"
+          :can-delete="canDeletePin(selected)"
           @next="next"
           @prev="prev"
           @set-status="setStatus"
           @set-assignee="setAssignee"
           @set-labels="setLabels"
+          @delete="onDeletePin(selected.id)"
         />
       </div>
     </div>

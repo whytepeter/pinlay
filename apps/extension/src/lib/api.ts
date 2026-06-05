@@ -54,6 +54,8 @@ export interface AnnotationPinRow {
   severity: Severity;
   issueType: PinType;
   status: Status;
+  /** Pin reporter — used to gate the Delete affordance (author/admin only). */
+  authorId: string;
   assigneeId: string | null;
   labels: string[];
   /** URL the pin lives on. Always present from the API. Used by host-grouped

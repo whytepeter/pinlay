@@ -30,6 +30,9 @@ export interface SerializedPin {
   severity: Pin["severity"];
   issueType: Pin["issueType"];
   status: Pin["status"];
+  /** Reporter — used by the extension/dashboard to decide whether to show
+   *  destructive affordances (Delete) on this row. */
+  authorId: string;
   assigneeId: string | null;
   labels: string[];
   /**
@@ -221,11 +224,24 @@ export class AnnotationService {
     return this.serialize(updated);
   }
 
+  /**
+   * Delete a pin. Mirrors the comment-delete policy — allowed for the pin's
+   * author OR a workspace owner/admin. Members can't delete other people's
+   * pins (you can still remove your OWN at any time).
+   */
   async deletePin(user: AuthenticatedUser, id: string): Promise<void> {
     const existing = await this.prisma.pin.findFirst({
       where: { id, session: { workspaceId: user.workspaceId } },
+      select: { id: true, authorId: true },
     });
     if (!existing) throw new NotFoundException("Pin not found");
+    const isAuthor = existing.authorId === user.id;
+    const isAdmin = user.role === Role.owner || user.role === Role.admin;
+    if (!isAuthor && !isAdmin) {
+      throw new ForbiddenException(
+        "Only the pin's author or a workspace admin can delete this pin.",
+      );
+    }
     await this.prisma.pin.delete({ where: { id } });
   }
 
@@ -459,6 +475,7 @@ export class AnnotationService {
       severity: pin.severity,
       issueType: pin.issueType,
       status: pin.status,
+      authorId: pin.authorId,
       assigneeId: pin.assigneeId,
       labels: pin.labels,
       pageUrl: pin.pageUrl,

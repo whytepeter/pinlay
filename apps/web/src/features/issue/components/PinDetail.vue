@@ -26,6 +26,8 @@ const props = defineProps<{
   index: number;
   total: number;
   members: WorkspaceMemberRow[];
+  /** Whether the current user can delete this pin (author or admin). */
+  canDelete?: boolean;
 }>();
 const assignee = computed(() => props.pin.assignee);
 
@@ -62,7 +64,17 @@ const emit = defineEmits<{
   setStatus: [Status];
   setAssignee: [MemberRef | null];
   setLabels: [string[]];
+  delete: [];
 }>();
+function onDeleteClick() {
+  if (
+    window.confirm(
+      `Delete pin #${props.pin.index}? This permanently removes the pin and its comments. This can't be undone.`,
+    )
+  ) {
+    emit("delete");
+  }
+}
 
 const labelDraft = ref("");
 const addingLabel = ref(false);
@@ -227,6 +239,24 @@ function removeLabel(label: string) {
         >
           <Icon name="check" :size="14" /> Resolve
         </Button>
+        <!-- More actions — author/admin only for the moment, since Delete
+             is the only entry. When non-destructive items land they'll
+             flip this to always-visible. -->
+        <DropdownMenu v-if="canDelete">
+          <DropdownMenuTrigger as-child>
+            <Button variant="ghost" size="icon-sm" title="More">
+              <Icon name="ellipsis" :size="16" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              class="text-destructive focus:bg-destructive/10 focus:text-destructive"
+              @click="onDeleteClick"
+            >
+              <Icon name="trash-2" :size="14" /> Delete pin
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <h2 class="text-[19px] font-semibold leading-tight tracking-tight">

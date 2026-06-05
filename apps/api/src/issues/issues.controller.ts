@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Query,
@@ -81,5 +84,18 @@ export class IssuesController {
     @Body() dto: UpdateIssueDto,
   ) {
     return this.issues.update(user, id, dto);
+  }
+
+  /**
+   * Delete an issue (and the pins underneath it). Author or workspace
+   * admin/owner only — same policy as deletePin.
+   */
+  @Delete(":id")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param("id") id: string,
+  ) {
+    await this.issues.remove(user, id);
   }
 }

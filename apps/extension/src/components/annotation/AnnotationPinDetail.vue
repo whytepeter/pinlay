@@ -89,6 +89,32 @@
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <!-- More menu — author/admin only. Currently houses Delete;
+               future home for Copy link, Open in dashboard, etc. -->
+          <DropdownMenu v-if="canDelete">
+            <DropdownMenuTrigger as-child>
+              <button
+                type="button"
+                aria-label="More actions"
+                class="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <Icon name="more-horizontal" :size="13" :stroke-width="2" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              class="w-44"
+              :to="rootEl ?? undefined"
+            >
+              <DropdownMenuItem
+                class="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                @click="onDeleteRequest"
+              >
+                <Icon name="trash-2" :size="12" :stroke-width="2" />
+                Delete pin
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <button
             type="button"
             class="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
@@ -102,8 +128,53 @@
 
       <Separator />
 
+      <!-- Delete-pin confirmation — swaps in for the body until the user
+           confirms or cancels. Destructive action, deliberately a beat away
+           from the click that opened it. -->
+      <div v-if="confirmingDelete" class="space-y-3 p-3">
+        <div
+          class="flex items-start gap-2.5 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5"
+        >
+          <Icon
+            name="trash-2"
+            :size="14"
+            :stroke-width="2"
+            class="mt-0.5 shrink-0 text-destructive"
+          />
+          <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+            <p class="text-[13px] font-semibold leading-tight text-foreground">
+              Delete this pin?
+            </p>
+            <p class="text-[11.5px] leading-snug text-muted-foreground">
+              This permanently removes the pin and its comments. This can't be
+              undone.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-1.5">
+          <Button
+            variant="ghost"
+            size="sm"
+            class="h-7 px-2.5 text-[12px]"
+            :disabled="deleting"
+            @click="confirmingDelete = false"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            class="h-7 px-2.5 text-[12px]"
+            :disabled="deleting"
+            @click="onDeleteConfirm"
+          >
+            {{ deleting ? "Deleting…" : "Delete pin" }}
+          </Button>
+        </div>
+      </div>
+
       <!-- ── BODY ──────────────────────────────────────────────────── -->
-      <div class="space-y-3 p-3">
+      <div v-else class="space-y-3 p-3">
         <!-- Stale notice (only when the anchor element can't be re-resolved). -->
         <div
           v-if="stale"
@@ -336,6 +407,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -365,6 +437,10 @@ const props = defineProps<{
   author?: { name: string; avatarHue?: number };
   createdAt?: string;
   updating?: boolean;
+  deleting?: boolean;
+  /** Whether the current user can delete this pin (author or admin). The
+   *  More menu — and its only item, Delete — is hidden when false. */
+  canDelete?: boolean;
   stale?: boolean;
   /** Fuzzy re-anchor suggestion when the pin is stale (Roadmap 1.3). */
   suggestion?: { confidence: number } | null;
@@ -375,7 +451,18 @@ const emit = defineEmits<{
   reanchor: [];
   "accept-suggestion": [];
   "change-status": [status: Status];
+  delete: [];
 }>();
+
+// Delete pin — uses an inline confirmation panel that replaces the body
+// while pending. Destructive actions deserve a deliberate two-step.
+const confirmingDelete = ref(false);
+function onDeleteRequest() {
+  confirmingDelete.value = true;
+}
+function onDeleteConfirm() {
+  emit("delete");
+}
 
 const suggestionPct = computed(() =>
   props.suggestion ? `${Math.round(props.suggestion.confidence * 100)}%` : "",
