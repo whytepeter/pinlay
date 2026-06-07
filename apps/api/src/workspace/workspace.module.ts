@@ -1,5 +1,6 @@
 import { Module, forwardRef } from "@nestjs/common";
 import { AuthModule } from "../auth/auth.module";
+import { MailModule } from "../mail/mail.module";
 import { WorkspaceController } from "./workspace.controller";
 import { MembersController } from "./members.controller";
 import { InvitesController } from "./invites.controller";
@@ -14,7 +15,7 @@ import { WorkspaceService } from "./workspace.service";
  * pending invites on signup.
  */
 @Module({
-  imports: [forwardRef(() => AuthModule)],
+  imports: [forwardRef(() => AuthModule), MailModule],
   controllers: [
     WorkspaceController,
     MembersController,

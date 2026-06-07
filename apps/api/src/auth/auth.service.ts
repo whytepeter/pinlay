@@ -9,6 +9,8 @@ import {
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { PrismaService } from "../prisma/prisma.service";
+import { MailService } from "../mail/mail.service";
+import { env } from "../config/env";
 import { SignupDto } from "./dto/signup.dto";
 import { LoginDto } from "./dto/login.dto";
 import { UpdateMeDto } from "./dto/update-me.dto";
@@ -59,6 +61,7 @@ export class AuthService {
     private readonly jwt: JwtService,
     @Inject(forwardRef(() => WorkspaceService))
     private readonly workspace: WorkspaceService,
+    private readonly mail: MailService,
   ) {}
 
   // ── Signup ───────────────────────────────────────────────────────────────
@@ -94,12 +97,28 @@ export class AuthService {
     // Best-effort: a failure here shouldn't take down the signup; the user
     // can still hit the workspace via the invite link later. Logged for
     // diagnostics.
+    let acceptedInviteCount = 0;
     try {
-      await this.workspace.acceptPendingInvitesForEmail(user.id, email);
+      acceptedInviteCount = await this.workspace.acceptPendingInvitesForEmail(
+        user.id,
+        email,
+      );
     } catch (err) {
       this.logger.warn(
         `Failed to auto-accept pending invites for ${email}: ${String(err)}`,
       );
+    }
+
+    // Welcome email — fire-and-forget. Skipped when this signup was driven
+    // by an invite link (we already mailed them the invite, no need to
+    // duplicate that touch).
+    if (acceptedInviteCount === 0) {
+      void this.mail.sendWelcome({
+        to: email,
+        name: user.name || email.split("@")[0] || "there",
+        workspaceName: workspace.name,
+        dashboardUrl: `${env().webAppUrl}/`,
+      });
     }
 
     return this.makeAuthResult(user, workspace, role);

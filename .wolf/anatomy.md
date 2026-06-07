@@ -1,12 +1,12 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-05T22:05:28.582Z
-> Files: 241 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-07T09:19:47.824Z
+> Files: 243 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
 - `.gitignore` — Git ignore rules (~144 tok)
-- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~4659 tok)
+- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~4660 tok)
 - `HANDOFF.md` — pinlay — Handoff (~4508 tok)
 - `package.json` — Node.js package manifest (~299 tok)
 - `ROADMAP.md` — pinlay — Product Roadmap (~3286 tok)
@@ -88,8 +88,8 @@
 ## apps/api/src/auth/
 
 - `auth.controller.ts` — Mirrors the extension's `Me` shape (apps/extension/src/lib/api.ts). (~757 tok)
-- `auth.module.ts` — Exports AuthModule (~397 tok)
-- `auth.service.ts` — Shape returned by GET /auth/me and PATCH /auth/me. (~2372 tok)
+- `auth.module.ts` — Exports AuthModule (~416 tok)
+- `auth.service.ts` — Shape returned by GET /auth/me and PATCH /auth/me. (~2554 tok)
 - `dev-auth.guard.ts` — Dev-only auth guard. While real OAuth is pending, every request resolves (~535 tok)
 - `jwt-auth.guard.ts` — Mark an endpoint as anonymous (no auth required). (~615 tok)
 
@@ -117,7 +117,7 @@
 
 ## apps/api/src/config/
 
-- `env.ts` — Validated environment access. (~552 tok)
+- `env.ts` — Validated environment access. (~959 tok)
 
 ## apps/api/src/dashboard/
 
@@ -147,6 +147,11 @@
 - `list-issues.dto.ts` — Query params for GET /api/issues — all optional filters. (~403 tok)
 - `update-issue.dto.ts` — Patch surface for an issue. Each field is optional — clients send only the (~278 tok)
 
+## apps/api/src/mail/
+
+- `mail.module.ts` — Exports MailModule (~52 tok)
+- `mail.service.ts` — Transactional email — thin wrapper around Resend's HTTP API. No SDK, (~2472 tok)
+
 ## apps/api/src/prisma/
 
 - `prisma.module.ts` — Exports PrismaModule (~60 tok)
@@ -164,8 +169,8 @@
 - `invites.controller.ts` — Pending workspace invites — sit alongside members so the Settings page can (~422 tok)
 - `members.controller.ts` — Members of the caller's ACTIVE workspace. Scoped to it implicitly via the (~423 tok)
 - `workspace.controller.ts` — Every workspace the caller belongs to — powers the switcher. (~652 tok)
-- `workspace.module.ts` — Workspace (org) domain: the workspace itself + its members + pending (~288 tok)
-- `workspace.service.ts` — Reserved subdomain-ish slugs that we never want a workspace to claim — they (~8422 tok)
+- `workspace.module.ts` — Workspace (org) domain: the workspace itself + its members + pending (~305 tok)
+- `workspace.service.ts` — Reserved subdomain-ish slugs that we never want a workspace to claim — they (~8718 tok)
 
 ## apps/api/src/workspace/dto/
 

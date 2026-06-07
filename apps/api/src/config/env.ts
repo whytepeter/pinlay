@@ -8,6 +8,8 @@
 
 export type NodeEnv = "development" | "test" | "production";
 
+export type MailProvider = "resend" | "disabled";
+
 export interface AppEnv {
   nodeEnv: NodeEnv;
   port: number;
@@ -18,6 +20,14 @@ export interface AppEnv {
 
   /** Max request body size (e.g. "10mb"). Sized for base64 screenshots. */
   bodyLimit: string;
+
+  /** Public URL for the dashboard. Used to mint invite-accept URLs etc. */
+  webAppUrl: string;
+
+  /** Transactional email config. `disabled` logs payloads instead of sending. */
+  mailProvider: MailProvider;
+  mailApiKey: string | null;
+  mailFrom: string;
 }
 
 /**
@@ -48,6 +58,25 @@ export function validateEnv(
     throw new Error("CORS_ORIGINS must be set in production.");
   }
 
+  // ── Mail config ────────────────────────────────────────────────────────
+  // Default to `disabled` so a missing key in dev doesn't break the invite
+  // flow — the MailService logs the payload instead of attempting a send.
+  // In production we still allow `disabled` (admins can copy the invite
+  // link manually) but warn loudly so it's noticed.
+  const rawProvider = (raw.MAIL_PROVIDER?.trim() || "disabled").toLowerCase();
+  const mailProvider: MailProvider =
+    rawProvider === "resend" ? "resend" : "disabled";
+  const mailApiKey = raw.MAIL_API_KEY?.trim() || null;
+  if (mailProvider === "resend" && !mailApiKey) {
+    throw new Error("MAIL_API_KEY is required when MAIL_PROVIDER=resend.");
+  }
+  if (isProd && mailProvider === "disabled") {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "[env] MAIL_PROVIDER=disabled in production — invite emails will NOT send.",
+    );
+  }
+
   return {
     nodeEnv,
     port: Number(raw.PORT ?? 4000),
@@ -55,6 +84,11 @@ export function validateEnv(
     jwtSecret,
     jwtExpiresIn: raw.JWT_EXPIRES_IN?.trim() || "30d",
     bodyLimit: raw.BODY_LIMIT?.trim() || "10mb",
+    webAppUrl:
+      raw.WEB_APP_URL?.trim().replace(/\/$/, "") || "http://localhost:5173",
+    mailProvider,
+    mailApiKey,
+    mailFrom: raw.MAIL_FROM?.trim() || "pinlay <onboarding@resend.dev>",
   };
 }
 

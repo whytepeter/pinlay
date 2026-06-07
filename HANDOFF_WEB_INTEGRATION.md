@@ -192,11 +192,15 @@ GET  /health      → {ok, db, latencyMs, uptime, version}
 
 ### Pre-launch plumbing — no roadmap phase (gating, not differentiating)
 
-**Email pipeline — invite emails aren't sent yet.** The whole invite flow (model, accept endpoints, accept page, signup-via-invite, auto-accept-on-signup) is **complete** but **no email actually leaves the API**. Admins currently use the "Copy invite link" menu item on the pending row and share the URL manually (Slack DM / paste / etc). Fine through Phase 0 user tests — not a blocker.
+**~~Email pipeline~~ — DONE.** `apps/api/src/mail/mail.service.ts` wraps Resend's HTTP API (no SDK; just `fetch`). Three templates wired today: **invite** (`WorkspaceService.inviteMember`), **invite-resent** (`WorkspaceService.resendInvite`), and **welcome** (`AuthService.signup`, skipped when the signup was driven by an invite link — `acceptPendingInvitesForEmail` now returns a count). Fire-and-forget — failures log a warning, never block the API. Modes via `MAIL_PROVIDER` env var:
+- `resend` — sends for real. Requires `MAIL_API_KEY`.
+- `disabled` (default) — logs `[mail:disabled] Would send "<subject>" to <to>` so dev never breaks when a key is missing.
 
-To finish: pick a transactional provider (Resend / Postmark / SendGrid), add `MAIL_*` env vars to `apps/api/src/config/env.ts`, write a thin `MailService` (typed payload + HTML+text template via React Email or MJML), fire it from `WorkspaceService.inviteMember` (after creating the pending Invite row) and `WorkspaceService.resendInvite` (after regenerating). The token is in `InviteDto.token`; the URL is `${WEB_APP_URL}/invite/${token}`. Fire-and-forget with a try/catch + logger.warn is fine for v1 — no queue required. Templates: **invite** + **invite-resent**.
+Sender defaults to `pinlay <onboarding@resend.dev>` (Resend's test sender, no DNS required). Production should swap `MAIL_FROM` to a verified domain. Env vars are documented in `apps/api/.env`.
 
-- **Email verification on signup** + **password reset flow** — both gated on the email pipeline above.
+What's NOT done yet (intentionally — adds testing friction):
+- **Email verification on signup** — extra click before first pin. Defer until after Phase 0.
+- **Password reset flow** — rare path. Defer.
 - **Audit logging** on auth events (login/signup/password-change/workspace-delete). Pre-launch hardening.
 - **Per-account login throttle** (today's throttle is per-IP only). Mitigates credential stuffing from rotated IPs.
 

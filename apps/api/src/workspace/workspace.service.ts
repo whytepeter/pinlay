@@ -10,6 +10,8 @@ import {
 import { InviteStatus, Prisma, Role } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuthService } from "../auth/auth.service";
+import { MailService } from "../mail/mail.service";
+import { env } from "../config/env";
 import { AuthenticatedUser } from "../common/current-user.decorator";
 import { CreateWorkspaceDto } from "./dto/create-workspace.dto";
 import { UpdateWorkspaceDto } from "./dto/update-workspace.dto";
@@ -141,6 +143,7 @@ export class WorkspaceService {
     private readonly prisma: PrismaService,
     @Inject(forwardRef(() => AuthService))
     private readonly auth: AuthService,
+    private readonly mail: MailService,
   ) {}
 
   // ── Reads ──────────────────────────────────────────────────────────────
@@ -382,7 +385,21 @@ export class WorkspaceService {
           Date.now() + INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
         ),
       },
-      include: { invitedBy: { select: { id: true, name: true } } },
+      include: {
+        invitedBy: { select: { id: true, name: true, email: true } },
+        workspace: { select: { name: true } },
+      },
+    });
+    // Fire-and-forget invite email — failures are logged inside MailService
+    // and never block the API response (admin still has Copy invite link).
+    void this.mail.sendInvite({
+      to: email,
+      inviterName:
+        created.invitedBy?.name ||
+        created.invitedBy?.email ||
+        "A teammate",
+      workspaceName: created.workspace.name,
+      inviteUrl: `${env().webAppUrl}/invite/${created.token}`,
     });
     return { kind: "invite", invite: this.toInviteDto(created) };
   }
@@ -452,9 +469,21 @@ export class WorkspaceService {
           Date.now() + INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
         ),
       },
-      include: { invitedBy: { select: { id: true, name: true } } },
+      include: {
+        invitedBy: { select: { id: true, name: true, email: true } },
+        workspace: { select: { name: true } },
+      },
     });
-    // TODO(email): when transactional email lands, re-send the accept link here.
+    // Re-fire the email with the regenerated token (the prior link is dead).
+    void this.mail.sendInviteResent({
+      to: refreshed.email,
+      inviterName:
+        refreshed.invitedBy?.name ||
+        refreshed.invitedBy?.email ||
+        "A teammate",
+      workspaceName: refreshed.workspace.name,
+      inviteUrl: `${env().webAppUrl}/invite/${refreshed.token}`,
+    });
     return this.toInviteDto(refreshed);
   }
 
@@ -467,13 +496,13 @@ export class WorkspaceService {
   async acceptPendingInvitesForEmail(
     userId: string,
     email: string,
-  ): Promise<void> {
+  ): Promise<number> {
     const normalized = email.trim().toLowerCase();
     const pending = await this.prisma.invite.findMany({
       where: { email: normalized, status: InviteStatus.pending },
       select: { id: true, workspaceId: true, role: true },
     });
-    if (pending.length === 0) return;
+    if (pending.length === 0) return 0;
 
     await this.prisma.$transaction(async (tx) => {
       for (const inv of pending) {
@@ -497,6 +526,7 @@ export class WorkspaceService {
         });
       }
     });
+    return pending.length;
   }
 
   // ── Public invite-by-token endpoints ───────────────────────────────────
