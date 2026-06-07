@@ -8,6 +8,7 @@ import {
   type UpdateBoardInput,
 } from "@/shared/lib/api";
 import { toast } from "@/shared/lib/toast";
+import { confirm } from "@/shared/lib/confirm";
 
 // Preset colors offered in the "New board" dialog (curated, not the full
 // severity palette so boards don't clash with severity reads).
@@ -113,10 +114,13 @@ export function useBoards() {
     return createMutation.mutateAsync({ name: trimmed, color });
   }
   function removeBoard(id: string) {
-    if (!window.confirm("Remove this board? Its issues stay, just unassigned.")) {
-      return;
-    }
-    removeMutation.mutate(id);
+    return confirm({
+      title: "Remove this board?",
+      message: "Its issues stay — they just become unassigned.",
+      confirmLabel: "Remove board",
+      variant: "destructive",
+      onConfirm: () => removeMutation.mutateAsync(id),
+    });
   }
 
   /**

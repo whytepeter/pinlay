@@ -66,14 +66,11 @@ const emit = defineEmits<{
   setLabels: [string[]];
   delete: [];
 }>();
+// Parent IssuePage owns the mutation, so it also owns the confirm dialog
+// (it needs to feed the dialog the awaitable `mutateAsync`). PinDetail
+// just emits the intent.
 function onDeleteClick() {
-  if (
-    window.confirm(
-      `Delete pin #${props.pin.index}? This permanently removes the pin and its comments. This can't be undone.`,
-    )
-  ) {
-    emit("delete");
-  }
+  emit("delete");
 }
 
 const labelDraft = ref("");

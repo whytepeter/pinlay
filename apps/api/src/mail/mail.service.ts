@@ -137,9 +137,30 @@ You're receiving this because you were invited to a pinlay workspace. If this wa
 </html>`;
 }
 
+// Brand row used at the top of every template. The pin is the actual
+// pinlay brand mark (same path as Brand.vue / favicon.svg) inlined as SVG.
+// Inline SVG renders in Apple Mail, iOS Mail, and most native clients;
+// Gmail strips it and shows just the "pinlay" wordmark — still clean,
+// just iconless. Layout uses a 1×2 table because Gmail strips flexbox.
+function brandHeader(): string {
+  return `
+<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin-bottom:28px;">
+  <tr>
+    <td style="vertical-align:middle;padding-right:10px;line-height:0;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="#7c3aed" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="pinlay">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.5C7.85 1.5 4.5 4.85 4.5 9c0 3.45 2.32 6.5 5.5 8L12 22l2-5c3.18-1.5 5.5-4.55 5.5-8 0-4.15-3.35-7.5-7.5-7.5zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+      </svg>
+    </td>
+    <td style="vertical-align:middle;">
+      <span style="font-weight:700;font-size:18px;letter-spacing:-0.01em;color:#111827;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">pinlay</span>
+    </td>
+  </tr>
+</table>`;
+}
+
 function inviteBody(p: InvitePayload, leadIn: string): string {
   return `
-<div style="font-weight:600;font-size:14px;color:#7c3aed;margin-bottom:24px;">pinlay</div>
+${brandHeader()}
 <h1 style="font-size:20px;line-height:1.3;margin:0 0 12px;font-weight:600;">
   ${escapeHtml(p.inviterName)} invited you to <span style="color:#7c3aed;">${escapeHtml(p.workspaceName)}</span>
 </h1>
@@ -147,11 +168,11 @@ function inviteBody(p: InvitePayload, leadIn: string): string {
   ${leadIn} Accept the invite to join the workspace and start pinning feedback together.
 </p>
 <p style="margin:0 0 24px;">
-  <a href="${escapeHtml(p.inviteUrl)}" style="display:inline-block;background:#7c3aed;color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Accept invite</a>
+  <a href="${escapeHtml(p.inviteUrl)}" style="display:inline-block;background:#7c3aed;color:#ffffff !important;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Accept invite</a>
 </p>
 <p style="color:#6b7280;font-size:13px;line-height:1.5;margin:0;">
   Or paste this URL into your browser:<br>
-  <code style="word-break:break-all;color:#7c3aed;">${escapeHtml(p.inviteUrl)}</code>
+  <a href="${escapeHtml(p.inviteUrl)}" style="color:#7c3aed !important;text-decoration:underline;word-break:break-all;font-family:monospace;font-size:12.5px;">${escapeHtml(p.inviteUrl)}</a>
 </p>
 <p style="color:#9ca3af;font-size:12px;line-height:1.5;margin:24px 0 0;">
   This invite expires in 7 days.
@@ -194,7 +215,7 @@ function welcomeHtml(p: WelcomePayload): string {
   return shell(
     `Welcome to pinlay`,
     `
-<div style="font-weight:600;font-size:14px;color:#7c3aed;margin-bottom:24px;">pinlay</div>
+${brandHeader()}
 <h1 style="font-size:20px;line-height:1.3;margin:0 0 12px;font-weight:600;">
   Welcome to pinlay, ${escapeHtml(p.name)}
 </h1>
@@ -202,7 +223,7 @@ function welcomeHtml(p: WelcomePayload): string {
   You're in. <strong>${escapeHtml(p.workspaceName)}</strong> is ready to go. pinlay is anchored comments for your live web app — drop a pin on any element, leave a note, and your team sees it in context.
 </p>
 <p style="margin:0 0 24px;">
-  <a href="${escapeHtml(p.dashboardUrl)}" style="display:inline-block;background:#7c3aed;color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Open dashboard</a>
+  <a href="${escapeHtml(p.dashboardUrl)}" style="display:inline-block;background:#7c3aed;color:#ffffff !important;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Open dashboard</a>
 </p>
 <div style="background:#f4f4f5;border-radius:8px;padding:16px;margin:0 0 16px;">
   <p style="font-weight:600;font-size:13px;color:#111827;margin:0 0 8px;">Two minutes to your first pin</p>

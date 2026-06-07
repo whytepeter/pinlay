@@ -2,6 +2,7 @@
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuth } from "@/shared/composables/useAuth";
+import { confirm } from "@/shared/lib/confirm";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { toast } from "@/shared/lib/toast";
 import {
@@ -164,19 +165,27 @@ const deletePinMutation = useMutation({
   onError: (err) => toast.error(err),
 });
 function onDeletePin(pinId: string) {
-  deletePinMutation.mutate(pinId);
+  const pin = pins.value.find((p) => p.id === pinId);
+  return confirm({
+    title: "Delete this pin?",
+    message: pin
+      ? `Pin #${pin.index} and its comments will be permanently removed. This can't be undone.`
+      : "This permanently removes the pin and its comments.",
+    confirmLabel: "Delete pin",
+    variant: "destructive",
+    onConfirm: () => deletePinMutation.mutateAsync(pinId),
+  });
 }
 
 function onDeleteIssue() {
   if (!session.value) return;
-  if (
-    !window.confirm(
-      `Delete "${session.value.title}"? This permanently removes the issue and its pins. This can't be undone.`,
-    )
-  ) {
-    return;
-  }
-  deleteIssueMutation.mutate();
+  return confirm({
+    title: "Delete this issue?",
+    message: `"${session.value.title}" and all its pins will be permanently removed. This can't be undone.`,
+    confirmLabel: "Delete issue",
+    variant: "destructive",
+    onConfirm: () => deleteIssueMutation.mutateAsync(),
+  });
 }
 function setIssueStatus(s: Status) {
   if (session.value?.status === s) return;

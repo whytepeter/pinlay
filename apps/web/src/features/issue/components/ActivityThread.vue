@@ -24,6 +24,7 @@ import { useAuth } from "@/shared/composables/useAuth";
 import { hashHue } from "@/shared/lib/issue-display";
 import { timeAgo } from "@/shared/lib/format";
 import { toast } from "@/shared/lib/toast";
+import { confirm } from "@/shared/lib/confirm";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
 
 /**
@@ -135,8 +136,13 @@ const removeMutation = useMutation({
   onError: (err) => toast.error(err),
 });
 function confirmDelete(c: PinCommentRow) {
-  if (!window.confirm("Delete this comment?")) return;
-  removeMutation.mutate(c.id);
+  return confirm({
+    title: "Delete this comment?",
+    message: "This permanently removes the comment from the thread.",
+    confirmLabel: "Delete",
+    variant: "destructive",
+    onConfirm: () => removeMutation.mutateAsync(c.id),
+  });
 }
 
 // ── Synthetic system events derived from the pin itself ─────────────────

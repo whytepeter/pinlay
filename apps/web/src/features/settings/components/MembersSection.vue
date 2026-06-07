@@ -24,6 +24,7 @@ import {
   type WorkspaceMemberRow,
 } from "@/shared/lib/api";
 import { hashHue } from "@/shared/lib/issue-display";
+import { confirm } from "@/shared/lib/confirm";
 import { toast } from "@/shared/lib/toast";
 import { timeAgo } from "@/shared/lib/format";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
@@ -144,13 +145,23 @@ function changeRole(m: WorkspaceMemberRow, role: Role) {
 }
 
 function confirmRemove(m: WorkspaceMemberRow) {
-  if (!window.confirm(`Remove ${m.name} from this workspace?`)) return;
-  removeMutation.mutate(m.id);
+  return confirm({
+    title: "Remove member?",
+    message: `Remove ${m.name} from this workspace?`,
+    confirmLabel: "Remove",
+    variant: "destructive",
+    onConfirm: () => removeMutation.mutateAsync(m.id),
+  });
 }
 
 function confirmRevoke(inv: WorkspaceInviteRow) {
-  if (!window.confirm(`Revoke the invite to ${inv.email}?`)) return;
-  revokeMutation.mutate(inv.id);
+  return confirm({
+    title: "Revoke invite?",
+    message: `Revoke the invite to ${inv.email}?`,
+    confirmLabel: "Revoke",
+    variant: "destructive",
+    onConfirm: () => revokeMutation.mutateAsync(inv.id),
+  });
 }
 
 // TODO(api): email pipeline isn't wired yet — admins copy the accept link

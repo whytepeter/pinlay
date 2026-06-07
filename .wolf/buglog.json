@@ -5633,6 +5633,134 @@
       "related_bugs": [],
       "occurrences": 2,
       "last_seen": "2026-06-07T08:56:38.189Z"
+    },
+    {
+      "id": "bug-350",
+      "timestamp": "2026-06-07T09:41:50.599Z",
+      "error_message": "Missing await",
+      "file": "apps/web/src/App.vue",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-07T09:41:50.599Z"
+    },
+    {
+      "id": "bug-351",
+      "timestamp": "2026-06-07T09:42:36.936Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/features/settings/components/MembersSection.vue",
+      "root_cause": "No early return/throw for edge case: !ok",
+      "fix": "Added guard clause: if (!ok)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-07T09:42:36.936Z"
+    },
+    {
+      "id": "bug-352",
+      "timestamp": "2026-06-07T09:43:13.298Z",
+      "error_message": "Missing await",
+      "file": "apps/web/src/features/issue/IssuePage.vue",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-07T09:43:13.298Z"
+    },
+    {
+      "id": "bug-353",
+      "timestamp": "2026-06-07T09:44:08.655Z",
+      "error_message": "Missing await",
+      "file": "apps/web/src/features/issue/components/PinDetail.vue",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-07T09:44:08.655Z"
+    },
+    {
+      "id": "bug-354",
+      "timestamp": "2026-06-07T09:44:51.445Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/features/issue/components/ActivityThread.vue",
+      "root_cause": "No early return/throw for edge case: !ok",
+      "fix": "Added guard clause: if (!ok)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-07T09:44:51.445Z"
+    },
+    {
+      "id": "bug-355",
+      "timestamp": "2026-06-07T09:45:49.079Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/web/src/shared/composables/useBoards.ts",
+      "root_cause": "No early return/throw for edge case: !ok",
+      "fix": "Added guard clause: if (!ok)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-07T09:45:49.079Z"
+    },
+    {
+      "id": "bug-356",
+      "timestamp": "2026-06-07T10:44:39.275Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/api/src/mail/mail.service.ts",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 20→38 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-07T10:44:39.275Z"
+    },
+    {
+      "id": "bug-357",
+      "timestamp": "2026-06-07T10:51:12.434Z",
+      "error_message": "Type error",
+      "file": "apps/api/src/mail/mail.service.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-06-07T10:51:12.434Z"
     }
   ]
 }

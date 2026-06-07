@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-07T09:19:47.824Z
-> Files: 243 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-07T10:51:12.411Z
+> Files: 245 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -150,7 +150,7 @@
 ## apps/api/src/mail/
 
 - `mail.module.ts` — Exports MailModule (~52 tok)
-- `mail.service.ts` — Transactional email — thin wrapper around Resend's HTTP API. No SDK, (~2472 tok)
+- `mail.service.ts` — Transactional email — thin wrapper around Resend's HTTP API. No SDK, (~2806 tok)
 
 ## apps/api/src/prisma/
 
@@ -271,7 +271,7 @@
 
 ## apps/web/src/
 
-- `App.vue` — Vue: setup (~954 tok)
+- `App.vue` — Vue: setup (~998 tok)
 - `main.ts` (~197 tok)
 
 ## apps/web/src/app/
@@ -308,14 +308,14 @@
 
 ## apps/web/src/features/issue/
 
-- `IssuePage.vue` — Single mutation handles every issue patch (board / status / title). The (~4935 tok)
+- `IssuePage.vue` — Single mutation handles every issue patch (board / status / title). The (~5069 tok)
 
 ## apps/web/src/features/issue/components/
 
-- `ActivityThread.vue` — Real activity thread for a single pin. (~2956 tok)
+- `ActivityThread.vue` — Real activity thread for a single pin. (~3010 tok)
 - `AnchorBlock.vue` — Vue: setup (~815 tok)
 - `IssuePageSkeleton.vue` — Vue: setup (~1079 tok)
-- `PinDetail.vue` — Whether the current user can delete this pin (author or admin). (~3019 tok)
+- `PinDetail.vue` — Whether the current user can delete this pin (author or admin). (~3023 tok)
 - `PinList.vue` — Vue: setup (~734 tok)
 - `PinListItem.vue` — Vue: setup (~458 tok)
 - `ReplyBox.vue` — Vue: setup (~337 tok)
@@ -353,7 +353,7 @@
 - `DangerZoneSection.vue` — Vue: login, setup (~1469 tok)
 - `FormField.vue` — Vue: setup (~178 tok)
 - `FormGroup.vue` — Vue component (~30 tok)
-- `MembersSection.vue` — Vue: setup (~3467 tok)
+- `MembersSection.vue` — Vue: setup (~3542 tok)
 - `NotificationsSection.vue` — Vue: setup (~479 tok)
 - `ProfileSection.vue` — Vue: setup (~880 tok)
 - `SectionHeading.vue` — Vue: setup (~91 tok)
@@ -380,6 +380,7 @@
 
 ## apps/web/src/shared/components/
 
+- `ConfirmDialog.vue` — Vue: setup (~623 tok)
 - `DetailsList.vue` — REUSABLE. Fetch ONE record by id via TanStack Query; owns loading/error+retry/empty/refetching. Slots: #default="{ data, refetch, isFetching }", #loading, #error, #empty. Use for issue/pin/workspace detail. (~1204 tok)
 - `Favicon.vue` — Vue: setup (~164 tok)
 - `PageHeader.vue` — Vue: setup (~244 tok)
@@ -396,13 +397,14 @@
 ## apps/web/src/shared/composables/
 
 - `useAuth.ts` — Auth state — module-level singleton (same pattern as useTheme/useSettings; (~1050 tok)
-- `useBoards.ts` — Boards = workspace-scoped groupings backed by the /api/boards module. (~1364 tok)
+- `useBoards.ts` — Boards = workspace-scoped groupings backed by the /api/boards module. (~1410 tok)
 - `useShell.ts` — Mobile: off-canvas drawer open. (Desktop sidebar is hover-expand, no state.) (~114 tok)
 - `useTheme.ts` — The user's preference (light/dark/system); system follows the OS. (~404 tok)
 
 ## apps/web/src/shared/lib/
 
 - `api.ts` — Web API client. (~3973 tok)
+- `confirm.ts` — Promise-based confirm dialog with optional async action. (~1341 tok)
 - `data.ts` — Mock-first seed data (SESSIONS/PEOPLE/getPins). STILL the source for PinboardsPage/useSessions/useIssue — NOT yet swapped to apiClient. (~2413 tok)
 - `extension-bridge.ts` — Web → extension token handoff. (~508 tok)
 - `format.ts` — Compact relative time, e.g. "5m ago", "3h ago", "2d ago". (~198 tok)

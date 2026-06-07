@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { Toaster } from "vue-sonner";
+import ConfirmDialog from "@/shared/components/ConfirmDialog.vue";
 </script>
 
 <template>
   <RouterView />
+  <!-- Singleton confirm dialog — drives all `await confirm({...})` calls. -->
+  <ConfirmDialog />
   <Toaster
     position="bottom-right"
     :offset="16"
