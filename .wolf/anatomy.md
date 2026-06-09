@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-07T10:51:12.411Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-06-08T20:40:52.258Z
 > Files: 245 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -29,7 +29,7 @@
 
 ## apps/api/
 
-- `nest-cli.json` (~62 tok)
+- `nest-cli.json` (~99 tok)
 - `package.json` — Node.js package manifest (~351 tok)
 - `tsconfig.build.json` (~34 tok)
 - `tsconfig.json` — TypeScript configuration (~197 tok)
@@ -150,7 +150,7 @@
 ## apps/api/src/mail/
 
 - `mail.module.ts` — Exports MailModule (~52 tok)
-- `mail.service.ts` — Transactional email — thin wrapper around Resend's HTTP API. No SDK, (~2806 tok)
+- `mail.service.ts` — Transactional email — thin wrapper around Resend's HTTP API. No SDK, (~3073 tok)
 
 ## apps/api/src/prisma/
 

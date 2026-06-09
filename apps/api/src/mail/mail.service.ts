@@ -10,14 +10,31 @@
  * Every send is best-effort: `WorkspaceService.inviteMember` fires this
  * fire-and-forget. A bad Resend response logs a warning; nothing throws.
  */
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { Injectable, Logger } from "@nestjs/common";
 import { env } from "../config/env";
+
+// Read once at module load (a few KB; lives in memory for the API lifetime).
+// Attached to every send under CID "pinlay-logo" — Resend supports `cid:`
+// references for inline images, which renders in EVERY major email client
+// including Gmail (data: URIs and hosted images don't, in many of them).
+const LOGO_PNG_BASE64 = readFileSync(
+  join(__dirname, "assets", "logo.png"),
+).toString("base64");
+const LOGO_CID = "pinlay-logo";
 
 interface SendArgs {
   to: string;
   subject: string;
   html: string;
   text: string;
+}
+
+interface ResendAttachment {
+  filename: string;
+  content: string; // base64
+  content_id?: string; // for `<img src="cid:...">` references
 }
 
 interface InvitePayload {
@@ -77,6 +94,13 @@ export class MailService {
       return;
     }
     try {
+      const attachments: ResendAttachment[] = [
+        {
+          filename: "logo.png",
+          content: LOGO_PNG_BASE64,
+          content_id: LOGO_CID,
+        },
+      ];
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
@@ -89,6 +113,7 @@ export class MailService {
           subject: args.subject,
           html: args.html,
           text: args.text,
+          attachments,
         }),
       });
       if (!res.ok) {
@@ -142,14 +167,16 @@ You're receiving this because you were invited to a pinlay workspace. If this wa
 // Inline SVG renders in Apple Mail, iOS Mail, and most native clients;
 // Gmail strips it and shows just the "pinlay" wordmark — still clean,
 // just iconless. Layout uses a 1×2 table because Gmail strips flexbox.
+// Brand row used at the top of every template. The pin uses an embedded
+// PNG (the favicon SVG rendered to a 128px PNG, attached with Content-ID
+// `pinlay-logo`). CID inline images render in EVERY major mail client —
+// Gmail, Apple Mail, iOS Mail, Outlook — unlike inline SVG or data: URIs.
 function brandHeader(): string {
   return `
 <table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin-bottom:28px;">
   <tr>
     <td style="vertical-align:middle;padding-right:10px;line-height:0;">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="#7c3aed" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="pinlay">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.5C7.85 1.5 4.5 4.85 4.5 9c0 3.45 2.32 6.5 5.5 8L12 22l2-5c3.18-1.5 5.5-4.55 5.5-8 0-4.15-3.35-7.5-7.5-7.5zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-      </svg>
+      <img src="cid:${LOGO_CID}" width="28" height="28" alt="pinlay" style="display:block;border:0;outline:none;width:28px;height:28px;" />
     </td>
     <td style="vertical-align:middle;">
       <span style="font-weight:700;font-size:18px;letter-spacing:-0.01em;color:#111827;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">pinlay</span>
