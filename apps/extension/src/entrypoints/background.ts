@@ -15,12 +15,18 @@ import { API_URL } from "../lib/env";
 interface ApiFetchMsg {
   type: "API_FETCH";
   path: string;
-  method: "GET" | "POST" | "PATCH" | "DELETE";
+  method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
   json?: unknown;
-  file?: {
+  /**
+   * Raw-body PUT (used for direct uploads to presigned URLs). `path` must be
+   * a fully-qualified URL when `directUrl` is true — the API_URL prefix is
+   * not applied and the auth header is NOT included (the presigned URL is
+   * its own credential).
+   */
+  directUrl?: boolean;
+  binary?: {
     base64: string;
     contentType: string;
-    filename: string;
   };
   fields?: Record<string, string>;
 }
@@ -34,30 +40,28 @@ interface ApiResult<T> {
 
 async function apiFetch(msg: ApiFetchMsg): Promise<ApiResult<unknown>> {
   try {
-    const { getAuth } = await import("../lib/auth");
-    const auth = await getAuth();
     const headers: Record<string, string> = {};
-    if (auth?.token) headers["Authorization"] = `Bearer ${auth.token}`;
+    if (!msg.directUrl) {
+      const { getAuth } = await import("../lib/auth");
+      const auth = await getAuth();
+      if (auth?.token) headers["Authorization"] = `Bearer ${auth.token}`;
+    }
 
     let body: BodyInit | undefined;
-    if (msg.file) {
-      // Convert base64 → Blob, send as multipart so the Worker can stream.
-      const binary = atob(msg.file.base64);
+    if (msg.binary) {
+      // base64 → Blob and PUT raw. Used for presigned uploads (R2 or local).
+      const binary = atob(msg.binary.base64);
       const bytes = new Uint8Array(binary.length);
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      const blob = new Blob([bytes], { type: msg.file.contentType });
-      const form = new FormData();
-      form.append("file", blob, msg.file.filename);
-      for (const [k, v] of Object.entries(msg.fields ?? {})) {
-        form.append(k, v);
-      }
-      body = form;
+      body = new Blob([bytes], { type: msg.binary.contentType });
+      headers["Content-Type"] = msg.binary.contentType;
     } else if (msg.json !== undefined) {
       headers["Content-Type"] = "application/json";
       body = JSON.stringify(msg.json);
     }
 
-    const res = await fetch(`${API_URL}${msg.path}`, {
+    const url = msg.directUrl ? msg.path : `${API_URL}${msg.path}`;
+    const res = await fetch(url, {
       method: msg.method,
       headers,
       body,

@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { Avatar, AvatarFallback } from "@pinlay/design";
+import { Avatar, AvatarFallback, AvatarImage } from "@pinlay/design";
 
 const props = withDefaults(
-  defineProps<{ name: string; hue?: number; size?: number }>(),
-  { hue: 262, size: 24 },
+  defineProps<{
+    name: string;
+    hue?: number;
+    size?: number;
+    avatarUrl?: string | null;
+  }>(),
+  { hue: 262, size: 24, avatarUrl: null },
 );
 
 const initials = computed(() =>
@@ -30,6 +35,12 @@ const fallbackStyle = computed(() => ({
 
 <template>
   <Avatar :style="sizeStyle" class="border">
+    <AvatarImage
+      v-if="avatarUrl"
+      :src="avatarUrl"
+      :alt="name"
+      class="h-full w-full object-cover"
+    />
     <AvatarFallback :style="fallbackStyle" class="font-semibold">{{
       initials
     }}</AvatarFallback>

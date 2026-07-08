@@ -1,12 +1,17 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-08T14:43:33.328Z
-> Files: 245 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-08T17:11:13.799Z
+> Files: 251 tracked | Anatomy hits: 0 | Misses: 0
+
+## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
+
+- `clear-pins.ts` — Targeted clear: wipe every pin-related row so the storage refactor gets a (~290 tok)
+- `env-check.ts` (~66 tok)
 
 ## ./
 
 - `.gitignore` — Git ignore rules (~144 tok)
-- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~5055 tok)
+- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~5509 tok)
 - `HANDOFF.md` — pinlay — Handoff (~4508 tok)
 - `package.json` — Node.js package manifest (~299 tok)
 - `ROADMAP.md` — pinlay — Product Roadmap (~3286 tok)
@@ -22,7 +27,7 @@
 
 ## .claude/
 
-- `launch.json` (~81 tok)
+- `launch.json` (~146 tok)
 
 ## Not yet created (future phases)
 
@@ -57,8 +62,8 @@
 
 ## apps/api/src/
 
-- `app.module.ts` — Exports AppModule (~412 tok)
-- `main.ts` — Declares bootstrap (~689 tok)
+- `app.module.ts` — Exports AppModule (~434 tok)
+- `main.ts` — Declares bootstrap (~685 tok)
 
 ## apps/api/src/annotation/
 
@@ -77,27 +82,28 @@
 
 ## apps/api/src/attachments/
 
-- `attachments.controller.ts` — Exports AttachmentsController (~183 tok)
-- `attachments.module.ts` — Exports AttachmentsModule (~105 tok)
-- `attachments.service.ts` — v1: inline storage. We persist the data URL on the row itself so the (~502 tok)
+- `attachments.controller.ts` — Step 1: get a presigned PUT URL. (~273 tok)
+- `attachments.module.ts` — Exports AttachmentsModule (~135 tok)
+- `attachments.service.ts` — Two-step attachment flow: (~934 tok)
 
 ## apps/api/src/attachments/dto/
 
-- `create-attachment.dto.ts` — Exports CreateAttachmentFileDto, CreateAttachmentDto (~169 tok)
+- `create-attachment.dto.ts` — Request a presigned upload URL. `contentType` + `sizeBytes` are baked into (~392 tok)
 
 ## apps/api/src/auth/
 
-- `auth.controller.ts` — Mirrors the extension's `Me` shape (apps/extension/src/lib/api.ts). (~757 tok)
-- `auth.module.ts` — Exports AuthModule (~416 tok)
+- `auth.controller.ts` — Mirrors the extension's `Me` shape (apps/extension/src/lib/api.ts). (~1027 tok)
+- `auth.module.ts` — Exports AuthModule (~438 tok)
 - `auth.service.ts` — Shape returned by GET /auth/me and PATCH /auth/me. (~2554 tok)
 - `dev-auth.guard.ts` — Dev-only auth guard. While real OAuth is pending, every request resolves (~535 tok)
 - `jwt-auth.guard.ts` — Mark an endpoint as anonymous (no auth required). (~615 tok)
 
 ## apps/api/src/auth/dto/
 
+- `avatar-upload-url.dto.ts` — Ask for a presigned URL to upload the caller's avatar. Content-type is (~152 tok)
 - `login.dto.ts` — Exports LoginDto (~64 tok)
 - `signup.dto.ts` — Plain-text password; hashed before storage. (~145 tok)
-- `update-me.dto.ts` — Patch the caller's profile. Email is intentionally NOT mutable — changing (~234 tok)
+- `update-me.dto.ts` — Patch the caller's profile. Email is intentionally NOT mutable — changing (~230 tok)
 
 ## apps/api/src/boards/
 
@@ -117,7 +123,7 @@
 
 ## apps/api/src/config/
 
-- `env.ts` — Validated environment access. (~959 tok)
+- `env.ts` — Validated environment access. (~1564 tok)
 
 ## apps/api/src/dashboard/
 
@@ -162,6 +168,12 @@
 - `sessions.controller.ts` — Session read surface — the list/detail of submitted reviews. Named for the (~450 tok)
 - `sessions.module.ts` — Exports SessionsModule (~99 tok)
 - `sessions.service.ts` — Dashboard read model. The dashboard's "Session" is the API's Issue (the (~951 tok)
+
+## apps/api/src/storage/
+
+- `local-upload.controller.ts` — Local upload endpoint used ONLY when STORAGE_PROVIDER=disabled. (~879 tok)
+- `storage.module.ts` — Exports StorageModule (~57 tok)
+- `storage.service.ts` — Object storage — Cloudflare R2 via the S3-compatible SDK. (~1248 tok)
 
 ## apps/api/src/workspace/
 
@@ -221,7 +233,7 @@
 
 ## apps/extension/src/entrypoints/
 
-- `background.ts` — Background service worker. (~1477 tok)
+- `background.ts` — Background service worker. (~1540 tok)
 - `content.ts` — Content script — mounts the on-page surfaces: (~6844 tok)
 
 ## apps/extension/src/entrypoints/popup/
@@ -234,7 +246,7 @@
 
 - `anchor.ts` — Element anchoring for live annotation. (~5704 tok)
 - `annotation-state.ts` — annotation-state (~1113 tok)
-- `api.ts` — API client (~2230 tok)
+- `api.ts` — API client (~2590 tok)
 - `auth.ts` — Subscribe to auth changes — fires when the token is added, updated, or cleared. (~562 tok)
 - `env.ts` — Exports WEB_APP_URL, API_URL (~131 tok)
 - `extension.ts` — Extension runtime helpers. (~253 tok)
@@ -355,7 +367,7 @@
 - `FormGroup.vue` — Vue component (~30 tok)
 - `MembersSection.vue` — Vue: setup (~3542 tok)
 - `NotificationsSection.vue` — Vue: setup (~479 tok)
-- `ProfileSection.vue` — Vue: setup (~880 tok)
+- `ProfileSection.vue` — Vue: setup (~1523 tok)
 - `SectionHeading.vue` — Vue: setup (~91 tok)
 - `WorkspaceSection.vue` — Vue: setup (~1689 tok)
 
@@ -392,7 +404,7 @@
 - `StatusChip.vue` — Vue: setup (~270 tok)
 - `SyncChip.vue` — Vue: setup (~196 tok)
 - `TypeChip.vue` — Vue: setup (~82 tok)
-- `UserAvatar.vue` — Vue: setup (~245 tok)
+- `UserAvatar.vue` — Vue: setup (~299 tok)
 
 ## apps/web/src/shared/composables/
 
@@ -403,7 +415,7 @@
 
 ## apps/web/src/shared/lib/
 
-- `api.ts` — Web API client. (~3973 tok)
+- `api.ts` — Web API client. (~4156 tok)
 - `confirm.ts` — Promise-based confirm dialog with optional async action. (~1341 tok)
 - `data.ts` — Mock-first seed data (SESSIONS/PEOPLE/getPins). STILL the source for PinboardsPage/useSessions/useIssue — NOT yet swapped to apiClient. (~2413 tok)
 - `extension-bridge.ts` — Web → extension token handoff. (~508 tok)

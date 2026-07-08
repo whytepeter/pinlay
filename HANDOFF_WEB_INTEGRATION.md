@@ -215,7 +215,33 @@ What's NOT done yet (intentionally — adds testing friction):
 ### Phase 5 — Paid expansion / Team tier (`ROADMAP.md` §Phase 5) — post-PMF
 
 - **Billing module** — Stripe subscription, seat counts, plan changes via the existing `PATCH /workspaces/current` plan field. Roadmap is explicit: "now — and *only* now" — do **not** build before the anchor moat has pulled users in.
-- **Move attachments off inline base64 to object storage** (R2 / S3 / Vercel Blob). Schema already separates `Attachment.url`, so the migration is just the upload pipeline + URL format. Only becomes load-bearing when **screen clips** land (Phase 5.3) — no urgency before then.
+- ~~**Move attachments off inline base64 to object storage**~~ — **DONE** (2026-07-08). See "Object storage" below.
+
+### Object storage — DONE (2026-07-08, R2-only)
+
+Attachments + avatars run on a two-step presigned upload against **Cloudflare R2**. Bytes never touch Nest. No local-disk fallback — the API refuses to boot without R2 credentials.
+
+**Endpoints:**
+- `POST /attachments/upload-url` → `{objectKey, uploadUrl, publicUrl, headers, method, expiresAt}`
+- Client `PUT`s blob to `uploadUrl` (R2 direct, with Content-Type header matching the presign)
+- `POST /attachments` → persists the row with `url = publicUrl`
+- Same shape for avatars: `POST /auth/me/avatar-upload-url` → PUT → `PATCH /auth/me { avatarUrl }`
+
+**Config (all required):**
+- `STORAGE_ENDPOINT` — `https://<accountid>.r2.cloudflarestorage.com`
+- `STORAGE_BUCKET`, `STORAGE_REGION=auto`, `STORAGE_ACCESS_KEY`, `STORAGE_SECRET_KEY`
+- `STORAGE_PUBLIC_URL_BASE` — the r2.dev subdomain or a custom domain, no trailing slash
+- `STORAGE_MAX_UPLOAD_BYTES` (default 20 MB — presign refuses larger)
+
+**R2 bucket setup (one-time, in Cloudflare dashboard):**
+- Enable **Public access** (r2.dev subdomain) OR add a custom domain
+- **CORS policy** must allow `PUT` + `Content-Type` header from your web origin AND `chrome-extension://*` (else the extension's SW can't PUT)
+- Bucket → Object → responses should return `Cross-Origin-Resource-Policy: cross-origin` (default for r2.dev; if fronting with a Worker, set it explicitly) so `<img src="…r2.dev/…">` isn't blocked cross-origin
+
+**Wiring:**
+- `apps/api/src/storage/{storage.service,storage.module}.ts` — S3 SDK, presign only
+- Extension: `apps/extension/src/lib/api.ts` `uploadAttachment` does three steps (presign → PUT via SW → confirm). Background SW's `API_FETCH` accepts `directUrl: true` for raw PUTs that skip `API_URL` + auth header
+- Web: `apps/web/src/features/settings/components/ProfileSection.vue` has the file input; `UserAvatar` accepts `avatarUrl` and falls through to initials on load fail. `apiClient.avatarUploadUrl(...)` in `apps/web/src/shared/lib/api.ts`
 
 ### Phase 6 — Collab & scale (`ROADMAP.md` §6.3) — post-PMF
 

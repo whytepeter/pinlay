@@ -214,28 +214,70 @@ export const api = {
       json: { title, ...(summary !== undefined && { summary }) },
     }),
 
-  /** Single-shot attachment upload (screenshots / small files). */
+  /**
+   * Three-step attachment upload:
+   *   1. POST /attachments/upload-url — get a presigned PUT URL.
+   *   2. PUT the blob directly to that URL (R2 or our local /uploads endpoint).
+   *   3. POST /attachments — persist the row pointing at publicUrl.
+   *
+   * Bytes never travel through the Nest API. Callers still receive the same
+   * {id, url, filename, ...} shape as before so the fire-and-forget wiring
+   * in AnnotationOverlay doesn't change.
+   */
   uploadAttachment: async (params: {
     blob: Blob;
     filename: string;
     type: "screenshot" | "thumbnail" | "export";
     issueId?: string;
-    sessionId?: string;
-  }) => {
-    const base64 = bufferToBase64(await params.blob.arrayBuffer());
-    const fields: Record<string, string> = { type: params.type };
-    if (params.issueId) fields["issueId"] = params.issueId;
-    if (params.sessionId) fields["sessionId"] = params.sessionId;
+    pinId?: string;
+  }): Promise<Attachment> => {
+    const contentType = params.blob.type || "application/octet-stream";
+    const sizeBytes = params.blob.size;
 
+    // Step 1: presign.
+    const presign = await send<{
+      objectKey: string;
+      uploadUrl: string;
+      publicUrl: string;
+      headers: Record<string, string>;
+      method: "PUT";
+      expiresAt: string;
+    }>({
+      path: "/attachments/upload-url",
+      method: "POST",
+      json: {
+        type: params.type,
+        contentType,
+        sizeBytes,
+        filename: params.filename,
+        ...(params.issueId && { issueId: params.issueId }),
+        ...(params.pinId && { pinId: params.pinId }),
+      },
+    });
+
+    // Step 2: raw PUT to the presigned URL via the SW.
+    const base64 = bufferToBase64(await params.blob.arrayBuffer());
+    await send<unknown>({
+      path: presign.uploadUrl,
+      method: "PUT",
+      directUrl: true,
+      binary: { base64, contentType },
+    });
+
+    // Step 3: persist the DB row.
     return send<Attachment>({
       path: "/attachments",
       method: "POST",
-      file: {
-        base64,
-        contentType: params.blob.type || "application/octet-stream",
+      json: {
+        type: params.type,
+        objectKey: presign.objectKey,
+        url: presign.publicUrl,
+        contentType,
         filename: params.filename,
+        sizeBytes,
+        ...(params.issueId && { issueId: params.issueId }),
+        ...(params.pinId && { pinId: params.pinId }),
       },
-      fields,
     });
   },
 };

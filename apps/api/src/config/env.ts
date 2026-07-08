@@ -10,6 +10,28 @@ export type NodeEnv = "development" | "test" | "production";
 
 export type MailProvider = "resend" | "disabled";
 
+/**
+ * Cloudflare R2 config. All fields are required — the API refuses to boot
+ * without them so a broken upload flow can't ship as a mystery 500 later.
+ */
+export interface StorageConfig {
+  bucket: string;
+  /** S3-compat endpoint: `https://<accountid>.r2.cloudflarestorage.com`. */
+  endpoint: string;
+  /** Region string. R2 wants "auto". */
+  region: string;
+  accessKey: string;
+  secretKey: string;
+  /**
+   * Base URL that objects resolve to for public reads — either the bucket's
+   * `pub-<hash>.r2.dev` subdomain or a custom domain in front of it. Must
+   * NOT include a trailing slash.
+   */
+  publicUrlBase: string;
+  /** Per-object hard cap (bytes). Presign refuses anything larger. */
+  maxUploadBytes: number;
+}
+
 export interface AppEnv {
   nodeEnv: NodeEnv;
   port: number;
@@ -28,6 +50,9 @@ export interface AppEnv {
   mailProvider: MailProvider;
   mailApiKey: string | null;
   mailFrom: string;
+
+  /** Object storage config for attachments + avatars. */
+  storage: StorageConfig;
 }
 
 /**
@@ -77,6 +102,31 @@ export function validateEnv(
     );
   }
 
+  // ── Storage config ─────────────────────────────────────────────────────
+  // Cloudflare R2 via the S3-compatible SDK. All fields required — the API
+  // refuses to boot without them so a misconfigured deploy fails fast rather
+  // than surfacing as a mystery 500 on first upload.
+  const storage: StorageConfig = {
+    bucket: raw.STORAGE_BUCKET?.trim() || "",
+    endpoint: raw.STORAGE_ENDPOINT?.trim().replace(/\/$/, "") || "",
+    region: raw.STORAGE_REGION?.trim() || "auto",
+    accessKey: raw.STORAGE_ACCESS_KEY?.trim() || "",
+    secretKey: raw.STORAGE_SECRET_KEY?.trim() || "",
+    publicUrlBase: raw.STORAGE_PUBLIC_URL_BASE?.trim().replace(/\/$/, "") || "",
+    maxUploadBytes: Number(raw.STORAGE_MAX_UPLOAD_BYTES ?? 20 * 1024 * 1024),
+  };
+  const missingStorage: string[] = [];
+  if (!storage.bucket) missingStorage.push("STORAGE_BUCKET");
+  if (!storage.endpoint) missingStorage.push("STORAGE_ENDPOINT");
+  if (!storage.accessKey) missingStorage.push("STORAGE_ACCESS_KEY");
+  if (!storage.secretKey) missingStorage.push("STORAGE_SECRET_KEY");
+  if (!storage.publicUrlBase) missingStorage.push("STORAGE_PUBLIC_URL_BASE");
+  if (missingStorage.length > 0) {
+    throw new Error(
+      `Object storage config incomplete — missing: ${missingStorage.join(", ")}.`,
+    );
+  }
+
   return {
     nodeEnv,
     port: Number(raw.PORT ?? 4000),
@@ -89,6 +139,7 @@ export function validateEnv(
     mailProvider,
     mailApiKey,
     mailFrom: raw.MAIL_FROM?.trim() || "pinlay <onboarding@resend.dev>",
+    storage,
   };
 }
 

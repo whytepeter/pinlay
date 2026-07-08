@@ -356,6 +356,30 @@ export const apiClient = {
       body: JSON.stringify(dto),
     }),
 
+  /**
+   * Two-step avatar upload:
+   *   1. avatarUploadUrl — presign the PUT.
+   *   2. Client PUTs the blob directly (fetch, no auth header).
+   *   3. updateMe({avatarUrl: publicUrl}) — persist.
+   * The blob NEVER passes through the Nest API.
+   */
+  avatarUploadUrl: (input: {
+    contentType: string;
+    sizeBytes: number;
+    filename?: string;
+  }) =>
+    request<{
+      objectKey: string;
+      uploadUrl: string;
+      publicUrl: string;
+      headers: Record<string, string>;
+      method: "PUT";
+      expiresAt: string;
+    }>("/auth/me/avatar-upload-url", {
+      method: "POST",
+      body: JSON.stringify(input),
+    }),
+
   workspaceMembers: () =>
     request<WorkspaceMember[]>("/auth/workspace/members"),
 

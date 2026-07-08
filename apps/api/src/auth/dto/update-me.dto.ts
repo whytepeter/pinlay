@@ -21,12 +21,12 @@ export class UpdateMeDto {
   name?: string;
 
   /**
-   * `null` clears the avatar; a string must be a valid URL. We accept https
-   * for production and require it once an upload pipeline lands.
+   * `null` clears the avatar; a string must be an https URL — the R2 public
+   * URL (r2.dev subdomain or a custom domain) always is.
    */
   @IsOptional()
   @ValidateIf((_o, v) => v !== null)
-  @IsUrl({ require_protocol: true, protocols: ["http", "https"] })
+  @IsUrl({ require_protocol: true, protocols: ["https"] })
   @MaxLength(2048)
   avatarUrl?: string | null;
 }

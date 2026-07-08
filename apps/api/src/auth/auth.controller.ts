@@ -15,10 +15,13 @@ import { JwtAuthGuard, Public } from "./jwt-auth.guard";
 import { SignupDto } from "./dto/signup.dto";
 import { LoginDto } from "./dto/login.dto";
 import { UpdateMeDto } from "./dto/update-me.dto";
+import { AvatarUploadUrlDto } from "./dto/avatar-upload-url.dto";
+import { StorageService } from "../storage/storage.service";
 import {
   CurrentUser,
   AuthenticatedUser,
 } from "../common/current-user.decorator";
+import { BadRequestException } from "@nestjs/common";
 
 @Controller("auth")
 @UseGuards(JwtAuthGuard)
@@ -26,6 +29,7 @@ export class AuthController {
   constructor(
     private readonly auth: AuthService,
     private readonly prisma: PrismaService,
+    private readonly storage: StorageService,
   ) {}
 
   // Tight per-route throttle: 5 attempts / minute / IP. Stops password
@@ -70,6 +74,30 @@ export class AuthController {
     @Body() dto: UpdateMeDto,
   ) {
     return this.auth.updateMe(user, dto);
+  }
+
+  /**
+   * Presign an avatar upload. Web/extension flow: hit this → PUT blob to the
+   * returned uploadUrl → PATCH /auth/me with {avatarUrl: publicUrl}. Scope is
+   * the caller's user id so a workspace admin can't overwrite another user's
+   * avatar path.
+   */
+  @Post("me/avatar-upload-url")
+  async avatarUploadUrl(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: AvatarUploadUrlDto,
+  ) {
+    try {
+      return await this.storage.presign({
+        kind: "avatar",
+        scopeId: user.id,
+        contentType: dto.contentType,
+        sizeBytes: dto.sizeBytes,
+        filename: dto.filename,
+      });
+    } catch (err) {
+      throw new BadRequestException((err as Error).message);
+    }
   }
 
   /**

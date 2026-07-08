@@ -10,6 +10,7 @@ import { AnnotationModule } from "./annotation/annotation.module";
 import { AttachmentsModule } from "./attachments/attachments.module";
 import { IssuesModule } from "./issues/issues.module";
 import { BoardsModule } from "./boards/boards.module";
+import { StorageModule } from "./storage/storage.module";
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { BoardsModule } from "./boards/boards.module";
     AttachmentsModule,
     IssuesModule,
     BoardsModule,
+    StorageModule,
   ],
   providers: [
     // Applies the throttler to every route by default.

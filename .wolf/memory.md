@@ -2438,3 +2438,54 @@
 |------|--------|---------|---------|--------|
 | 15:43 | Edited HANDOFF_WEB_INTEGRATION.md | 5→9 lines | ~412 |
 | 15:43 | Edited HANDOFF_WEB_INTEGRATION.md | expanded (+8 lines) | ~295 |
+| 16:27 | Session end: 2 writes across 1 files (HANDOFF_WEB_INTEGRATION.md) | 1 reads | ~5418 tok |
+
+## Session: 2026-07-08 16:34
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 16:54 | Edited apps/api/src/config/env.ts | expanded (+28 lines) | ~452 |
+| 16:55 | Edited apps/api/src/config/env.ts | added 8 condition(s) | ~711 |
+| 16:57 | Created apps/api/src/storage/storage.service.ts | — | ~2095 |
+| 16:57 | Created apps/api/src/storage/local-upload.controller.ts | — | ~905 |
+| 16:58 | Edited apps/api/src/storage/local-upload.controller.ts | inline fix | ~18 |
+| 16:58 | Edited apps/api/src/storage/local-upload.controller.ts | 7→4 lines | ~18 |
+| 16:58 | Created apps/api/src/storage/storage.module.ts | — | ~182 |
+| 16:58 | Edited apps/api/src/app.module.ts | added 1 import(s) | ~68 |
+| 16:58 | Edited apps/api/src/app.module.ts | 9→10 lines | ~51 |
+| 16:58 | Edited apps/api/src/main.ts | added 2 import(s) | ~100 |
+| 16:59 | Edited apps/api/src/main.ts | added 1 condition(s) | ~359 |
+| 17:09 | Created apps/api/src/attachments/dto/create-attachment.dto.ts | — | ~392 |
+| 17:09 | Created apps/api/src/attachments/attachments.service.ts | — | ~934 |
+| 17:09 | Created apps/api/src/attachments/attachments.controller.ts | — | ~273 |
+| 17:10 | Edited apps/api/src/attachments/attachments.module.ts | added 1 import(s) | ~135 |
+| 17:10 | Created apps/api/src/auth/dto/avatar-upload-url.dto.ts | — | ~152 |
+| 17:10 | Edited apps/api/src/auth/auth.module.ts | added 1 import(s) | ~50 |
+| 17:10 | Edited apps/api/src/auth/auth.module.ts | 3→4 lines | ~23 |
+| 17:10 | Edited apps/api/src/auth/auth.controller.ts | added 3 import(s) | ~163 |
+| 17:10 | Edited apps/api/src/auth/auth.controller.ts | modified constructor() | ~44 |
+| 17:11 | Edited apps/api/src/auth/auth.controller.ts | added error handling | ~249 |
+| 17:26 | Edited apps/extension/src/entrypoints/background.ts | added 1 condition(s) | ~603 |
+| 17:27 | Edited apps/extension/src/lib/api.ts | upload() → URL() | ~578 |
+| 17:32 | Edited apps/web/src/shared/lib/api.ts | expanded (+24 lines) | ~220 |
+| 17:33 | Edited apps/web/src/features/settings/components/ProfileSection.vue | added error handling | ~889 |
+| 17:33 | Edited apps/web/src/features/settings/components/ProfileSection.vue | expanded (+29 lines) | ~306 |
+| 17:34 | Edited apps/web/src/shared/components/UserAvatar.vue | CSS: avatarUrl | ~299 |
+| 17:38 | Edited .claude/launch.json | expanded (+9 lines) | ~146 |
+| 17:42 | Created ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/clear-pins.ts | — | ~290 |
+| 17:46 | Edited apps/api/src/auth/dto/update-me.dto.ts | 9→13 lines | ~106 |
+| 17:52 | Edited apps/api/src/main.ts | expanded (+14 lines) | ~308 |
+| 17:55 | Object-storage pipeline: swapped Attachments off inline base64 (Attachment.url data URL) onto a two-step presigned PUT flow. New StorageService (apps/api/src/storage) with `r2` mode (S3 SDK presign) + `disabled` mode (local disk under uploads/, HMAC-signed PUT to /api/storage/put, served via /uploads/*). Attachments: POST /attachments/upload-url → PUT blob → POST /attachments. Avatars: POST /auth/me/avatar-upload-url → PUT → PATCH /auth/me. Extension `uploadAttachment` refactored to 3-step; web ProfileSection has real file input + Change/Remove. Helmet CORP override on /uploads (was blocking cross-origin img loads from :5173). update-me.dto avatarUrl relaxed to require_tld:false for localhost. DB pins/issues/sessions/attachments cleared for fresh test. Verified end-to-end via preview: presign → upload → GET 200 (81B PNG) → PATCH /auth/me → img rendered, Remove clears it. | apps/api/src/{storage/**,attachments/**,auth/**,config/env.ts,main.ts,app.module.ts}, apps/extension/src/{entrypoints/background.ts,lib/api.ts}, apps/web/src/{shared/{components/UserAvatar.vue,lib/api.ts},features/settings/components/ProfileSection.vue}, .claude/launch.json, apps/api/.env{,.example} | typecheck pass, preview verified | ~3800 |
+| 17:55 | Edited HANDOFF_WEB_INTEGRATION.md | expanded (+21 lines) | ~685 |
+| 17:56 | Session end: 32 writes across 21 files (env.ts, storage.service.ts, local-upload.controller.ts, storage.module.ts, app.module.ts) | 24 reads | ~56604 tok |
+| 18:04 | Created apps/api/src/storage/storage.service.ts | — | ~1248 |
+| 18:04 | Created apps/api/src/storage/storage.module.ts | — | ~57 |
+| 18:05 | Edited apps/api/src/main.ts | 9→7 lines | ~78 |
+| 18:05 | Edited apps/api/src/main.ts | removed 47 lines | ~73 |
+| 18:07 | Storage refactor → R2-only. Per user, removed the `disabled`/local-disk fallback: deleted LocalUploadController + apps/api/uploads/ dir + HMAC token helpers + /uploads static mount + raw-body middleware. StorageService is now a single R2 code path (S3 SDK presign). env.ts: dropped StorageProvider union, made R2 vars mandatory (bucket/endpoint/access/secret/publicUrlBase) — API refuses to boot with clear "missing: STORAGE_BUCKET, ..." message. update-me.dto avatarUrl tightened back to https-only (no more localhost). .env/.env.example updated with R2-only vars + Cloudflare setup instructions (bucket + API token + CORS + public URL). Verified boot rejection with empty vars. **User must fill .env with real R2 credentials before API will start.** | apps/api/src/{storage/**, config/env.ts, main.ts, auth/dto/update-me.dto.ts}, apps/api/.env{,.example}, HANDOFF_WEB_INTEGRATION.md | typecheck pass; boot fails loudly as designed | ~2100 |
+| 18:05 | Edited apps/api/src/config/env.ts | 26→23 lines | ~223 |
+| 18:06 | Edited apps/api/src/config/env.ts | modified if() | ~390 |
+| 18:06 | Edited apps/api/src/auth/dto/update-me.dto.ts | 13→9 lines | ~88 |
+| 18:07 | Created ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/env-check.ts | — | ~66 |
+| 18:11 | Edited HANDOFF_WEB_INTEGRATION.md | modified Config() | ~527 |
+| 18:12 | Session end: 41 writes across 22 files (env.ts, storage.service.ts, local-upload.controller.ts, storage.module.ts, app.module.ts) | 24 reads | ~60727 tok |

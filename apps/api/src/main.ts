@@ -24,8 +24,8 @@ async function bootstrap() {
   // etc.) stay on.
   app.use(helmet({ contentSecurityPolicy: false }));
 
-  // Explicit body-size limits. Sized for base64 screenshot attachments, but
-  // bounded so a single request can't exhaust memory. Default 10mb.
+  // JSON body parser. Kept small — attachments upload directly to R2 via
+  // presigned URLs, so nothing large flows through Nest.
   app.use(express.json({ limit: cfg.bodyLimit }));
   app.use(express.urlencoded({ limit: cfg.bodyLimit, extended: true }));
 

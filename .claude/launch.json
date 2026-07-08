@@ -9,6 +9,15 @@
         ". ~/.nvm/nvm.sh >/dev/null && nvm use 20 >/dev/null && pnpm --filter @pinlay/web dev"
       ],
       "port": 5173
+    },
+    {
+      "name": "api",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        ". ~/.nvm/nvm.sh >/dev/null && nvm use 20 >/dev/null && pnpm --filter @pinlay/api dev"
+      ],
+      "port": 8787
     }
   ]
 }

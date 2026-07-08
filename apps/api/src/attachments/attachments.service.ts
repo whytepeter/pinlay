@@ -1,43 +1,52 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+/**
+ * Two-step attachment flow:
+ *
+ *   1. POST /attachments/upload-url  →  presigned {uploadUrl, publicUrl, objectKey}
+ *   2. client PUTs bytes to `uploadUrl`
+ *   3. POST /attachments              →  persist row with the returned URL
+ *
+ * The API never sees the file bytes. Scoping (pin/issue must be in the
+ * caller's workspace) happens at BOTH steps so a stolen presigned URL can't
+ * be used to attach to a pin in another workspace.
+ */
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateAttachmentDto } from "./dto/create-attachment.dto";
+import { StorageService, type UploadKind } from "../storage/storage.service";
+import { CreateAttachmentDto, CreateUploadUrlDto } from "./dto/create-attachment.dto";
 import { AuthenticatedUser } from "../common/current-user.decorator";
 
-/**
- * v1: inline storage. We persist the data URL on the row itself so the
- * extension can attach screenshots without S3/R2 plumbing. Upgrade path:
- * swap `inlineUrl` for a signed `objectKey` once apps/storage lands.
- */
 @Injectable()
 export class AttachmentsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly storage: StorageService,
+  ) {}
+
+  async createUploadUrl(user: AuthenticatedUser, dto: CreateUploadUrlDto) {
+    await this.assertScope(user, dto.pinId, dto.issueId);
+    return this.presign(user.workspaceId, "attachment", {
+      contentType: dto.contentType,
+      sizeBytes: dto.sizeBytes,
+      filename: dto.filename,
+    });
+  }
 
   async create(user: AuthenticatedUser, dto: CreateAttachmentDto) {
-    if (dto.pinId) {
-      const pin = await this.prisma.pin.findFirst({
-        where: { id: dto.pinId, session: { workspaceId: user.workspaceId } },
-      });
-      if (!pin) throw new NotFoundException("Pin not found");
-    }
-    if (dto.issueId) {
-      const issue = await this.prisma.issue.findFirst({
-        where: { id: dto.issueId, workspaceId: user.workspaceId },
-      });
-      if (!issue) throw new NotFoundException("Issue not found");
-    }
-
-    const sizeBytes = Math.floor((dto.file.base64.length * 3) / 4);
-    const inlineUrl = `data:${dto.file.contentType};base64,${dto.file.base64}`;
+    await this.assertScope(user, dto.pinId, dto.issueId);
 
     const att = await this.prisma.attachment.create({
       data: {
         pinId: dto.pinId ?? null,
         issueId: dto.issueId ?? null,
         type: dto.type,
-        filename: dto.file.filename,
-        contentType: dto.file.contentType,
-        url: inlineUrl,
-        sizeBytes,
+        filename: dto.filename,
+        contentType: dto.contentType,
+        url: dto.url,
+        sizeBytes: dto.sizeBytes,
       },
     });
 
@@ -49,5 +58,52 @@ export class AttachmentsService {
       contentType: att.contentType,
       sizeBytes: att.sizeBytes,
     };
+  }
+
+  /**
+   * Presign helper shared with avatar / logo flows. `scopeId` is what gets
+   * baked into the object key path so a workspace can't be tricked into
+   * writing to another workspace's prefix.
+   */
+  async presign(
+    scopeId: string,
+    kind: UploadKind,
+    args: { contentType: string; sizeBytes: number; filename?: string },
+  ) {
+    if (!args.contentType.trim()) {
+      throw new BadRequestException("contentType is required");
+    }
+    try {
+      return await this.storage.presign({
+        kind,
+        scopeId,
+        contentType: args.contentType,
+        sizeBytes: args.sizeBytes,
+        filename: args.filename,
+      });
+    } catch (err) {
+      throw new BadRequestException((err as Error).message);
+    }
+  }
+
+  private async assertScope(
+    user: AuthenticatedUser,
+    pinId?: string,
+    issueId?: string,
+  ) {
+    if (pinId) {
+      const pin = await this.prisma.pin.findFirst({
+        where: { id: pinId, session: { workspaceId: user.workspaceId } },
+        select: { id: true },
+      });
+      if (!pin) throw new NotFoundException("Pin not found");
+    }
+    if (issueId) {
+      const issue = await this.prisma.issue.findFirst({
+        where: { id: issueId, workspaceId: user.workspaceId },
+        select: { id: true },
+      });
+      if (!issue) throw new NotFoundException("Issue not found");
+    }
   }
 }

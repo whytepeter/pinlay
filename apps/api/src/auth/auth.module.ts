@@ -6,6 +6,7 @@ import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { WorkspaceModule } from "../workspace/workspace.module";
 import { MailModule } from "../mail/mail.module";
+import { StorageModule } from "../storage/storage.module";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { MailModule } from "../mail/mail.module";
     // auto-accept pending invites on signup.
     forwardRef(() => WorkspaceModule),
     MailModule,
+    StorageModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard],

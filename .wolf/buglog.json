@@ -5793,6 +5793,182 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-08T14:43:33.340Z"
+    },
+    {
+      "id": "bug-360",
+      "timestamp": "2026-07-08T15:55:21.896Z",
+      "error_message": "Type error",
+      "file": "apps/api/src/config/env.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T15:55:21.896Z"
+    },
+    {
+      "id": "bug-361",
+      "timestamp": "2026-07-08T15:58:14.564Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/api/src/storage/local-upload.controller.ts",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 7→4 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T15:58:14.564Z"
+    },
+    {
+      "id": "bug-362",
+      "timestamp": "2026-07-08T15:59:12.447Z",
+      "error_message": "Missing await",
+      "file": "apps/api/src/main.ts",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T15:59:12.447Z"
+    },
+    {
+      "id": "bug-363",
+      "timestamp": "2026-07-08T16:11:00.392Z",
+      "error_message": "Missing error handling in avatarUploadUrl",
+      "file": "apps/api/src/auth/auth.controller.ts",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T16:11:00.392Z"
+    },
+    {
+      "id": "bug-364",
+      "timestamp": "2026-07-08T16:27:17.924Z",
+      "error_message": "Type error",
+      "file": "apps/extension/src/lib/api.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T16:27:17.924Z"
+    },
+    {
+      "id": "bug-365",
+      "timestamp": "2026-07-08T16:33:12.731Z",
+      "error_message": "Missing error handling in save",
+      "file": "apps/web/src/features/settings/components/ProfileSection.vue",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T16:33:12.731Z"
+    },
+    {
+      "id": "bug-366",
+      "timestamp": "2026-07-08T16:33:39.447Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/features/settings/components/ProfileSection.vue",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 12→41 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T16:33:39.447Z"
+    },
+    {
+      "id": "bug-367",
+      "timestamp": "2026-07-08T16:34:23.395Z",
+      "error_message": "CSS fix: hue",
+      "file": "apps/web/src/shared/components/UserAvatar.vue",
+      "root_cause": "hue: 262, size: 24 → 262, size: 24, avatarUrl: null",
+      "fix": "Changed hue: 262, size: 24 → 262, size: 24, avatarUrl: null",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T16:34:23.395Z"
+    },
+    {
+      "id": "bug-368",
+      "timestamp": "2026-07-08T17:05:30.823Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/api/src/main.ts",
+      "root_cause": "43 lines replaced/restructured",
+      "fix": "Rewrote 47→4 lines (43 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T17:05:30.823Z"
+    },
+    {
+      "id": "bug-369",
+      "timestamp": "2026-07-08T17:05:50.640Z",
+      "error_message": "Type error",
+      "file": "apps/api/src/config/env.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T17:05:50.640Z"
+    },
+    {
+      "id": "bug-370",
+      "timestamp": "2026-07-08T17:06:10.224Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/api/src/config/env.ts",
+      "root_cause": "29 lines replaced/restructured",
+      "fix": "Rewrote 51→29 lines (29 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T17:06:10.224Z"
     }
   ]
 }
