@@ -5777,6 +5777,22 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-06-08T20:22:05.681Z"
+    },
+    {
+      "id": "bug-359",
+      "timestamp": "2026-07-08T14:43:33.340Z",
+      "error_message": "Missing await",
+      "file": "HANDOFF_WEB_INTEGRATION.md",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-08T14:43:33.340Z"
     }
   ]
 }

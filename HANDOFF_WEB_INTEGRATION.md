@@ -192,9 +192,13 @@ GET  /health      → {ok, db, latencyMs, uptime, version}
 
 ### Pre-launch plumbing — no roadmap phase (gating, not differentiating)
 
-**~~Email pipeline~~ — DONE.** `apps/api/src/mail/mail.service.ts` wraps Resend's HTTP API (no SDK; just `fetch`). Three templates wired today: **invite** (`WorkspaceService.inviteMember`), **invite-resent** (`WorkspaceService.resendInvite`), and **welcome** (`AuthService.signup`, skipped when the signup was driven by an invite link — `acceptPendingInvitesForEmail` now returns a count). Fire-and-forget — failures log a warning, never block the API. Modes via `MAIL_PROVIDER` env var:
+**~~Email pipeline~~ — DONE.** `apps/api/src/mail/mail.service.ts` wraps Resend's HTTP API (no SDK; just `fetch`). Three templates wired: **invite** (`WorkspaceService.inviteMember`), **invite-resent** (`WorkspaceService.resendInvite`), and **welcome** (`AuthService.signup`, skipped when the signup was driven by an invite link — `acceptPendingInvitesForEmail` now returns a count). Fire-and-forget — failures log a warning, never block the API. Modes via `MAIL_PROVIDER` env var:
 - `resend` — sends for real. Requires `MAIL_API_KEY`.
 - `disabled` (default) — logs `[mail:disabled] Would send "<subject>" to <to>` so dev never breaks when a key is missing.
+
+**Brand mark rendering**: pinlay logo shipped as a 128×128 PNG (`apps/api/src/mail/assets/logo.png`, rendered once from `apps/web/public/favicon.svg`), read at module load, attached with `content_id: "pinlay-logo"` on every send, referenced in HTML via `<img src="cid:pinlay-logo">`. CID inline images render in **every** major client — Gmail, Apple Mail, iOS, Outlook — unlike inline SVG or `data:` URIs. `nest-cli.json` copies the asset to `dist/mail/assets/` on build; watch mode picks up asset changes via `watchAssets: true`.
+
+**Link colors**: raw URLs in the invite body are wrapped in explicit `<a style="color:#7c3aed !important">` — Gmail otherwise auto-links them in default blue.
 
 Sender defaults to `pinlay <onboarding@resend.dev>` (Resend's test sender, no DNS required). Production should swap `MAIL_FROM` to a verified domain. Env vars are documented in `apps/api/.env`.
 
@@ -216,6 +220,14 @@ What's NOT done yet (intentionally — adds testing friction):
 ### Phase 6 — Collab & scale (`ROADMAP.md` §6.3) — post-PMF
 
 - **Notifications module** — preferences matrix (event × channel), dispatch infra, fan-out to email/in-app. Settings → Notifications UI is mock. Depends on the email pipeline above.
+
+### Global confirm dialog — DONE
+
+Replaced every `window.confirm` with an async `await confirm({...})` from `apps/web/src/shared/lib/confirm.ts`. Singleton `<ConfirmDialog>` mounted in `App.vue`. Two modes:
+- **Pure yes/no** — resolves immediately on click.
+- **With `onConfirm`** — dialog **stays open** with the confirm button in a loading state until the action settles. On success it closes + resolves `true`. On failure it stays open with an inline retry hint; the caller's mutation `onError` (toast) still runs. Esc / overlay / X ignored while loading — can't half-cancel a destructive op.
+
+Call sites: `MembersSection` (remove member, revoke invite), `IssuePage` (delete issue, delete pin), `ActivityThread` (delete comment), `useBoards` (remove board). Pattern: `onConfirm: () => mutation.mutateAsync(id)`. `PinDetail` emits `delete` up to `IssuePage` since the parent owns the mutation.
 
 ### Anytime — small UI cleanups (no phase, low-pri)
 

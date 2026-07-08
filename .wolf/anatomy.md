@@ -1,12 +1,12 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-06-08T20:40:52.258Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-08T14:43:33.328Z
 > Files: 245 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
 - `.gitignore` — Git ignore rules (~144 tok)
-- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~4660 tok)
+- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~5055 tok)
 - `HANDOFF.md` — pinlay — Handoff (~4508 tok)
 - `package.json` — Node.js package manifest (~299 tok)
 - `ROADMAP.md` — pinlay — Product Roadmap (~3286 tok)
