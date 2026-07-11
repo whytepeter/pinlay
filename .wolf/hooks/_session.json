@@ -91,6 +91,31 @@
       "count": 1,
       "tokens": 0,
       "first_read": "2026-07-11T21:21:44.518Z"
+    },
+    "/Users/apple/Documents/code/pinlay/packages/design/src/tokens.css": {
+      "count": 1,
+      "tokens": 1580,
+      "first_read": "2026-07-11T21:30:20.321Z"
+    },
+    "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/button/index.ts": {
+      "count": 1,
+      "tokens": 567,
+      "first_read": "2026-07-11T21:31:04.463Z"
+    },
+    "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/input/Input.vue": {
+      "count": 1,
+      "tokens": 307,
+      "first_read": "2026-07-11T21:31:45.811Z"
+    },
+    "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/textarea/Textarea.vue": {
+      "count": 1,
+      "tokens": 286,
+      "first_read": "2026-07-11T21:31:46.233Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue": {
+      "count": 2,
+      "tokens": 2289,
+      "first_read": "2026-07-11T21:34:38.453Z"
     }
   },
   "files_written": [
@@ -315,6 +340,78 @@
       "action": "edit",
       "tokens": 62,
       "at": "2026-07-11T21:16:40.157Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/packages/design/src/tokens.css",
+      "action": "edit",
+      "tokens": 64,
+      "at": "2026-07-11T21:30:35.576Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/button/index.ts",
+      "action": "edit",
+      "tokens": 561,
+      "at": "2026-07-11T21:31:30.599Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/input/Input.vue",
+      "action": "edit",
+      "tokens": 226,
+      "at": "2026-07-11T21:32:19.528Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/textarea/Textarea.vue",
+      "action": "edit",
+      "tokens": 158,
+      "at": "2026-07-11T21:32:23.452Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/workspace-shell/components/AppNavbar.vue",
+      "action": "create",
+      "tokens": 1355,
+      "at": "2026-07-11T21:34:14.195Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue",
+      "action": "edit",
+      "tokens": 40,
+      "at": "2026-07-11T21:35:29.683Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue",
+      "action": "edit",
+      "tokens": 538,
+      "at": "2026-07-11T21:35:40.383Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/workspace-shell/components/AppNavbar.vue",
+      "action": "edit",
+      "tokens": 24,
+      "at": "2026-07-11T21:35:42.369Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/workspace-shell/AppLayout.vue",
+      "action": "create",
+      "tokens": 237,
+      "at": "2026-07-11T21:36:01.179Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/app/router.ts",
+      "action": "edit",
+      "tokens": 32,
+      "at": "2026-07-11T21:36:44.694Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/composables/usePins.ts",
+      "action": "edit",
+      "tokens": 182,
+      "at": "2026-07-11T21:38:29.732Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinsPage.vue",
+      "action": "create",
+      "tokens": 3911,
+      "at": "2026-07-11T21:39:29.954Z"
     }
   ],
   "edit_counts": {
@@ -325,23 +422,29 @@
     "apps/api/src/issues/pins-inbox.controller.ts": 1,
     "apps/api/src/issues/issues.module.ts": 1,
     "apps/web/src/shared/lib/api.ts": 2,
-    "apps/web/src/features/pins/composables/usePins.ts": 2,
-    "apps/web/src/features/pins/PinsPage.vue": 5,
+    "apps/web/src/features/pins/composables/usePins.ts": 3,
+    "apps/web/src/features/pins/PinsPage.vue": 6,
     "apps/web/src/features/pins/PinDetailPage.vue": 3,
     "apps/web/src/features/pins/SessionRedirect.vue": 1,
-    "apps/web/src/app/router.ts": 1,
-    "apps/web/src/features/workspace-shell/AppLayout.vue": 2,
+    "apps/web/src/app/router.ts": 2,
+    "apps/web/src/features/workspace-shell/AppLayout.vue": 3,
     "apps/web/src/features/workspace-shell/components/AppSidebar.vue": 1,
     "apps/web/src/features/settings/SettingsPage.vue": 4,
     "apps/web/src/features/auth/AcceptInviteView.vue": 1,
     "apps/web/index.html": 1,
     "apps/extension/src/entrypoints/content.ts": 2,
     "apps/extension/src/components/annotation/AnnotationPinComposer.vue": 5,
-    "apps/extension/src/components/annotation/AnnotationOverlay.vue": 1
+    "apps/extension/src/components/annotation/AnnotationOverlay.vue": 1,
+    "packages/design/src/tokens.css": 1,
+    "packages/design/src/components/ui/button/index.ts": 1,
+    "packages/design/src/components/ui/input/Input.vue": 1,
+    "packages/design/src/components/ui/textarea/Textarea.vue": 1,
+    "apps/web/src/features/workspace-shell/components/AppNavbar.vue": 2,
+    "apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue": 2
   },
-  "anatomy_hits": 17,
+  "anatomy_hits": 22,
   "anatomy_misses": 1,
-  "repeated_reads_warned": 7,
+  "repeated_reads_warned": 8,
   "cerebrum_warnings": 0,
-  "stop_count": 1
+  "stop_count": 2
 }

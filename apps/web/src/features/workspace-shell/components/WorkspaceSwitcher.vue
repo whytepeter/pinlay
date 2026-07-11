@@ -24,7 +24,11 @@ import { apiClient, type Workspace } from "@/shared/lib/api";
 import { useAuth } from "@/shared/composables/useAuth";
 import { toast } from "@/shared/lib/toast";
 
-defineProps<{ collapsed?: boolean }>();
+defineProps<{
+  collapsed?: boolean;
+  /** Navbar pill: initial + name + chevron, no plan line, quiet surface. */
+  compact?: boolean;
+}>();
 const emit = defineEmits<{ "update:open": [boolean] }>();
 
 const auth = useAuth();
@@ -142,7 +146,25 @@ function submitCreate() {
 <template>
   <DropdownMenu v-model:open="open">
     <DropdownMenuTrigger as-child>
+      <!-- Compact pill for the top navbar -->
       <button
+        v-if="compact"
+        class="flex min-h-[36px] max-w-full items-center gap-1.5 rounded-full bg-muted/60 py-1 pl-1.5 pr-2.5 text-left transition-all hover:bg-muted active:scale-[0.97]"
+      >
+        <span
+          class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground"
+          >{{ placeholderName.charAt(0).toUpperCase() }}</span
+        >
+        <span class="truncate text-[13px] font-medium">{{ placeholderName }}</span>
+        <Icon
+          name="chevrons-up-down"
+          :size="13"
+          class="shrink-0 text-muted-foreground"
+        />
+      </button>
+      <!-- Original wide trigger (settings pages, future sidebars) -->
+      <button
+        v-else
         class="flex w-full items-center gap-2 rounded-md border border-border bg-card px-2 py-1.5 text-left transition-colors hover:bg-sidebar-accent"
         :class="collapsed ? 'justify-center' : ''"
       >

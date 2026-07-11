@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-11T21:16:40.136Z
-> Files: 259 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-11T21:39:29.932Z
+> Files: 260 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
 
@@ -361,12 +361,12 @@
 ## apps/web/src/features/pins/
 
 - `PinDetailPage.vue` — Pin detail — /p/:pinId. The dashboard's only detail surface after the (~3463 tok)
-- `PinsPage.vue` — The Pin Inbox — the dashboard's home. One reverse-chron list of pins, (~2693 tok)
+- `PinsPage.vue` — The Pin Inbox — the dashboard's home (v2, 2026-07-10 iOS pass). (~3651 tok)
 - `SessionRedirect.vue` — Legacy /s/:id → /p/:pinId shim. Old links (extension "Open in dashboard", (~259 tok)
 
 ## apps/web/src/features/pins/composables/
 
-- `usePins.ts` — Pin Inbox server state — one composable per domain (project convention). (~879 tok)
+- `usePins.ts` — Pin Inbox server state — one composable per domain (project convention). (~1046 tok)
 
 ## apps/web/src/features/settings/
 
@@ -391,13 +391,14 @@
 
 ## apps/web/src/features/workspace-shell/
 
-- `AppLayout.vue` — Vue: setup (~359 tok)
+- `AppLayout.vue` — App shell (2026-07-10 redesign): one frosted top navbar, no sidebar, no (~222 tok)
 
 ## apps/web/src/features/workspace-shell/components/
 
+- `AppNavbar.vue` — The app's single chrome element (2026-07-10 shell redesign): a frosted, (~1267 tok)
 - `AppSidebar.vue` — Sidebar — deliberately tiny. Two destinations (Pins, Settings) plus the (~1834 tok)
 - `StatusBar.vue` — Vue: settings, setup (~2749 tok)
-- `WorkspaceSwitcher.vue` — Shared post-switch reconciliation: replace the bearer token, drop every (~2289 tok)
+- `WorkspaceSwitcher.vue` — Navbar pill: initial + name + chevron, no plan line, quiet surface. (~2529 tok)
 
 ## apps/web/src/pages/
 
@@ -459,7 +460,7 @@
 ## packages/design/src/
 
 - `index.ts` — Import "@pinlay/design/tokens.css" once in the host app. Components are (~382 tok)
-- `tokens.css` — Styles: 5 rules, 87 vars (~1580 tok)
+- `tokens.css` — Styles: 5 rules, 87 vars (~1604 tok)
 
 ## packages/design/src/components/
 
@@ -467,7 +468,7 @@
 
 ## packages/design/src/components/ui/button/
 
-- `index.ts` — Exports buttonVariants, ButtonVariants (~567 tok)
+- `index.ts` — Exports buttonVariants, ButtonVariants (~731 tok)
 
 ## packages/design/src/components/ui/dialog/
 
@@ -481,7 +482,7 @@
 
 ## packages/design/src/components/ui/input/
 
-- `Input.vue` — Vue: setup (~307 tok)
+- `Input.vue` — Vue: setup (~368 tok)
 
 ## packages/design/src/components/ui/popover/
 
@@ -504,7 +505,7 @@
 
 ## packages/design/src/components/ui/textarea/
 
-- `Textarea.vue` — Vue: setup (~286 tok)
+- `Textarea.vue` — Vue: setup (~307 tok)
 
 ## packages/design/src/lib/
 

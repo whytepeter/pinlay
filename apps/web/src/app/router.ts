@@ -54,8 +54,8 @@ export const router = createRouter({
           path: "settings",
           redirect: { name: "settings", params: { section: "profile" } },
         },
-        // Pin detail — the only detail surface. Own header; AppLayout hides
-        // the StatusBar on /p/*.
+        // Pin detail — the only detail surface. Own back-header; AppLayout
+        // hides the navbar on /p/*.
         {
           path: "p/:pinId",
           name: "pin",

@@ -6321,6 +6321,86 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-11T21:16:40.159Z"
+    },
+    {
+      "id": "bug-393",
+      "timestamp": "2026-07-11T21:30:35.578Z",
+      "error_message": "Significant refactor of ",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 6→7 lines (6 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-11T21:30:35.578Z"
+    },
+    {
+      "id": "bug-394",
+      "timestamp": "2026-07-11T21:31:30.601Z",
+      "error_message": "Significant refactor of ",
+      "file": "packages/design/src/components/ui/button/index.ts",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 17→25 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-11T21:31:30.601Z"
+    },
+    {
+      "id": "bug-395",
+      "timestamp": "2026-07-11T21:32:19.530Z",
+      "error_message": "CSS fix: file, focus-visible",
+      "file": "packages/design/src/components/ui/input/Input.vue",
+      "root_cause": "file: text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', → text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground h-9 w-full min-w-0 rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-1 text-base transition-[color,box-shadow,background-color] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',; focus-visible: border-ring', → border-ring focus-visible:bg-background dark:focus-visible:bg-input/20',",
+      "fix": "Changed file: text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', → text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground h-9 w-full min-w-0 rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-1 text-base transition-[color,box-shadow,background-color] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',; focus-visible: border-ring', → border-ring focus-visible:bg-background dark:focus-visible:bg-input/20',",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-11T21:32:19.530Z"
+    },
+    {
+      "id": "bug-396",
+      "timestamp": "2026-07-11T21:32:23.455Z",
+      "error_message": "CSS fix: placeholder",
+      "file": "packages/design/src/components/ui/textarea/Textarea.vue",
+      "root_cause": "placeholder: text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\" → text-muted-foreground focus-visible:border-ring focus-visible:bg-background dark:focus-visible:bg-input/20 focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex field-sizing-content min-h-16 w-full rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-2 text-base transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\"",
+      "fix": "Changed placeholder: text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\" → text-muted-foreground focus-visible:border-ring focus-visible:bg-background dark:focus-visible:bg-input/20 focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex field-sizing-content min-h-16 w-full rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-2 text-base transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-11T21:32:23.455Z"
+    },
+    {
+      "id": "bug-397",
+      "timestamp": "2026-07-11T21:35:42.371Z",
+      "error_message": "Wrong reference: div should be compact",
+      "file": "apps/web/src/features/workspace-shell/components/AppNavbar.vue",
+      "root_cause": "Used \"div\" instead of \"compact\"",
+      "fix": "Changed div → compact",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-11T21:35:42.371Z"
     }
   ]
 }

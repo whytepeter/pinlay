@@ -63,6 +63,23 @@ export function usePinInbox(filters: InboxFilters) {
   return { query, pins, total, sites };
 }
 
+/**
+ * Row-level status flip for the inbox (the resolve circle). Optimistic-free
+ * on purpose: the row animates out via invalidation, and the API round-trip
+ * is fast enough that a spinner on the circle covers it.
+ */
+export function useQuickStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (vars: { id: string; status: Status }) =>
+      apiClient.pins.update(vars.id, { status: vars.status }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["pins"] });
+    },
+    onError: (err) => toast.error(err),
+  });
+}
+
 export function usePinDetail(pinId: Ref<string>) {
   const queryClient = useQueryClient();
 
