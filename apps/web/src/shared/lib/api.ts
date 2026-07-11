@@ -237,6 +237,47 @@ export interface IssueDetail extends IssueSummary {
   pins: ApiPin[];
 }
 
+// ── Pin Inbox (pin-centric dashboard feed, 2026-07-10 rebuild) ─────────────
+
+export interface InboxIssueRef {
+  id: string;
+  title: string;
+  reference: string;
+}
+
+/** One inbox row: the pin + where it lives. */
+export interface InboxPin extends ApiPin {
+  pageUrl: string;
+  issue: InboxIssueRef | null;
+}
+
+/** Sibling pin pill on the detail page. */
+export interface SiblingPin {
+  id: string;
+  index: number;
+  title: string;
+  status: Status;
+}
+
+export interface InboxPinDetail extends InboxPin {
+  siblings: SiblingPin[];
+}
+
+export interface SiteBucket {
+  host: string;
+  count: number;
+}
+
+export type InboxState = "open" | "resolved" | "all";
+
+export interface ListInboxPinsParams {
+  state?: InboxState;
+  site?: string;
+  q?: string;
+  limit?: number;
+  offset?: number;
+}
+
 /** Single comment on a pin. Mirrors apps/api SerializedComment. */
 export interface PinCommentRow {
   id: string;
@@ -499,6 +540,16 @@ export const apiClient = {
 
   // ── Pin mutations (extension's write surface, reused by the dashboard) ──
   pins: {
+    /** The Pin Inbox — the dashboard's primary feed (pin-centric). */
+    inbox: (params: ListInboxPinsParams = {}) =>
+      request<Paginated<InboxPin>>(
+        `/pins${qs(params as Record<string, unknown>)}`,
+      ),
+    /** Distinct site hosts + counts for the site filter chips. */
+    sites: () => request<SiteBucket[]>("/pins/sites"),
+    /** Single pin + sibling pills for /p/:pinId. */
+    get: (id: string) => request<InboxPinDetail>(`/pins/${id}`),
+
     update: (id: string, patch: UpdatePinInput) =>
       request<ApiPin>(`/annotation/pins/${id}`, {
         method: "PATCH",

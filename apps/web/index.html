@@ -2,7 +2,18 @@
 <html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- viewport-fit=cover lets safe-area-inset-* env vars work on notched
+         iPhones; without it the app renders in a letterboxed viewport. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <!-- iOS home-screen behaviour: standalone shell, translucent status bar -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="pinlay" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>pinlay</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

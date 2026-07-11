@@ -221,11 +221,18 @@ What's NOT done yet (intentionally — adds testing friction):
 
 Attachments + avatars run on a two-step presigned upload against **Cloudflare R2**. Bytes never touch Nest. No local-disk fallback — the API refuses to boot without R2 credentials.
 
-**Endpoints:**
+**Endpoints — two flavours by caller:**
+
+*Web / direct PUT (uses R2 CORS):*
 - `POST /attachments/upload-url` → `{objectKey, uploadUrl, publicUrl, headers, method, expiresAt}`
-- Client `PUT`s blob to `uploadUrl` (R2 direct, with Content-Type header matching the presign)
+- Client `PUT`s blob to `uploadUrl` (R2 direct, Content-Type matches the presign)
 - `POST /attachments` → persists the row with `url = publicUrl`
 - Same shape for avatars: `POST /auth/me/avatar-upload-url` → PUT → `PATCH /auth/me { avatarUrl }`
+
+*Extension / server-proxied:*
+- `POST /attachments/upload` (multipart: `file` + `type` + `pinId?` + `issueId?`) → bytes stream through Nest to R2 via `StorageService.uploadBuffer`, row persisted in one call.
+- Needed because R2 CORS doesn't accept `chrome-extension://*` origins.
+- Cost: one extra hop for extension screenshots. Small (a few MB max) — not worth optimising until it hurts.
 
 **Config (all required):**
 - `STORAGE_ENDPOINT` — `https://<accountid>.r2.cloudflarestorage.com`
@@ -235,13 +242,14 @@ Attachments + avatars run on a two-step presigned upload against **Cloudflare R2
 
 **R2 bucket setup (one-time, in Cloudflare dashboard):**
 - Enable **Public access** (r2.dev subdomain) OR add a custom domain
-- **CORS policy** must allow `PUT` + `Content-Type` header from your web origin AND `chrome-extension://*` (else the extension's SW can't PUT)
-- Bucket → Object → responses should return `Cross-Origin-Resource-Policy: cross-origin` (default for r2.dev; if fronting with a Worker, set it explicitly) so `<img src="…r2.dev/…">` isn't blocked cross-origin
+- **CORS policy** must allow `PUT`/`GET`/`HEAD` + `Content-Type` header from your web origin. R2 does NOT accept `chrome-extension://*` wildcards — this is why the extension goes through the server-side proxy (`POST /attachments/upload`) instead of direct-PUT. See `apps/api/.env.example` for the CORS JSON example.
+- Bucket → Object responses should return `Cross-Origin-Resource-Policy: cross-origin` (default for r2.dev; if fronting with a Worker, set it explicitly) so `<img src="…r2.dev/…">` isn't blocked cross-origin
 
 **Wiring:**
-- `apps/api/src/storage/{storage.service,storage.module}.ts` — S3 SDK, presign only
-- Extension: `apps/extension/src/lib/api.ts` `uploadAttachment` does three steps (presign → PUT via SW → confirm). Background SW's `API_FETCH` accepts `directUrl: true` for raw PUTs that skip `API_URL` + auth header
-- Web: `apps/web/src/features/settings/components/ProfileSection.vue` has the file input; `UserAvatar` accepts `avatarUrl` and falls through to initials on load fail. `apiClient.avatarUploadUrl(...)` in `apps/web/src/shared/lib/api.ts`
+- `apps/api/src/storage/{storage.service,storage.module}.ts` — S3 SDK, presign + `uploadBuffer` (server-side proxy)
+- `apps/api/src/attachments/attachments.controller.ts` — `POST /upload-url` (direct) + `POST /upload` (multipart proxy)
+- Extension: `apps/extension/src/lib/api.ts` `uploadAttachment` → single multipart POST via the SW. Background SW's `API_FETCH` handles a `file` field (base64 → FormData).
+- Web: `apps/web/src/features/settings/components/ProfileSection.vue` has the file input; `UserAvatar` accepts `avatarUrl` and falls through to initials on load fail. `apiClient.avatarUploadUrl(...)` in `apps/web/src/shared/lib/api.ts` uses the direct-PUT presign flow.
 
 ### Phase 6 — Collab & scale (`ROADMAP.md` §6.3) — post-PMF
 

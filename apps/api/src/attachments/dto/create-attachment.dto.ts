@@ -39,3 +39,19 @@ export class CreateAttachmentDto {
   @IsOptional() @IsString() pinId?: string;
   @IsOptional() @IsString() issueId?: string;
 }
+
+/**
+ * Server-side proxied upload. Used by the browser extension, which can't PUT
+ * to R2 directly (R2 CORS doesn't accept `chrome-extension://*` origins).
+ * The file rides as a multipart field; the rest are text fields on the same
+ * FormData.
+ *
+ * The multer file itself is validated on the controller (size + presence).
+ * class-validator with `enableImplicitConversion` coerces the type field
+ * from the multipart form value.
+ */
+export class UploadAttachmentDto {
+  @IsEnum(AttachmentType) type!: AttachmentType;
+  @IsOptional() @IsString() pinId?: string;
+  @IsOptional() @IsString() issueId?: string;
+}

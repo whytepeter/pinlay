@@ -1224,6 +1224,9 @@ async function onComposerSubmit(draft: PinDraft) {
     // Attachments upload in the background in parallel; making the user wait on
     // serial N×RTT uploads just to dismiss the composer is the visible delay.
     if (draft.images && draft.images.length > 0) {
+      // Scope to the PIN, not the issue — the dashboard's ScreenshotViewer
+      // reads pin.attachments[0]. Scoping to issueId only would leave the
+      // pin's viewer showing "No screenshot" even after a successful upload.
       void Promise.all(
         draft.images.map((img) =>
           api
@@ -1231,7 +1234,7 @@ async function onComposerSubmit(draft: PinDraft) {
               blob: img,
               filename: img.name || `image-${Date.now()}.png`,
               type: "screenshot",
-              issueId: res.issueId,
+              pinId: res.pin.id,
             })
             .catch((err) => {
               console.warn(
@@ -1357,14 +1360,20 @@ function onDone() {
 }
 
 function defaultReviewTitle(): string {
+  // Page title + date reads human ("Checkout — Acme · Jul 10"); host is the
+  // fallback for pages with empty/whitespace titles.
   let host = livePageUrl.value;
   try {
     host = new URL(livePageUrl.value).host;
   } catch {
     /* keep */
   }
-  const n = sessionPinCount.value;
-  return `Annotation review · ${host} · ${n} pin${n === 1 ? "" : "s"}`;
+  const label = document.title.trim() || host;
+  const date = new Date().toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+  return `${label} · ${date}`;
 }
 
 async function confirmFinish() {

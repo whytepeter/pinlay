@@ -38,23 +38,14 @@ export const router = createRouter({
       component: () => import("@/features/workspace-shell/AppLayout.vue"),
       children: [
         {
+          // The Pin Inbox — the dashboard's home (2026-07-10 rebuild).
           path: "",
-          name: "pinboards",
-          component: () => import("@/features/pinboards/PinboardsPage.vue"),
+          name: "pins",
+          component: () => import("@/features/pins/PinsPage.vue"),
         },
         {
-          path: "overview",
-          name: "dashboard",
-          component: () => import("@/features/dashboard/DashboardPage.vue"),
-        },
-        {
-          path: "integrations",
-          name: "integrations",
-          component: () => import("@/features/integrations/IntegrationsPage.vue"),
-        },
-        {
-          // Tab lives in the URL (`/settings/profile`, `/settings/workspace`,
-          // …). Bare `/settings` redirects to Profile so old links still work.
+          // Tab lives in the URL (`/settings/profile`, `/settings/team`, …).
+          // Bare `/settings` redirects to Profile so old links still work.
           path: "settings/:section?",
           name: "settings",
           component: () => import("@/features/settings/SettingsPage.vue"),
@@ -63,12 +54,18 @@ export const router = createRouter({
           path: "settings",
           redirect: { name: "settings", params: { section: "profile" } },
         },
-        // Issue detail — inside the shell (sidebar visible), own header instead
-        // of the StatusBar (AppLayout hides StatusBar on /s/*).
+        // Pin detail — the only detail surface. Own header; AppLayout hides
+        // the StatusBar on /p/*.
+        {
+          path: "p/:pinId",
+          name: "pin",
+          component: () => import("@/features/pins/PinDetailPage.vue"),
+        },
+        // Legacy issue links forward to the first pin.
         {
           path: "s/:id",
-          name: "issue",
-          component: () => import("@/features/issue/IssuePage.vue"),
+          name: "issue-redirect",
+          component: () => import("@/features/pins/SessionRedirect.vue"),
         },
       ],
     },

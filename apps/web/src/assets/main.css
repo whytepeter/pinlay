@@ -90,3 +90,25 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ── iOS / touch friendliness (2026-07-10) ──────────────────────────────────
+ * • No grey tap flash on interactive elements — the design system's own
+ *   hover/active states are the feedback.
+ * • Overscroll containment stops the whole page rubber-banding when an
+ *   inner panel scrolls (pin detail, dropdowns).
+ * • Momentum scrolling for overflow containers on older WebKit.
+ */
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    /* Prevent iOS Safari from auto-inflating font sizes in landscape. */
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    overscroll-behavior-y: none;
+  }
+  .overflow-y-auto,
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}

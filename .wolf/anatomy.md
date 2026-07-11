@@ -1,20 +1,21 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-08T17:11:13.799Z
-> Files: 251 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-11T21:16:40.136Z
+> Files: 259 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
 
 - `clear-pins.ts` — Targeted clear: wipe every pin-related row so the storage refactor gets a (~290 tok)
 - `env-check.ts` (~66 tok)
+- `wake-db.ts` — p: main (~132 tok)
 
 ## ./
 
 - `.gitignore` — Git ignore rules (~144 tok)
-- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~5509 tok)
+- `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~5697 tok)
 - `HANDOFF.md` — pinlay — Handoff (~4508 tok)
 - `package.json` — Node.js package manifest (~299 tok)
-- `ROADMAP.md` — pinlay — Product Roadmap (~3286 tok)
+- `ROADMAP.md` — pinlay — Product Roadmap (~2776 tok)
 
 ## ./ (root)
 
@@ -82,13 +83,13 @@
 
 ## apps/api/src/attachments/
 
-- `attachments.controller.ts` — Step 1: get a presigned PUT URL. (~273 tok)
+- `attachments.controller.ts` — Step 1: get a presigned PUT URL. (~586 tok)
 - `attachments.module.ts` — Exports AttachmentsModule (~135 tok)
-- `attachments.service.ts` — Two-step attachment flow: (~934 tok)
+- `attachments.service.ts` — Two-step attachment flow: (~1340 tok)
 
 ## apps/api/src/attachments/dto/
 
-- `create-attachment.dto.ts` — Request a presigned upload URL. `contentType` + `sizeBytes` are baked into (~392 tok)
+- `create-attachment.dto.ts` — Request a presigned upload URL. `contentType` + `sizeBytes` are baked into (~568 tok)
 
 ## apps/api/src/auth/
 
@@ -143,13 +144,16 @@
 
 ## apps/api/src/issues/
 
-- `issue.serializers.ts` — Issue read DTOs — the dashboard's primary unit. An **Issue** is the titled (~1905 tok)
+- `issue.serializers.ts` — Issue read DTOs — the dashboard's primary unit. An **Issue** is the titled (~2339 tok)
 - `issues.controller.ts` — Issue read + narrow-write surface — the list/detail of submitted reviews. (~836 tok)
-- `issues.module.ts` — Exports IssuesModule (~115 tok)
+- `issues.module.ts` — Exports IssuesModule (~160 tok)
 - `issues.service.ts` — Issue read model — the dashboard's primary unit. An Issue is the titled (~2642 tok)
+- `pins-inbox.controller.ts` — GET /api/pins — the Pin Inbox, the dashboard's primary read surface. (~383 tok)
+- `pins-inbox.service.ts` — The Pin Inbox — the dashboard's read surface after the 2026-07-10 rebuild. (~1150 tok)
 
 ## apps/api/src/issues/dto/
 
+- `list-inbox-pins.dto.ts` — Query params for GET /api/pins — the inbox feed. (~250 tok)
 - `list-issues.dto.ts` — Query params for GET /api/issues — all optional filters. (~403 tok)
 - `update-issue.dto.ts` — Patch surface for an issue. Each field is optional — clients send only the (~278 tok)
 
@@ -173,7 +177,7 @@
 
 - `local-upload.controller.ts` — Local upload endpoint used ONLY when STORAGE_PROVIDER=disabled. (~879 tok)
 - `storage.module.ts` — Exports StorageModule (~57 tok)
-- `storage.service.ts` — Object storage — Cloudflare R2 via the S3-compatible SDK. (~1248 tok)
+- `storage.service.ts` — Object storage — Cloudflare R2 via the S3-compatible SDK. (~1664 tok)
 
 ## apps/api/src/workspace/
 
@@ -208,9 +212,9 @@
 
 ## apps/extension/src/components/annotation/
 
-- `AnnotationOverlay.vue` — Vue component (~13027 tok)
+- `AnnotationOverlay.vue` — Vue component (~13142 tok)
 - `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1143 tok)
-- `AnnotationPinComposer.vue` — Vue component (~9386 tok)
+- `AnnotationPinComposer.vue` — Vue component (~10078 tok)
 - `AnnotationPinDetail.vue` — Vue component (~7175 tok)
 
 ## apps/extension/src/components/capture/
@@ -233,8 +237,8 @@
 
 ## apps/extension/src/entrypoints/
 
-- `background.ts` — Background service worker. (~1540 tok)
-- `content.ts` — Content script — mounts the on-page surfaces: (~6844 tok)
+- `background.ts` — Background service worker. (~1560 tok)
+- `content.ts` — Content script — mounts the on-page surfaces: (~7338 tok)
 
 ## apps/extension/src/entrypoints/popup/
 
@@ -246,7 +250,7 @@
 
 - `anchor.ts` — Element anchoring for live annotation. (~5704 tok)
 - `annotation-state.ts` — annotation-state (~1113 tok)
-- `api.ts` — API client (~2590 tok)
+- `api.ts` — API client (~2275 tok)
 - `auth.ts` — Subscribe to auth changes — fires when the token is added, updated, or cleared. (~562 tok)
 - `env.ts` — Exports WEB_APP_URL, API_URL (~131 tok)
 - `extension.ts` — Extension runtime helpers. (~253 tok)
@@ -258,7 +262,7 @@
 
 ## apps/web/
 
-- `index.html` — pinlay (~184 tok)
+- `index.html` — pinlay (~356 tok)
 - `package.json` — Node.js package manifest (~181 tok)
 - `package.json` — Node.js package manifest (~181 tok)
 - `vercel.json` (~78 tok)
@@ -288,7 +292,7 @@
 
 ## apps/web/src/app/
 
-- `router.ts` — Exports router (~1074 tok)
+- `router.ts` — Exports router (~1048 tok)
 
 ## apps/web/src/assets/
 
@@ -296,7 +300,7 @@
 
 ## apps/web/src/features/auth/
 
-- `AcceptInviteView.vue` — Public invite-accept page reached from an invite link (~2865 tok)
+- `AcceptInviteView.vue` — Public invite-accept page reached from an invite link (~2827 tok)
 - `AuthLayout.vue` — Vue: setup (~648 tok)
 - `ConnectExtensionView.vue` — Vue: login, setup (~1240 tok)
 - `LoginView.vue` — Vue: signup, setup (~886 tok)
@@ -331,7 +335,7 @@
 - `PinList.vue` — Vue: setup (~734 tok)
 - `PinListItem.vue` — Vue: setup (~458 tok)
 - `ReplyBox.vue` — Vue: setup (~337 tok)
-- `ScreenshotViewer.vue` — Vue: setup (~853 tok)
+- `ScreenshotViewer.vue` — Vue: setup (~1274 tok)
 
 ## apps/web/src/features/issue/composables/
 
@@ -354,9 +358,19 @@
 
 - `useSessions.ts` — Stores the reporter's userId (not the workspace-member-row id). (~1376 tok)
 
+## apps/web/src/features/pins/
+
+- `PinDetailPage.vue` — Pin detail — /p/:pinId. The dashboard's only detail surface after the (~3463 tok)
+- `PinsPage.vue` — The Pin Inbox — the dashboard's home. One reverse-chron list of pins, (~2693 tok)
+- `SessionRedirect.vue` — Legacy /s/:id → /p/:pinId shim. Old links (extension "Open in dashboard", (~259 tok)
+
+## apps/web/src/features/pins/composables/
+
+- `usePins.ts` — Pin Inbox server state — one composable per domain (project convention). (~879 tok)
+
 ## apps/web/src/features/settings/
 
-- `SettingsPage.vue` — Vue: settings, setup (~1126 tok)
+- `SettingsPage.vue` — Old deep links (`/settings/workspace`, `/settings/members`) → Team. (~1153 tok)
 
 ## apps/web/src/features/settings/components/
 
@@ -377,11 +391,11 @@
 
 ## apps/web/src/features/workspace-shell/
 
-- `AppLayout.vue` — Vue: setup (~330 tok)
+- `AppLayout.vue` — Vue: setup (~359 tok)
 
 ## apps/web/src/features/workspace-shell/components/
 
-- `AppSidebar.vue` — Hover-expand on desktop. Stays expanded while a menu is open (so clicking the (~5079 tok)
+- `AppSidebar.vue` — Sidebar — deliberately tiny. Two destinations (Pins, Settings) plus the (~1834 tok)
 - `StatusBar.vue` — Vue: settings, setup (~2749 tok)
 - `WorkspaceSwitcher.vue` — Shared post-switch reconciliation: replace the bearer token, drop every (~2289 tok)
 
@@ -415,7 +429,7 @@
 
 ## apps/web/src/shared/lib/
 
-- `api.ts` — Web API client. (~4156 tok)
+- `api.ts` — Web API client. (~4514 tok)
 - `confirm.ts` — Promise-based confirm dialog with optional async action. (~1341 tok)
 - `data.ts` — Mock-first seed data (SESSIONS/PEOPLE/getPins). STILL the source for PinboardsPage/useSessions/useIssue — NOT yet swapped to apiClient. (~2413 tok)
 - `extension-bridge.ts` — Web → extension token handoff. (~508 tok)

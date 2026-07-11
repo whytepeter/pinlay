@@ -188,57 +188,81 @@
           </div>
         </div>
 
-        <!-- Severity -->
-        <div class="space-y-1.5">
-          <label
-            class="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground"
-            >Severity</label
-          >
-          <div class="flex flex-wrap gap-1.5">
-            <button
-              v-for="s in SEVERITIES"
-              :key="s.value"
-              type="button"
-              :class="[
-                'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors',
-                severity === s.value
-                  ? `${s.activeBorder} ${s.activeBg} text-foreground`
-                  : 'border-border bg-background text-foreground/80 hover:bg-muted',
-              ]"
-              @click="severity = s.value"
-            >
-              <span
-                :class="['h-1.5 w-1.5 rounded-full', s.dot]"
-                aria-hidden="true"
-              />
-              {{ s.label }}
-            </button>
-          </div>
-        </div>
+        <!-- "More" disclosure — severity/type are opt-in triage detail, not
+             the happy path (defaults: medium / other). -->
+        <button
+          type="button"
+          class="flex items-center gap-1 self-start rounded-md px-1 py-0.5 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+          :aria-expanded="moreOpen"
+          @click="moreOpen = !moreOpen"
+        >
+          <Icon
+            name="chevron-right"
+            :size="12"
+            :stroke-width="2"
+            class="transition-transform"
+            :class="moreOpen ? 'rotate-90' : ''"
+          />
+          More options
+          <span v-if="!moreOpen" class="opacity-70">
+            · {{ SEVERITIES.find((s) => s.value === severity)?.label }}
+            · {{ ISSUE_TYPES.find((t) => t.value === issueType)?.label }}
+          </span>
+        </button>
 
-        <!-- Type (smaller pills) -->
-        <div class="space-y-1.5">
-          <label
-            class="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground"
-            >Type</label
-          >
-          <div class="flex flex-wrap gap-1">
-            <button
-              v-for="t in ISSUE_TYPES"
-              :key="t.value"
-              type="button"
-              :class="[
-                'inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] transition-colors',
-                issueType === t.value
-                  ? 'border-primary bg-primary-soft text-primary'
-                  : 'border-border bg-background text-foreground/80 hover:bg-muted',
-              ]"
-              @click="issueType = t.value"
+        <template v-if="moreOpen">
+          <!-- Severity -->
+          <div class="space-y-1.5">
+            <label
+              class="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground"
+              >Severity</label
             >
-              {{ t.label }}
-            </button>
+            <div class="flex flex-wrap gap-1.5">
+              <button
+                v-for="s in SEVERITIES"
+                :key="s.value"
+                type="button"
+                :class="[
+                  'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors',
+                  severity === s.value
+                    ? `${s.activeBorder} ${s.activeBg} text-foreground`
+                    : 'border-border bg-background text-foreground/80 hover:bg-muted',
+                ]"
+                @click="severity = s.value"
+              >
+                <span
+                  :class="['h-1.5 w-1.5 rounded-full', s.dot]"
+                  aria-hidden="true"
+                />
+                {{ s.label }}
+              </button>
+            </div>
           </div>
-        </div>
+
+          <!-- Type (smaller pills) -->
+          <div class="space-y-1.5">
+            <label
+              class="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground"
+              >Type</label
+            >
+            <div class="flex flex-wrap gap-1">
+              <button
+                v-for="t in ISSUE_TYPES"
+                :key="t.value"
+                type="button"
+                :class="[
+                  'inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] transition-colors',
+                  issueType === t.value
+                    ? 'border-primary bg-primary-soft text-primary'
+                    : 'border-border bg-background text-foreground/80 hover:bg-muted',
+                ]"
+                @click="issueType = t.value"
+              >
+                {{ t.label }}
+              </button>
+            </div>
+          </div>
+        </template>
 
         <!-- Attached image thumbnails -->
         <div v-if="images.length" class="flex flex-wrap gap-1.5">
@@ -451,14 +475,6 @@
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <span
-          class="ml-1 inline-flex items-center gap-1 text-[11px] text-muted-foreground"
-          title="Default integration"
-        >
-          <Icon name="arrow-right" :size="11" :stroke-width="2" />
-          Linear
-        </span>
-
         <div class="ml-auto flex items-center gap-1.5">
           <Button
             variant="ghost"
@@ -495,7 +511,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import {
   Button,
   DropdownMenu,
@@ -533,11 +549,18 @@ const emit = defineEmits<{
 }>();
 
 // ── Form state ──────────────────────────────────────────────────────────────
+// Defaults over decisions (ROADMAP.md Phase 0.1): severity medium, type
+// other. The happy path is comment + Send; severity/type live behind the
+// "More" disclosure below.
 const description = ref("");
 const severity = ref<Severity>("medium");
-const issueType = ref<PinType>("visual");
+const issueType = ref<PinType>("other");
 const images = ref<File[]>([]);
 const assigneeId = ref<string | null>(null);
+
+// Severity/Type pickers collapse behind one toggle. Closed by default —
+// opening it is the opt-in for triage detail.
+const moreOpen = ref(false);
 
 // `description` holds the contenteditable's innerHTML. Strip tags + entities
 // for the canSubmit check so an empty editor (just `<br>` etc) doesn't count.
@@ -711,6 +734,34 @@ function takeScreenshot() {
   window.dispatchEvent(new CustomEvent("pinlay:capture-region"));
 }
 
+// ── Auto-screenshot on open (Roadmap Phase 0.1) ─────────────────────────────
+// The moment the composer mounts we silently grab the visible viewport and
+// attach it, so the happy path is literally comment + Send. The content
+// script hides all pinlay UI for two frames before capturing, so neither the
+// composer nor the pin marker appears in the shot. The attachment is
+// removable like any manual one; a capture failure (permission, race) just
+// means no auto-image — never an error state.
+onMounted(() => {
+  const timeout = window.setTimeout(() => {
+    window.removeEventListener("pinlay:capture-viewport-result", onAutoResult);
+  }, 5000);
+
+  function onAutoResult(ev: Event) {
+    const detail = (ev as CustomEvent<{ dataUrl?: string; cancelled?: boolean }>).detail;
+    window.removeEventListener("pinlay:capture-viewport-result", onAutoResult);
+    window.clearTimeout(timeout);
+    if (!detail || detail.cancelled || !detail.dataUrl) return;
+    // If the user already attached something in the meantime, don't stack an
+    // unexpected extra image on top.
+    if (images.value.length > 0) return;
+    const file = dataUrlToFile(detail.dataUrl, `page-${Date.now()}.png`);
+    if (file) images.value.push(file);
+  }
+
+  window.addEventListener("pinlay:capture-viewport-result", onAutoResult);
+  window.dispatchEvent(new CustomEvent("pinlay:capture-viewport"));
+});
+
 function dataUrlToFile(dataUrl: string, filename: string): File | null {
   const [meta, b64] = dataUrl.split(",");
   if (!b64) return null;
@@ -847,17 +898,17 @@ function confirmLink() {
     editor.appendChild(a);
   }
 
-  // Move the caret to just after the inserted anchor so the next keystroke
-  // doesn't extend it. Use the editor's root selection (works across the
-  // shadow-DOM boundary in Chrome).
+  // Highlight the inserted anchor so the user sees exactly what landed and
+  // can retype to replace the label immediately. `selectNodeContents` picks
+  // the visible text; picking the anchor itself would visually include the
+  // element boundaries which reads as a wider selection than expected.
   editor.focus();
   try {
-    const after = document.createRange();
-    after.setStartAfter(a);
-    after.collapse(true);
+    const picked = document.createRange();
+    picked.selectNodeContents(a);
     const sel = window.getSelection();
     sel?.removeAllRanges();
-    sel?.addRange(after);
+    sel?.addRange(picked);
   } catch {
     /* Selection placement is best-effort — the link is already inserted. */
   }

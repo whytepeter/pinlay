@@ -109,6 +109,55 @@ export class StorageService {
   }
 
   /**
+   * Server-side upload — the browser extension can't PUT to R2 directly
+   * because R2 CORS doesn't accept `chrome-extension://*` wildcards. The
+   * extension POSTs multipart to `/attachments/upload`, this method streams
+   * the buffer to R2 via S3 PutObject. Bytes DO pass through Nest here (one
+   * extra hop vs the direct PUT the web app uses) — screenshots are small
+   * enough that it's fine.
+   */
+  async uploadBuffer(args: {
+    kind: UploadKind;
+    scopeId: string;
+    buffer: Buffer;
+    contentType: string;
+    filename?: string;
+  }): Promise<{ objectKey: string; publicUrl: string; sizeBytes: number }> {
+    if (args.buffer.length === 0) {
+      throw new Error("empty upload");
+    }
+    if (args.buffer.length > this.cfg.maxUploadBytes) {
+      throw new Error(
+        `payload ${args.buffer.length}B exceeds max ${this.cfg.maxUploadBytes}B`,
+      );
+    }
+
+    const objectKey = buildObjectKey({
+      kind: args.kind,
+      scopeId: args.scopeId,
+      contentType: args.contentType,
+      sizeBytes: args.buffer.length,
+      filename: args.filename,
+    });
+
+    await this.s3.send(
+      new PutObjectCommand({
+        Bucket: this.cfg.bucket,
+        Key: objectKey,
+        Body: args.buffer,
+        ContentType: args.contentType,
+        ContentLength: args.buffer.length,
+      }),
+    );
+
+    return {
+      objectKey,
+      publicUrl: this.publicUrlFor(objectKey),
+      sizeBytes: args.buffer.length,
+    };
+  }
+
+  /**
    * Best-effort delete. Currently unused (no cascade path deletes attachments)
    * but exists so future cleanup jobs share one code path.
    */

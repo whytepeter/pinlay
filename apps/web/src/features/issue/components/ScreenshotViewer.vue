@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { Button, Icon } from "@pinlay/design";
-import type { ApiPin } from "@/shared/lib/api";
+import type { ApiPin, ApiAttachment } from "@/shared/lib/api";
 import { timeAgo } from "@/shared/lib/format";
 
 const props = defineProps<{ pin: ApiPin }>();
@@ -36,12 +36,26 @@ const url = computed(() => {
   return `${path || "/"}`.replace(/^\//, "") || "/";
 });
 
-const firstImage = computed(() => {
-  const att = props.pin.attachments?.[0];
-  if (!att) return null;
-  if (att.contentType && !att.contentType.startsWith("image/")) return null;
-  return att;
+const images = computed<ApiAttachment[]>(() =>
+  (props.pin.attachments ?? []).filter(
+    (a) => !a.contentType || a.contentType.startsWith("image/"),
+  ),
+);
+
+const activeIndex = ref(0);
+// Clamp when the pin (and its attachment list) changes — swapping to a pin
+// with fewer attachments would otherwise leave activeIndex out of range.
+watch(
+  () => props.pin.id,
+  () => {
+    activeIndex.value = 0;
+  },
+);
+watch(images, (list) => {
+  if (activeIndex.value >= list.length) activeIndex.value = 0;
 });
+
+const activeImage = computed(() => images.value[activeIndex.value] ?? null);
 </script>
 
 <template>
@@ -62,9 +76,9 @@ const firstImage = computed(() => {
     <!-- canvas -->
     <div class="relative aspect-[16/9] w-full overflow-hidden bg-muted/50">
       <img
-        v-if="firstImage"
-        :src="firstImage.url"
-        :alt="firstImage.filename"
+        v-if="activeImage"
+        :src="activeImage.url"
+        :alt="activeImage.filename"
         class="absolute inset-0 size-full object-contain"
       />
       <div
@@ -74,6 +88,42 @@ const firstImage = computed(() => {
         <Icon name="image" :size="22" />
         <span class="text-[11px]">No screenshot</span>
       </div>
+
+      <!-- N-of-M indicator, hidden with a single image -->
+      <span
+        v-if="images.length > 1"
+        class="absolute right-2 top-2 rounded bg-background/90 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground shadow-sm ring-1 ring-border"
+      >
+        {{ activeIndex + 1 }} / {{ images.length }}
+      </span>
+    </div>
+
+    <!-- thumbnail strip — only when there's more than one -->
+    <div
+      v-if="images.length > 1"
+      class="flex gap-1.5 overflow-x-auto border-t bg-muted/30 p-2"
+    >
+      <button
+        v-for="(att, i) in images"
+        :key="att.id"
+        type="button"
+        class="relative size-14 shrink-0 overflow-hidden rounded border transition-colors"
+        :class="
+          i === activeIndex
+            ? 'border-primary ring-1 ring-primary'
+            : 'border-border hover:border-muted-foreground'
+        "
+        :aria-label="`Show ${att.filename}`"
+        :aria-pressed="i === activeIndex"
+        @click="activeIndex = i"
+      >
+        <img
+          :src="att.url"
+          :alt="att.filename"
+          class="size-full object-cover"
+          loading="lazy"
+        />
+      </button>
     </div>
 
     <!-- caption -->
@@ -88,14 +138,14 @@ const firstImage = computed(() => {
       >
       <span>Captured {{ timeAgo(pin.createdAt) }}</span>
       <Button
-        v-if="firstImage"
+        v-if="activeImage"
         variant="ghost"
         size="icon-sm"
         class="ml-auto"
         title="Download"
         :as="'a'"
-        :href="firstImage.url"
-        :download="firstImage.filename"
+        :href="activeImage.url"
+        :download="activeImage.filename"
       >
         <Icon name="download" :size="13" />
       </Button>

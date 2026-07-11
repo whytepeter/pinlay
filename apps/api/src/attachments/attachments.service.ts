@@ -16,7 +16,11 @@ import {
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { StorageService, type UploadKind } from "../storage/storage.service";
-import { CreateAttachmentDto, CreateUploadUrlDto } from "./dto/create-attachment.dto";
+import {
+  CreateAttachmentDto,
+  CreateUploadUrlDto,
+  UploadAttachmentDto,
+} from "./dto/create-attachment.dto";
 import { AuthenticatedUser } from "../common/current-user.decorator";
 
 @Injectable()
@@ -47,6 +51,54 @@ export class AttachmentsService {
         contentType: dto.contentType,
         url: dto.url,
         sizeBytes: dto.sizeBytes,
+      },
+    });
+
+    return {
+      id: att.id,
+      url: att.url,
+      type: att.type,
+      filename: att.filename,
+      contentType: att.contentType,
+      sizeBytes: att.sizeBytes,
+    };
+  }
+
+  /**
+   * Proxied upload (extension path). File bytes pass through Nest to R2 so
+   * the client never touches R2 directly — needed because R2 CORS refuses
+   * `chrome-extension://*` wildcards. The web app still uses the direct
+   * presign+PUT flow above.
+   */
+  async createFromBuffer(
+    user: AuthenticatedUser,
+    dto: UploadAttachmentDto,
+    file: { buffer: Buffer; originalname: string; mimetype: string },
+  ) {
+    await this.assertScope(user, dto.pinId, dto.issueId);
+
+    let stored: { objectKey: string; publicUrl: string; sizeBytes: number };
+    try {
+      stored = await this.storage.uploadBuffer({
+        kind: "attachment",
+        scopeId: user.workspaceId,
+        buffer: file.buffer,
+        contentType: file.mimetype,
+        filename: file.originalname,
+      });
+    } catch (err) {
+      throw new BadRequestException((err as Error).message);
+    }
+
+    const att = await this.prisma.attachment.create({
+      data: {
+        pinId: dto.pinId ?? null,
+        issueId: dto.issueId ?? null,
+        type: dto.type,
+        filename: file.originalname,
+        contentType: file.mimetype,
+        url: stored.publicUrl,
+        sizeBytes: stored.sizeBytes,
       },
     });
 

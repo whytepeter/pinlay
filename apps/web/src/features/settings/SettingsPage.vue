@@ -6,26 +6,22 @@ import PageHeader from "@/shared/components/PageHeader.vue";
 import ProfileSection from "./components/ProfileSection.vue";
 import WorkspaceSection from "./components/WorkspaceSection.vue";
 import MembersSection from "./components/MembersSection.vue";
-import BillingSection from "./components/BillingSection.vue";
-import NotificationsSection from "./components/NotificationsSection.vue";
 import DangerZoneSection from "./components/DangerZoneSection.vue";
 
-type SectionId =
-  | "profile"
-  | "workspace"
-  | "members"
-  | "billing"
-  | "notifications"
-  | "danger";
+// Billing + Notifications tabs were removed in the 2026-07-10 rebuild —
+// their backends don't exist yet, and we don't ship mock UI (see ROADMAP.md
+// "Product principles"). They return with Phase 6/7. "Team" merges the old
+// Workspace + Members tabs: name your workspace and manage who's in it are
+// one job, not two.
+type SectionId = "profile" | "team" | "danger";
 
-const SECTIONS: SectionId[] = [
-  "profile",
-  "workspace",
-  "members",
-  "billing",
-  "notifications",
-  "danger",
-];
+const SECTIONS: SectionId[] = ["profile", "team", "danger"];
+
+/** Old deep links (`/settings/workspace`, `/settings/members`) → Team. */
+const LEGACY_ALIASES: Record<string, SectionId> = {
+  workspace: "team",
+  members: "team",
+};
 
 const route = useRoute();
 const router = useRouter();
@@ -35,6 +31,7 @@ const router = useRouter();
 // `/settings` to `/settings/profile`; an unknown slug normalises here.
 function paramOf(value: unknown): SectionId | null {
   const v = Array.isArray(value) ? value[0] : value;
+  if (typeof v === "string" && v in LEGACY_ALIASES) return LEGACY_ALIASES[v]!;
   return SECTIONS.includes(v as SectionId) ? (v as SectionId) : null;
 }
 
@@ -69,10 +66,7 @@ watch(
 const NAV: { id: SectionId; label: string; icon: string; danger?: boolean }[] =
   [
     { id: "profile", label: "Profile", icon: "user" },
-    { id: "workspace", label: "Workspace", icon: "building-2" },
-    { id: "members", label: "Members", icon: "users" },
-    { id: "billing", label: "Billing", icon: "credit-card" },
-    { id: "notifications", label: "Notifications", icon: "bell" },
+    { id: "team", label: "Team", icon: "users" },
     {
       id: "danger",
       label: "Danger zone",
@@ -113,10 +107,12 @@ const NAV: { id: SectionId; label: string; icon: string; danger?: boolean }[] =
       <div class="min-w-0 flex-1 px-4 py-6 md:px-10 md:py-8">
         <div class="mx-auto w-full max-w-3xl md:mx-0">
           <ProfileSection v-if="section === 'profile'" />
-          <WorkspaceSection v-else-if="section === 'workspace'" />
-          <MembersSection v-else-if="section === 'members'" />
-          <BillingSection v-else-if="section === 'billing'" />
-          <NotificationsSection v-else-if="section === 'notifications'" />
+          <!-- Team = workspace identity + the people in it, stacked. -->
+          <template v-else-if="section === 'team'">
+            <WorkspaceSection />
+            <div class="my-8 border-t" />
+            <MembersSection />
+          </template>
           <DangerZoneSection v-else-if="section === 'danger'" />
         </div>
       </div>

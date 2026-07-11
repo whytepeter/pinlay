@@ -243,3 +243,62 @@ export function toIssueDetail(
     pins: pins.map(toPinDto),
   };
 }
+
+// ── Pin inbox (dashboard feed) ──────────────────────────────────────────────
+// The inbox is pin-centric: one row per pin, no issue-level aggregation.
+// `issue` rides along as a compact ref so the detail page can link back and
+// show sibling pins without a second lookup vocabulary.
+
+export interface InboxIssueRef {
+  id: string;
+  title: string;
+  reference: string;
+}
+
+/** One feed row: the pin + where it lives. */
+export interface InboxPinDto extends PinDto {
+  pageUrl: string;
+  issue: InboxIssueRef | null;
+}
+
+/** Sibling pin pill on the detail page. */
+export interface SiblingPinDto {
+  id: string;
+  index: number;
+  title: string;
+  status: Pin["status"];
+}
+
+export interface InboxPinDetailDto extends InboxPinDto {
+  siblings: SiblingPinDto[];
+}
+
+export type PinForInbox = PinWithRelations & {
+  issue?: (Issue & { pins?: Pick<Pin, "id" | "index" | "comment" | "status">[] }) | null;
+};
+
+export function toInboxPin(pin: PinForInbox): InboxPinDto {
+  return {
+    ...toPinDto(pin),
+    pageUrl: pin.pageUrl,
+    issue: pin.issue
+      ? {
+          id: pin.issue.id,
+          title: pin.issue.title,
+          reference: reference(pin.issue.seq),
+        }
+      : null,
+  };
+}
+
+export function toInboxPinDetail(pin: PinForInbox): InboxPinDetailDto {
+  const siblings = (pin.issue?.pins ?? [])
+    .filter((p) => p.id !== pin.id)
+    .map((p) => ({
+      id: p.id,
+      index: p.index,
+      title: deriveTitle(p.comment),
+      status: p.status,
+    }));
+  return { ...toInboxPin(pin), siblings };
+}

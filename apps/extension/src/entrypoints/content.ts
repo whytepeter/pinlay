@@ -190,6 +190,14 @@ export default defineContentScript({
       void startRegionCapture();
     });
 
+    // Composer → content-script: silent full-viewport capture (auto-screenshot
+    // on pin drop, Roadmap Phase 0.1). Same hide-UI/capture/restore dance as
+    // region capture but no selector and no markup editor — the frame goes
+    // straight back via `pinlay:capture-viewport-result`.
+    window.addEventListener("pinlay:capture-viewport", () => {
+      void captureViewport();
+    });
+
     // ── FloatingLauncher (permanent) ──────────────────────────────────────────
     const launcherUi = await createShadowRootUi(ctx, {
       name: "pinlay-launcher",
@@ -290,6 +298,44 @@ export default defineContentScript({
     function dispatchRegionResult(detail: { dataUrl?: string; cancelled?: boolean }) {
       window.dispatchEvent(
         new CustomEvent("pinlay:capture-region-result", { detail }),
+      );
+    }
+
+    /**
+     * Silent full-viewport capture. Hides every pinlay shadow host for two
+     * frames so the shot is clean, grabs the visible tab, restores. Failure
+     * dispatches `{cancelled:true}` — the composer just skips the auto-attach.
+     */
+    async function captureViewport() {
+      const hosts = ["pinlay-annotation", "pinlay-launcher"]
+        .map((s) => document.querySelector(s) as HTMLElement | null)
+        .filter((h): h is HTMLElement => !!h);
+      const prevDisplay = hosts.map((h) => h.style.display);
+      hosts.forEach((h) => {
+        h.style.display = "none";
+      });
+      await new Promise<void>((r) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => r())),
+      );
+
+      let dataUrl: string | null = null;
+      try {
+        const res = (await chrome.runtime.sendMessage({
+          type: "CAPTURE_VISIBLE_TAB",
+        })) as { ok: boolean; dataUrl?: string; error?: string } | null;
+        if (res?.ok && res.dataUrl) dataUrl = res.dataUrl;
+      } catch {
+        /* swallow — null dataUrl below */
+      }
+
+      hosts.forEach((h, i) => {
+        h.style.display = prevDisplay[i] ?? "";
+      });
+
+      window.dispatchEvent(
+        new CustomEvent("pinlay:capture-viewport-result", {
+          detail: dataUrl ? { dataUrl } : { cancelled: true },
+        }),
       );
     }
 

@@ -51,11 +51,6 @@ const errorMessage = computed(() => {
   if (!err) return null;
   return err.message || "This invite couldn't be loaded.";
 });
-const errorStatus = computed(() => {
-  const err = inviteQuery.error.value as ApiError | null | undefined;
-  return err?.status ?? null;
-});
-
 const signedIn = computed(() => auth.isAuthenticated.value);
 const emailMatches = computed(
   () => !!auth.user.value && !!invite.value && auth.user.value.email.toLowerCase() === invite.value.email.toLowerCase(),
