@@ -6739,6 +6739,22 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-12T14:56:16.572Z"
+    },
+    {
+      "id": "bug-419",
+      "timestamp": "2026-07-12T18:44:13.361Z",
+      "error_message": "Type error",
+      "file": "apps/api/src/annotation/annotation.service.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T18:44:13.361Z"
     }
   ]
 }

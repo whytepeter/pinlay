@@ -2686,3 +2686,15 @@
 | 15:52 | Edited apps/web/src/features/settings/SettingsPage.vue | CSS: sm, padding-bottom | ~408 |
 | 15:55 | Edited apps/web/src/features/pins/PinsPage.vue | added optional chaining | ~500 |
 | 15:56 | Edited apps/web/src/features/pins/PinsPage.vue | expanded (+12 lines) | ~1535 |
+
+## Session: 2026-07-12 18:29
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-12 19:40
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 19:44 | Edited apps/api/src/annotation/annotation.service.ts | 10→13 lines | ~140 |
+| 2026-07-12 (2) | Alignment + session grouping (user feedback). PinDetailPage header content now sits in the same centered max-w-3xl column as the body (was edge-to-edge); loading/content columns unified 760px→max-w-3xl. SettingsPage rebuilt as centered column (same max-w-3xl + h1 pattern as PinsPage) w/ horizontal iOS segmented tabs — vertical md: tab rail + PageHeader removed; PageHeader.vue deleted (last consumer). PinsPage inbox now groups day → SESSION → pins: pins cluster by pin.issue.id into rounded-2xl session cards w/ muted header row (favicon + issue title + pin count); rows dropped per-row host (moved to header), gained #NN index, sort by index asc within session; client-side only (issue ref already on InboxPin). API: createPin placeholder issue title "Untitled review · host" → just host (submitSession still renames; headers carry favicon already). Verified in browser: header alignment on detail, centered settings w/ segmented tabs, Today/Yesterday/9 July session cards incl. user's fresh "Helod" pin with auto-screenshot thumb. | apps/web/src/features/{pins/{PinsPage,PinDetailPage}.vue, settings/SettingsPage.vue}, apps/web/src/shared/components/PageHeader.vue (deleted), apps/api/src/annotation/annotation.service.ts | verified in preview | ~3200 |

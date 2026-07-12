@@ -165,7 +165,10 @@ export class AnnotationService {
           workspaceId: user.workspaceId,
           sessionId: session.id,
           authorId: user.id,
-          title: `Untitled review · ${host}`,
+          // Placeholder until submitSession renames — just the host. The old
+          // "Untitled review · host" prefix read as noise in the inbox's
+          // session headers, which already carry a favicon for context.
+          title: host,
           pageUrl,
           status: "open",
         },

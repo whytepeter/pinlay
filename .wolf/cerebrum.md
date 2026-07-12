@@ -116,6 +116,8 @@
 
 <!-- Significant technical decisions with rationale. Why X was chosen over Y. -->
 
+- [2026-07-12] **Inbox groups pins by session** (user decision: pins dropped in one sitting belong together). Grouping is day → session card (keyed on `pin.issue.id`, title = issue title, favicon+host in a muted header row) → pin rows sorted by index. Client-side only — the issue ref already rides on every InboxPin; no BE change. Corollary: per-row site context is FORBIDDEN inside session cards (it lives on the header). Also: every page (Pins, Settings, Pin detail incl. its sticky header inner content) uses the SAME centered `max-w-3xl px-4 sm:px-6` column — no edge-to-edge chrome, no vertical tab rails.
+
 - [2026-07-10] **Dashboard = pin inbox, NOT a project-management tool** (user directive after UX audit; ROADMAP.md rewritten to encode it). Product principles now binding: (1) one noun — "Pin" — in all UI copy ("issues"/"sessions"/"boards"/"pinboards" never appear; DB schema unchanged, presentation-only rule); (2) time-to-first-pin is the north-star metric; (3) never ship mock/dead UI (Integrations page, "View in Linear", Billing/Notifications tabs all removed until their phase); (4) defaults over decisions — severity/type/labels/assignee behind a "More" disclosure, never the happy path; (5) nav is exactly Pins + Settings. New Phase 0 in ROADMAP.md = the simplification rebuild (composer auto-screenshot + pin-centric feed + `/p/:pinId` detail); it precedes user validation because the demo IS the product.
 
 - [2026-05-24] UI layer = **shadcn-vue + Tailwind v4** (user directive). Component styling via Tailwind utilities, not bespoke CSS. pinlay tokens (light-first, amber) feed the theme.

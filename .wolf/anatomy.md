@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-12T14:56:16.549Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-12T18:44:13.334Z
 > Files: 262 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
@@ -69,7 +69,7 @@
 ## apps/api/src/annotation/
 
 - `annotation.module.ts` — Exports AnnotationModule (~126 tok)
-- `annotation.service.ts` — Attachment as the overlay needs it — enough to render a thumb + lightbox. (~5059 tok)
+- `annotation.service.ts` — Attachment as the overlay needs it — enough to render a thumb + lightbox. (~5117 tok)
 - `pins.controller.ts` — Exports PinsController (~724 tok)
 - `sessions.controller.ts` — Write half of the session lifecycle: finishing/submitting a capture sitting (~285 tok)
 
