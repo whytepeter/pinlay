@@ -78,13 +78,14 @@ onBeforeUnmount(() => {
     data-slot="tabs-list"
     v-bind="delegatedProps"
     :class="cn(
-      'scrollbar-hide relative inline-flex w-fit shrink-0 items-center gap-0.5 overflow-auto rounded-md border bg-card p-0.5 text-muted-foreground data-[orientation=vertical]:w-full data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch',
+      // iOS segmented control: recessed muted track, raised thumb (below).
+      'scrollbar-hide relative inline-flex w-fit shrink-0 items-center gap-0.5 overflow-auto rounded-lg border border-transparent bg-muted p-1 text-muted-foreground data-[orientation=vertical]:w-full data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch',
       props.class,
     )"
   >
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute left-0 top-0 rounded-[5px] bg-secondary transition-all duration-300 ease-out"
+      class="pointer-events-none absolute left-0 top-0 rounded-md bg-background shadow-sm ring-1 ring-black/[0.04] transition-all duration-300 ease-out dark:bg-muted-foreground/20 dark:ring-white/[0.06]"
       :style="indicatorStyle"
     />
     <slot />

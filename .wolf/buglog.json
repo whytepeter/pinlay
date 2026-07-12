@@ -6401,6 +6401,296 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-11T21:35:42.371Z"
+    },
+    {
+      "id": "bug-398",
+      "timestamp": "2026-07-12T13:50:20.730Z",
+      "error_message": "Type error",
+      "file": "apps/api/src/annotation/annotation.service.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T13:50:20.730Z"
+    },
+    {
+      "id": "bug-399",
+      "timestamp": "2026-07-12T13:50:41.849Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/api/src/annotation/annotation.service.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T13:50:41.849Z"
+    },
+    {
+      "id": "bug-400",
+      "timestamp": "2026-07-12T00:00:00Z",
+      "error_message": "Attached images not visible when viewing a pin in the extension overlay",
+      "file": "apps/api/src/annotation/annotation.service.ts",
+      "root_cause": "GET /annotation/pins never included attachments: the Prisma queries had no include{attachments} and SerializedPin had no attachments field, so AnnotationOverlay.rowToExistingPin had nothing to map and AnnotationPinDetail rendered no thumbs. The detail component's PinAttachment type was also still the pre-API local-file shape (name/mime/dataUrl/size).",
+      "fix": "SerializedPin gains attachments: SerializedPinAttachment[] (id,url,type,filename,contentType,sizeBytes); both getPagePins queries include {attachments:true}; extension AnnotationPinRow gains attachments?: PinRowAttachment[]; rowToExistingPin maps server rows into the detail popover's shape (dataUrl <- R2 public url).",
+      "tags": [
+        "attachments",
+        "extension",
+        "annotation-api",
+        "serializer",
+        "r2"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T00:00:00Z"
+    },
+    {
+      "id": "bug-401",
+      "timestamp": "2026-07-12T13:59:39.875Z",
+      "error_message": "Significant refactor of ",
+      "file": "packages/design/src/components/ui/tabs/TabsList.vue",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 10→11 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T13:59:39.875Z"
+    },
+    {
+      "id": "bug-402",
+      "timestamp": "2026-07-12T14:01:44.808Z",
+      "error_message": "CSS fix: focus",
+      "file": "packages/design/src/components/ui/dropdown-menu/DropdownMenuItem.vue",
+      "root_cause": "focus: bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\" → bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex min-h-9 cursor-default items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\"",
+      "fix": "Changed focus: bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\" → bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex min-h-9 cursor-default items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:01:44.808Z"
+    },
+    {
+      "id": "bug-403",
+      "timestamp": "2026-07-12T14:02:21.002Z",
+      "error_message": "Incorrect value in code",
+      "file": "packages/design/src/components/ui/popover/PopoverContent.vue",
+      "root_cause": "Had 'bg-popover text-popover-foreground data-[state=op",
+      "fix": "Changed to 'bg-popover/90 backdrop-blur-xl text-popover-foreg",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:02:21.002Z"
+    },
+    {
+      "id": "bug-404",
+      "timestamp": "2026-07-12T14:02:24.889Z",
+      "error_message": "Incorrect value in code",
+      "file": "packages/design/src/components/ui/dialog/DialogContent.vue",
+      "root_cause": "Had 'bg-background data-[state=open]:animate-in data-[",
+      "fix": "Changed to 'bg-background data-[state=open]:animate-in data-[",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:02:24.889Z"
+    },
+    {
+      "id": "bug-405",
+      "timestamp": "2026-07-12T14:03:07.789Z",
+      "error_message": "CSS fix: _svg",
+      "file": "packages/design/src/components/ui/select/SelectTrigger.vue",
+      "root_cause": "_svg: not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', → not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-muted/60 hover:bg-muted dark:bg-input/40 dark:hover:bg-input/60 flex w-fit items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4',",
+      "fix": "Changed _svg: not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', → not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-muted/60 hover:bg-muted dark:bg-input/40 dark:hover:bg-input/60 flex w-fit items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4',",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:03:07.789Z"
+    },
+    {
+      "id": "bug-406",
+      "timestamp": "2026-07-12T14:03:27.451Z",
+      "error_message": "CSS fix: --font-sans, --font-mono",
+      "file": "packages/design/src/tokens.css",
+      "root_cause": "--font-sans: \"Geist\", ui-sans-serif, system-ui, -apple-system, sans-serif → -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui,; --font-mono: \"Geist Mono\", ui-monospace, \"SF Mono\", Menlo, monospace → ui-monospace, \"SF Mono\", \"Geist Mono\", Menlo, Consolas,",
+      "fix": "Changed --font-sans: \"Geist\", ui-sans-serif, system-ui, -apple-system, sans-serif → -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui,; --font-mono: \"Geist Mono\", ui-monospace, \"SF Mono\", Menlo, monospace → ui-monospace, \"SF Mono\", \"Geist Mono\", Menlo, Consolas,",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:03:27.451Z"
+    },
+    {
+      "id": "bug-407",
+      "timestamp": "2026-07-12T14:04:35.084Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/shared/components/PinPill.vue",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 7→7 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:04:35.084Z"
+    },
+    {
+      "id": "bug-408",
+      "timestamp": "2026-07-12T14:05:03.635Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/index.html",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 9→5 lines (6 removed) | Also: <link rel=\"preconnect\" href=\"https://fonts.googlea; <link rel=\"preconnect\" href=\"https://fonts.gstatic",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "html"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-07-12T14:07:39.757Z"
+    },
+    {
+      "id": "bug-409",
+      "timestamp": "2026-07-12T14:09:07.089Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/features/pins/PinsPage.vue",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 9→10 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:09:07.089Z"
+    },
+    {
+      "id": "bug-410",
+      "timestamp": "2026-07-12T14:09:42.962Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/features/issue/components/ScreenshotViewer.vue",
+      "root_cause": "Had \"overflow-hidden rounded-lg border bg-card\"",
+      "fix": "Changed to \"overflow-hidden rounded-2xl border bg-card\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:09:42.962Z"
+    },
+    {
+      "id": "bug-411",
+      "timestamp": "2026-07-12T14:18:38.679Z",
+      "error_message": "CSS fix: Brand",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Brand: size=\"20\" /> → size=\"18\" class=\"shrink-0 text-primary\" />",
+      "fix": "Changed Brand: size=\"20\" /> → size=\"18\" class=\"shrink-0 text-primary\" />",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-07-12T14:19:39.309Z"
+    },
+    {
+      "id": "bug-412",
+      "timestamp": "2026-07-12T14:21:01.072Z",
+      "error_message": "CSS fix: hover, focus-within",
+      "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "root_cause": "hover: bg-card hover:text-foreground\" → bg-muted hover:text-foreground\"; focus-within: ring-1 focus-within:ring-ring\"> → border-ring focus-within:bg-background\">",
+      "fix": "Changed hover: bg-card hover:text-foreground\" → bg-muted hover:text-foreground\"; focus-within: ring-1 focus-within:ring-ring\"> → border-ring focus-within:bg-background\">",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:21:01.072Z"
+    },
+    {
+      "id": "bug-413",
+      "timestamp": "2026-07-12T14:21:41.624Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "root_cause": "Had \"flex items-center gap-0.5 border-b border-border ",
+      "fix": "Changed to \"flex items-center gap-0.5 border-b border-border/",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:21:41.624Z"
+    },
+    {
+      "id": "bug-414",
+      "timestamp": "2026-07-12T14:23:08.022Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
+      "root_cause": "Had \"fixed z-[2147483647] w-[248px]\n               rou",
+      "fix": "Changed to \"fixed z-[2147483647] w-[248px]\n               rou",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-07-12T14:23:09.983Z"
+    },
+    {
+      "id": "bug-415",
+      "timestamp": "2026-07-12T14:35:29.897Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/shared/lib/api.ts",
+      "root_cause": "37 lines replaced/restructured",
+      "fix": "Rewrote 44→8 lines (37 removed) | Also: /** Workspace-scoped grouping of issues. */; export interface Board {",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-07-12T14:35:46.374Z"
     }
   ]
 }

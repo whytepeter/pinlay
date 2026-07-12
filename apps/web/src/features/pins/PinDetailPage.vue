@@ -30,9 +30,9 @@ import { useAuth } from "@/shared/composables/useAuth";
 import { usePinDetail } from "./composables/usePins";
 import UserAvatar from "@/shared/components/UserAvatar.vue";
 import PinPill from "@/shared/components/PinPill.vue";
-import ScreenshotViewer from "@/features/issue/components/ScreenshotViewer.vue";
-import AnchorBlock from "@/features/issue/components/AnchorBlock.vue";
-import ActivityThread from "@/features/issue/components/ActivityThread.vue";
+import ScreenshotViewer from "./components/ScreenshotViewer.vue";
+import AnchorBlock from "./components/AnchorBlock.vue";
+import ActivityThread from "./components/ActivityThread.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -118,9 +118,9 @@ function onSetAssignee(m: MemberRef | null) {
 
 <template>
   <div class="flex min-h-dvh flex-col bg-background text-foreground">
-    <!-- top bar -->
+    <!-- top bar — same frosted language as the app navbar -->
     <header
-      class="sticky top-0 z-10 flex h-[52px] shrink-0 items-center gap-2 border-b bg-background/85 px-3 backdrop-blur"
+      class="sticky top-0 z-10 flex h-[52px] shrink-0 items-center gap-2 border-b border-border/60 bg-background/80 px-3 backdrop-blur-xl"
       style="padding-top: env(safe-area-inset-top)"
     >
       <RouterLink to="/">
@@ -317,27 +317,30 @@ function onSetAssignee(m: MemberRef | null) {
           </RouterLink>
         </div>
 
-        <ActivityThread :pin="pin" />
+        <!-- Discussion — inset card like the list groups -->
+        <div class="rounded-2xl border bg-card px-4 py-4">
+          <ActivityThread :pin="pin" />
+        </div>
 
         <!-- Developer details — collapsed by default. QA never needs this;
              a dev expands it when the anchor is in question. -->
-        <div class="rounded-lg border">
+        <div class="overflow-hidden rounded-2xl border bg-card">
           <button
             type="button"
-            class="flex min-h-[44px] w-full items-center gap-2 px-3 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
+            class="flex min-h-[48px] w-full items-center gap-2 px-4 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
             :aria-expanded="devDetailsOpen"
             @click="devDetailsOpen = !devDetailsOpen"
           >
             <Icon
               name="chevron-right"
               :size="14"
-              class="transition-transform"
+              class="transition-transform duration-200"
               :class="devDetailsOpen ? 'rotate-90' : ''"
             />
             Developer details
             <span class="ml-auto font-mono text-[11px] opacity-60">anchor</span>
           </button>
-          <div v-if="devDetailsOpen" class="border-t p-3">
+          <div v-if="devDetailsOpen" class="border-t border-border/60 p-4">
             <AnchorBlock v-if="pin.anchor" :anchor="pin.anchor" :stale="pin.stale" />
           </div>
         </div>

@@ -62,6 +62,17 @@ export interface AnnotationPinRow {
    *  browse views to show + navigate to the right page on click. */
   pageUrl: string;
   createdAt: string;
+  /** Screenshots etc. Populated on page/host reads; [] on create/update. */
+  attachments?: PinRowAttachment[];
+}
+
+export interface PinRowAttachment {
+  id: string;
+  url: string;
+  type: string;
+  filename: string;
+  contentType: string;
+  sizeBytes: number;
 }
 
 export interface Attachment {

@@ -59,7 +59,7 @@ const activeImage = computed(() => images.value[activeIndex.value] ?? null);
 </script>
 
 <template>
-  <div class="overflow-hidden rounded-lg border bg-card">
+  <div class="overflow-hidden rounded-2xl border bg-card">
     <!-- faux browser chrome -->
     <div class="flex items-center gap-2 border-b bg-muted/50 px-3 py-2">
       <span class="flex gap-1.5">

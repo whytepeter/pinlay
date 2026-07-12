@@ -56,39 +56,12 @@ export interface WorkspaceMember extends MemberRef {
   role: string;
 }
 
-/** Workspace-scoped grouping of issues. */
-export interface Board {
-  id: string;
-  workspaceId: string;
-  name: string;
-  slug: string;
-  color: string;
-  position: number;
-  issueCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 /** Compact board chip embedded in IssueSummary / IssueDetail. */
 export interface BoardRef {
   id: string;
   name: string;
   slug: string;
   color: string;
-}
-
-export interface CreateBoardInput {
-  name: string;
-  slug?: string;
-  color?: string;
-  position?: number;
-}
-
-export interface UpdateBoardInput {
-  name?: string;
-  slug?: string;
-  color?: string;
-  position?: number;
 }
 
 /** A workspace as the switcher / settings render it (mirrors WorkspaceDto). */
@@ -295,43 +268,6 @@ export interface Paginated<T> {
   offset: number;
 }
 
-export interface ListIssuesParams {
-  status?: Status;
-  /** Only issues with at least one pin at this severity. */
-  severity?: Severity;
-  pageUrl?: string;
-  q?: string;
-  /**
-   * Board id to scope to, OR the literal string `"null"` to surface only
-   * unassigned issues. Omit for no board filter.
-   */
-  boardId?: string;
-  /** User id of the issue's reporter (= issue.author). */
-  reporterId?: string;
-  /**
-   * Include archived issues. Default (omitted) hides them. Has no effect
-   * when an explicit `status` is set.
-   */
-  includeArchived?: "true";
-  limit?: number;
-  offset?: number;
-}
-
-export interface IssueCounts {
-  all: number;
-  open: number;
-  in_progress: number;
-  resolved: number;
-  archived: number;
-}
-
-export interface UpdateIssueInput {
-  /** New board id, or `null` to unassign. Undefined leaves the assignment alone. */
-  boardId?: string | null;
-  title?: string;
-  status?: Status;
-}
-
 function qs(params: Record<string, unknown>): string {
   const sp = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) {
@@ -495,47 +431,11 @@ export const apiClient = {
       ),
   },
 
-  // ── Issues (dashboard read surface) ──────────────────────────────────────
+  // ── Issues — only the legacy-link resolver remains (SessionRedirect).
+  // The pin-centric inbox replaced the issue-level dashboard surface
+  // (2026-07-10); boards client methods went with it.
   issues: {
-    list: (params: ListIssuesParams = {}) =>
-      request<Paginated<IssueSummary>>(
-        `/issues${qs(params as Record<string, unknown>)}`,
-      ),
-    /**
-     * Issue counts per status, honoring non-status filters. The `status`
-     * field of `params` is ignored server-side.
-     */
-    counts: (params: Omit<ListIssuesParams, "status" | "limit" | "offset"> = {}) =>
-      request<IssueCounts>(
-        `/issues/counts${qs(params as Record<string, unknown>)}`,
-      ),
     get: (id: string) => request<IssueDetail>(`/issues/${id}`),
-    pins: (id: string) => request<ApiPin[]>(`/issues/${id}/pins`),
-    update: (id: string, patch: UpdateIssueInput) =>
-      request<IssueSummary>(`/issues/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify(patch),
-      }),
-    /** Delete an issue (and its pins by cascade). Author or admin only. */
-    remove: (id: string) =>
-      request<void>(`/issues/${id}`, { method: "DELETE" }),
-  },
-
-  // ── Boards (workspace-scoped issue groupings) ────────────────────────────
-  boards: {
-    list: () => request<Board[]>("/boards"),
-    create: (dto: CreateBoardInput) =>
-      request<Board>("/boards", {
-        method: "POST",
-        body: JSON.stringify(dto),
-      }),
-    update: (id: string, dto: UpdateBoardInput) =>
-      request<Board>(`/boards/${id}`, {
-        method: "PATCH",
-        body: JSON.stringify(dto),
-      }),
-    remove: (id: string) =>
-      request<void>(`/boards/${id}`, { method: "DELETE" }),
   },
 
   // ── Pin mutations (extension's write surface, reused by the dashboard) ──

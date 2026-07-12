@@ -103,6 +103,9 @@
     -webkit-tap-highlight-color: transparent;
     /* Prevent iOS Safari from auto-inflating font sizes in landscape. */
     -webkit-text-size-adjust: 100%;
+    /* System faces (SF Pro) render heavy on macOS without this. */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   body {
     overscroll-behavior-y: none;

@@ -40,12 +40,12 @@
     @click.stop
   >
     <div
-      class="overflow-hidden rounded-xl border border-border bg-card shadow-[0_16px_40px_rgba(0,0,0,0.16),0_2px_8px_rgba(0,0,0,0.08)]"
+      class="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_16px_40px_rgba(0,0,0,0.16),0_2px_8px_rgba(0,0,0,0.08)]"
     >
       <!-- ── HEADER ─────────────────────────────────────────────────── -->
       <header class="flex items-center gap-2 px-3 py-2.5">
         <span
-          class="inline-flex items-center rounded-md bg-primary-soft px-1.5 py-0.5 font-mono text-[11px] font-semibold text-primary"
+          class="inline-flex items-center rounded-full bg-primary/12 px-2 py-0.5 font-mono text-[11px] font-semibold text-primary"
         >
           #{{ paddedIndex }}
         </span>
@@ -55,7 +55,7 @@
         />
         <span
           v-if="issueType"
-          class="inline-flex items-center rounded-md border border-border bg-card px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground"
+          class="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
         >
           {{ formatType(issueType) }}
         </span>

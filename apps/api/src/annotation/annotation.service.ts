@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { Pin, PinComment, Prisma, Role } from "@prisma/client";
+import { Attachment, Pin, PinComment, Prisma, Role } from "@prisma/client";
 import { normalizeUrl } from "@pinlay/shared";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreatePinDto } from "./dto/create-pin.dto";
@@ -18,6 +18,16 @@ interface CreateResult {
   pin: SerializedPin;
   sessionId: string;
   issueId: string | null;
+}
+
+/** Attachment as the overlay needs it — enough to render a thumb + lightbox. */
+export interface SerializedPinAttachment {
+  id: string;
+  url: string;
+  type: string;
+  filename: string;
+  contentType: string;
+  sizeBytes: number;
 }
 
 export interface SerializedPin {
@@ -42,6 +52,8 @@ export interface SerializedPin {
    */
   pageUrl: string;
   createdAt: string;
+  /** Screenshots etc. Populated on reads that `include` them; [] otherwise. */
+  attachments: SerializedPinAttachment[];
 }
 
 /** Wire shape for a pin comment. */
@@ -389,6 +401,7 @@ export class AnnotationService {
             { pageUrl: `http://${host}` },
           ],
         },
+        include: { attachments: true },
         orderBy: [{ sessionId: "asc" }, { index: "asc" }],
       });
       return pins.map((p) => this.serialize(p));
@@ -399,6 +412,7 @@ export class AnnotationService {
       // regardless of how the client formatted its URL.
       const pins = await this.prisma.pin.findMany({
         where: { ...baseWhere, pageUrl: normalizeUrl(query.pageUrl) },
+        include: { attachments: true },
         orderBy: [{ sessionId: "asc" }, { index: "asc" }],
       });
       return pins.map((p) => this.serialize(p));
@@ -464,7 +478,9 @@ export class AnnotationService {
   }
 
   // ── Serialisation ────────────────────────────────────────────────────────
-  private serialize(pin: Pin): SerializedPin {
+  private serialize(
+    pin: Pin & { attachments?: Attachment[] },
+  ): SerializedPin {
     return {
       id: pin.id,
       sessionId: pin.sessionId,
@@ -480,6 +496,14 @@ export class AnnotationService {
       labels: pin.labels,
       pageUrl: pin.pageUrl,
       createdAt: pin.createdAt.toISOString(),
+      attachments: (pin.attachments ?? []).map((a) => ({
+        id: a.id,
+        url: a.url,
+        type: a.type,
+        filename: a.filename,
+        contentType: a.contentType,
+        sizeBytes: a.sizeBytes,
+      })),
     };
   }
 }

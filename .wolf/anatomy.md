@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-11T21:39:29.932Z
-> Files: 260 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-12T14:35:46.360Z
+> Files: 262 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
 
@@ -69,7 +69,7 @@
 ## apps/api/src/annotation/
 
 - `annotation.module.ts` — Exports AnnotationModule (~126 tok)
-- `annotation.service.ts` — Reporter — used by the extension/dashboard to decide whether to show (~4854 tok)
+- `annotation.service.ts` — Attachment as the overlay needs it — enough to render a thumb + lightbox. (~5059 tok)
 - `pins.controller.ts` — Exports PinsController (~724 tok)
 - `sessions.controller.ts` — Write half of the session lifecycle: finishing/submitting a capture sitting (~285 tok)
 
@@ -212,10 +212,10 @@
 
 ## apps/extension/src/components/annotation/
 
-- `AnnotationOverlay.vue` — Vue component (~13142 tok)
+- `AnnotationOverlay.vue` — Vue component (~13243 tok)
 - `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1143 tok)
-- `AnnotationPinComposer.vue` — Vue component (~10078 tok)
-- `AnnotationPinDetail.vue` — Vue component (~7175 tok)
+- `AnnotationPinComposer.vue` — Vue component (~10083 tok)
+- `AnnotationPinDetail.vue` — Vue component (~7168 tok)
 
 ## apps/extension/src/components/capture/
 
@@ -232,7 +232,7 @@
 ## apps/extension/src/components/launcher/
 
 - `ConnectPrompt.vue` — Vue: setup (~400 tok)
-- `FloatingLauncher.vue` — Vue: setup (~6396 tok)
+- `FloatingLauncher.vue` — Vue: setup (~6418 tok)
 - `LauncherItem.vue` — Vue: setup (~1061 tok)
 
 ## apps/extension/src/entrypoints/
@@ -242,15 +242,15 @@
 
 ## apps/extension/src/entrypoints/popup/
 
-- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~13322 tok)
-- `index.html` — pinlay (~170 tok)
+- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~12403 tok)
+- `index.html` — pinlay (~138 tok)
 - `main.ts` (~47 tok)
 
 ## apps/extension/src/lib/
 
 - `anchor.ts` — Element anchoring for live annotation. (~5704 tok)
 - `annotation-state.ts` — annotation-state (~1113 tok)
-- `api.ts` — API client (~2275 tok)
+- `api.ts` — API client (~2350 tok)
 - `auth.ts` — Subscribe to auth changes — fires when the token is added, updated, or cleared. (~562 tok)
 - `env.ts` — Exports WEB_APP_URL, API_URL (~131 tok)
 - `extension.ts` — Extension runtime helpers. (~253 tok)
@@ -262,7 +262,7 @@
 
 ## apps/web/
 
-- `index.html` — pinlay (~356 tok)
+- `index.html` — pinlay (~307 tok)
 - `package.json` — Node.js package manifest (~181 tok)
 - `package.json` — Node.js package manifest (~181 tok)
 - `vercel.json` (~78 tok)
@@ -296,7 +296,7 @@
 
 ## apps/web/src/assets/
 
-- `main.css` — Styles: 8 rules, 45 vars (~869 tok)
+- `main.css` — Styles: 9 rules, 45 vars (~1109 tok)
 
 ## apps/web/src/features/auth/
 
@@ -360,8 +360,8 @@
 
 ## apps/web/src/features/pins/
 
-- `PinDetailPage.vue` — Pin detail — /p/:pinId. The dashboard's only detail surface after the (~3463 tok)
-- `PinsPage.vue` — The Pin Inbox — the dashboard's home (v2, 2026-07-10 iOS pass). (~3651 tok)
+- `PinDetailPage.vue` — Pin detail — /p/:pinId. The dashboard's only detail surface after the (~3531 tok)
+- `PinsPage.vue` — The Pin Inbox — the dashboard's home (v2, 2026-07-10 iOS pass). (~3703 tok)
 - `SessionRedirect.vue` — Legacy /s/:id → /p/:pinId shim. Old links (extension "Open in dashboard", (~259 tok)
 
 ## apps/web/src/features/pins/composables/
@@ -411,14 +411,14 @@
 - `DetailsList.vue` — REUSABLE. Fetch ONE record by id via TanStack Query; owns loading/error+retry/empty/refetching. Slots: #default="{ data, refetch, isFetching }", #loading, #error, #empty. Use for issue/pin/workspace detail. (~1204 tok)
 - `Favicon.vue` — Vue: setup (~164 tok)
 - `PageHeader.vue` — Vue: setup (~244 tok)
-- `PinPill.vue` — Vue: setup (~152 tok)
+- `PinPill.vue` — Vue: setup (~128 tok)
 - `QueryList.vue` — REUSABLE. THE list primitive (TanStack Query). Owns loading/error+retry/empty/refetch/pagination. mode=load-more|infinite|paged. Slots: #default/#item/#loading/#error/#empty/#load-more/#pagination. Defaults to API page shape {items,total,limit,offset}. Use for ALL lists (issues, pins, members) — don't hand-roll loading/error. (~3810 tok)
 - `SeverityChip.vue` — Vue: setup (~149 tok)
 - `SeverityDot.vue` — Vue: setup (~127 tok)
 - `SeverityHeatbar.vue` — Vue: setup (~315 tok)
 - `StatusChip.vue` — Vue: setup (~270 tok)
 - `SyncChip.vue` — Vue: setup (~196 tok)
-- `TypeChip.vue` — Vue: setup (~82 tok)
+- `TypeChip.vue` — Vue: setup (~192 tok)
 - `UserAvatar.vue` — Vue: setup (~299 tok)
 
 ## apps/web/src/shared/composables/
@@ -430,12 +430,12 @@
 
 ## apps/web/src/shared/lib/
 
-- `api.ts` — Web API client. (~4514 tok)
+- `api.ts` — Web API client. (~3748 tok)
 - `confirm.ts` — Promise-based confirm dialog with optional async action. (~1341 tok)
 - `data.ts` — Mock-first seed data (SESSIONS/PEOPLE/getPins). STILL the source for PinboardsPage/useSessions/useIssue — NOT yet swapped to apiClient. (~2413 tok)
 - `extension-bridge.ts` — Web → extension token handoff. (~508 tok)
 - `format.ts` — Compact relative time, e.g. "5m ago", "3h ago", "2d ago". (~198 tok)
-- `issue-display.ts` — Client-derived display fields for an issue summary. The API intentionally (~350 tok)
+- `issue-display.ts` — Stable deterministic hue (0–359) derived from any string identifier. (~74 tok)
 - `query-client.ts` — Shared TanStack Query QueryClient (no-retry-4xx, retry network/5xx 2×). Registered via VueQueryPlugin in main.ts. (~302 tok)
 - `severity.ts` — The highest-priority severity present (drives the card's left bar). (~204 tok)
 - `toast.ts` — Thin wrapper over vue-sonner so the rest of the app imports one path. (~362 tok)
@@ -460,7 +460,7 @@
 ## packages/design/src/
 
 - `index.ts` — Import "@pinlay/design/tokens.css" once in the host app. Components are (~382 tok)
-- `tokens.css` — Styles: 5 rules, 87 vars (~1604 tok)
+- `tokens.css` — Styles: 5 rules, 87 vars (~1683 tok)
 
 ## packages/design/src/components/
 
@@ -472,12 +472,14 @@
 
 ## packages/design/src/components/ui/dialog/
 
+- `DialogContent.vue` — Vue: setup (~538 tok)
 - `DialogOverlay.vue` — Vue: setup (~204 tok)
 - `DialogScrollContent.vue` — Vue: setup (~517 tok)
 
 ## packages/design/src/components/ui/dropdown-menu/
 
-- `DropdownMenuContent.vue` — Vue: setup (~509 tok)
+- `DropdownMenuContent.vue` — Vue: setup (~519 tok)
+- `DropdownMenuItem.vue` — Vue: setup (~395 tok)
 - `DropdownMenuSubContent.vue` — Vue: setup (~347 tok)
 
 ## packages/design/src/components/ui/input/
@@ -486,13 +488,13 @@
 
 ## packages/design/src/components/ui/popover/
 
-- `PopoverContent.vue` — Vue: setup (~390 tok)
+- `PopoverContent.vue` — Vue: setup (~400 tok)
 
 ## packages/design/src/components/ui/select/
 
 - `SelectContent.vue` — Vue: setup (~524 tok)
 - `SelectItem.vue` — Vue: setup (~392 tok)
-- `SelectTrigger.vue` — Vue: setup (~457 tok)
+- `SelectTrigger.vue` — Vue: setup (~486 tok)
 
 ## packages/design/src/components/ui/skeleton/
 
@@ -500,8 +502,8 @@
 
 ## packages/design/src/components/ui/tabs/
 
-- `TabsList.vue` — Vue: setup (~826 tok)
-- `TabsTrigger.vue` — Vue: setup (~430 tok)
+- `TabsList.vue` — Vue: setup (~873 tok)
+- `TabsTrigger.vue` — Vue: setup (~429 tok)
 
 ## packages/design/src/components/ui/textarea/
 

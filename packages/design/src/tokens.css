@@ -108,9 +108,13 @@
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
-  /* Type */
-  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  /* Type — system-first (2026-07-12): SF Pro on Apple devices, Segoe on
+     Windows, Roboto on Android. THE native feel; Geist stays as a webfont
+     fallback for platforms without a good system face. */
+  --font-sans: -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui,
+    "Segoe UI", Roboto, "Geist", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Geist Mono", Menlo, Consolas,
+    monospace;
 
   /* Radii — iOS-continuous feel (2026-07-10): every step up ~25% so
      controls read as soft capsules rather than rounded rectangles. */

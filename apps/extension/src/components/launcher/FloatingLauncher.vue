@@ -107,7 +107,7 @@
         @click.stop
         :style="{ ...menuStyle, pointerEvents: 'auto' }"
         class="fixed z-[2147483647] w-[248px]
-               rounded-2xl border border-border bg-card p-1.5
+               rounded-2xl border border-border/70 bg-card/90 p-1.5 backdrop-blur-xl
                shadow-[0_16px_48px_rgba(0,0,0,0.14),0_2px_8px_rgba(0,0,0,0.08)]"
       >
         <!-- ConnectPrompt auth gate disabled until apps/api lands. Re-add
@@ -150,7 +150,7 @@
                 v-model="pinFilter"
                 type="text"
                 placeholder="Filter pins"
-                class="w-full rounded-md border border-border bg-background px-2 h-7 text-[12px] text-foreground placeholder:text-muted-foreground focus:outline-none"
+                class="h-7 w-full rounded-lg border border-transparent bg-muted/60 px-2 text-[12px] text-foreground placeholder:text-muted-foreground transition-colors focus:border-ring focus:bg-background focus:outline-none"
               />
             </div>
 

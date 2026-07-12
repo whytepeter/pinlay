@@ -2635,3 +2635,47 @@
 | 22:38 | Edited apps/web/src/features/pins/composables/usePins.ts | modified useQuickStatus() | ~182 |
 | 22:39 | Created apps/web/src/features/pins/PinsPage.vue | — | ~3651 |
 | 2026-07-10 (2) | iOS-feel redesign pass on feat/pin-inbox (2nd commit). DESIGN PKG: tokens.css radii bumped (sm8/md10/lg14/xl20, --radius .875rem); Button base gains active:scale-[0.97] + duration-150 ease-out (motion-reduce guarded), outline variant → iOS gray-fill (border-transparent bg-muted/70), NEW tinted variant (bg-primary/12 text-primary); Input+Textarea → filled fields (bg-muted/60, border-transparent, rounded-lg, focus lifts to bg-background+ring). SHELL: AppSidebar.vue + StatusBar.vue + useShell.ts DELETED; new AppNavbar.vue = frosted sticky top bar (backdrop-blur-xl bg-background/80, brand + WorkspaceSwitcher compact pill variant + theme cycle + avatar menu w/ Settings·Install extension·Log out); AppLayout = navbar + main, no rail padding; navbar hidden on /p/* + /s/* (detail keeps own back-header, iOS push-nav). WorkspaceSwitcher gained `compact` prop (pill trigger). PINS LIST v2: day-grouped (Today/Yesterday/Month D) iOS inset lists (one rounded-2xl bg-card container per day, hairline border-t separators), 56px rounded-xl thumbs + attachment-count badge, inline Things-style resolve circle (useQuickStatus mutation, spinner while pending, filled green check when resolved, row title line-through), in-progress inline chip, segmented control via Tabs rounded-full, pill search. All 3 packages typecheck. Committed. Visual verify partial (login page confirms new primitives; authed pages pending — browser-tool classifier outage mid-session). | packages/design/src/{tokens.css, components/ui/{button/index.ts, input/Input.vue, textarea/Textarea.vue}}, apps/web/src/features/{workspace-shell/**, pins/**}, apps/web/src/app/router.ts | committed on branch | ~4200 |
+
+## Session: 2026-07-12 14:47
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 14:50 | Edited apps/api/src/annotation/annotation.service.ts | expanded (+11 lines) | ~297 |
+| 14:50 | Edited apps/api/src/annotation/annotation.service.ts | added nullish coalescing | ~235 |
+| 14:51 | Edited apps/api/src/annotation/annotation.service.ts | 15→16 lines | ~177 |
+| 14:51 | Edited apps/api/src/annotation/annotation.service.ts | 5→6 lines | ~80 |
+| 14:55 | Edited apps/api/src/annotation/annotation.service.ts | 8→9 lines | ~67 |
+| 14:55 | Edited apps/api/src/annotation/annotation.service.ts | 7→8 lines | ~65 |
+| 14:55 | Edited apps/extension/src/lib/api.ts | expanded (+11 lines) | ~129 |
+| 14:56 | Edited apps/extension/src/components/annotation/AnnotationOverlay.vue | expanded (+10 lines) | ~200 |
+| 14:59 | Edited packages/design/src/components/ui/tabs/TabsList.vue | CSS: control, dark, dark | ~181 |
+| 14:59 | Edited packages/design/src/components/ui/tabs/TabsTrigger.vue | 7→7 lines | ~164 |
+| 15:00 | Edited packages/design/src/components/ui/dropdown-menu/DropdownMenuContent.vue | inline fix | ~174 |
+| 15:01 | Edited packages/design/src/components/ui/dropdown-menu/DropdownMenuItem.vue | inline fix | ~178 |
+| 15:02 | Edited packages/design/src/components/ui/popover/PopoverContent.vue | "bg-popover text-popover-f" → "bg-popover/90 backdrop-bl" | ~145 |
+| 15:02 | Edited packages/design/src/components/ui/dialog/DialogContent.vue | "bg-background data-[state" → "bg-background data-[state" | ~110 |
+| 15:03 | Edited packages/design/src/components/ui/select/SelectTrigger.vue | 4→5 lines | ~259 |
+| 15:03 | Edited packages/design/src/tokens.css | modified first() | ~126 |
+| 15:04 | Created apps/web/src/shared/components/TypeChip.vue | — | ~192 |
+| 15:04 | Edited apps/web/src/shared/components/PinPill.vue | 7→7 lines | ~69 |
+| 15:05 | Edited apps/web/index.html | 9→5 lines | ~62 |
+| 15:05 | Edited apps/web/src/assets/main.css | CSS: -webkit-font-smoothing, -moz-osx-font-smoothing | ~108 |
+| 15:07 | Edited apps/extension/src/entrypoints/popup/index.html | 9→5 lines | ~67 |
+| 15:08 | Edited apps/web/src/features/pins/PinsPage.vue | link() → decoration() | ~390 |
+| 15:09 | Edited apps/web/src/features/pins/PinsPage.vue | CSS: sm | ~104 |
+| 15:09 | Edited apps/web/src/features/pins/PinDetailPage.vue | 5→5 lines | ~73 |
+| 15:09 | Edited apps/web/src/features/pins/PinDetailPage.vue | 24→27 lines | ~325 |
+| 15:09 | Edited apps/web/src/features/issue/components/ScreenshotViewer.vue | "overflow-hidden rounded-l" → "overflow-hidden rounded-2" | ~16 |
+| 15:18 | Edited apps/extension/src/entrypoints/popup/App.vue | reduced (-35 lines) | ~324 |
+| 15:19 | Edited apps/extension/src/entrypoints/popup/App.vue | reduced (-29 lines) | ~1464 |
+| 15:19 | Edited apps/extension/src/entrypoints/popup/App.vue | inline fix | ~15 |
+| 15:21 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | CSS: quiet | ~363 |
+| 15:21 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | "flex items-center gap-0.5" → "flex items-center gap-0.5" | ~24 |
+| 15:23 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 3→3 lines | ~57 |
+| 15:23 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | "w-full rounded-md border " → "h-7 w-full rounded-lg bor" | ~60 |
+| 15:24 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 20→20 lines | ~223 |
+| 15:34 | Created apps/web/src/shared/lib/issue-display.ts | — | ~74 |
+| 15:34 | Edited apps/web/src/shared/lib/api.ts | removed 38 lines | ~16 |
+| 15:35 | Edited apps/web/src/shared/lib/api.ts | reduced (-36 lines) | ~103 |
+| 15:35 | Edited apps/web/src/shared/lib/api.ts | reduced (-27 lines) | ~46 |
+| 2026-07-12 | Full iOS design pass + attachments bug + dead-code sweep (feat/pin-inbox). BUG bug-400: extension pin detail showed no images — GET /annotation/pins never included attachments; SerializedPin += attachments[] (id,url,type,filename,contentType,sizeBytes), queries include{attachments}, extension AnnotationPinRow += attachments, rowToExistingPin maps to detail shape (dataUrl <- R2 url). DESIGN PKG: system-first font stack (SF Pro/Segoe/Roboto, Geist fallback; Google-Fonts links removed from web index.html + popup html), DropdownMenu/Popover frosted (bg-popover/90 blur-xl rounded-xl, items min-h-9 rounded-lg), Dialog rounded-2xl shadow-xl, SelectTrigger filled like Input, TabsList = iOS segmented (muted track + raised bg-background thumb w/ ring), web font-smoothing antialiased. WEB: resolve circle → labeled tinted "Resolve"/ghost "Re-open" pill buttons (user: circle unclear); pin detail header frosted blur-xl, Activity in inset card, Developer details rounded-2xl; PinPill/TypeChip friendlied. EXTENSION: popup main view rebuilt — compact header (brand+host+status dot), one h-11 filled "Drop a pin" button, iOS inset list card (Pins on this page row + Show-pins Switch + Floating-launcher Switch via design Switch), old gradient/version-chip/pill/cards removed; composer header quieted (selector hidden, pill #, round close) + editor filled-field style; launcher menu frosted + filter input filled; pin detail popover rounded-2xl + friendly chips. SWEEP: deleted web features/{pinboards,integrations,dashboard,issue(moved ScreenshotViewer/AnchorBlock/ActivityThread→features/pins/components)}, Billing/Notifications sections, useSettings, useBoards, SyncChip/SeverityHeatbar/StatusChip/DetailsList/QueryList/SeverityChip/SeverityDot/TypeChip, issueDisplay helper, api.ts issues.list/counts/pins/update/remove + boards.* + Board/CreateBoard/UpdateBoard/ListIssuesParams/IssueCounts/UpdateIssueInput types (issues.get kept for SessionRedirect); extension ConnectPrompt.vue. All 3 typecheck; extension rebuilt; verified inbox+detail in browser (SF font, segmented thumb, Resolve pills, auto-screenshot thumbnail visible). | packages/design/**, apps/web/**, apps/extension/**, apps/api/src/annotation/annotation.service.ts, .wolf/buglog.json | verified in preview | ~11000 |

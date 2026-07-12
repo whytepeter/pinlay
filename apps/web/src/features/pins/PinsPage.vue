@@ -308,43 +308,56 @@ function toggleResolve(pin: InboxPin) {
               </span>
             </span>
 
-            <!-- reporter -->
+            <!-- reporter — hidden on narrow screens so the Resolve action
+                 keeps breathing room -->
             <UserAvatar
               v-if="pin.author"
               :name="pin.author.name"
               :avatar-url="pin.author.avatarUrl"
               :hue="hashHue(pin.author.id)"
               :size="24"
-              class="shrink-0"
+              class="hidden shrink-0 sm:block"
             />
 
-            <!-- resolve circle — Things-style check-off. Sits above the row
-                 link (@click.prevent.stop) so tapping it never navigates. -->
-            <button
-              type="button"
-              class="flex size-11 shrink-0 items-center justify-center rounded-full transition-transform active:scale-90"
-              :title="pin.status === 'resolved' ? 'Re-open' : 'Resolve'"
-              :aria-label="pin.status === 'resolved' ? `Re-open ${pin.title}` : `Resolve ${pin.title}`"
+            <!-- Labeled resolve action — an unlabeled circle read as
+                 decoration (user feedback 2026-07-12). @click.prevent.stop
+                 so tapping it never follows the row link. -->
+            <Button
+              v-if="pin.status !== 'resolved'"
+              variant="tinted"
+              size="sm"
+              class="min-h-[36px] shrink-0 rounded-full"
+              :disabled="pendingId === pin.id"
+              :aria-label="`Resolve ${pin.title}`"
               @click.prevent.stop="toggleResolve(pin)"
             >
               <Icon
                 v-if="pendingId === pin.id"
                 name="loader-circle"
-                :size="20"
-                class="animate-spin text-muted-foreground"
+                :size="14"
+                class="animate-spin"
               />
-              <span
-                v-else-if="pin.status === 'resolved'"
-                class="flex size-[22px] items-center justify-center rounded-full text-white"
-                :style="{ background: STATUS_COLOR.resolved }"
-              >
-                <Icon name="check" :size="13" :stroke-width="3" />
-              </span>
-              <span
-                v-else
-                class="size-[22px] rounded-full border-2 border-border transition-colors group-hover:border-muted-foreground/60 hover:!border-[color:var(--status-resolved)]"
+              <Icon v-else name="check" :size="14" />
+              Resolve
+            </Button>
+            <Button
+              v-else
+              variant="ghost"
+              size="sm"
+              class="min-h-[36px] shrink-0 rounded-full text-muted-foreground"
+              :disabled="pendingId === pin.id"
+              :aria-label="`Re-open ${pin.title}`"
+              @click.prevent.stop="toggleResolve(pin)"
+            >
+              <Icon
+                v-if="pendingId === pin.id"
+                name="loader-circle"
+                :size="14"
+                class="animate-spin"
               />
-            </button>
+              <Icon v-else name="rotate-ccw" :size="14" />
+              Re-open
+            </Button>
           </RouterLink>
         </div>
       </section>

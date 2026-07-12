@@ -875,6 +875,16 @@ function rowToExistingPin(row: AnnotationPinRow, index: number): ExistingPin | n
     issueType: row.issueType ?? null,
     authorId: row.authorId,
     createdAt: row.createdAt,
+    // Server attachments → the detail popover's render shape. `dataUrl` is
+    // just an <img src>, so the R2 public URL drops straight in.
+    attachments: (row.attachments ?? [])
+      .filter((a) => a.contentType.startsWith("image/"))
+      .map((a) => ({
+        name: a.filename,
+        mime: a.contentType,
+        dataUrl: a.url,
+        size: a.sizeBytes,
+      })),
   };
 }
 

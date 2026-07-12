@@ -50,27 +50,20 @@
     @keydown.stop
   >
     <div
-      class="overflow-hidden rounded-xl border border-border bg-card shadow-[0_16px_40px_rgba(0,0,0,0.16),0_2px_8px_rgba(0,0,0,0.08)]"
+      class="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_16px_40px_rgba(0,0,0,0.16),0_2px_8px_rgba(0,0,0,0.08)]"
     >
-      <!-- ── HEADER ─────────────────────────────────────────────────── -->
-      <header
-        class="flex items-center gap-2 border-b border-border bg-primary-soft/60 px-3 py-2"
-      >
+      <!-- ── HEADER — quiet: pin number + close. The clicked-element selector
+           was dev-noise here; the anchor data still rides with the pin. -->
+      <header class="flex items-center gap-2 px-3 pb-1 pt-2.5">
         <span
-          class="inline-flex items-center rounded-md bg-primary-soft px-1.5 py-0.5 font-mono text-[11px] font-semibold text-primary"
+          class="inline-flex items-center rounded-full bg-primary/12 px-2 py-0.5 font-mono text-[11px] font-semibold text-primary"
         >
           #{{ paddedIndex }}
         </span>
-        <span
-          v-if="selector"
-          class="truncate font-mono text-[12px] text-foreground/80"
-          :title="selector"
-        >
-          {{ selector }}
-        </span>
+        <span class="text-[12px] font-medium text-muted-foreground">New pin</span>
         <button
           type="button"
-          class="ml-auto rounded-md p-1 text-muted-foreground transition-colors hover:bg-card hover:text-foreground"
+          class="ml-auto flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           aria-label="Cancel pin"
           @click="emit('cancel')"
         >
@@ -80,9 +73,9 @@
 
       <!-- ── BODY ──────────────────────────────────────────────────── -->
       <div class="space-y-3 p-3">
-        <!-- Description (with mini markdown toolbar) -->
-        <div class="relative rounded-md border border-border bg-background focus-within:ring-1 focus-within:ring-ring">
-          <div class="flex items-center gap-0.5 border-b border-border px-1.5 py-1">
+        <!-- Description (with mini markdown toolbar) — filled iOS field -->
+        <div class="relative rounded-xl border border-transparent bg-muted/50 transition-colors focus-within:border-ring focus-within:bg-background">
+          <div class="flex items-center gap-0.5 border-b border-border/50 px-1.5 py-1">
             <button
               type="button"
               class="inline-flex h-5 w-5 cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"

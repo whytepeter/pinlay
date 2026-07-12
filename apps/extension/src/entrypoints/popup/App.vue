@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
-import { Brand, Icon } from "@pinlay/design";
+import { Brand, Icon, Switch } from "@pinlay/design";
 import { clearAuth, getAuth, onAuthChange, setAuth, type StoredAuth } from "../../lib/auth";
 import { api, type Me, type Workspace } from "../../lib/api";
 import {
@@ -786,240 +786,176 @@ function onConnect() {
 
     <!-- ── Main view (default) ─────────────────────────────────────────── -->
     <template v-else>
-    <!-- ── Header — brand + page context + connection pill ───────────────── -->
-    <header
-      class="flex items-center gap-2.5 border-b border-border bg-gradient-to-b from-primary/[0.06] to-transparent px-4 py-3"
-    >
-      <div
-        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"
-      >
-        <Brand :size="20" />
-      </div>
-      <div class="min-w-0 flex-1">
-        <div class="flex items-center gap-1.5">
-          <span class="text-[14px] font-semibold leading-tight text-foreground">
-            pinlay
-          </span>
-          <span
-            class="rounded-full bg-muted px-1.5 py-px text-[9px] font-medium leading-none text-muted-foreground"
-          >
-            v0.0.1
-          </span>
-        </div>
-        <div
-          class="mt-0.5 truncate text-[11px] leading-tight text-muted-foreground"
-        >
-          {{ pageHost || "This page" }}
-        </div>
-      </div>
-      <!-- Connection pill: 4 honest states. NEVER says "Local" while we're
-           still resolving — show a skeleton dot + label instead so the user
-           isn't told something wrong for the half-second before /auth/me
-           returns. -->
-      <span
-        class="flex shrink-0 items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium"
-        :class="{
-          'text-muted-foreground': isLoading,
-          'text-status-resolved': isConnected,
-          'text-primary': conn === 'disconnected',
-          'text-status-stale': conn === 'offline',
-        }"
-      >
-        <span
-          v-if="isLoading"
-          class="h-1.5 w-1.5 animate-pulse rounded-full bg-muted-foreground/40"
-        />
-        <span
-          v-else
-          class="h-1.5 w-1.5 rounded-full"
-          :class="{
-            'bg-status-resolved': isConnected,
-            'bg-primary': conn === 'disconnected',
-            'bg-status-stale': conn === 'offline',
-          }"
-        />
-        {{
-          isLoading
-            ? "Checking"
-            : isConnected
-              ? "Live"
-              : conn === "offline"
-                ? "Offline"
-                : "Not connected"
-        }}
+    <!-- ── Header — brand + page context + status dot ─────────────────────
+         One quiet line. Connection state collapses into a colored dot (the
+         label lives in the tooltip); the old gradient/version-chip/pill trio
+         read as three competing signals. -->
+    <header class="flex items-center gap-2 border-b border-border/60 px-4 py-3">
+      <Brand :size="18" class="shrink-0 text-primary" />
+      <span class="truncate text-[13px] font-semibold text-foreground">
+        {{ pageHost || "pinlay" }}
       </span>
+      <span
+        class="ml-auto h-2 w-2 shrink-0 rounded-full"
+        :class="{
+          'animate-pulse bg-muted-foreground/40': isLoading,
+          'bg-status-resolved': isConnected,
+          'bg-primary': conn === 'disconnected',
+          'bg-status-stale': conn === 'offline',
+        }"
+        :title="
+          isLoading
+            ? 'Checking your session…'
+            : isConnected
+              ? 'Connected'
+              : conn === 'offline'
+                ? 'Offline — API unreachable'
+                : 'Not connected'
+        "
+      />
     </header>
 
     <div class="flex flex-col gap-3 p-3">
-      <!-- ── Primary action ──────────────────────────────────────────────── -->
-      <!-- Rendered while we have ANY identity (loading skeleton, connected, or
-           cached-but-offline). The disabled state + subtitle communicate when
-           it can't actually be used; hiding it would shift layout on every
-           network blip. Hidden only on a true cold disconnected state. -->
-      <button
-        v-if="isLoading || hasIdentity"
-        type="button"
-        :disabled="status === 'starting' || !isConnected"
-        class="group flex items-center gap-2.5 rounded-xl bg-primary px-3 py-2.5 text-left text-primary-foreground shadow-[0_2px_8px_color-mix(in_oklab,var(--primary)_25%,transparent)] transition-[transform,box-shadow,background-color] hover:bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none"
-        @click="startAnnotation"
-      >
-        <span
-          class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-white/15"
+      <!-- ── Primary action — one loud button, iOS filled style ──────────
+           Rendered while we have ANY identity (loading, connected, or
+           cached-but-offline). Hidden only on a cold disconnected state. -->
+      <div v-if="isLoading || hasIdentity" class="flex flex-col gap-1.5">
+        <button
+          type="button"
+          :disabled="status === 'starting' || !isConnected"
+          class="flex h-11 items-center justify-center gap-2 rounded-xl bg-primary text-[14px] font-semibold text-primary-foreground transition-all duration-150 ease-out hover:bg-primary-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55"
+          @click="startAnnotation"
         >
-          <Icon name="map-pin" :size="14" :stroke-width="2.25" />
-        </span>
-        <span class="flex-1">
-          <span class="block text-[13px] font-semibold leading-tight">
-            Drop a pin
-          </span>
-          <span class="block text-[11px] leading-tight text-white/75">
-            {{
-              isLoading
-                ? "Checking your session…"
-                : isConnected
-                  ? "Click any element to start"
-                  : conn === "offline"
-                    ? "Reconnect to start pinning"
-                    : "Connect a workspace to start"
-            }}
-          </span>
-        </span>
-        <Icon
-          name="arrow-right"
-          :size="14"
-          class="opacity-70 transition-transform group-hover:translate-x-0.5"
-        />
-      </button>
-
-      <!-- ── View pins area (Roadmap 2.1) ─────────────────────────────────
-           Three mutually exclusive states:
-           1. Loading skeleton while the content script's pin probe runs.
-           2. Error card with Try again when the probe fails.
-           3. View pins card with status breakdown + count, when the URL
-              has pins. (Silent when zero pins — that's the "no work" case.)
-           The skeleton avoids the previous pop-in where the View pins card
-           appeared "out of the blue" after the async fetch resolved. -->
-      <!-- 1. Loading skeleton — shape mirrors the real View pins card.
-           Suppressed when we know there's no identity (idle empty state) —
-           otherwise the skeleton briefly flashes above the hero. -->
-      <div
-        v-if="pinsLoading && !showIdlePrompt"
-        class="flex items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2"
-        aria-busy="true"
-      >
-        <span class="h-9 w-9 shrink-0 animate-pulse rounded-md bg-muted" />
-        <span class="flex min-w-0 flex-1 flex-col gap-1.5">
-          <span class="h-2.5 w-20 animate-pulse rounded bg-muted" />
-          <span class="h-2 w-28 animate-pulse rounded bg-muted/70" />
-        </span>
-        <span class="h-6 w-8 animate-pulse rounded-full bg-muted" />
+          <Icon name="map-pin" :size="16" :stroke-width="2.25" />
+          Drop a pin
+        </button>
+        <!-- One-line caption only when the button can't be used. -->
+        <p
+          v-if="!isConnected"
+          class="text-center text-[11px] text-muted-foreground"
+        >
+          {{
+            isLoading
+              ? "Checking your session…"
+              : conn === "offline"
+                ? "Reconnect to start pinning"
+                : "Connect a workspace to start"
+          }}
+        </p>
       </div>
 
-      <!-- 2. Error + Try again — friendly retry surface. -->
-      <button
-        v-else-if="pinsError"
-        type="button"
-        class="group flex items-center gap-2.5 rounded-xl border border-status-stale/30 bg-status-stale/5 px-3 py-2 text-left transition-colors hover:bg-status-stale/10"
-        @click="fetchPinState"
+      <!-- ── This page — one inset list card (iOS settings language).
+           Rows: pins on this page (→ sub-view) · show-on-page switch ·
+           floating launcher switch. Same hairline-separator container as
+           the dashboard inbox, so both surfaces speak one dialect. -->
+      <div
+        v-if="hasIdentity || (pinsLoading && !showIdlePrompt)"
+        class="overflow-hidden rounded-xl border border-border/70 bg-card"
       >
-        <span
-          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-status-stale/15 text-status-stale"
+        <!-- Row 1: pins on this page (loading / error / count states) -->
+        <div
+          v-if="pinsLoading && !showIdlePrompt"
+          class="flex min-h-[44px] items-center gap-2.5 px-3"
+          aria-busy="true"
         >
-          <Icon name="alert-triangle" :size="15" :stroke-width="2" />
-        </span>
-        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span class="text-[13px] font-semibold leading-tight text-foreground">
-            Couldn't load pins
-          </span>
-          <span class="truncate text-[11px] leading-tight text-muted-foreground">
-            {{ pinsError }}
-          </span>
-        </span>
-        <span
-          class="inline-flex items-center gap-1 rounded-md bg-card px-2 py-1 text-[11px] font-medium text-foreground transition-colors group-hover:bg-background"
-        >
-          <Icon name="refresh-cw" :size="11" :stroke-width="2" />
-          Try again
-        </span>
-      </button>
-
-      <!-- 3. View pins card — happy path. -->
-      <button
-        v-else-if="pageCounts.all > 0"
-        type="button"
-        class="group flex items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2 text-left text-foreground transition-colors hover:bg-muted/40"
-        @click="openPinsView"
-      >
-        <span
-          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground"
-        >
-          <Icon name="message-square" :size="15" :stroke-width="2" />
-        </span>
-        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span class="text-[13px] font-semibold leading-tight">
-            View pins
-          </span>
-          <span class="text-[11px] leading-tight text-muted-foreground">
-            <template v-if="pageCounts.open > 0">
-              {{ pageCounts.open }} open
-            </template>
-            <template v-if="pageCounts.open > 0 && pageCounts.resolved > 0">
-              ·
-            </template>
-            <template v-if="pageCounts.resolved > 0">
-              {{ pageCounts.resolved }} resolved
-            </template>
-            <template v-if="pageCounts.open === 0 && pageCounts.resolved === 0">
-              {{ pageCounts.all }} on this page
-            </template>
-          </span>
-        </span>
-        <span
-          class="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary-soft px-2 text-[11px] font-semibold text-primary tabular-nums"
-        >
-          {{ pageCounts.all }}
-        </span>
-      </button>
-
-      <!-- ── Toggle row: Hide pins | Floating launcher ───────────────────
-           Two equal-width pill toggles (rounded-full for a stronger pill
-           silhouette than the cards above). Each reflects ON/OFF visually
-           (violet-tinted = currently on, neutral = off). -->
-      <div v-if="hasIdentity" class="grid grid-cols-2 gap-2">
-        <!-- Hide / Show on-page pins. Disabled if there's nothing to hide
-             AND we don't have a "viewing" overlay state to flip back from. -->
+          <span class="h-4 w-4 animate-pulse rounded bg-muted" />
+          <span class="h-2.5 w-28 animate-pulse rounded bg-muted" />
+          <span class="ml-auto h-5 w-7 animate-pulse rounded-full bg-muted" />
+        </div>
         <button
+          v-else-if="pinsError"
           type="button"
-          :disabled="!pageViewing && pageCounts.all === 0"
-          :class="[
-            'flex items-center justify-center gap-1.5 rounded-full border px-3 py-2 text-[12px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-55',
-            pageViewing
-              ? 'border-primary/35 bg-primary-soft text-primary hover:bg-primary-soft/80'
-              : 'border-border bg-card text-foreground hover:bg-muted/50',
-          ]"
-          @click="toggleViewPins"
+          class="flex min-h-[44px] w-full items-center gap-2.5 px-3 text-left transition-colors hover:bg-muted/40"
+          @click="fetchPinState"
         >
           <Icon
-            :name="pageViewing ? 'eye-off' : 'eye'"
-            :size="13"
+            name="alert-triangle"
+            :size="15"
             :stroke-width="2"
+            class="shrink-0 text-status-stale"
           />
-          {{ pageViewing ? "Hide pins" : "Show pins" }}
+          <span class="min-w-0 flex-1 truncate text-[13px] text-foreground">
+            Couldn't load pins
+          </span>
+          <span class="flex shrink-0 items-center gap-1 text-[12px] font-medium text-primary">
+            <Icon name="refresh-cw" :size="11" :stroke-width="2" /> Retry
+          </span>
         </button>
-        <!-- Floating launcher (FAB) visibility — global preference. -->
         <button
+          v-else
           type="button"
-          :class="[
-            'flex items-center justify-center gap-1.5 rounded-full border px-3 py-2 text-[12px] font-medium transition-colors',
-            !launcherHidden
-              ? 'border-primary/35 bg-primary-soft text-primary hover:bg-primary-soft/80'
-              : 'border-border bg-card text-foreground hover:bg-muted/50',
-          ]"
-          @click="toggleLauncher"
+          :disabled="pageCounts.all === 0"
+          class="flex min-h-[44px] w-full items-center gap-2.5 px-3 text-left transition-colors enabled:hover:bg-muted/40 disabled:cursor-default"
+          @click="openPinsView"
         >
-          <Icon name="map-pin" :size="13" :stroke-width="2" />
-          Floating launcher
+          <Icon
+            name="message-square"
+            :size="15"
+            :stroke-width="2"
+            class="shrink-0 text-muted-foreground"
+          />
+          <span class="min-w-0 flex-1 truncate text-[13px] text-foreground">
+            Pins on this page
+          </span>
+          <span
+            v-if="pageCounts.all > 0"
+            class="inline-flex h-[22px] min-w-[22px] shrink-0 items-center justify-center rounded-full bg-primary/12 px-1.5 text-[11px] font-semibold tabular-nums text-primary"
+          >
+            {{ pageCounts.all }}
+          </span>
+          <span v-else class="shrink-0 text-[12px] text-muted-foreground">
+            None yet
+          </span>
+          <Icon
+            v-if="pageCounts.all > 0"
+            name="chevron-right"
+            :size="14"
+            class="shrink-0 text-muted-foreground/60"
+          />
         </button>
+
+        <!-- Row 2: show pins on page — real switch, not an ambiguous pill -->
+        <div
+          v-if="hasIdentity"
+          class="flex min-h-[44px] items-center gap-2.5 border-t border-border/60 px-3"
+        >
+          <Icon
+            name="eye"
+            :size="15"
+            :stroke-width="2"
+            class="shrink-0 text-muted-foreground"
+          />
+          <span class="min-w-0 flex-1 truncate text-[13px] text-foreground">
+            Show pins on page
+          </span>
+          <Switch
+            :model-value="pageViewing"
+            :disabled="!pageViewing && pageCounts.all === 0"
+            aria-label="Show pins on page"
+            @update:model-value="toggleViewPins"
+          />
+        </div>
+
+        <!-- Row 3: floating launcher — global preference switch -->
+        <div
+          v-if="hasIdentity"
+          class="flex min-h-[44px] items-center gap-2.5 border-t border-border/60 px-3"
+        >
+          <Icon
+            name="map-pin"
+            :size="15"
+            :stroke-width="2"
+            class="shrink-0 text-muted-foreground"
+          />
+          <span class="min-w-0 flex-1 truncate text-[13px] text-foreground">
+            Floating launcher
+          </span>
+          <Switch
+            :model-value="!launcherHidden"
+            aria-label="Floating launcher"
+            @update:model-value="toggleLauncher"
+          />
+        </div>
       </div>
 
       <!-- ── Identity / workspace switcher ─────────────────────────────────
