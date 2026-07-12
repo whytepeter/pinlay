@@ -118,12 +118,15 @@ function onSetAssignee(m: MemberRef | null) {
 
 <template>
   <div class="flex min-h-dvh flex-col bg-background text-foreground">
-    <!-- top bar — same frosted language as the app navbar -->
+    <!-- top bar — same frosted language as the app navbar. Inner content
+         sits in the SAME centered column as the page body (max-w-3xl), so
+         Back/actions line up with the content instead of hugging the edges. -->
     <header
-      class="sticky top-0 z-10 flex h-[52px] shrink-0 items-center gap-2 border-b border-border/60 bg-background/80 px-3 backdrop-blur-xl"
+      class="sticky top-0 z-10 shrink-0 border-b border-border/60 bg-background/80 backdrop-blur-xl"
       style="padding-top: env(safe-area-inset-top)"
     >
-      <RouterLink to="/">
+      <div class="mx-auto flex h-[52px] w-full max-w-3xl items-center gap-2 px-4 sm:px-6">
+      <RouterLink to="/" class="-ml-2.5">
         <Button variant="ghost" size="sm" class="min-h-[40px]">
           <Icon name="arrow-left" :size="15" /> Pins
         </Button>
@@ -157,10 +160,11 @@ function onSetAssignee(m: MemberRef | null) {
           <span class="hide-mobile">Open on page</span>
         </Button>
       </div>
+      </div>
     </header>
 
     <!-- loading -->
-    <div v-if="query.isPending.value" class="mx-auto w-full max-w-[760px] px-4 py-6 sm:px-6">
+    <div v-if="query.isPending.value" class="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
       <Skeleton class="mb-3 h-6 w-2/3" />
       <Skeleton class="mb-6 h-4 w-1/3" />
       <Skeleton class="aspect-[16/9] w-full rounded-lg" />
@@ -183,7 +187,7 @@ function onSetAssignee(m: MemberRef | null) {
     <!-- content -->
     <div v-else class="min-h-0 flex-1 overflow-y-auto">
       <div
-        class="mx-auto flex w-full max-w-[760px] flex-col gap-6 px-4 pt-6 sm:px-6"
+        class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 pt-6 sm:px-6"
         style="padding-bottom: calc(2.5rem + env(safe-area-inset-bottom))"
       >
         <!-- title + meta -->

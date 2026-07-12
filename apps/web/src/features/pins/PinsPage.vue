@@ -52,7 +52,10 @@ const isBlankWorkspace = computed(
     !q.value.trim(),
 );
 
-// ── Day grouping (Today / Yesterday / Month D) ────────────────────────────
+// ── Grouping: day → session → pins ────────────────────────────────────────
+// Pins dropped in one sitting share an issue (the session's grouping record),
+// so they cluster under one card with the site context lifted to a header
+// row. Rows inside stay in drop order (#01, #02, …).
 function dayLabel(iso: string): string {
   const d = new Date(iso);
   const now = new Date();
@@ -68,15 +71,45 @@ function dayLabel(iso: string): string {
   });
 }
 
-const groups = computed<{ label: string; pins: InboxPin[] }[]>(() => {
-  const out: { label: string; pins: InboxPin[] }[] = [];
+interface SessionGroup {
+  key: string;
+  title: string;
+  host: string;
+  pins: InboxPin[];
+}
+interface DayGroup {
+  label: string;
+  sessions: SessionGroup[];
+}
+
+const groups = computed<DayGroup[]>(() => {
+  const days: DayGroup[] = [];
   for (const pin of pins.value) {
+    // pins arrive newest-first, so days + sessions appear in that order too
     const label = dayLabel(pin.createdAt);
-    const last = out[out.length - 1];
-    if (last && last.label === label) last.pins.push(pin);
-    else out.push({ label, pins: [pin] });
+    let day = days[days.length - 1];
+    if (!day || day.label !== label) {
+      day = { label, sessions: [] };
+      days.push(day);
+    }
+    const key = pin.issue?.id ?? pin.id;
+    let session = day.sessions.find((s) => s.key === key);
+    if (!session) {
+      session = {
+        key,
+        title: pin.issue?.title ?? hostPath(pin.pageUrl).host,
+        host: hostPath(pin.pageUrl).host,
+        pins: [],
+      };
+      day.sessions.push(session);
+    }
+    session.pins.push(pin);
   }
-  return out;
+  // Within a session, show pins in the order they were dropped.
+  for (const day of days) {
+    for (const s of day.sessions) s.pins.sort((a, b) => a.index - b.index);
+  }
+  return days;
 });
 
 function hostPath(pageUrl: string): { host: string; path: string } {
@@ -237,128 +270,140 @@ function toggleResolve(pin: InboxPin) {
       <p class="text-sm text-muted-foreground">No pins match these filters.</p>
     </div>
 
-    <!-- grouped inset lists -->
+    <!-- day → session cards → pin rows -->
     <div v-else class="flex flex-col gap-6">
       <section v-for="group in groups" :key="group.label">
         <h2 class="mb-2 px-1 text-[13px] font-semibold text-muted-foreground">
           {{ group.label }}
         </h2>
-        <div class="overflow-hidden rounded-2xl border bg-card">
-          <RouterLink
-            v-for="(pin, i) in group.pins"
-            :key="pin.id"
-            :to="`/p/${pin.id}`"
-            class="group flex min-h-[72px] items-center gap-3 p-3 transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring active:bg-muted/60"
-            :class="i > 0 ? 'border-t border-border/60' : ''"
+        <div class="flex flex-col gap-3">
+          <div
+            v-for="session in group.sessions"
+            :key="session.key"
+            class="overflow-hidden rounded-2xl border bg-card"
           >
-            <!-- thumb or placeholder -->
-            <span
-              class="relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-muted/50"
-            >
-              <img
-                v-if="firstImage(pin)"
-                :src="firstImage(pin)!.url"
-                :alt="pin.title"
-                loading="lazy"
-                class="size-full object-cover"
-              />
-              <Icon
-                v-else
-                name="map-pin"
+            <!-- session header — site context lives here, not on every row -->
+            <div class="flex min-h-[40px] items-center gap-2 bg-muted/30 px-3 py-2">
+              <Favicon
+                :label="(session.host.replace(/^www\./, '')[0] ?? '?').toUpperCase()"
+                :hue="hashHue(session.host)"
                 :size="16"
-                class="text-muted-foreground/50"
               />
-              <span
-                v-if="pin.attachments.length > 1"
-                class="absolute bottom-0.5 right-0.5 rounded bg-background/90 px-1 font-mono text-[9px] text-muted-foreground"
-                >{{ pin.attachments.length }}</span
-              >
-            </span>
-
-            <!-- title + where -->
-            <span class="flex min-w-0 flex-1 flex-col gap-1">
-              <span
-                class="truncate text-[15px] font-medium leading-tight"
-                :class="
-                  pin.status === 'resolved'
-                    ? 'text-muted-foreground line-through decoration-border'
-                    : 'text-foreground'
-                "
-              >
-                {{ pin.title || "(no comment)" }}
+              <span class="min-w-0 flex-1 truncate text-[13px] font-medium text-foreground">
+                {{ session.title }}
               </span>
-              <span class="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
-                <Favicon
-                  :label="(hostPath(pin.pageUrl).host.replace(/^www\./, '')[0] ?? '?').toUpperCase()"
-                  :hue="hashHue(hostPath(pin.pageUrl).host)"
-                  :size="13"
+              <span class="shrink-0 text-[11px] text-muted-foreground">
+                {{ session.pins.length }} pin{{ session.pins.length === 1 ? "" : "s" }}
+              </span>
+            </div>
+
+            <RouterLink
+              v-for="pin in session.pins"
+              :key="pin.id"
+              :to="`/p/${pin.id}`"
+              class="group flex min-h-[64px] items-center gap-3 border-t border-border/60 p-3 transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring active:bg-muted/60"
+            >
+              <!-- thumb or placeholder -->
+              <span
+                class="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border/60 bg-muted/50"
+              >
+                <img
+                  v-if="firstImage(pin)"
+                  :src="firstImage(pin)!.url"
+                  :alt="pin.title"
+                  loading="lazy"
+                  class="size-full object-cover"
                 />
-                <span class="truncate">
-                  {{ hostPath(pin.pageUrl).host }}<span class="opacity-60">{{ hostPath(pin.pageUrl).path }}</span>
-                </span>
+                <Icon
+                  v-else
+                  name="map-pin"
+                  :size="15"
+                  class="text-muted-foreground/50"
+                />
                 <span
-                  v-if="pin.status === 'in_progress'"
-                  class="inline-flex shrink-0 items-center gap-1"
-                  :style="{ color: STATUS_COLOR.in_progress }"
+                  v-if="pin.attachments.length > 1"
+                  class="absolute bottom-0.5 right-0.5 rounded bg-background/90 px-1 font-mono text-[9px] text-muted-foreground"
+                  >{{ pin.attachments.length }}</span
                 >
-                  <span class="size-1.5 rounded-full" :style="{ background: STATUS_COLOR.in_progress }" />
-                  In progress
-                </span>
-                <span class="shrink-0 opacity-70">· {{ timeAgo(pin.createdAt) }}</span>
               </span>
-            </span>
 
-            <!-- reporter — hidden on narrow screens so the Resolve action
-                 keeps breathing room -->
-            <UserAvatar
-              v-if="pin.author"
-              :name="pin.author.name"
-              :avatar-url="pin.author.avatarUrl"
-              :hue="hashHue(pin.author.id)"
-              :size="24"
-              class="hidden shrink-0 sm:block"
-            />
+              <!-- title + meta (host moved to the session header) -->
+              <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span
+                  class="truncate text-[15px] font-medium leading-tight"
+                  :class="
+                    pin.status === 'resolved'
+                      ? 'text-muted-foreground line-through decoration-border'
+                      : 'text-foreground'
+                  "
+                >
+                  {{ pin.title || "(no comment)" }}
+                </span>
+                <span class="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+                  <span class="font-mono text-[11px] opacity-70">#{{ String(pin.index).padStart(2, "0") }}</span>
+                  <span
+                    v-if="pin.status === 'in_progress'"
+                    class="inline-flex shrink-0 items-center gap-1"
+                    :style="{ color: STATUS_COLOR.in_progress }"
+                  >
+                    <span class="size-1.5 rounded-full" :style="{ background: STATUS_COLOR.in_progress }" />
+                    In progress
+                  </span>
+                  <span class="shrink-0 opacity-70">{{ timeAgo(pin.createdAt) }}</span>
+                </span>
+              </span>
 
-            <!-- Labeled resolve action — an unlabeled circle read as
-                 decoration (user feedback 2026-07-12). @click.prevent.stop
-                 so tapping it never follows the row link. -->
-            <Button
-              v-if="pin.status !== 'resolved'"
-              variant="tinted"
-              size="sm"
-              class="min-h-[36px] shrink-0 rounded-full"
-              :disabled="pendingId === pin.id"
-              :aria-label="`Resolve ${pin.title}`"
-              @click.prevent.stop="toggleResolve(pin)"
-            >
-              <Icon
-                v-if="pendingId === pin.id"
-                name="loader-circle"
-                :size="14"
-                class="animate-spin"
+              <!-- reporter — hidden on narrow screens so the Resolve action
+                   keeps breathing room -->
+              <UserAvatar
+                v-if="pin.author"
+                :name="pin.author.name"
+                :avatar-url="pin.author.avatarUrl"
+                :hue="hashHue(pin.author.id)"
+                :size="24"
+                class="hidden shrink-0 sm:block"
               />
-              <Icon v-else name="check" :size="14" />
-              Resolve
-            </Button>
-            <Button
-              v-else
-              variant="ghost"
-              size="sm"
-              class="min-h-[36px] shrink-0 rounded-full text-muted-foreground"
-              :disabled="pendingId === pin.id"
-              :aria-label="`Re-open ${pin.title}`"
-              @click.prevent.stop="toggleResolve(pin)"
-            >
-              <Icon
-                v-if="pendingId === pin.id"
-                name="loader-circle"
-                :size="14"
-                class="animate-spin"
-              />
-              <Icon v-else name="rotate-ccw" :size="14" />
-              Re-open
-            </Button>
-          </RouterLink>
+
+              <!-- Labeled resolve action — @click.prevent.stop so tapping it
+                   never follows the row link. -->
+              <Button
+                v-if="pin.status !== 'resolved'"
+                variant="tinted"
+                size="sm"
+                class="min-h-[36px] shrink-0 rounded-full"
+                :disabled="pendingId === pin.id"
+                :aria-label="`Resolve ${pin.title}`"
+                @click.prevent.stop="toggleResolve(pin)"
+              >
+                <Icon
+                  v-if="pendingId === pin.id"
+                  name="loader-circle"
+                  :size="14"
+                  class="animate-spin"
+                />
+                <Icon v-else name="check" :size="14" />
+                Resolve
+              </Button>
+              <Button
+                v-else
+                variant="ghost"
+                size="sm"
+                class="min-h-[36px] shrink-0 rounded-full text-muted-foreground"
+                :disabled="pendingId === pin.id"
+                :aria-label="`Re-open ${pin.title}`"
+                @click.prevent.stop="toggleResolve(pin)"
+              >
+                <Icon
+                  v-if="pendingId === pin.id"
+                  name="loader-circle"
+                  :size="14"
+                  class="animate-spin"
+                />
+                <Icon v-else name="rotate-ccw" :size="14" />
+                Re-open
+              </Button>
+            </RouterLink>
+          </div>
         </div>
       </section>
 

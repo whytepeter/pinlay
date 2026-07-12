@@ -2,14 +2,14 @@
   "version": 1,
   "created_at": "2026-05-24T17:26:01.008Z",
   "lifetime": {
-    "total_tokens_estimated": 4591737,
-    "total_reads": 1247,
-    "total_writes": 5598,
+    "total_tokens_estimated": 4664750,
+    "total_reads": 1268,
+    "total_writes": 5636,
     "total_sessions": 150,
-    "anatomy_hits": 1051,
-    "anatomy_misses": 187,
-    "repeated_reads_blocked": 707,
-    "estimated_savings_vs_bare_cli": 3951982
+    "anatomy_hits": 1070,
+    "anatomy_misses": 189,
+    "repeated_reads_blocked": 717,
+    "estimated_savings_vs_bare_cli": 4036596
   },
   "sessions": [
     {
@@ -39540,6 +39540,339 @@
         "writes_count": 37,
         "repeated_reads_blocked": 7,
         "anatomy_lookups": 17
+      }
+    },
+    {
+      "id": "session-2026-07-12-1447",
+      "started": "2026-07-12T13:47:15.086Z",
+      "ended": "2026-07-12T14:43:39.858Z",
+      "reads": [
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+          "tokens_estimated": 4854,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/lib/api.ts",
+          "tokens_estimated": 2275,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+          "tokens_estimated": 7175,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+          "tokens_estimated": 13142,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/tabs/TabsList.vue",
+          "tokens_estimated": 826,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/tabs/TabsTrigger.vue",
+          "tokens_estimated": 430,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/dropdown-menu/DropdownMenuContent.vue",
+          "tokens_estimated": 509,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/dropdown-menu/DropdownMenuItem.vue",
+          "tokens_estimated": 0,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/popover/PopoverContent.vue",
+          "tokens_estimated": 390,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/dialog/DialogContent.vue",
+          "tokens_estimated": 0,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/select/SelectTrigger.vue",
+          "tokens_estimated": 457,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/components/SeverityChip.vue",
+          "tokens_estimated": 149,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/components/TypeChip.vue",
+          "tokens_estimated": 82,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/components/PinPill.vue",
+          "tokens_estimated": 152,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/assets/main.css",
+          "tokens_estimated": 869,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/entrypoints/popup/index.html",
+          "tokens_estimated": 170,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/entrypoints/popup/App.vue",
+          "tokens_estimated": 13322,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+          "tokens_estimated": 10078,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/launcher/FloatingLauncher.vue",
+          "tokens_estimated": 6396,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/lib/api.ts",
+          "tokens_estimated": 4251,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/lib/issue-display.ts",
+          "tokens_estimated": 350,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+          "tokens_estimated": 297,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+          "tokens_estimated": 235,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+          "tokens_estimated": 177,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+          "tokens_estimated": 80,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+          "tokens_estimated": 67,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+          "tokens_estimated": 65,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/lib/api.ts",
+          "tokens_estimated": 129,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationOverlay.vue",
+          "tokens_estimated": 215,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/tabs/TabsList.vue",
+          "tokens_estimated": 194,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/tabs/TabsTrigger.vue",
+          "tokens_estimated": 176,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/dropdown-menu/DropdownMenuContent.vue",
+          "tokens_estimated": 187,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/dropdown-menu/DropdownMenuItem.vue",
+          "tokens_estimated": 190,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/popover/PopoverContent.vue",
+          "tokens_estimated": 155,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/dialog/DialogContent.vue",
+          "tokens_estimated": 118,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/select/SelectTrigger.vue",
+          "tokens_estimated": 277,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/tokens.css",
+          "tokens_estimated": 126,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/components/TypeChip.vue",
+          "tokens_estimated": 206,
+          "action": "create"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/components/PinPill.vue",
+          "tokens_estimated": 74,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/index.html",
+          "tokens_estimated": 66,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/assets/main.css",
+          "tokens_estimated": 108,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/entrypoints/popup/index.html",
+          "tokens_estimated": 72,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinsPage.vue",
+          "tokens_estimated": 418,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinsPage.vue",
+          "tokens_estimated": 112,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+          "tokens_estimated": 78,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+          "tokens_estimated": 348,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/issue/components/ScreenshotViewer.vue",
+          "tokens_estimated": 17,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/entrypoints/popup/App.vue",
+          "tokens_estimated": 347,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/entrypoints/popup/App.vue",
+          "tokens_estimated": 1568,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/entrypoints/popup/App.vue",
+          "tokens_estimated": 16,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+          "tokens_estimated": 389,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+          "tokens_estimated": 25,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/launcher/FloatingLauncher.vue",
+          "tokens_estimated": 61,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/launcher/FloatingLauncher.vue",
+          "tokens_estimated": 65,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+          "tokens_estimated": 239,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/lib/issue-display.ts",
+          "tokens_estimated": 74,
+          "action": "create"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/lib/api.ts",
+          "tokens_estimated": 16,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/lib/api.ts",
+          "tokens_estimated": 103,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/shared/lib/api.ts",
+          "tokens_estimated": 46,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 65877,
+        "output_tokens_estimated": 7136,
+        "reads_count": 21,
+        "writes_count": 38,
+        "repeated_reads_blocked": 10,
+        "anatomy_lookups": 19
       }
     }
   ],

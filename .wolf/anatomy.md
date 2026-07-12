@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-12T14:35:46.360Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-12T14:56:16.549Z
 > Files: 262 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
@@ -360,8 +360,8 @@
 
 ## apps/web/src/features/pins/
 
-- `PinDetailPage.vue` — Pin detail — /p/:pinId. The dashboard's only detail surface after the (~3531 tok)
-- `PinsPage.vue` — The Pin Inbox — the dashboard's home (v2, 2026-07-10 iOS pass). (~3703 tok)
+- `PinDetailPage.vue` — Pin detail — /p/:pinId. The dashboard's only detail surface after the (~3584 tok)
+- `PinsPage.vue` — The Pin Inbox — the dashboard's home (v2, 2026-07-10 iOS pass). (~4136 tok)
 - `SessionRedirect.vue` — Legacy /s/:id → /p/:pinId shim. Old links (extension "Open in dashboard", (~259 tok)
 
 ## apps/web/src/features/pins/composables/
@@ -370,7 +370,7 @@
 
 ## apps/web/src/features/settings/
 
-- `SettingsPage.vue` — Old deep links (`/settings/workspace`, `/settings/members`) → Team. (~1153 tok)
+- `SettingsPage.vue` — Old deep links (`/settings/workspace`, `/settings/members`) → Team. (~1098 tok)
 
 ## apps/web/src/features/settings/components/
 

@@ -6691,6 +6691,54 @@
       "related_bugs": [],
       "occurrences": 2,
       "last_seen": "2026-07-12T14:35:46.374Z"
+    },
+    {
+      "id": "bug-416",
+      "timestamp": "2026-07-12T14:49:44.515Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/features/pins/PinDetailPage.vue",
+      "root_cause": "3 lines replaced/restructured",
+      "fix": "Rewrote 12→15 lines (3 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:49:44.515Z"
+    },
+    {
+      "id": "bug-417",
+      "timestamp": "2026-07-12T14:55:32.737Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/features/pins/PinsPage.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:55:32.737Z"
+    },
+    {
+      "id": "bug-418",
+      "timestamp": "2026-07-12T14:56:16.572Z",
+      "error_message": "CSS fix: Favicon",
+      "file": "apps/web/src/features/pins/PinsPage.vue",
+      "root_cause": "Favicon: label=\"(hostPath(pin.pageUrl).host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\" → label=\"(session.host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\"",
+      "fix": "Changed Favicon: label=\"(hostPath(pin.pageUrl).host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\" → label=\"(session.host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T14:56:16.572Z"
     }
   ]
 }

@@ -2,7 +2,6 @@
 import { computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Icon, Tabs, TabsList, TabsTrigger } from "@pinlay/design";
-import PageHeader from "@/shared/components/PageHeader.vue";
 import ProfileSection from "./components/ProfileSection.vue";
 import WorkspaceSection from "./components/WorkspaceSection.vue";
 import MembersSection from "./components/MembersSection.vue";
@@ -77,26 +76,31 @@ const NAV: { id: SectionId; label: string; icon: string; danger?: boolean }[] =
 </script>
 
 <template>
-  <div class="flex min-h-[calc(100dvh-3rem)] flex-col">
-    <PageHeader title="Settings" subtitle="Workspace, team, and preferences." />
+  <!-- Same centered column as the Pins inbox (max-w-3xl) — the old vertical
+       tab rail + edge-to-edge header read as desktop-app chrome. -->
+  <div
+    class="mx-auto w-full max-w-3xl px-4 pt-6 sm:px-6"
+    style="padding-bottom: calc(2.5rem + env(safe-area-inset-bottom))"
+  >
+    <div class="mb-5">
+      <h1 class="text-2xl font-bold tracking-tight">Settings</h1>
+      <p class="mt-0.5 text-sm text-muted-foreground">
+        Workspace, team, and preferences.
+      </p>
+    </div>
 
-    <Tabs v-model="section" class="flex flex-1 flex-col md:flex-row md:gap-0">
-      <!-- Same TabsList morphs from horizontal strip (mobile) to vertical
-           sidebar (md+). The sliding indicator handles either axis via
-           translate(x,y). -->
-      <TabsList
-        class="w-full rounded-none border-b bg-transparent px-3 py-2 [&>[aria-hidden]]:bg-muted [&>[aria-hidden]]:shadow-none md:w-[220px] md:shrink-0 md:flex-col md:items-stretch md:gap-0.5 md:border-b-0 border-t-0 border-l-0 md:border-r md:px-3 md:py-6"
-      >
+    <Tabs v-model="section" class="flex flex-col gap-6">
+      <TabsList class="rounded-full">
         <TabsTrigger
           v-for="s in NAV"
           :key="s.id"
           :value="s.id"
-          :class="[
+          class="rounded-full px-4"
+          :class="
             s.danger
               ? 'text-destructive/75 hover:text-destructive data-[state=active]:text-destructive data-[state=active]:[&_svg]:text-destructive'
-              : '',
-            'flex justify-start',
-          ]"
+              : ''
+          "
         >
           <Icon :name="s.icon" :size="15" />
           {{ s.label }}
@@ -104,17 +108,15 @@ const NAV: { id: SectionId; label: string; icon: string; danger?: boolean }[] =
       </TabsList>
 
       <!-- section content -->
-      <div class="min-w-0 flex-1 px-4 py-6 md:px-10 md:py-8">
-        <div class="mx-auto w-full max-w-3xl md:mx-0">
-          <ProfileSection v-if="section === 'profile'" />
-          <!-- Team = workspace identity + the people in it, stacked. -->
-          <template v-else-if="section === 'team'">
-            <WorkspaceSection />
-            <div class="my-8 border-t" />
-            <MembersSection />
-          </template>
-          <DangerZoneSection v-else-if="section === 'danger'" />
-        </div>
+      <div class="min-w-0">
+        <ProfileSection v-if="section === 'profile'" />
+        <!-- Team = workspace identity + the people in it, stacked. -->
+        <template v-else-if="section === 'team'">
+          <WorkspaceSection />
+          <div class="my-8 border-t" />
+          <MembersSection />
+        </template>
+        <DangerZoneSection v-else-if="section === 'danger'" />
       </div>
     </Tabs>
   </div>

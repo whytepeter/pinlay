@@ -106,6 +106,16 @@
       "count": 1,
       "tokens": 350,
       "first_read": "2026-07-12T14:34:33.271Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue": {
+      "count": 1,
+      "tokens": 3582,
+      "first_read": "2026-07-12T14:50:12.971Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/web/src/features/settings/SettingsPage.vue": {
+      "count": 1,
+      "tokens": 1153,
+      "first_read": "2026-07-12T14:51:30.436Z"
     }
   },
   "files_written": [
@@ -336,6 +346,42 @@
       "action": "edit",
       "tokens": 46,
       "at": "2026-07-12T14:35:46.371Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+      "action": "edit",
+      "tokens": 212,
+      "at": "2026-07-12T14:49:44.513Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+      "action": "edit",
+      "tokens": 107,
+      "at": "2026-07-12T14:50:35.977Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+      "action": "edit",
+      "tokens": 50,
+      "at": "2026-07-12T14:50:53.322Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/settings/SettingsPage.vue",
+      "action": "edit",
+      "tokens": 437,
+      "at": "2026-07-12T14:52:50.108Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinsPage.vue",
+      "action": "edit",
+      "tokens": 536,
+      "at": "2026-07-12T14:55:32.733Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinsPage.vue",
+      "action": "edit",
+      "tokens": 1644,
+      "at": "2026-07-12T14:56:16.568Z"
     }
   ],
   "edit_counts": {
@@ -355,19 +401,20 @@
     "apps/web/index.html": 1,
     "apps/web/src/assets/main.css": 1,
     "apps/extension/src/entrypoints/popup/index.html": 1,
-    "apps/web/src/features/pins/PinsPage.vue": 2,
-    "apps/web/src/features/pins/PinDetailPage.vue": 2,
+    "apps/web/src/features/pins/PinsPage.vue": 4,
+    "apps/web/src/features/pins/PinDetailPage.vue": 5,
     "apps/web/src/features/issue/components/ScreenshotViewer.vue": 1,
     "apps/extension/src/entrypoints/popup/App.vue": 3,
     "apps/extension/src/components/annotation/AnnotationPinComposer.vue": 2,
     "apps/extension/src/components/launcher/FloatingLauncher.vue": 2,
     "apps/extension/src/components/annotation/AnnotationPinDetail.vue": 1,
     "apps/web/src/shared/lib/issue-display.ts": 1,
-    "apps/web/src/shared/lib/api.ts": 3
+    "apps/web/src/shared/lib/api.ts": 3,
+    "apps/web/src/features/settings/SettingsPage.vue": 1
   },
-  "anatomy_hits": 19,
+  "anatomy_hits": 21,
   "anatomy_misses": 2,
   "repeated_reads_warned": 10,
   "cerebrum_warnings": 0,
-  "stop_count": 0
+  "stop_count": 1
 }
