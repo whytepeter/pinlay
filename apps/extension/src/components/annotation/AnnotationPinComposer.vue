@@ -216,10 +216,10 @@
                 :key="s.value"
                 type="button"
                 :class="[
-                  'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors',
+                  'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] font-medium transition-all active:scale-[0.97]',
                   severity === s.value
                     ? `${s.activeBorder} ${s.activeBg} text-foreground`
-                    : 'border-border bg-background text-foreground/80 hover:bg-muted',
+                    : 'border-transparent bg-muted/60 text-foreground/80 hover:bg-muted',
                 ]"
                 @click="severity = s.value"
               >
@@ -244,10 +244,10 @@
                 :key="t.value"
                 type="button"
                 :class="[
-                  'inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] transition-colors',
+                  'inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] transition-all active:scale-[0.97]',
                   issueType === t.value
-                    ? 'border-primary bg-primary-soft text-primary'
-                    : 'border-border bg-background text-foreground/80 hover:bg-muted',
+                    ? 'border-transparent bg-primary/12 font-medium text-primary'
+                    : 'border-transparent bg-muted/60 text-foreground/80 hover:bg-muted',
                 ]"
                 @click="issueType = t.value"
               >
@@ -409,7 +409,7 @@
       >
         <button
           type="button"
-          class="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
+          class="flex h-8 w-8 items-center justify-center rounded-full bg-muted/60 text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-95 disabled:opacity-50"
           title="Attach screenshot of the page"
           :disabled="capturing"
           @click="takeScreenshot"
@@ -421,7 +421,7 @@
           <DropdownMenuTrigger as-child>
             <button
               type="button"
-              class="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-card transition-colors hover:bg-muted"
+              class="flex h-8 w-8 items-center justify-center rounded-full bg-muted/60 transition-all hover:bg-muted active:scale-95"
               :title="
                 selectedMember ? `Assigned to ${selectedMember.name}` : 'Assign'
               "

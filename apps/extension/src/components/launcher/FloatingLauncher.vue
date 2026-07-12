@@ -123,7 +123,7 @@
             <div class="flex items-center gap-1.5 px-1.5 pb-1.5 pt-1">
               <button
                 type="button"
-                class="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+                class="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                 aria-label="Back"
                 @click="menuView = 'main'"
               >
@@ -165,7 +165,7 @@
                 v-for="row in filteredPinRows"
                 :key="row.id"
                 type="button"
-                class="flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-secondary"
+                class="flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-muted"
                 @click="onJumpToPin(row)"
               >
                 <span
@@ -276,7 +276,7 @@
                opens the toolbar popup → toggles "Show floating launcher". -->
           <button
             type="button"
-            class="flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-[12px] text-foreground transition-colors hover:bg-secondary"
+            class="flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-[12px] text-foreground transition-colors hover:bg-muted"
             @click="onHideLauncher"
           >
             <Icon

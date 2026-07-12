@@ -160,10 +160,10 @@ function toggleResolve(pin: InboxPin) {
     <!-- filters -->
     <div class="mb-5 flex flex-wrap items-center gap-2">
       <Tabs v-model="state">
-        <TabsList class="rounded-full">
-          <TabsTrigger value="open" class="rounded-full px-4">Open</TabsTrigger>
-          <TabsTrigger value="resolved" class="rounded-full px-4">Resolved</TabsTrigger>
-          <TabsTrigger value="all" class="rounded-full px-4">All</TabsTrigger>
+        <TabsList>
+          <TabsTrigger value="open">Open</TabsTrigger>
+          <TabsTrigger value="resolved">Resolved</TabsTrigger>
+          <TabsTrigger value="all">All</TabsTrigger>
         </TabsList>
       </Tabs>
 

@@ -90,12 +90,11 @@ const NAV: { id: SectionId; label: string; icon: string; danger?: boolean }[] =
     </div>
 
     <Tabs v-model="section" class="flex flex-col gap-6">
-      <TabsList class="rounded-full">
+      <TabsList>
         <TabsTrigger
           v-for="s in NAV"
           :key="s.id"
           :value="s.id"
-          class="rounded-full px-4"
           :class="
             s.danger
               ? 'text-destructive/75 hover:text-destructive data-[state=active]:text-destructive data-[state=active]:[&_svg]:text-destructive'

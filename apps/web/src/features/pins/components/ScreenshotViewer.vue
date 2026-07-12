@@ -4,7 +4,12 @@ import { Button, Icon } from "@pinlay/design";
 import type { ApiPin, ApiAttachment } from "@/shared/lib/api";
 import { timeAgo } from "@/shared/lib/format";
 
-const props = defineProps<{ pin: ApiPin }>();
+const props = defineProps<{
+  pin: ApiPin;
+  /** Full page URL — shown in the faux browser bar. Falls back to the
+   *  anchor's stored path (which used to render a lone "/" on root pages). */
+  pageUrl?: string;
+}>();
 
 interface AnchorMeta {
   urlPath?: string;
@@ -32,8 +37,17 @@ function readAnchor(): AnchorMeta {
 const anchor = computed(() => readAnchor());
 
 const url = computed(() => {
-  const path = anchor.value.urlPath ?? "";
-  return `${path || "/"}`.replace(/^\//, "") || "/";
+  // Prefer the real page URL — "host/path" reads like a browser bar.
+  if (props.pageUrl) {
+    try {
+      const u = new URL(props.pageUrl);
+      return `${u.host}${u.pathname === "/" ? "" : u.pathname}`;
+    } catch {
+      /* fall through to the anchor path */
+    }
+  }
+  const path = (anchor.value.urlPath ?? "").replace(/^\//, "");
+  return path || "—";
 });
 
 const images = computed<ApiAttachment[]>(() =>

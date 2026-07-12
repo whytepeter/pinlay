@@ -80,6 +80,29 @@ const canDelete = computed(() => {
 
 const devDetailsOpen = ref(false);
 
+// ── Session navigation — walk sibling pins without bouncing to the list.
+// Ordered by drop index (self + siblings); ‹ › in the header steps through.
+const sessionPins = computed(() => {
+  if (!pin.value) return [];
+  const all = [
+    { id: pin.value.id, index: pin.value.index },
+    ...pin.value.siblings.map((s) => ({ id: s.id, index: s.index })),
+  ];
+  return all.sort((a, b) => a.index - b.index);
+});
+const positionInSession = computed(() =>
+  sessionPins.value.findIndex((p) => p.id === pin.value?.id),
+);
+const prevPin = computed(
+  () => sessionPins.value[positionInSession.value - 1] ?? null,
+);
+const nextPin = computed(
+  () => sessionPins.value[positionInSession.value + 1] ?? null,
+);
+function goSibling(target: { id: string } | null) {
+  if (target) void router.push(`/p/${target.id}`);
+}
+
 function openOnPage() {
   if (!pin.value) return;
   // #pinlay-pin deep-link — the content script scrolls-to + flashes the pin
@@ -117,7 +140,7 @@ function onSetAssignee(m: MemberRef | null) {
 </script>
 
 <template>
-  <div class="flex min-h-dvh flex-col bg-background text-foreground">
+  <div class="min-h-dvh bg-background text-foreground">
     <!-- top bar — same frosted language as the app navbar. Inner content
          sits in the SAME centered column as the page body (max-w-3xl), so
          Back/actions line up with the content instead of hugging the edges. -->
@@ -133,6 +156,34 @@ function onSetAssignee(m: MemberRef | null) {
       </RouterLink>
 
       <div class="ml-auto flex items-center gap-2">
+        <!-- ‹ 2/10 › — step through the session's pins without going back -->
+        <div
+          v-if="pin && sessionPins.length > 1"
+          class="flex items-center gap-0.5 rounded-full bg-muted/60 p-0.5"
+        >
+          <button
+            type="button"
+            class="flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors enabled:hover:bg-background enabled:hover:text-foreground enabled:hover:shadow-sm disabled:opacity-40"
+            :disabled="!prevPin"
+            aria-label="Previous pin in this session"
+            @click="goSibling(prevPin)"
+          >
+            <Icon name="chevron-left" :size="15" />
+          </button>
+          <span class="px-1 font-mono text-[11px] tabular-nums text-muted-foreground">
+            {{ positionInSession + 1 }}/{{ sessionPins.length }}
+          </span>
+          <button
+            type="button"
+            class="flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors enabled:hover:bg-background enabled:hover:text-foreground enabled:hover:shadow-sm disabled:opacity-40"
+            :disabled="!nextPin"
+            aria-label="Next pin in this session"
+            @click="goSibling(nextPin)"
+          >
+            <Icon name="chevron-right" :size="15" />
+          </button>
+        </div>
+
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
             <Button variant="ghost" size="icon-sm" class="min-h-[40px] min-w-[40px]" title="More">
@@ -173,7 +224,7 @@ function onSetAssignee(m: MemberRef | null) {
     <!-- error / gone -->
     <div
       v-else-if="query.isError.value || !pin"
-      class="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center"
+      class="flex min-h-[60dvh] flex-col items-center justify-center gap-3 px-6 text-center"
     >
       <Icon name="map-pin-off" :size="22" class="text-muted-foreground" />
       <p class="text-sm text-muted-foreground">
@@ -184,8 +235,10 @@ function onSetAssignee(m: MemberRef | null) {
       </RouterLink>
     </div>
 
-    <!-- content -->
-    <div v-else class="min-h-0 flex-1 overflow-y-auto">
+    <!-- content — the BODY is the only scroller (an inner overflow-y-auto
+         here made two competing scroll containers; the sticky header jittered
+         and wheel momentum stalled between them). -->
+    <div v-else>
       <div
         class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 pt-6 sm:px-6"
         style="padding-bottom: calc(2.5rem + env(safe-area-inset-bottom))"
@@ -300,7 +353,7 @@ function onSetAssignee(m: MemberRef | null) {
           </Button>
         </div>
 
-        <ScreenshotViewer :pin="pin" />
+        <ScreenshotViewer :pin="pin" :page-url="pin.pageUrl" />
 
         <!-- sibling pins from the same sitting — pills, not a panel -->
         <div v-if="pin.siblings.length > 0" class="flex flex-wrap items-center gap-1.5">

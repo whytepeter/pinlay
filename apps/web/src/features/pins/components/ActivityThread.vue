@@ -149,7 +149,7 @@ function confirmDelete(c: PinCommentRow) {
 interface SystemEvent {
   id: string;
   kind: "pinned" | "assign";
-  actor: { id: string; name: string };
+  actor: { id: string; name: string; avatarUrl: string | null };
   meta?: string;
   createdAt: string;
 }
@@ -159,18 +159,20 @@ const systemEvents = computed<SystemEvent[]>(() => {
     list.push({
       id: `${props.pin.id}-pinned`,
       kind: "pinned",
-      actor: { id: props.pin.author.id, name: props.pin.author.name },
+      actor: {
+        id: props.pin.author.id,
+        name: props.pin.author.name,
+        avatarUrl: props.pin.author.avatarUrl,
+      },
       createdAt: props.pin.createdAt,
     });
   }
   if (props.pin.assignee) {
+    const actor = props.pin.author ?? props.pin.assignee;
     list.push({
       id: `${props.pin.id}-assignee`,
       kind: "assign",
-      actor: {
-        id: props.pin.author?.id ?? props.pin.assignee.id,
-        name: props.pin.author?.name ?? props.pin.assignee.name,
-      },
+      actor: { id: actor.id, name: actor.name, avatarUrl: actor.avatarUrl },
       meta: props.pin.assignee.name,
       createdAt: props.pin.updatedAt,
     });
@@ -216,36 +218,37 @@ const totalRows = computed(
         class="absolute bottom-3 left-[13px] top-3 w-px bg-border"
       />
 
-      <!-- System events: pinned, assigned. -->
+      <!-- System events: pinned, assigned. One avatar per row — the actor's
+           real avatar, not an icon tile + mini-avatar pair. -->
       <div v-for="it in systemEvents" :key="it.id" class="relative flex gap-3">
-        <span
-          class="z-10 flex size-[27px] shrink-0 items-center justify-center rounded-full border bg-muted text-muted-foreground"
-        >
-          <Icon :name="iconFor[it.kind]" :size="13" />
-        </span>
+        <UserAvatar
+          class="z-10 shrink-0"
+          :name="it.actor.name"
+          :avatar-url="it.actor.avatarUrl"
+          :hue="hashHue(it.actor.id)"
+          :size="28"
+        />
         <div
-          class="flex flex-wrap items-center gap-1.5 pt-1.5 text-[12px] text-muted-foreground"
+          class="flex flex-wrap items-center gap-1 pt-1.5 text-[12px] text-muted-foreground"
         >
-          <UserAvatar
-            :name="it.actor.name"
-            :hue="hashHue(it.actor.id)"
-            :size="16"
-          />
           <span class="font-medium text-foreground">{{ it.actor.name }}</span>
           {{ sysText(it) }}
+          <Icon :name="iconFor[it.kind]" :size="11" class="opacity-60" />
           <span>· {{ timeAgo(it.createdAt) }}</span>
         </div>
       </div>
 
-      <!-- Real comments. -->
+      <!-- Real comments — quiet filled bubbles (this whole thread already
+           lives inside a card; border-on-card reads as nesting). -->
       <div v-for="c in comments" :key="c.id" class="relative flex gap-3">
         <UserAvatar
           class="z-10 shrink-0"
           :name="c.author.name"
+          :avatar-url="c.author.avatarUrl"
           :hue="hashHue(c.author.id)"
-          :size="27"
+          :size="28"
         />
-        <div class="flex-1 rounded-lg border bg-card p-3">
+        <div class="flex-1 rounded-xl bg-muted/50 p-3">
           <div class="flex items-center gap-2">
             <span class="text-[13px] font-medium">{{ c.author.name }}</span>
             <span class="text-[11px] text-muted-foreground">{{
@@ -326,13 +329,15 @@ const totalRows = computed(
       </div>
     </div>
 
-    <!-- Composer -->
-    <div class="flex flex-col gap-2 rounded-lg border bg-card p-3">
+    <!-- Composer — the filled Textarea IS the field (its own padding +
+         muted surface); no extra wrapper card so the placeholder never
+         touches an edge. -->
+    <div class="flex flex-col gap-2">
       <Textarea
         ref="composerRef"
         v-model="draft"
         placeholder="Write a comment…"
-        class="min-h-[60px] resize-y border-0 p-0 focus-visible:ring-0"
+        class="min-h-[72px] resize-y text-[13px]"
         :disabled="createMutation.isPending.value"
         @keydown="onComposerKeydown"
       />
@@ -342,6 +347,7 @@ const totalRows = computed(
         </span>
         <Button
           size="sm"
+          class="rounded-full"
           :disabled="!draft.trim() || createMutation.isPending.value"
           @click="submit"
         >

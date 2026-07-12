@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-12T18:44:13.334Z
-> Files: 262 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-12T19:19:10.787Z
+> Files: 264 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
 
@@ -214,7 +214,7 @@
 
 - `AnnotationOverlay.vue` — Vue component (~13243 tok)
 - `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1143 tok)
-- `AnnotationPinComposer.vue` — Vue component (~10083 tok)
+- `AnnotationPinComposer.vue` — Vue component (~10098 tok)
 - `AnnotationPinDetail.vue` — Vue component (~7168 tok)
 
 ## apps/extension/src/components/capture/
@@ -360,9 +360,14 @@
 
 ## apps/web/src/features/pins/
 
-- `PinDetailPage.vue` — Pin detail — /p/:pinId. The dashboard's only detail surface after the (~3584 tok)
-- `PinsPage.vue` — The Pin Inbox — the dashboard's home (v2, 2026-07-10 iOS pass). (~4136 tok)
+- `PinDetailPage.vue` — Pin detail — /p/:pinId. The dashboard's only detail surface after the (~4203 tok)
+- `PinsPage.vue` — The Pin Inbox — the dashboard's home (v2, 2026-07-10 iOS pass). (~4110 tok)
 - `SessionRedirect.vue` — Legacy /s/:id → /p/:pinId shim. Old links (extension "Open in dashboard", (~259 tok)
+
+## apps/web/src/features/pins/components/
+
+- `ActivityThread.vue` — Real activity thread for a single pin. (~3111 tok)
+- `ScreenshotViewer.vue` — Full page URL — shown in the faux browser bar. Falls back to the (~1391 tok)
 
 ## apps/web/src/features/pins/composables/
 
@@ -370,7 +375,7 @@
 
 ## apps/web/src/features/settings/
 
-- `SettingsPage.vue` — Old deep links (`/settings/workspace`, `/settings/members`) → Team. (~1098 tok)
+- `SettingsPage.vue` — Old deep links (`/settings/workspace`, `/settings/members`) → Team. (~1066 tok)
 
 ## apps/web/src/features/settings/components/
 
@@ -502,8 +507,8 @@
 
 ## packages/design/src/components/ui/tabs/
 
-- `TabsList.vue` — Vue: setup (~873 tok)
-- `TabsTrigger.vue` — Vue: setup (~429 tok)
+- `TabsList.vue` — Vue: setup (~895 tok)
+- `TabsTrigger.vue` — Vue: setup (~430 tok)
 
 ## packages/design/src/components/ui/textarea/
 

@@ -6755,6 +6755,134 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-12T18:44:13.361Z"
+    },
+    {
+      "id": "bug-420",
+      "timestamp": "2026-07-12T18:48:34.776Z",
+      "error_message": "CSS fix: control",
+      "file": "packages/design/src/components/ui/tabs/TabsList.vue",
+      "root_cause": "control: recessed muted track, raised thumb (below). → recessed pill track, raised pill thumb (below).",
+      "fix": "Changed control: recessed muted track, raised thumb (below). → recessed pill track, raised pill thumb (below).",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T18:48:34.776Z"
+    },
+    {
+      "id": "bug-421",
+      "timestamp": "2026-07-12T18:49:21.626Z",
+      "error_message": "CSS fix: id, actor, name",
+      "file": "apps/web/src/features/pins/components/ActivityThread.vue",
+      "root_cause": "id: props.pin.author?.id ?? props.pin.assignee.id, → `${props.pin.id; actor: { → { id: actor.id, name: actor.name, avatarUrl: actor.avatarUrl; name: props.pin.author?.name ?? props.pin.assignee.name, → props.pin.author.name,",
+      "fix": "Changed id: props.pin.author?.id ?? props.pin.assignee.id, → `${props.pin.id; actor: { → { id: actor.id, name: actor.name, avatarUrl: actor.avatarUrl; name: props.pin.author?.name ?? props.pin.assignee.name, → props.pin.author.name,",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-07-12T18:49:53.109Z"
+    },
+    {
+      "id": "bug-422",
+      "timestamp": "2026-07-12T18:51:24.959Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "apps/web/src/features/pins/components/ScreenshotViewer.vue",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T18:51:24.959Z"
+    },
+    {
+      "id": "bug-423",
+      "timestamp": "2026-07-12T18:51:49.565Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/features/pins/PinDetailPage.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T18:51:49.565Z"
+    },
+    {
+      "id": "bug-424",
+      "timestamp": "2026-07-12T18:52:22.625Z",
+      "error_message": "CSS fix: ScreenshotViewer",
+      "file": "apps/web/src/features/pins/PinDetailPage.vue",
+      "root_cause": "ScreenshotViewer: pin=\"pin\" /> → pin=\"pin\" :page-url=\"pin.pageUrl\" />",
+      "fix": "Changed ScreenshotViewer: pin=\"pin\" /> → pin=\"pin\" :page-url=\"pin.pageUrl\" />",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T18:52:22.625Z"
+    },
+    {
+      "id": "bug-425",
+      "timestamp": "2026-07-12T18:52:58.890Z",
+      "error_message": "CSS fix: hover",
+      "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "root_cause": "hover: bg-muted\" → bg-muted active:scale-95\"",
+      "fix": "Changed hover: bg-muted\" → bg-muted active:scale-95\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T18:52:58.890Z"
+    },
+    {
+      "id": "bug-426",
+      "timestamp": "2026-07-12T19:18:50.999Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/features/pins/PinDetailPage.vue",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 6→8 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T19:18:50.999Z"
+    },
+    {
+      "id": "bug-427",
+      "timestamp": "2026-07-12T19:18:52.424Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/features/pins/PinDetailPage.vue",
+      "root_cause": "Had \"flex min-h-dvh flex-col bg-background text-foregr",
+      "fix": "Changed to \"min-h-dvh bg-background text-foreground\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T19:18:52.424Z"
     }
   ]
 }
