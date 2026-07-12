@@ -2,12 +2,12 @@
   "version": 1,
   "created_at": "2026-05-24T17:26:01.008Z",
   "lifetime": {
-    "total_tokens_estimated": 4664890,
-    "total_reads": 1268,
-    "total_writes": 5637,
+    "total_tokens_estimated": 4668160,
+    "total_reads": 1270,
+    "total_writes": 5656,
     "total_sessions": 152,
     "anatomy_hits": 1070,
-    "anatomy_misses": 189,
+    "anatomy_misses": 191,
     "repeated_reads_blocked": 717,
     "estimated_savings_vs_bare_cli": 4036596
   },
@@ -39892,6 +39892,130 @@
         "output_tokens_estimated": 140,
         "reads_count": 0,
         "writes_count": 1,
+        "repeated_reads_blocked": 0,
+        "anatomy_lookups": 0
+      }
+    },
+    {
+      "id": "session-2026-07-12-1940",
+      "started": "2026-07-12T18:40:05.248Z",
+      "ended": "2026-07-12T19:26:55.768Z",
+      "reads": [
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/components/ActivityThread.vue",
+          "tokens_estimated": 0,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/components/ScreenshotViewer.vue",
+          "tokens_estimated": 0,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/api/src/annotation/annotation.service.ts",
+          "tokens_estimated": 140,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/tabs/TabsList.vue",
+          "tokens_estimated": 218,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/tabs/TabsTrigger.vue",
+          "tokens_estimated": 104,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinsPage.vue",
+          "tokens_estimated": 72,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/settings/SettingsPage.vue",
+          "tokens_estimated": 127,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/components/ActivityThread.vue",
+          "tokens_estimated": 278,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/components/ActivityThread.vue",
+          "tokens_estimated": 363,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/components/ActivityThread.vue",
+          "tokens_estimated": 316,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/components/ScreenshotViewer.vue",
+          "tokens_estimated": 63,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/components/ScreenshotViewer.vue",
+          "tokens_estimated": 113,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+          "tokens_estimated": 241,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+          "tokens_estimated": 476,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+          "tokens_estimated": 18,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+          "tokens_estimated": 164,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+          "tokens_estimated": 163,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+          "tokens_estimated": 240,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+          "tokens_estimated": 114,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+          "tokens_estimated": 16,
+          "action": "edit"
+        },
+        {
+          "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/pins/PinDetailPage.vue",
+          "tokens_estimated": 44,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 0,
+        "output_tokens_estimated": 3270,
+        "reads_count": 2,
+        "writes_count": 19,
         "repeated_reads_blocked": 0,
         "anatomy_lookups": 0
       }

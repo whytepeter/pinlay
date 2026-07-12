@@ -11,6 +11,16 @@
       "count": 1,
       "tokens": 0,
       "first_read": "2026-07-12T18:51:04.654Z"
+    },
+    "/Users/apple/Documents/code/pinlay/apps/web/src/shared/components/UserAvatar.vue": {
+      "count": 1,
+      "tokens": 299,
+      "first_read": "2026-07-12T19:31:08.839Z"
+    },
+    "/Users/apple/Documents/code/pinlay/packages/design/src/index.ts": {
+      "count": 1,
+      "tokens": 382,
+      "first_read": "2026-07-12T19:32:12.057Z"
     }
   },
   "files_written": [
@@ -127,6 +137,24 @@
       "action": "edit",
       "tokens": 44,
       "at": "2026-07-12T19:19:10.816Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/UserAvatar.vue",
+      "action": "create",
+      "tokens": 422,
+      "at": "2026-07-12T19:31:34.712Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/packages/design/src/index.ts",
+      "action": "edit",
+      "tokens": 115,
+      "at": "2026-07-12T19:32:45.752Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/packages/design/src/components/ui/button/index.ts",
+      "action": "edit",
+      "tokens": 130,
+      "at": "2026-07-12T19:32:50.200Z"
     }
   ],
   "edit_counts": {
@@ -138,11 +166,14 @@
     "apps/web/src/features/pins/components/ActivityThread.vue": 3,
     "apps/web/src/features/pins/components/ScreenshotViewer.vue": 2,
     "apps/web/src/features/pins/PinDetailPage.vue": 6,
-    "apps/extension/src/components/annotation/AnnotationPinComposer.vue": 3
+    "apps/extension/src/components/annotation/AnnotationPinComposer.vue": 3,
+    "packages/design/src/components/UserAvatar.vue": 1,
+    "packages/design/src/index.ts": 1,
+    "packages/design/src/components/ui/button/index.ts": 1
   },
-  "anatomy_hits": 0,
+  "anatomy_hits": 2,
   "anatomy_misses": 2,
   "repeated_reads_warned": 0,
   "cerebrum_warnings": 0,
-  "stop_count": 1
+  "stop_count": 2
 }

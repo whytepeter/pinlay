@@ -6883,6 +6883,22 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-12T19:18:52.424Z"
+    },
+    {
+      "id": "bug-428",
+      "timestamp": "2026-07-12T19:32:50.204Z",
+      "error_message": "Significant refactor of ",
+      "file": "packages/design/src/components/ui/button/index.ts",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 8→11 lines (6 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-12T19:32:50.204Z"
     }
   ]
 }

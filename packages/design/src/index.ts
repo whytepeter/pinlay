@@ -8,6 +8,9 @@
 export { default as Icon } from "./components/Icon.vue";
 // Brand mark (custom SVG, currentColor)
 export { default as Brand } from "./components/Brand.vue";
+// Person avatar — image with hue-tinted initials fallback. THE avatar for
+// dashboard + extension alike; don't hand-roll initials circles.
+export { default as UserAvatar } from "./components/UserAvatar.vue";
 
 // Utility
 export { cn } from "./lib/utils";

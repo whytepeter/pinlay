@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-12T19:19:10.787Z
-> Files: 264 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-12T19:32:50.190Z
+> Files: 265 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
 
@@ -464,16 +464,17 @@
 
 ## packages/design/src/
 
-- `index.ts` — Import "@pinlay/design/tokens.css" once in the host app. Components are (~382 tok)
+- `index.ts` — Import "@pinlay/design/tokens.css" once in the host app. Components are (~442 tok)
 - `tokens.css` — Styles: 5 rules, 87 vars (~1683 tok)
 
 ## packages/design/src/components/
 
 - `Brand.vue` — Vue: setup (~261 tok)
+- `UserAvatar.vue` — The one avatar for people, everywhere — dashboard, extension popup, and (~394 tok)
 
 ## packages/design/src/components/ui/button/
 
-- `index.ts` — Exports buttonVariants, ButtonVariants (~731 tok)
+- `index.ts` — Exports buttonVariants, ButtonVariants (~781 tok)
 
 ## packages/design/src/components/ui/dialog/
 
