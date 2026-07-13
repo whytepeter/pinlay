@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
-import { Brand, Icon, Switch } from "@pinlay/design";
+import { Brand, Button, Icon, Switch, UserAvatar } from "@pinlay/design";
 import { clearAuth, getAuth, onAuthChange, setAuth, type StoredAuth } from "../../lib/auth";
 import { api, type Me, type Workspace } from "../../lib/api";
 import {
@@ -183,10 +183,6 @@ const showIdlePrompt = computed(
 );
 
 // User identity (only read when connected).
-const userInitial = computed(() => {
-  const source = me.value?.name?.trim() || me.value?.email?.trim();
-  return source ? source.charAt(0).toUpperCase() : "?";
-});
 const userLabel = computed(() => me.value?.name || me.value?.email || "");
 
 // Workspace name — referenced inline alongside member count in the
@@ -820,15 +816,15 @@ function onConnect() {
            Rendered while we have ANY identity (loading, connected, or
            cached-but-offline). Hidden only on a cold disconnected state. -->
       <div v-if="isLoading || hasIdentity" class="flex flex-col gap-1.5">
-        <button
-          type="button"
+        <Button
+          size="lg"
+          class="w-full text-[14px] font-semibold"
           :disabled="status === 'starting' || !isConnected"
-          class="flex h-11 items-center justify-center gap-2 rounded-xl bg-primary text-[14px] font-semibold text-primary-foreground transition-all duration-150 ease-out hover:bg-primary-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55"
           @click="startAnnotation"
         >
           <Icon name="map-pin" :size="16" :stroke-width="2.25" />
           Drop a pin
-        </button>
+        </Button>
         <!-- One-line caption only when the button can't be used. -->
         <p
           v-if="!isConnected"
@@ -1078,14 +1074,14 @@ function onConnect() {
               aria-haspopup="listbox"
               @click="toggleSwitcher"
             >
-              <!-- User avatar (D for Dev User). Primary identity in this
-                   consolidated row — workspace info moves to the subtitle. -->
-              <span
-                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold text-white"
-                :style="{ background: 'oklch(0.55 0.16 264)' }"
-              >
-                {{ userInitial }}
-              </span>
+              <!-- Same UserAvatar as the dashboard — real image, initials
+                   fallback. Primary identity in this consolidated row. -->
+              <UserAvatar
+                :name="userLabel"
+                :avatar-url="me?.avatarUrl ?? null"
+                :size="32"
+                class="shrink-0"
+              />
               <span class="flex min-w-0 flex-1 flex-col gap-0">
                 <span
                   class="truncate text-[13px] font-semibold leading-tight text-foreground"
@@ -1208,23 +1204,21 @@ function onConnect() {
              cached-but-offline we still show Disconnect (the user has an
              identity to clear, even if the network is down). -->
         <span v-if="isLoading" class="h-5 w-16" />
-        <button
+        <Button
           v-else
-          type="button"
-          class="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[11.5px] font-medium text-destructive transition-colors hover:bg-destructive/10"
+          variant="ghost"
+          size="sm"
+          class="text-destructive hover:bg-destructive/10 hover:text-destructive"
           @click="onDisconnect"
         >
-          <Icon name="log-out" :size="12" :stroke-width="2" />
+          <Icon name="log-out" :size="13" :stroke-width="2" />
           Disconnect
-        </button>
+        </Button>
 
-        <button
-          class="flex items-center gap-1 rounded-md px-1.5 py-1 text-[11.5px] font-medium text-muted-foreground transition-colors hover:text-foreground"
-          @click="openDashboard"
-        >
+        <Button variant="ghost" size="sm" class="text-muted-foreground" @click="openDashboard">
           Dashboard
-          <Icon name="arrow-up-right" :size="11" :stroke-width="2" />
-        </button>
+          <Icon name="arrow-up-right" :size="12" :stroke-width="2" />
+        </Button>
       </div>
     </div>
     </template>

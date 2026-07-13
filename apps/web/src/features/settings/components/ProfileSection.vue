@@ -6,7 +6,7 @@ import { useAuth } from "@/shared/composables/useAuth";
 import { apiClient, type Me } from "@/shared/lib/api";
 import { hashHue } from "@/shared/lib/issue-display";
 import { toast } from "@/shared/lib/toast";
-import UserAvatar from "@/shared/components/UserAvatar.vue";
+import { UserAvatar } from "@pinlay/design";
 import SectionHeading from "./SectionHeading.vue";
 import FormGroup from "./FormGroup.vue";
 import FormField from "./FormField.vue";

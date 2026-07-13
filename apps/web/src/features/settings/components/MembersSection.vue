@@ -27,7 +27,7 @@ import { hashHue } from "@/shared/lib/issue-display";
 import { confirm } from "@/shared/lib/confirm";
 import { toast } from "@/shared/lib/toast";
 import { timeAgo } from "@/shared/lib/format";
-import UserAvatar from "@/shared/components/UserAvatar.vue";
+import { UserAvatar } from "@pinlay/design";
 import SectionHeading from "./SectionHeading.vue";
 
 type Role = "owner" | "admin" | "member" | "viewer";

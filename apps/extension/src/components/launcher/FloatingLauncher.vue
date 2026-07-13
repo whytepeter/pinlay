@@ -104,6 +104,7 @@
     >
       <div
         v-if="menuOpen"
+        :key="menuView"
         @click.stop
         :style="{ ...menuStyle, pointerEvents: 'auto' }"
         class="fixed z-[2147483647] w-[248px]
@@ -154,7 +155,7 @@
               />
             </div>
 
-            <div class="max-h-[260px] overflow-y-auto">
+            <div class="max-h-[300px] overflow-y-auto" @scroll.passive="onPinListScroll">
               <p
                 v-if="filteredPinRows.length === 0"
                 class="px-2.5 py-4 text-center text-[11px] text-muted-foreground"
@@ -162,7 +163,7 @@
                 {{ pinRows.length === 0 ? "No pins yet." : "No matches." }}
               </p>
               <button
-                v-for="row in filteredPinRows"
+                v-for="row in visiblePinRows"
                 :key="row.id"
                 type="button"
                 class="flex w-full items-start gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-muted"
@@ -429,6 +430,25 @@ const filteredPinRows = computed(() => {
   return pinRows.value.filter((r) => r.title.toLowerCase().includes(q));
 });
 
+// Incremental rendering for the pin list (long sessions stay smooth): show
+// a page of rows, extend as the user nears the bottom of the scroller.
+const PIN_LIST_PAGE = 20;
+const pinListVisible = ref(PIN_LIST_PAGE);
+const visiblePinRows = computed(() =>
+  filteredPinRows.value.slice(0, pinListVisible.value),
+);
+watch([menuView, pinFilter], () => {
+  pinListVisible.value = PIN_LIST_PAGE;
+});
+function onPinListScroll(e: Event) {
+  const el = e.target as HTMLElement;
+  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 48) {
+    if (pinListVisible.value < filteredPinRows.value.length) {
+      pinListVisible.value += PIN_LIST_PAGE;
+    }
+  }
+}
+
 // (Existing-pin count fetch removed — the default menu is gone, so there's
 // nowhere to surface the count. The overlay still fetches its own pins on
 // mount via api.getPagePins when auth is wired.)
@@ -468,13 +488,16 @@ const fabStyle = computed<Record<string, string>>(() => {
         "0 4px 16px color-mix(in oklab, var(--primary) 30%, transparent)",
     };
   }
-  // Idle → white card with the violet brand mark.
+  // Idle → frosted white circle (iOS floating-control look) with the
+  // violet brand mark.
   return {
     ...pos,
-    backgroundColor: "#ffffff",
+    backgroundColor: "rgba(255,255,255,0.85)",
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
     color: "var(--primary)",
-    borderColor: "var(--border)",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08)",
+    borderColor: "rgba(0,0,0,0.06)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.08), 0 10px 28px rgba(0,0,0,0.12)",
   };
 });
 

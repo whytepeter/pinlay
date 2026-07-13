@@ -21,7 +21,9 @@
   <button
     type="button"
     :class="[
-      'pointer-events-auto absolute z-[2147483645] -translate-x-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold text-white shadow-[0_2px_8px_rgba(0,0,0,0.25)] ring-2 transition-transform hover:scale-110',
+      // iOS map-pin feel: slightly larger tap target, thick white ring,
+      // deeper soft shadow, springy press.
+      'pointer-events-auto absolute z-[2147483645] -translate-x-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold text-white shadow-[0_1px_3px_rgba(0,0,0,0.2),0_6px_16px_rgba(0,0,0,0.25)] ring-2 transition-transform duration-150 ease-out hover:scale-110 active:scale-95',
       pinBg,
       resolved && 'opacity-55',
       stale

@@ -6899,6 +6899,198 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-12T19:32:50.204Z"
+    },
+    {
+      "id": "bug-429",
+      "timestamp": "2026-07-13T07:56:03.233Z",
+      "error_message": "Incorrect value in code",
+      "file": "packages/design/src/components/ui/button/index.ts",
+      "root_cause": "Had \"inline-flex items-center justify-center gap-2 whi",
+      "fix": "Changed to \"inline-flex items-center justify-center gap-2 whi",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T07:56:03.233Z"
+    },
+    {
+      "id": "bug-430",
+      "timestamp": "2026-07-13T07:56:11.967Z",
+      "error_message": "Incorrect value in code",
+      "file": "packages/design/src/components/ui/input/Input.vue",
+      "root_cause": "Had 'file:text-foreground placeholder:text-muted-foreg",
+      "fix": "Changed to 'file:text-foreground placeholder:text-muted-foreg",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T07:56:11.967Z"
+    },
+    {
+      "id": "bug-431",
+      "timestamp": "2026-07-13T07:56:13.929Z",
+      "error_message": "CSS fix: disabled",
+      "file": "packages/design/src/components/ui/select/SelectTrigger.vue",
+      "root_cause": "disabled: cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 → cursor-not-allowed disabled:opacity-50 data-[size=default]:h-10 data-[size=sm]:h-9",
+      "fix": "Changed disabled: cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 → cursor-not-allowed disabled:opacity-50 data-[size=default]:h-10 data-[size=sm]:h-9",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T07:56:13.929Z"
+    },
+    {
+      "id": "bug-432",
+      "timestamp": "2026-07-13T07:57:14.356Z",
+      "error_message": "CSS fix: focus-visible, dark",
+      "file": "packages/design/src/components/ui/switch/Switch.vue",
+      "root_cause": "focus-visible: border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50', → border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-6 w-10 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',; dark: data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0')\" → data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-5 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-out data-[state=checked]:translate-x-[18px] data-[state=unchecked]:translate-x-0.5')\"",
+      "fix": "Changed focus-visible: border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50', → border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-6 w-10 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',; dark: data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0')\" → data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-5 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-out data-[state=checked]:translate-x-[18px] data-[state=unchecked]:translate-x-0.5')\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T07:57:14.356Z"
+    },
+    {
+      "id": "bug-433",
+      "timestamp": "2026-07-13T08:05:06.349Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "4 lines replaced/restructured",
+      "fix": "Rewrote 10→10 lines (4 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T08:05:06.349Z"
+    },
+    {
+      "id": "bug-434",
+      "timestamp": "2026-07-13T08:05:24.108Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T08:05:24.108Z"
+    },
+    {
+      "id": "bug-435",
+      "timestamp": "2026-07-13T08:05:46.118Z",
+      "error_message": "CSS fix: hover",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "hover: text-foreground\" → bg-destructive/10 hover:text-destructive\"",
+      "fix": "Changed hover: text-foreground\" → bg-destructive/10 hover:text-destructive\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T08:05:46.118Z"
+    },
+    {
+      "id": "bug-436",
+      "timestamp": "2026-07-13T08:08:16.147Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "root_cause": "Had \"block max-h-[200px] min-h-[60px] w-full resize-no",
+      "fix": "Changed to \"block max-h-[200px] min-h-[60px] w-full resize-no",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T08:08:16.147Z"
+    },
+    {
+      "id": "bug-437",
+      "timestamp": "2026-07-13T08:12:04.113Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
+      "root_cause": "9 lines replaced/restructured",
+      "fix": "Rewrote 14→4 lines (9 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T08:12:04.113Z"
+    },
+    {
+      "id": "bug-438",
+      "timestamp": "2026-07-13T08:15:09.820Z",
+      "error_message": "CSS fix: backgroundColor, borderColor, boxShadow",
+      "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
+      "root_cause": "backgroundColor: \"#ffffff\", → \"rgba(255,255,255,0.85)\",; borderColor: \"var(--border)\", → \"rgba(0,0,0,0.06)\",; boxShadow: \"0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08)\", → \"0 2px 8px rgba(0,0,0,0.08), 0 10px 28px rgba(0,0,0,0.12)\",",
+      "fix": "Changed backgroundColor: \"#ffffff\", → \"rgba(255,255,255,0.85)\",; borderColor: \"var(--border)\", → \"rgba(0,0,0,0.06)\",; boxShadow: \"0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08)\", → \"0 2px 8px rgba(0,0,0,0.08), 0 10px 28px rgba(0,0,0,0.12)\",",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T08:15:09.820Z"
+    },
+    {
+      "id": "bug-439",
+      "timestamp": "2026-07-13T08:17:00.083Z",
+      "error_message": "CSS fix: hover",
+      "file": "apps/extension/src/components/annotation/AnnotationPin.vue",
+      "root_cause": "hover: scale-110', → scale-110 active:scale-95',",
+      "fix": "Changed hover: scale-110', → scale-110 active:scale-95',",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T08:17:00.083Z"
+    },
+    {
+      "id": "bug-440",
+      "timestamp": "2026-07-13T08:19:36.437Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T08:19:36.437Z"
     }
   ]
 }

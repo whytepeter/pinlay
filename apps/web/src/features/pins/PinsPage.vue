@@ -26,7 +26,7 @@ import type { InboxPin, InboxState } from "@/shared/lib/api";
 import { timeAgo } from "@/shared/lib/format";
 import { hashHue } from "@/shared/lib/issue-display";
 import { usePinInbox, useQuickStatus } from "./composables/usePins";
-import UserAvatar from "@/shared/components/UserAvatar.vue";
+import { UserAvatar } from "@pinlay/design";
 import Favicon from "@/shared/components/Favicon.vue";
 
 const state = ref<InboxState>("open");

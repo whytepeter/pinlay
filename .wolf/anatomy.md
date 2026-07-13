@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-12T19:32:50.190Z
-> Files: 265 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-13T08:23:00.315Z
+> Files: 266 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
 
@@ -213,9 +213,9 @@
 ## apps/extension/src/components/annotation/
 
 - `AnnotationOverlay.vue` — Vue component (~13243 tok)
-- `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1143 tok)
-- `AnnotationPinComposer.vue` — Vue component (~10098 tok)
-- `AnnotationPinDetail.vue` — Vue component (~7168 tok)
+- `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1192 tok)
+- `AnnotationPinComposer.vue` — Vue component (~10008 tok)
+- `AnnotationPinDetail.vue` — Vue component (~6737 tok)
 
 ## apps/extension/src/components/capture/
 
@@ -232,7 +232,7 @@
 ## apps/extension/src/components/launcher/
 
 - `ConnectPrompt.vue` — Vue: setup (~400 tok)
-- `FloatingLauncher.vue` — Vue: setup (~6418 tok)
+- `FloatingLauncher.vue` — Vue component (~6641 tok)
 - `LauncherItem.vue` — Vue: setup (~1061 tok)
 
 ## apps/extension/src/entrypoints/
@@ -242,7 +242,7 @@
 
 ## apps/extension/src/entrypoints/popup/
 
-- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~12403 tok)
+- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~12238 tok)
 - `index.html` — pinlay (~138 tok)
 - `main.ts` (~47 tok)
 
@@ -287,7 +287,7 @@
 
 ## apps/web/src/
 
-- `App.vue` — Vue: setup (~998 tok)
+- `App.vue` — Vue: setup (~886 tok)
 - `main.ts` (~197 tok)
 
 ## apps/web/src/app/
@@ -474,7 +474,7 @@
 
 ## packages/design/src/components/ui/button/
 
-- `index.ts` — Exports buttonVariants, ButtonVariants (~781 tok)
+- `index.ts` — Exports buttonVariants, ButtonVariants (~788 tok)
 
 ## packages/design/src/components/ui/dialog/
 
@@ -490,7 +490,7 @@
 
 ## packages/design/src/components/ui/input/
 
-- `Input.vue` — Vue: setup (~368 tok)
+- `Input.vue` — Vue: setup (~369 tok)
 
 ## packages/design/src/components/ui/popover/
 
@@ -505,6 +505,10 @@
 ## packages/design/src/components/ui/skeleton/
 
 - `Skeleton.vue` — Vue: setup (~96 tok)
+
+## packages/design/src/components/ui/switch/
+
+- `Switch.vue` — Vue: setup (~423 tok)
 
 ## packages/design/src/components/ui/tabs/
 

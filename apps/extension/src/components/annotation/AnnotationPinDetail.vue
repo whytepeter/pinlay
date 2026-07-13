@@ -239,72 +239,41 @@
           v-html="renderedComment"
         />
 
-        <!-- Attachments card -->
-        <div
+        <!-- Attachments — full-width preview (the old 48px thumb+meta row
+             hid the actual screenshot). Tap anywhere to open the lightbox. -->
+        <button
           v-if="primaryAttachment"
-          class="flex items-center gap-3 rounded-lg border border-border bg-muted/40 p-2"
+          type="button"
+          class="group relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-border/60 bg-muted/40"
+          title="Preview screenshot"
+          @click="openPreview(0)"
         >
-          <button
-            type="button"
-            class="group relative h-12 w-16 shrink-0 cursor-zoom-in overflow-hidden rounded-md border border-border bg-card"
-            :title="`Preview ${primaryAttachment.ext}`"
-            @click="openPreview(0)"
+          <img
+            :src="primaryAttachment.dataUrl"
+            alt=""
+            class="aspect-[16/10] w-full object-cover"
+          />
+          <span
+            v-if="attachments && attachments.length > 1"
+            class="absolute bottom-1.5 right-1.5 rounded-full bg-foreground/80 px-2 py-0.5 text-[10px] font-semibold text-card"
           >
-            <img
-              :src="primaryAttachment.dataUrl"
-              alt=""
-              class="h-full w-full object-cover"
-            />
-            <span
-              class="absolute left-1 top-1 rounded bg-foreground/85 px-1 py-0.5 text-[8px] font-bold uppercase tracking-wide text-card"
-            >
-              {{ primaryAttachment.ext }}
-            </span>
-            <!-- Hover dim + centered eye -->
-            <span
-              class="pointer-events-none absolute inset-0 flex items-center justify-center bg-foreground/55 opacity-0 transition-opacity group-hover:opacity-100"
-            >
-              <Icon
-                name="eye"
-                :size="16"
-                :stroke-width="2"
-                class="text-card"
-              />
-            </span>
-          </button>
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-1.5">
-              <Icon name="camera" :size="12" :stroke-width="2" class="text-primary" />
-              <span class="text-[13px] font-medium text-foreground">
-                Screenshot
-              </span>
-              <span
-                v-if="attachments && attachments.length > 1"
-                class="inline-flex items-center rounded-md bg-primary-soft px-1 py-0 text-[10px] font-semibold text-primary"
-              >
-                +{{ attachments.length - 1 }}
-              </span>
-            </div>
-            <div class="mt-0.5 text-[11px] text-muted-foreground">
-              {{ primaryAttachment.dimensionsLabel }}
-              <span
-                v-if="primaryAttachment.dimensionsLabel && primaryAttachment.sizeLabel"
-                class="px-0.5"
-                >·</span
-              >
-              {{ primaryAttachment.sizeLabel }}
-            </div>
-          </div>
-        </div>
+            +{{ attachments.length - 1 }}
+          </span>
+          <span
+            class="pointer-events-none absolute inset-0 flex items-center justify-center bg-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            <Icon name="eye" :size="18" :stroke-width="2" class="text-card" />
+          </span>
+        </button>
 
         <!-- Author + relative time -->
         <div v-if="author" class="flex items-center gap-1.5">
-          <span
-            class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[8px] font-semibold text-white"
-            :style="{ background: authorBg }"
-          >
-            {{ authorInitials }}
-          </span>
+          <UserAvatar
+            :name="author.name"
+            :hue="author.avatarHue ?? 262"
+            :size="18"
+            class="shrink-0"
+          />
           <span class="text-[11px] font-medium text-foreground">
             {{ author.name }}
           </span>
@@ -414,6 +383,7 @@ import {
   DropdownMenuTrigger,
   Icon,
   Separator,
+  UserAvatar,
 } from "@pinlay/design";
 import type { Severity, Status } from "@pinlay/shared";
 
@@ -592,21 +562,6 @@ function formatBytes(bytes: number): string {
   const mb = kb / 1024;
   return `${mb < 10 ? mb.toFixed(1) : Math.round(mb)} MB`;
 }
-
-// ── Author ───────────────────────────────────────────────────────────────────
-const authorInitials = computed(() => {
-  const name = props.author?.name ?? "";
-  return name
-    .split(/\s+/)
-    .map((w) => w[0] ?? "")
-    .slice(0, 2)
-    .join("")
-    .toUpperCase() || "??";
-});
-const authorBg = computed(() => {
-  const hue = props.author?.avatarHue ?? 264; // violet-ish default
-  return `oklch(0.55 0.16 ${hue})`;
-});
 
 // ── Relative time ────────────────────────────────────────────────────────────
 const relativeTime = computed(() => {

@@ -166,7 +166,7 @@
               role="textbox"
               aria-multiline="true"
               aria-label="Pin description"
-              class="block max-h-[200px] min-h-[60px] w-full resize-none overflow-y-auto border-0 bg-transparent px-2.5 py-2 text-[12.5px] leading-relaxed text-foreground outline-none focus:outline-none focus:ring-0"
+              class="block max-h-[200px] min-h-[60px] w-full resize-none overflow-y-auto border-0 bg-transparent px-2.5 py-2 text-[12.5px] leading-relaxed text-foreground outline-none focus:outline-none focus:ring-0 [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2"
               @input="onEditorInput"
               @paste="onEditorPaste"
               @keydown.meta.enter.prevent="onSubmit"
@@ -263,7 +263,7 @@
             v-for="(img, i) in images"
             :key="i"
             type="button"
-            class="group relative inline-flex h-10 w-10 cursor-zoom-in items-center justify-center overflow-hidden rounded-md border border-border bg-muted"
+            class="group relative inline-flex h-16 w-16 cursor-zoom-in items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-muted"
             :title="img.name"
             @click="imagePreviews[i] && (previewIdx = i)"
           >
@@ -426,15 +426,13 @@
                 selectedMember ? `Assigned to ${selectedMember.name}` : 'Assign'
               "
             >
-              <span
+              <UserAvatar
                 v-if="selectedMember"
-                class="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                :style="{
-                  background: `oklch(0.55 0.16 ${memberHue(selectedMember.id)})`,
-                }"
-              >
-                {{ initials(selectedMember.name) }}
-              </span>
+                :name="selectedMember.name"
+                :avatar-url="selectedMember.avatarUrl"
+                :hue="memberHue(selectedMember.id)"
+                :size="22"
+              />
               <Icon
                 v-else
                 name="user-plus"
@@ -457,12 +455,12 @@
               :key="m.id"
               @click="selectAssignee(m.id)"
             >
-              <span
-                class="flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white"
-                :style="{ background: `oklch(0.55 0.16 ${memberHue(m.id)})` }"
-              >
-                {{ initials(m.name) }}
-              </span>
+              <UserAvatar
+                :name="m.name"
+                :avatar-url="m.avatarUrl"
+                :hue="memberHue(m.id)"
+                :size="20"
+              />
               <span class="truncate">{{ m.name }}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -512,6 +510,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Icon,
+  UserAvatar,
 } from "@pinlay/design";
 import type { Severity, PinType } from "@pinlay/shared";
 import type { WorkspaceMember } from "../../lib/api";
@@ -632,16 +631,6 @@ const selectedMember = computed(() =>
 );
 function selectAssignee(id: string | null) {
   assigneeId.value = id;
-}
-function initials(name: string): string {
-  return (
-    name
-      .split(/\s+/)
-      .map((w) => w[0] ?? "")
-      .slice(0, 2)
-      .join("")
-      .toUpperCase() || "??"
-  );
 }
 function memberHue(id: string): number {
   // Deterministic hue from id so each member's avatar stays consistent

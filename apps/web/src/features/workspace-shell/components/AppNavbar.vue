@@ -22,7 +22,7 @@ import {
 } from "@pinlay/design";
 import { useAuth } from "@/shared/composables/useAuth";
 import { useTheme } from "@/shared/composables/useTheme";
-import UserAvatar from "@/shared/components/UserAvatar.vue";
+import { UserAvatar } from "@pinlay/design";
 import WorkspaceSwitcher from "./WorkspaceSwitcher.vue";
 
 const router = useRouter();

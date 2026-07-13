@@ -2722,3 +2722,33 @@
 | 20:31 | Created packages/design/src/components/UserAvatar.vue | — | ~394 |
 | 20:32 | Edited packages/design/src/index.ts | 4→7 lines | ~115 |
 | 20:32 | Edited packages/design/src/components/ui/button/index.ts | modified scale() | ~130 |
+
+## Session: 2026-07-13 08:53
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 08:56 | Edited packages/design/src/components/ui/button/index.ts | 3→3 lines | ~190 |
+| 08:56 | Edited packages/design/src/components/ui/button/index.ts | modified scale() | ~133 |
+| 08:56 | Edited packages/design/src/components/ui/input/Input.vue | "file:text-foreground plac" → "file:text-foreground plac" | ~124 |
+| 08:56 | Edited packages/design/src/components/ui/select/SelectTrigger.vue | inline fix | ~25 |
+| 08:57 | Edited packages/design/src/components/ui/switch/Switch.vue | CSS: iOS-proportioned | ~224 |
+| 09:04 | Created apps/web/src/App.vue | — | ~886 |
+| 09:05 | Edited apps/extension/src/entrypoints/popup/App.vue | inline fix | ~20 |
+| 09:05 | Edited apps/extension/src/entrypoints/popup/App.vue | 10→10 lines | ~99 |
+| 09:05 | Edited apps/extension/src/entrypoints/popup/App.vue | added optional chaining | ~188 |
+| 09:05 | Edited apps/extension/src/entrypoints/popup/App.vue | 19→17 lines | ~153 |
+| 09:06 | Edited apps/extension/src/entrypoints/popup/App.vue | 6→2 lines | ~32 |
+| 09:07 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 16→14 lines | ~123 |
+| 09:07 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | CSS: UserAvatar | ~112 |
+| 09:08 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | 8→9 lines | ~40 |
+| 09:08 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | "block max-h-[200px] min-h" → "block max-h-[200px] min-h" | ~74 |
+| 09:12 | Edited apps/extension/src/components/annotation/AnnotationPinComposer.vue | modified selectAssignee() | ~30 |
+| 09:14 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | CSS: e | ~248 |
+| 09:14 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 9→9 lines | ~112 |
+| 09:15 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | 8→9 lines | ~95 |
+| 09:15 | Edited apps/extension/src/components/launcher/FloatingLauncher.vue | CSS: backdropFilter, WebkitBackdropFilter | ~104 |
+| 09:17 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | CSS: feel, active | ~175 |
+| 09:19 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | added nullish coalescing | ~380 |
+| 09:20 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 9→10 lines | ~43 |
+| 09:23 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | removed 16 lines | ~22 |
+| 2026-07-12 (4) | Uniformity round 3 (user feedback: controls too small, popup/launcher not iOS, screenshots tiny, editor links invisible). DESIGN PKG: Button base → rounded-full pill + sizes up a notch (sm h-9/36, default h-10/40, lg h-11/44, icons 9/10/11); Input h-10 px-3.5; SelectTrigger h-10/h-9; Switch → iOS 24×40 track w/ 20px shadow-sm thumb (translate-x-[18px]); NEW shared UserAvatar component in packages/design (moved from web, exported) — web imports sed'd to @pinlay/design, web copy deleted. TOAST: vue-sonner restyled to iOS banner — top-center frosted capsule (blur 20px, translucent card, rounded-full, tinted icon per type, no colored left bar). POPUP: Drop a pin → design Button lg; identity row → UserAvatar w/ me.avatarUrl (was hand-rolled blue oklch circle); footer Disconnect/Dashboard → design ghost Buttons; userInitial computed removed. COMPOSER: assignee trigger + dropdown items → UserAvatar w/ avatarUrl; attachment thumbs h-10→h-16 rounded-xl; contenteditable gains [&_a]:text-primary underline so inserted links look like links (user: "doesn't highlight that this is a link"). PIN MARKER: h-7 ring-2 deeper double shadow active:scale-95. PIN DETAIL POPOVER: attachment row (48px thumb + meta) → full-width aspect-16/10 preview w/ +N badge + eye hover; author initials circle → UserAvatar; authorInitials/authorBg removed. LAUNCHER: FAB idle → frosted white (rgba .85 + blur 12) w/ deeper shadow; menu :key="menuView" (stale-height fix on view switch); pin list max-h-300 + incremental render (20/page, @scroll near-bottom += 20, reset on view/filter change). MarkupToolbar already frosted — untouched. Verified in browser: inbox pill buttons/segmented/search all larger, host-only session title live, detail full-width screenshot. | packages/design/src/{components/{UserAvatar.vue,ui/{button,input,select,switch}}, index.ts}, apps/web/src/{App.vue, shared/components/UserAvatar.vue (deleted), features/**}, apps/extension/src/{entrypoints/popup/App.vue, components/{annotation/**, launcher/FloatingLauncher.vue}} | typecheck x2 + build; verified | ~5200 |

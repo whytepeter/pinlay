@@ -25,7 +25,7 @@ import { hashHue } from "@/shared/lib/issue-display";
 import { timeAgo } from "@/shared/lib/format";
 import { toast } from "@/shared/lib/toast";
 import { confirm } from "@/shared/lib/confirm";
-import UserAvatar from "@/shared/components/UserAvatar.vue";
+import { UserAvatar } from "@pinlay/design";
 
 /**
  * Real activity thread for a single pin.

@@ -28,7 +28,7 @@ import { firstName, timeAgo } from "@/shared/lib/format";
 import { hashHue } from "@/shared/lib/issue-display";
 import { useAuth } from "@/shared/composables/useAuth";
 import { usePinDetail } from "./composables/usePins";
-import UserAvatar from "@/shared/components/UserAvatar.vue";
+import { UserAvatar } from "@pinlay/design";
 import PinPill from "@/shared/components/PinPill.vue";
 import ScreenshotViewer from "./components/ScreenshotViewer.vue";
 import AnchorBlock from "./components/AnchorBlock.vue";
