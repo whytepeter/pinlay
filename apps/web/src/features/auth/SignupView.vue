@@ -12,7 +12,6 @@ const { signup } = useAuth();
 const name = ref("");
 const email = ref("");
 const password = ref("");
-const workspaceName = ref("");
 const showPassword = ref(false);
 const submitting = ref(false);
 const error = ref<string | null>(null);
@@ -29,11 +28,13 @@ async function onSubmit() {
   error.value = null;
   submitting.value = true;
   try {
+    // Workspace name deliberately not asked — the API defaults it from the
+    // user's name and it's renameable in Settings ("defaults over decisions",
+    // ROADMAP product principle 4).
     await signup({
       name: name.value.trim(),
       email: email.value.trim(),
       password: password.value,
-      workspaceName: workspaceName.value.trim() || undefined,
     });
     await router.replace(redirectTarget());
   } catch (e) {
@@ -97,18 +98,6 @@ async function onSubmit() {
         </div>
       </div>
 
-      <div class="flex flex-col gap-1.5">
-        <Label for="workspace">
-          Workspace name
-          <span class="font-normal text-muted-foreground">(optional)</span>
-        </Label>
-        <Input
-          id="workspace"
-          v-model="workspaceName"
-          placeholder="Acme Inc"
-        />
-      </div>
-
       <p
         v-if="error"
         class="flex items-start gap-1.5 rounded-md bg-destructive/10 px-3 py-2 text-[12.5px] text-destructive"
@@ -124,14 +113,16 @@ async function onSubmit() {
       </Button>
     </form>
 
-    <p class="mt-6 text-center text-[13px] text-muted-foreground">
-      Already have an account?
-      <RouterLink
-        :to="{ name: 'login', query: route.query }"
-        class="font-medium text-primary hover:underline"
-      >
-        Sign in
-      </RouterLink>
-    </p>
+    <template #footer>
+      <p class="mt-6 text-center text-[13px] text-muted-foreground">
+        Already have an account?
+        <RouterLink
+          :to="{ name: 'login', query: route.query }"
+          class="font-medium text-primary hover:underline"
+        >
+          Sign in
+        </RouterLink>
+      </p>
+    </template>
   </AuthLayout>
 </template>

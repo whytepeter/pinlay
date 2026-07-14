@@ -95,14 +95,16 @@ async function onSubmit() {
       </Button>
     </form>
 
-    <p class="mt-6 text-center text-[13px] text-muted-foreground">
-      New to pinlay?
-      <RouterLink
-        :to="{ name: 'signup', query: route.query }"
-        class="font-medium text-primary hover:underline"
-      >
-        Create an account
-      </RouterLink>
-    </p>
+    <template #footer>
+      <p class="mt-6 text-center text-[13px] text-muted-foreground">
+        New to pinlay?
+        <RouterLink
+          :to="{ name: 'signup', query: route.query }"
+          class="font-medium text-primary hover:underline"
+        >
+          Create an account
+        </RouterLink>
+      </p>
+    </template>
   </AuthLayout>
 </template>

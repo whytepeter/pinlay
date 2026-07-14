@@ -26,8 +26,6 @@ import ConfirmDialog from "@/shared/components/ConfirmDialog.vue";
         icon: 'pl-toast-icon',
       },
     }"
-    close-button
-    rich-colors
   />
 </template>
 
@@ -41,7 +39,7 @@ import ConfirmDialog from "@/shared/components/ConfirmDialog.vue";
 /* ── iOS banner capsule ──────────────────────────────────────────────────
    Frosted translucent surface, full-radius, soft depth. Semantic type is
    the icon tint (below), not chrome. */
-[data-sonner-toast].pl-toast {
+[data-sonner-toaster] [data-sonner-toast].pl-toast {
   background: color-mix(in oklab, var(--card) 85%, transparent);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
@@ -58,38 +56,38 @@ import ConfirmDialog from "@/shared/components/ConfirmDialog.vue";
 }
 
 /* Icon sizing & per-type tint — matches the app's status palette. */
-[data-sonner-toast] .pl-toast-icon {
+[data-sonner-toaster] [data-sonner-toast] .pl-toast-icon {
   margin: 0;
 }
-[data-sonner-toast] .pl-toast-icon > svg {
+[data-sonner-toaster] [data-sonner-toast] .pl-toast-icon > svg {
   width: 17px;
   height: 17px;
 }
-[data-sonner-toast][data-type="success"] .pl-toast-icon > svg {
+[data-sonner-toaster] [data-sonner-toast][data-type="success"] .pl-toast-icon > svg {
   color: var(--status-resolved, #10b981);
 }
-[data-sonner-toast][data-type="error"] .pl-toast-icon > svg {
+[data-sonner-toaster] [data-sonner-toast][data-type="error"] .pl-toast-icon > svg {
   color: var(--destructive);
 }
-[data-sonner-toast][data-type="warning"] .pl-toast-icon > svg {
+[data-sonner-toaster] [data-sonner-toast][data-type="warning"] .pl-toast-icon > svg {
   color: #f59e0b;
 }
-[data-sonner-toast][data-type="info"] .pl-toast-icon > svg {
+[data-sonner-toaster] [data-sonner-toast][data-type="info"] .pl-toast-icon > svg {
   color: var(--primary);
 }
 
 /* Title + description typography. */
-[data-sonner-toast] .pl-toast-title {
+[data-sonner-toaster] [data-sonner-toast] .pl-toast-title {
   font-weight: 500;
   color: var(--foreground);
 }
-[data-sonner-toast] .pl-toast-description {
+[data-sonner-toaster] [data-sonner-toast] .pl-toast-description {
   color: var(--muted-foreground);
   margin-top: 1px;
 }
 
 /* Action buttons (when toast.success("…", { action: { label, onClick }}) ) */
-[data-sonner-toast] .pl-toast-action {
+[data-sonner-toaster] [data-sonner-toast] .pl-toast-action {
   background: var(--primary);
   color: var(--primary-foreground);
   border-radius: 9999px;
@@ -97,7 +95,7 @@ import ConfirmDialog from "@/shared/components/ConfirmDialog.vue";
   padding: 6px 12px;
   font-size: 12px;
 }
-[data-sonner-toast] .pl-toast-cancel {
+[data-sonner-toaster] [data-sonner-toast] .pl-toast-cancel {
   background: var(--muted);
   color: var(--muted-foreground);
   border-radius: 9999px;
@@ -106,15 +104,5 @@ import ConfirmDialog from "@/shared/components/ConfirmDialog.vue";
   font-size: 12px;
 }
 
-/* Close-X button (close-button enabled). */
-[data-sonner-toast] .pl-toast-close {
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--muted-foreground);
-  border-radius: 9999px;
-}
-[data-sonner-toast] .pl-toast-close:hover {
-  color: var(--foreground);
-  background: var(--muted);
-}
+/* No close-X — iOS banners dismiss on timeout or swipe, not via chrome. */
 </style>

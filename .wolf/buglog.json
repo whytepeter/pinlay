@@ -73,7 +73,7 @@
       "error_message": "shadcn-vue components rendered as unstyled plain text (no button/card/badge styling) in the app",
       "file": "apps/app/src/assets/main.css",
       "root_cause": "Tailwind v4 auto-content-detection ignores node_modules, so utility classes used INSIDE the @pinlayer/design workspace package (resolved via a node_modules symlink) were never generated.",
-      "fix": "Added `@source \"../../../../packages/design/src\";` to apps/app/src/assets/main.css so Tailwind scans the design package source. CSS output grew ~11kB → ~40kB.",
+      "fix": "Added `@source \"../../../../packages/design/src\";` to apps/app/src/assets/main.css so Tailwind scans the design package source. CSS output grew ~11kB \u2192 ~40kB.",
       "tags": [
         "tailwind-v4",
         "monorepo",
@@ -105,7 +105,7 @@
     {
       "id": "bug-007",
       "timestamp": "2026-05-25T08:46:00.000Z",
-      "error_message": "shadcn-vue CLI: Invalid components.json — Unrecognized key 'tsx'",
+      "error_message": "shadcn-vue CLI: Invalid components.json \u2014 Unrecognized key 'tsx'",
       "file": "packages/design/components.json",
       "root_cause": "components.json contained a `tsx` key not in the shadcn-vue schema.",
       "fix": "Removed the `tsx` key. Also added tsconfig paths `@pinlayer/design/* -> ./src/*` so the CLI resolves aliases in the package.",
@@ -140,8 +140,8 @@
       "timestamp": "2026-05-25T09:15:10.006Z",
       "error_message": "CSS fix: name",
       "file": "apps/app/src/features/integrations/IntegrationsPage.vue",
-      "root_cause": "name: \"Notion\", icon: \"notebook\", connected: false → \"Notion\", icon: \"file-text\", connected: false",
-      "fix": "Changed name: \"Notion\", icon: \"notebook\", connected: false → \"Notion\", icon: \"file-text\", connected: false",
+      "root_cause": "name: \"Notion\", icon: \"notebook\", connected: false \u2192 \"Notion\", icon: \"file-text\", connected: false",
+      "fix": "Changed name: \"Notion\", icon: \"notebook\", connected: false \u2192 \"Notion\", icon: \"file-text\", connected: false",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -157,7 +157,7 @@
       "error_message": "Significant refactor of ",
       "file": "packages/design/src/tokens.css",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 6→6 lines (6 removed)",
+      "fix": "Rewrote 6\u21926 lines (6 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -189,7 +189,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 17→29 lines (2 removed)",
+      "fix": "Rewrote 17\u219229 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -205,7 +205,7 @@
       "error_message": "Wrong reference: 1a1330 should be ffffff",
       "file": "packages/design/src/tokens.css",
       "root_cause": "Used \"1a1330\" instead of \"ffffff\"",
-      "fix": "Changed 1a1330 → ffffff",
+      "fix": "Changed 1a1330 \u2192 ffffff",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -220,8 +220,8 @@
       "timestamp": "2026-05-25T09:51:51.362Z",
       "error_message": "CSS fix: Icon",
       "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
-      "root_cause": "Icon: name=\"item.icon\" :size=\"18\" class=\"shrink-0\" /> → name=\"item.icon\"",
-      "fix": "Changed Icon: name=\"item.icon\" :size=\"18\" class=\"shrink-0\" /> → name=\"item.icon\"",
+      "root_cause": "Icon: name=\"item.icon\" :size=\"18\" class=\"shrink-0\" /> \u2192 name=\"item.icon\"",
+      "fix": "Changed Icon: name=\"item.icon\" :size=\"18\" class=\"shrink-0\" /> \u2192 name=\"item.icon\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -236,8 +236,8 @@
       "timestamp": "2026-05-25T09:52:16.602Z",
       "error_message": "CSS fix: --sidebar, --sidebar-accent",
       "file": "packages/design/src/tokens.css",
-      "root_cause": "--sidebar: #f4f4f5 → #fafafa; --sidebar-accent: #e7e7ea → #ececee",
-      "fix": "Changed --sidebar: #f4f4f5 → #fafafa; --sidebar-accent: #e7e7ea → #ececee",
+      "root_cause": "--sidebar: #f4f4f5 \u2192 #fafafa; --sidebar-accent: #e7e7ea \u2192 #ececee",
+      "fix": "Changed --sidebar: #f4f4f5 \u2192 #fafafa; --sidebar-accent: #e7e7ea \u2192 #ececee",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -252,8 +252,8 @@
       "timestamp": "2026-05-25T09:59:41.961Z",
       "error_message": "CSS fix: --sidebar, --sidebar-accent",
       "file": "packages/design/src/tokens.css",
-      "root_cause": "--sidebar: #fafafa → #ffffff; --sidebar-accent: #ececee → #f4f4f5",
-      "fix": "Changed --sidebar: #fafafa → #ffffff; --sidebar-accent: #ececee → #f4f4f5",
+      "root_cause": "--sidebar: #fafafa \u2192 #ffffff; --sidebar-accent: #ececee \u2192 #f4f4f5",
+      "fix": "Changed --sidebar: #fafafa \u2192 #ffffff; --sidebar-accent: #ececee \u2192 #f4f4f5",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -269,7 +269,7 @@
       "error_message": "Wrong reference: 09090b should be 18181b",
       "file": "packages/design/src/tokens.css",
       "root_cause": "Used \"09090b\" instead of \"18181b\"",
-      "fix": "Changed 09090b → 18181b",
+      "fix": "Changed 09090b \u2192 18181b",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -301,7 +301,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/app/src/features/pinboards/components/SessionFilters.vue",
       "root_cause": "13 lines replaced/restructured",
-      "fix": "Rewrote 18→14 lines (13 removed)",
+      "fix": "Rewrote 18\u219214 lines (13 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -348,8 +348,8 @@
       "timestamp": "2026-05-25T19:06:43.148Z",
       "error_message": "CSS fix: dark",
       "file": "packages/design/src/components/ui/tabs/TabsTrigger.vue",
-      "root_cause": "dark: data-[state=active]:text-foreground focus-visible:border-ring → data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground focus-visible:border-ring",
-      "fix": "Changed dark: data-[state=active]:text-foreground focus-visible:border-ring → data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground focus-visible:border-ring",
+      "root_cause": "dark: data-[state=active]:text-foreground focus-visible:border-ring \u2192 data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground focus-visible:border-ring",
+      "fix": "Changed dark: data-[state=active]:text-foreground focus-visible:border-ring \u2192 data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground focus-visible:border-ring",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -380,8 +380,8 @@
       "timestamp": "2026-05-25T19:51:31.221Z",
       "error_message": "CSS fix: --border, --input, --sidebar-accent",
       "file": "packages/design/src/tokens.css",
-      "root_cause": "--border: #e4e4e7 → #e6dfbe; --input: #e4e4e7 → #e6dfbe; --sidebar-accent: #f4f4f5 → #f3eed5",
-      "fix": "Changed --border: #e4e4e7 → #e6dfbe; --input: #e4e4e7 → #e6dfbe; --sidebar-accent: #f4f4f5 → #f3eed5",
+      "root_cause": "--border: #e4e4e7 \u2192 #e6dfbe; --input: #e4e4e7 \u2192 #e6dfbe; --sidebar-accent: #f4f4f5 \u2192 #f3eed5",
+      "fix": "Changed --border: #e4e4e7 \u2192 #e6dfbe; --input: #e4e4e7 \u2192 #e6dfbe; --sidebar-accent: #f4f4f5 \u2192 #f3eed5",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -396,8 +396,8 @@
       "timestamp": "2026-05-25T20:12:09.809Z",
       "error_message": "CSS fix: --border, --input, --sidebar-accent",
       "file": "packages/design/src/tokens.css",
-      "root_cause": "--border: #e6dfbe → #e7e1d4; --input: #e6dfbe → #e7e1d4; --sidebar-accent: #f3eed5 → #f1ece2",
-      "fix": "Changed --border: #e6dfbe → #e7e1d4; --input: #e6dfbe → #e7e1d4; --sidebar-accent: #f3eed5 → #f1ece2",
+      "root_cause": "--border: #e6dfbe \u2192 #e7e1d4; --input: #e6dfbe \u2192 #e7e1d4; --sidebar-accent: #f3eed5 \u2192 #f1ece2",
+      "fix": "Changed --border: #e6dfbe \u2192 #e7e1d4; --input: #e6dfbe \u2192 #e7e1d4; --sidebar-accent: #f3eed5 \u2192 #f1ece2",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -412,8 +412,8 @@
       "timestamp": "2026-05-25T20:23:52.480Z",
       "error_message": "CSS fix: --border, --input, --sidebar-accent",
       "file": "packages/design/src/tokens.css",
-      "root_cause": "--border: #e7e1d4 → #e4e4e7; --input: #e7e1d4 → #e4e4e7; --sidebar-accent: #f1ece2 → #f4f4f5",
-      "fix": "Changed --border: #e7e1d4 → #e4e4e7; --input: #e7e1d4 → #e4e4e7; --sidebar-accent: #f1ece2 → #f4f4f5",
+      "root_cause": "--border: #e7e1d4 \u2192 #e4e4e7; --input: #e7e1d4 \u2192 #e4e4e7; --sidebar-accent: #f1ece2 \u2192 #f4f4f5",
+      "fix": "Changed --border: #e7e1d4 \u2192 #e4e4e7; --input: #e7e1d4 \u2192 #e4e4e7; --sidebar-accent: #f1ece2 \u2192 #f4f4f5",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -429,7 +429,7 @@
       "error_message": "Significant refactor of ",
       "file": "packages/design/src/tokens.css",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 7→9 lines (6 removed)",
+      "fix": "Rewrote 7\u21929 lines (6 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -445,7 +445,7 @@
       "error_message": "Significant refactor of ",
       "file": "packages/design/src/components/ui/button/index.ts",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 4→4 lines (2 removed)",
+      "fix": "Rewrote 4\u21924 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -492,8 +492,8 @@
       "timestamp": "2026-05-25T20:59:13.756Z",
       "error_message": "CSS fix: dark",
       "file": "packages/design/src/components/ui/tabs/TabsTrigger.vue",
-      "root_cause": "dark: data-[state=active]:border-transparent text-foreground → data-[state=active]:border-[color-mix(in_oklab,var(--primary)_85%,#000)] text-foreground",
-      "fix": "Changed dark: data-[state=active]:border-transparent text-foreground → data-[state=active]:border-[color-mix(in_oklab,var(--primary)_85%,#000)] text-foreground",
+      "root_cause": "dark: data-[state=active]:border-transparent text-foreground \u2192 data-[state=active]:border-[color-mix(in_oklab,var(--primary)_85%,#000)] text-foreground",
+      "fix": "Changed dark: data-[state=active]:border-transparent text-foreground \u2192 data-[state=active]:border-[color-mix(in_oklab,var(--primary)_85%,#000)] text-foreground",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -524,8 +524,8 @@
       "timestamp": "2026-05-25T21:37:09.902Z",
       "error_message": "CSS fix: md",
       "file": "apps/app/src/features/issue/IssuePage.vue",
-      "root_cause": "md: hidden\"> → hidden\" title=\"More\">",
-      "fix": "Changed md: hidden\"> → hidden\" title=\"More\">",
+      "root_cause": "md: hidden\"> \u2192 hidden\" title=\"More\">",
+      "fix": "Changed md: hidden\"> \u2192 hidden\" title=\"More\">",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -540,8 +540,8 @@
       "timestamp": "2026-05-25T21:39:26.095Z",
       "error_message": "CSS fix: left, top, height",
       "file": "apps/app/src/features/issue/components/ScreenshotViewer.vue",
-      "root_cause": "left: 56% → 54%; top: 58% → 53%; height: 16%\" → 20%\"",
-      "fix": "Changed left: 56% → 54%; top: 58% → 53%; height: 16%\" → 20%\"",
+      "root_cause": "left: 56% \u2192 54%; top: 58% \u2192 53%; height: 16%\" \u2192 20%\"",
+      "fix": "Changed left: 56% \u2192 54%; top: 58% \u2192 53%; height: 16%\" \u2192 20%\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -589,7 +589,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/app/src/features/issue/IssuePage.vue",
       "root_cause": "26 lines replaced/restructured",
-      "fix": "Rewrote 27→7 lines (26 removed)",
+      "fix": "Rewrote 27\u21927 lines (26 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -621,7 +621,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/app/src/features/settings/composables/useSettings.ts",
       "root_cause": "5 lines replaced/restructured",
-      "fix": "Rewrote 5→13 lines (5 removed) | Also: newComment: true,; pinAssigned: true,",
+      "fix": "Rewrote 5\u219213 lines (5 removed) | Also: newComment: true,; pinAssigned: true,",
       "tags": [
         "auto-detected",
         "refactor",
@@ -653,7 +653,7 @@
       "error_message": "Wrong reference: 1fr_80px_80px should be 1fr_56px_56px",
       "file": "apps/app/src/features/settings/components/NotificationsSection.vue",
       "root_cause": "Used \"1fr_80px_80px\" instead of \"1fr_56px_56px\"",
-      "fix": "Changed 1fr_80px_80px → 1fr_56px_56px",
+      "fix": "Changed 1fr_80px_80px \u2192 1fr_56px_56px",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -684,8 +684,8 @@
       "timestamp": "2026-05-26T15:05:25.121Z",
       "error_message": "CSS fix: --primary, --primary-foreground",
       "file": "packages/design/src/tokens.css",
-      "root_cause": "--primary: #3fcf8e → #7c3aed; --primary-foreground: #04231a → #ffffff",
-      "fix": "Changed --primary: #3fcf8e → #7c3aed; --primary-foreground: #04231a → #ffffff",
+      "root_cause": "--primary: #3fcf8e \u2192 #7c3aed; --primary-foreground: #04231a \u2192 #ffffff",
+      "fix": "Changed --primary: #3fcf8e \u2192 #7c3aed; --primary-foreground: #04231a \u2192 #ffffff",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -717,7 +717,7 @@
       "error_message": "Significant refactor of ",
       "file": "packages/design/src/tokens.css",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 9→5 lines (3 removed)",
+      "fix": "Rewrote 9\u21925 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -733,7 +733,7 @@
       "error_message": "Wrong reference: _90 should be _95",
       "file": "packages/design/src/components/ui/tabs/TabsTrigger.vue",
       "root_cause": "Used \"_90\" instead of \"_95\"",
-      "fix": "Changed _90 → _95",
+      "fix": "Changed _90 \u2192 _95",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -764,8 +764,8 @@
       "timestamp": "2026-05-26T15:56:35.977Z",
       "error_message": "CSS fix: grid-template-columns",
       "file": "apps/app/src/features/pinboards/PinboardsPage.vue",
-      "root_cause": "grid-template-columns: repeat(auto-fill,minmax(360px,1fr))]\" → repeat(auto-fill,minmax(min(360px,100%),1fr))]\"",
-      "fix": "Changed grid-template-columns: repeat(auto-fill,minmax(360px,1fr))]\" → repeat(auto-fill,minmax(min(360px,100%),1fr))]\"",
+      "root_cause": "grid-template-columns: repeat(auto-fill,minmax(360px,1fr))]\" \u2192 repeat(auto-fill,minmax(min(360px,100%),1fr))]\"",
+      "fix": "Changed grid-template-columns: repeat(auto-fill,minmax(360px,1fr))]\" \u2192 repeat(auto-fill,minmax(min(360px,100%),1fr))]\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -812,8 +812,8 @@
       "timestamp": "2026-05-26T16:42:15.805Z",
       "error_message": "CSS fix: v-model, hover",
       "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
-      "root_cause": "v-model: open=\"userMenuOpen\"> → open=\"helpMenuOpen\">; hover: bg-sidebar-accent\" → bg-sidebar-accent hover:text-foreground\"",
-      "fix": "Changed v-model: open=\"userMenuOpen\"> → open=\"helpMenuOpen\">; hover: bg-sidebar-accent\" → bg-sidebar-accent hover:text-foreground\"",
+      "root_cause": "v-model: open=\"userMenuOpen\"> \u2192 open=\"helpMenuOpen\">; hover: bg-sidebar-accent\" \u2192 bg-sidebar-accent hover:text-foreground\"",
+      "fix": "Changed v-model: open=\"userMenuOpen\"> \u2192 open=\"helpMenuOpen\">; hover: bg-sidebar-accent\" \u2192 bg-sidebar-accent hover:text-foreground\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -845,7 +845,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/app/src/features/pinboards/components/SessionFilters.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 9→12 lines (2 removed)",
+      "fix": "Rewrote 9\u219212 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -860,8 +860,8 @@
       "timestamp": "2026-05-27T09:02:41.650Z",
       "error_message": "CSS fix: width, height, transform",
       "file": "packages/design/src/components/ui/tabs/TabsList.vue",
-      "root_cause": "width: `${active.offsetWidth → `${aRect.width; height: `${active.offsetHeight → `${aRect.height; transform: `translate(${active.offsetLeft → `translate(${x",
-      "fix": "Changed width: `${active.offsetWidth → `${aRect.width; height: `${active.offsetHeight → `${aRect.height; transform: `translate(${active.offsetLeft → `translate(${x",
+      "root_cause": "width: `${active.offsetWidth \u2192 `${aRect.width; height: `${active.offsetHeight \u2192 `${aRect.height; transform: `translate(${active.offsetLeft \u2192 `translate(${x",
+      "fix": "Changed width: `${active.offsetWidth \u2192 `${aRect.width; height: `${active.offsetHeight \u2192 `${aRect.height; transform: `translate(${active.offsetLeft \u2192 `translate(${x",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -893,7 +893,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/app/src/features/settings/composables/useSettings.ts",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 3→18 lines (3 removed)",
+      "fix": "Rewrote 3\u219218 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -924,8 +924,8 @@
       "timestamp": "2026-05-27T09:07:59.848Z",
       "error_message": "CSS fix: UserAvatar",
       "file": "apps/app/src/features/settings/components/MembersSection.vue",
-      "root_cause": "UserAvatar: name=\"m.name\" :hue=\"m.avatarHue\" :size=\"28\" /> → name=\"m.name\"",
-      "fix": "Changed UserAvatar: name=\"m.name\" :hue=\"m.avatarHue\" :size=\"28\" /> → name=\"m.name\"",
+      "root_cause": "UserAvatar: name=\"m.name\" :hue=\"m.avatarHue\" :size=\"28\" /> \u2192 name=\"m.name\"",
+      "fix": "Changed UserAvatar: name=\"m.name\" :hue=\"m.avatarHue\" :size=\"28\" /> \u2192 name=\"m.name\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -956,8 +956,8 @@
       "timestamp": "2026-05-27T09:47:27.628Z",
       "error_message": "CSS fix: name",
       "file": "apps/app/src/features/workspace-shell/components/AppSidebar.vue",
-      "root_cause": "name: \"Mobile web\", color: \"#f97316\", count: 12 → \"\",",
-      "fix": "Changed name: \"Mobile web\", color: \"#f97316\", count: 12 → \"\",",
+      "root_cause": "name: \"Mobile web\", color: \"#f97316\", count: 12 \u2192 \"\",",
+      "fix": "Changed name: \"Mobile web\", color: \"#f97316\", count: 12 \u2192 \"\",",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -989,7 +989,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/app/src/features/pinboards/PinboardsPage.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 28→53 lines (3 removed)",
+      "fix": "Rewrote 28\u219253 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1004,8 +1004,8 @@
       "timestamp": "2026-05-27T10:02:17.474Z",
       "error_message": "CSS fix: hover",
       "file": "apps/app/src/features/pinboards/PinboardsPage.vue",
-      "root_cause": "hover: text-foreground\" → bg-muted/70\"",
-      "fix": "Changed hover: text-foreground\" → bg-muted/70\"",
+      "root_cause": "hover: text-foreground\" \u2192 bg-muted/70\"",
+      "fix": "Changed hover: text-foreground\" \u2192 bg-muted/70\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -1053,7 +1053,7 @@
       "error_message": "Wrong reference: app should be web",
       "file": "HANDOFF.md",
       "root_cause": "Used \"app\" instead of \"web\"",
-      "fix": "Changed app → web",
+      "fix": "Changed app \u2192 web",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -1101,7 +1101,7 @@
       "error_message": "Wrong reference: app should be web",
       "file": "specs/WEB_APP_SPEC.md",
       "root_cause": "Used \"app\" instead of \"web\"",
-      "fix": "Changed app → web",
+      "fix": "Changed app \u2192 web",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -1133,7 +1133,7 @@
       "error_message": "Significant refactor of ",
       "file": "HANDOFF.md",
       "root_cause": "7 lines replaced/restructured",
-      "fix": "Rewrote 19→22 lines (7 removed) | Also: 1. **`@pinlay/api`** — the backend the dashboard a; 2. **New Session modal** on Pinboards — URL input,",
+      "fix": "Rewrote 19\u219222 lines (7 removed) | Also: 1. **`@pinlay/api`** \u2014 the backend the dashboard a; 2. **New Session modal** on Pinboards \u2014 URL input,",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1149,7 +1149,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/workspace-shell/components/AppSidebar.vue",
       "root_cause": "14 lines replaced/restructured",
-      "fix": "Rewrote 40→15 lines (14 removed) | Also: DropdownMenuSub,; DropdownMenuSubContent,",
+      "fix": "Rewrote 40\u219215 lines (14 removed) | Also: DropdownMenuSub,; DropdownMenuSubContent,",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1181,7 +1181,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/settings/components/BillingSection.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 4→3 lines (2 removed)",
+      "fix": "Rewrote 4\u21923 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1295,7 +1295,7 @@
       "error_message": "Wrong reference: 500 should be 200",
       "file": "apps/web/src/features/settings/components/BillingSection.vue",
       "root_cause": "Used \"500\" instead of \"200\"",
-      "fix": "Changed 500 → 200",
+      "fix": "Changed 500 \u2192 200",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -1326,8 +1326,8 @@
       "timestamp": "2026-05-27T18:55:42.455Z",
       "error_message": "CSS fix: price",
       "file": "apps/web/src/features/settings/components/BillingSection.vue",
-      "root_cause": "price: \"$10\", → \"$15\",",
-      "fix": "Changed price: \"$10\", → \"$15\",",
+      "root_cause": "price: \"$10\", \u2192 \"$15\",",
+      "fix": "Changed price: \"$10\", \u2192 \"$15\",",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -1359,7 +1359,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/settings/components/BillingSection.vue",
       "root_cause": "24 lines replaced/restructured",
-      "fix": "Rewrote 65→43 lines (24 removed) | Also: <span; v-if=\"isFree && m.freeLimit !== null\"",
+      "fix": "Rewrote 65\u219243 lines (24 removed) | Also: <span; v-if=\"isFree && m.freeLimit !== null\"",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1406,8 +1406,8 @@
       "timestamp": "2026-05-27T20:10:34.228Z",
       "error_message": "CSS fix: value",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "value: \"critical\", label: \"Critical\", dot: \"bg-rose-500\" → \"critical\", label: \"Critical\", dot: \"bg-sev-critical\"",
-      "fix": "Changed value: \"critical\", label: \"Critical\", dot: \"bg-rose-500\" → \"critical\", label: \"Critical\", dot: \"bg-sev-critical\"",
+      "root_cause": "value: \"critical\", label: \"Critical\", dot: \"bg-rose-500\" \u2192 \"critical\", label: \"Critical\", dot: \"bg-sev-critical\"",
+      "fix": "Changed value: \"critical\", label: \"Critical\", dot: \"bg-rose-500\" \u2192 \"critical\", label: \"Critical\", dot: \"bg-sev-critical\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -1423,7 +1423,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 9→11 lines (3 removed)",
+      "fix": "Rewrote 9\u219211 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1438,8 +1438,8 @@
       "timestamp": "2026-05-27T20:11:25.518Z",
       "error_message": "CSS fix: borderColor",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
-      "root_cause": "borderColor: \"rgba(0,0,0,0.06)\", → \"var(--border)\",",
-      "fix": "Changed borderColor: \"rgba(0,0,0,0.06)\", → \"var(--border)\",",
+      "root_cause": "borderColor: \"rgba(0,0,0,0.06)\", \u2192 \"var(--border)\",",
+      "fix": "Changed borderColor: \"rgba(0,0,0,0.06)\", \u2192 \"var(--border)\",",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -1487,7 +1487,7 @@
       "error_message": "Wrong reference: amber should be primary",
       "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
       "root_cause": "Used \"amber\" instead of \"primary\"",
-      "fix": "Changed amber → primary",
+      "fix": "Changed amber \u2192 primary",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -1503,7 +1503,7 @@
       "error_message": "Wrong reference: amber should be primary",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
       "root_cause": "Used \"amber\" instead of \"primary\"",
-      "fix": "Changed amber → primary",
+      "fix": "Changed amber \u2192 primary",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -1519,7 +1519,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 5→6 lines (3 removed)",
+      "fix": "Rewrote 5\u21926 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1535,7 +1535,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 15→36 lines (2 removed)",
+      "fix": "Rewrote 15\u219236 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1567,7 +1567,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/assets/style.css",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 6→5 lines (6 removed)",
+      "fix": "Rewrote 6\u21925 lines (6 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1583,7 +1583,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
       "root_cause": "59 lines replaced/restructured",
-      "fix": "Rewrote 65→3 lines (59 removed) | Also: // Count of existing pins on this URL — fetched la; // menu opens (not already in annotation). | Also: // Lazily fetch existing pin count on first menu o; watch(menuOpen, async (open) => {",
+      "fix": "Rewrote 65\u21923 lines (59 removed) | Also: // Count of existing pins on this URL \u2014 fetched la; // menu opens (not already in annotation). | Also: // Lazily fetch existing pin count on first menu o; watch(menuOpen, async (open) => {",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1614,8 +1614,8 @@
       "timestamp": "2026-05-28T12:36:59.332Z",
       "error_message": "CSS fix: backgroundColor",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
-      "root_cause": "backgroundColor: \"var(--card)\", → \"#ffffff\",",
-      "fix": "Changed backgroundColor: \"var(--card)\", → \"#ffffff\",",
+      "root_cause": "backgroundColor: \"var(--card)\", \u2192 \"#ffffff\",",
+      "fix": "Changed backgroundColor: \"var(--card)\", \u2192 \"#ffffff\",",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -1630,8 +1630,8 @@
       "timestamp": "2026-05-28T12:45:44.504Z",
       "error_message": "CSS fix: span",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "span: class=\"['h-1.5 w-1.5 rounded-full', s.dot]\" aria-hidden=\"true\" /> → class=\"['h-1.5 w-1.5 rounded-full', s.dot]\"",
-      "fix": "Changed span: class=\"['h-1.5 w-1.5 rounded-full', s.dot]\" aria-hidden=\"true\" /> → class=\"['h-1.5 w-1.5 rounded-full', s.dot]\"",
+      "root_cause": "span: class=\"['h-1.5 w-1.5 rounded-full', s.dot]\" aria-hidden=\"true\" /> \u2192 class=\"['h-1.5 w-1.5 rounded-full', s.dot]\"",
+      "fix": "Changed span: class=\"['h-1.5 w-1.5 rounded-full', s.dot]\" aria-hidden=\"true\" /> \u2192 class=\"['h-1.5 w-1.5 rounded-full', s.dot]\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -1662,7 +1662,7 @@
       "timestamp": "2026-05-28T12:47:28.738Z",
       "error_message": "Missing error handling in onImagesPicked",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -1694,7 +1694,7 @@
       "timestamp": "2026-05-28T13:24:21.618Z",
       "error_message": "Missing error handling in function",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -1710,8 +1710,8 @@
       "timestamp": "2026-05-28T13:25:41.655Z",
       "error_message": "CSS fix: hover",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "hover: text-foreground\" → bg-foreground group-hover:opacity-100\"",
-      "fix": "Changed hover: text-foreground\" → bg-foreground group-hover:opacity-100\"",
+      "root_cause": "hover: text-foreground\" \u2192 bg-foreground group-hover:opacity-100\"",
+      "fix": "Changed hover: text-foreground\" \u2192 bg-foreground group-hover:opacity-100\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -1726,7 +1726,7 @@
       "timestamp": "2026-05-28T13:26:00.063Z",
       "error_message": "Missing error handling in onImagesPicked",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -1759,7 +1759,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 6→4 lines (2 removed)",
+      "fix": "Rewrote 6\u21924 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1774,7 +1774,7 @@
       "timestamp": "2026-05-28T13:46:31.887Z",
       "error_message": "Missing error handling in dispatchRegionResult",
       "file": "apps/extension/src/entrypoints/content.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -1791,7 +1791,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
       "root_cause": "10 lines replaced/restructured",
-      "fix": "Rewrote 44→25 lines (10 removed)",
+      "fix": "Rewrote 44\u219225 lines (10 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1807,7 +1807,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
       "root_cause": "5 lines replaced/restructured",
-      "fix": "Rewrote 74→148 lines (5 removed)",
+      "fix": "Rewrote 74\u2192148 lines (5 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1855,7 +1855,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
       "root_cause": "10 lines replaced/restructured",
-      "fix": "Rewrote 25→32 lines (10 removed)",
+      "fix": "Rewrote 25\u219232 lines (10 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1871,7 +1871,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 19→20 lines (2 removed)",
+      "fix": "Rewrote 19\u219220 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1887,7 +1887,7 @@
       "error_message": "Significant refactor of ",
       "file": "packages/design/src/components/ui/dropdown-menu/DropdownMenuContent.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 31→40 lines (3 removed)",
+      "fix": "Rewrote 31\u219240 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1935,7 +1935,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 14→10 lines (3 removed)",
+      "fix": "Rewrote 14\u219210 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1951,7 +1951,7 @@
       "error_message": "Null/undefined access in ",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
       "root_cause": "Property access on potentially null/undefined value",
-      "fix": "Added null safety (optional chaining or null check) | Also: // ── Lightbox preview ─────────────────────────────────────; const previewIdx = ref<number | null>(null);",
+      "fix": "Added null safety (optional chaining or null check) | Also: // \u2500\u2500 Lightbox preview \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500; const previewIdx = ref<number | null>(null);",
       "tags": [
         "auto-detected",
         "null-safety",
@@ -1967,7 +1967,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 19→33 lines (2 removed)",
+      "fix": "Rewrote 19\u219233 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -1999,7 +1999,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 10→6 lines (6 removed) | Also: <!-- Default state has no menu — the FAB click goe; start-annotation. (See toggleMenu in script.) -->",
+      "fix": "Rewrote 10\u21926 lines (6 removed) | Also: <!-- Default state has no menu \u2014 the FAB click goe; start-annotation. (See toggleMenu in script.) -->",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2014,7 +2014,7 @@
       "timestamp": "2026-05-28T18:58:00.642Z",
       "error_message": "Missing error handling in onStartIdleAnnotation",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block | Also: if (storageHandler) {; try {",
       "tags": [
         "auto-detected",
@@ -2080,8 +2080,8 @@
       "timestamp": "2026-05-28T19:11:54.222Z",
       "error_message": "CSS fix: Surfaces",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
-      "root_cause": "Surfaces: • IDLE        — white FAB with the violet pinlay Brand mark. Click goes → • IDLE        — white FAB with the violet pinlay Brand mark. Clicking it",
-      "fix": "Changed Surfaces: • IDLE        — white FAB with the violet pinlay Brand mark. Click goes → • IDLE        — white FAB with the violet pinlay Brand mark. Clicking it",
+      "root_cause": "Surfaces: \u2022 IDLE        \u2014 white FAB with the violet pinlay Brand mark. Click goes \u2192 \u2022 IDLE        \u2014 white FAB with the violet pinlay Brand mark. Clicking it",
+      "fix": "Changed Surfaces: \u2022 IDLE        \u2014 white FAB with the violet pinlay Brand mark. Click goes \u2192 \u2022 IDLE        \u2014 white FAB with the violet pinlay Brand mark. Clicking it",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -2096,8 +2096,8 @@
       "timestamp": "2026-05-28T19:22:10.737Z",
       "error_message": "CSS fix: hover",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
-      "root_cause": "hover: bg-destructive/10' → bg-secondary\"",
-      "fix": "Changed hover: bg-destructive/10' → bg-secondary\"",
+      "root_cause": "hover: bg-destructive/10' \u2192 bg-secondary\"",
+      "fix": "Changed hover: bg-destructive/10' \u2192 bg-secondary\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -2112,8 +2112,8 @@
       "timestamp": "2026-05-28T23:27:37.263Z",
       "error_message": "CSS fix: left",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "left: `${props.pageX → `${clampedX",
-      "fix": "Changed left: `${props.pageX → `${clampedX",
+      "root_cause": "left: `${props.pageX \u2192 `${clampedX",
+      "fix": "Changed left: `${props.pageX \u2192 `${clampedX",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -2128,8 +2128,8 @@
       "timestamp": "2026-05-28T23:27:54.989Z",
       "error_message": "CSS fix: left",
       "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
-      "root_cause": "left: `${props.pageX → `${clampedX",
-      "fix": "Changed left: `${props.pageX → `${clampedX",
+      "root_cause": "left: `${props.pageX \u2192 `${clampedX",
+      "fix": "Changed left: `${props.pageX \u2192 `${clampedX",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -2145,7 +2145,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 5→6 lines (2 removed) | Also: exitPlaceMode();; viewingPinId.value = res.pin.id; | Also: composingPinId.value = null;; exitPlaceMode();",
+      "fix": "Rewrote 5\u21926 lines (2 removed) | Also: exitPlaceMode();; viewingPinId.value = res.pin.id; | Also: composingPinId.value = null;; exitPlaceMode();",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2178,7 +2178,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPin.vue",
       "root_cause": "5 lines replaced/restructured",
-      "fix": "Rewrote 15→19 lines (5 removed)",
+      "fix": "Rewrote 15\u219219 lines (5 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2193,8 +2193,8 @@
       "timestamp": "2026-05-29T00:04:49.801Z",
       "error_message": "CSS fix: 2, left",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "2: Math.max(minX, Math.min(props.pageX, maxX)) → Math.max(minCenterX, Math.min(props.pageX, maxCenterX)); left: `${clampedX → `${left",
-      "fix": "Changed 2: Math.max(minX, Math.min(props.pageX, maxX)) → Math.max(minCenterX, Math.min(props.pageX, maxCenterX)); left: `${clampedX → `${left",
+      "root_cause": "2: Math.max(minX, Math.min(props.pageX, maxX)) \u2192 Math.max(minCenterX, Math.min(props.pageX, maxCenterX)); left: `${clampedX \u2192 `${left",
+      "fix": "Changed 2: Math.max(minX, Math.min(props.pageX, maxX)) \u2192 Math.max(minCenterX, Math.min(props.pageX, maxCenterX)); left: `${clampedX \u2192 `${left",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -2209,8 +2209,8 @@
       "timestamp": "2026-05-29T00:05:19.256Z",
       "error_message": "CSS fix: 2, left",
       "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
-      "root_cause": "2: Math.max(minX, Math.min(props.pageX, maxX)) → Math.max(minCenterX, Math.min(props.pageX, maxCenterX)); left: `${clampedX → `${left",
-      "fix": "Changed 2: Math.max(minX, Math.min(props.pageX, maxX)) → Math.max(minCenterX, Math.min(props.pageX, maxCenterX)); left: `${clampedX → `${left",
+      "root_cause": "2: Math.max(minX, Math.min(props.pageX, maxX)) \u2192 Math.max(minCenterX, Math.min(props.pageX, maxCenterX)); left: `${clampedX \u2192 `${left",
+      "fix": "Changed 2: Math.max(minX, Math.min(props.pageX, maxX)) \u2192 Math.max(minCenterX, Math.min(props.pageX, maxCenterX)); left: `${clampedX \u2192 `${left",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -2242,7 +2242,7 @@
       "error_message": "Significant refactor of ",
       "file": "package.json",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 13→25 lines (2 removed)",
+      "fix": "Rewrote 13\u219225 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2258,7 +2258,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/prisma/schema.prisma",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 7→10 lines (6 removed)",
+      "fix": "Rewrote 7\u219210 lines (6 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2306,7 +2306,7 @@
       "error_message": "Significant refactor of ",
       "file": "specs/GENERAL_SPEC.md",
       "root_cause": "5 lines replaced/restructured",
-      "fix": "Rewrote 6→6 lines (5 removed)",
+      "fix": "Rewrote 6\u21926 lines (5 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2322,7 +2322,7 @@
       "error_message": "Significant refactor of ",
       "file": "specs/BACKEND_SPEC.md",
       "root_cause": "4 lines replaced/restructured",
-      "fix": "Rewrote 5→14 lines (4 removed) | Also: JWT (jose) signed with a Worker secret; bcrypt pas; `{ userId, orgId, role }`. `requireAuth()` verifie | Also: ## 6. Async jobs (Queues); R2 buckets for screenshots and clips. Uploads are ",
+      "fix": "Rewrote 5\u219214 lines (4 removed) | Also: JWT (jose) signed with a Worker secret; bcrypt pas; `{ userId, orgId, role }`. `requireAuth()` verifie | Also: ## 6. Async jobs (Queues); R2 buckets for screenshots and clips. Uploads are ",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2386,7 +2386,7 @@
       "error_message": "Wrong reference: true should be false",
       "file": "apps/api/tsconfig.json",
       "root_cause": "Used \"true\" instead of \"false\"",
-      "fix": "Changed true → false",
+      "fix": "Changed true \u2192 false",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -2439,7 +2439,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/auth/jwt-auth.guard.ts",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 17→20 lines (3 removed)",
+      "fix": "Rewrote 17\u219220 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2455,7 +2455,7 @@
       "error_message": "Wrong operator: ?? should be ===",
       "file": "apps/api/src/main.ts",
       "root_cause": "Used \"??\" instead of \"===\"",
-      "fix": "Changed operator ?? → ===",
+      "fix": "Changed operator ?? \u2192 ===",
       "tags": [
         "auto-detected",
         "operator-fix",
@@ -2589,7 +2589,7 @@
       "error_message": "vue-tsc surfaces pre-existing errors once vite/client resolves: TS2304 createShadowRootUi & TS2353 autoIcons (auto-import types not loaded); TS6133 unused vars in FloatingLauncher.vue/AnnotationOverlay.vue/popup App.vue; TS2769 FloatingLauncher.vue:375 (computed style union with optional top/bottom not assignable to Record<string,string>).",
       "file": "apps/extension/tsconfig.json, apps/extension/src/components/launcher/FloatingLauncher.vue",
       "root_cause": "Always failing but vue-tsc aborted early on the unrelated vite/client error (bug-151) so never seen. The auto-import errors were caused by the hand-written tsconfig include overriding WXT and dropping .wxt/wxt.d.ts.",
-      "fix": "RESOLVED — extension typecheck now fully clean. (1) added vite devDep + .wxt/wxt.d.ts to tsconfig include (auto-import errors). (2) removed vestigial dead code left by the account-chrome→popup refactor: FloatingLauncher userInitial/userLabel/userSubtext/workspaceLabel/workspaceSubtext computeds + onDisconnect(); AnnotationOverlay openInDashboard() + its now-orphaned WEB_APP_URL & safeSendMessage imports. (3) FloatingLauncher menuStyle: build a typed Record<string,string> + mutate instead of returning a {left,top}|{left,bottom} union (TS2769). (4) popup App.vue: wired onUnmounted(()=>unsubscribeAuth?.()) — fixes a real onAuthChange subscription leak, not just the TS6133.",
+      "fix": "RESOLVED \u2014 extension typecheck now fully clean. (1) added vite devDep + .wxt/wxt.d.ts to tsconfig include (auto-import errors). (2) removed vestigial dead code left by the account-chrome\u2192popup refactor: FloatingLauncher userInitial/userLabel/userSubtext/workspaceLabel/workspaceSubtext computeds + onDisconnect(); AnnotationOverlay openInDashboard() + its now-orphaned WEB_APP_URL & safeSendMessage imports. (3) FloatingLauncher menuStyle: build a typed Record<string,string> + mutate instead of returning a {left,top}|{left,bottom} union (TS2769). (4) popup App.vue: wired onUnmounted(()=>unsubscribeAuth?.()) \u2014 fixes a real onAuthChange subscription leak, not just the TS6133.",
       "tags": [
         "extension",
         "wxt",
@@ -2645,7 +2645,7 @@
       "timestamp": "2026-05-30T15:14:50.743Z",
       "error_message": "Missing error handling in unknown",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -2677,7 +2677,7 @@
       "timestamp": "2026-05-30T15:16:26.705Z",
       "error_message": "Missing error handling in function",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -2694,7 +2694,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/sessions/sessions.controller.ts",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 8→13 lines (3 removed)",
+      "fix": "Rewrote 8\u219213 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2742,7 +2742,7 @@
       "error_message": "Wrong reference: DashboardModule should be SessionsModule",
       "file": "apps/api/src/app.module.ts",
       "root_cause": "Used \"DashboardModule\" instead of \"SessionsModule\"",
-      "fix": "Changed DashboardModule → SessionsModule",
+      "fix": "Changed DashboardModule \u2192 SessionsModule",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -2758,7 +2758,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/auth/jwt-auth.guard.ts",
       "root_cause": "24 lines replaced/restructured",
-      "fix": "Rewrote 104→67 lines (24 removed)",
+      "fix": "Rewrote 104\u219267 lines (24 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2774,7 +2774,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/config/env.ts",
       "root_cause": "17 lines replaced/restructured",
-      "fix": "Rewrote 76→49 lines (17 removed)",
+      "fix": "Rewrote 76\u219249 lines (17 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2790,7 +2790,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/main.ts",
       "root_cause": "4 lines replaced/restructured",
-      "fix": "Rewrote 8→3 lines (4 removed)",
+      "fix": "Rewrote 8\u21923 lines (4 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2806,7 +2806,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/lib/api.ts",
       "root_cause": "9 lines replaced/restructured",
-      "fix": "Rewrote 26→8 lines (9 removed)",
+      "fix": "Rewrote 26\u21928 lines (9 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2822,7 +2822,7 @@
       "error_message": "Wrong reference: fl__icker should be flicker",
       "file": "apps/web/src/shared/composables/useAuth.ts",
       "root_cause": "Used \"fl__icker\" instead of \"flicker\"",
-      "fix": "Changed fl__icker → flicker",
+      "fix": "Changed fl__icker \u2192 flicker",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -2853,8 +2853,8 @@
       "timestamp": "2026-05-30T15:39:01.960Z",
       "error_message": "CSS fix: url",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "url: \"http://localhost:5173/\" → `${WEB_APP_URL",
-      "fix": "Changed url: \"http://localhost:5173/\" → `${WEB_APP_URL",
+      "root_cause": "url: \"http://localhost:5173/\" \u2192 `${WEB_APP_URL",
+      "fix": "Changed url: \"http://localhost:5173/\" \u2192 `${WEB_APP_URL",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -2870,7 +2870,7 @@
       "error_message": "Wrong reference: DialogTrigger should be DropdownMenu",
       "file": "apps/web/src/features/settings/components/MembersSection.vue",
       "root_cause": "Used \"DialogTrigger\" instead of \"DropdownMenu\"",
-      "fix": "Changed DialogTrigger → DropdownMenu",
+      "fix": "Changed DialogTrigger \u2192 DropdownMenu",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -2886,7 +2886,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/lib/api.ts",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 16→32 lines (3 removed)",
+      "fix": "Rewrote 16\u219232 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2902,7 +2902,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "11 lines replaced/restructured",
-      "fix": "Rewrote 31→41 lines (11 removed)",
+      "fix": "Rewrote 31\u219241 lines (11 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -2950,7 +2950,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/auth/auth.service.ts",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 8→3 lines (6 removed)",
+      "fix": "Rewrote 8\u21923 lines (6 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3013,8 +3013,8 @@
       "timestamp": "2026-05-31T10:45:17.410Z",
       "error_message": "CSS fix: footer, v-model",
       "file": "apps/web/src/features/workspace-shell/components/AppSidebar.vue",
-      "root_cause": "footer: account + help --> → account row → settings/profile, chevron → logout menu -->; v-model: open=\"helpMenuOpen\"> → open=\"accountMenuOpen\">",
-      "fix": "Changed footer: account + help --> → account row → settings/profile, chevron → logout menu -->; v-model: open=\"helpMenuOpen\"> → open=\"accountMenuOpen\">",
+      "root_cause": "footer: account + help --> \u2192 account row \u2192 settings/profile, chevron \u2192 logout menu -->; v-model: open=\"helpMenuOpen\"> \u2192 open=\"accountMenuOpen\">",
+      "fix": "Changed footer: account + help --> \u2192 account row \u2192 settings/profile, chevron \u2192 logout menu -->; v-model: open=\"helpMenuOpen\"> \u2192 open=\"accountMenuOpen\">",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3030,7 +3030,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/workspace-shell/components/StatusBar.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 8→29 lines (3 removed)",
+      "fix": "Rewrote 8\u219229 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3093,8 +3093,8 @@
       "timestamp": "2026-05-31T10:54:05.064Z",
       "error_message": "CSS fix: footer, UserAvatar",
       "file": "apps/web/src/features/workspace-shell/components/AppSidebar.vue",
-      "root_cause": "footer: account row → settings/profile, chevron → logout menu --> → account menu. Trigger shows the user; UserAvatar: name=\"displayName\" :size=\"24\" class=\"shrink-0\" /> → name=\"displayName\" :size=\"28\" class=\"shrink-0\" />",
-      "fix": "Changed footer: account row → settings/profile, chevron → logout menu --> → account menu. Trigger shows the user; UserAvatar: name=\"displayName\" :size=\"24\" class=\"shrink-0\" /> → name=\"displayName\" :size=\"28\" class=\"shrink-0\" />",
+      "root_cause": "footer: account row \u2192 settings/profile, chevron \u2192 logout menu --> \u2192 account menu. Trigger shows the user; UserAvatar: name=\"displayName\" :size=\"24\" class=\"shrink-0\" /> \u2192 name=\"displayName\" :size=\"28\" class=\"shrink-0\" />",
+      "fix": "Changed footer: account row \u2192 settings/profile, chevron \u2192 logout menu --> \u2192 account menu. Trigger shows the user; UserAvatar: name=\"displayName\" :size=\"24\" class=\"shrink-0\" /> \u2192 name=\"displayName\" :size=\"28\" class=\"shrink-0\" />",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3110,7 +3110,7 @@
       "error_message": "Significant refactor of ",
       "file": ".claude/launch.json",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 11→14 lines (2 removed)",
+      "fix": "Rewrote 11\u219214 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3142,7 +3142,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 10→36 lines (3 removed) | Also: <div class=\"overflow-hidden rounded-lg border bord; {{ userSubtext }}",
+      "fix": "Rewrote 10\u219236 lines (3 removed) | Also: <div class=\"overflow-hidden rounded-lg border bord; {{ userSubtext }}",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3157,8 +3157,8 @@
       "timestamp": "2026-05-31T16:46:27.851Z",
       "error_message": "CSS fix: hover",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "hover: bg-primary-hover active:scale-[0.99] disabled:opacity-60\" → bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none\"",
-      "fix": "Changed hover: bg-primary-hover active:scale-[0.99] disabled:opacity-60\" → bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none\"",
+      "root_cause": "hover: bg-primary-hover active:scale-[0.99] disabled:opacity-60\" \u2192 bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none\"",
+      "fix": "Changed hover: bg-primary-hover active:scale-[0.99] disabled:opacity-60\" \u2192 bg-primary-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-55 disabled:shadow-none\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3174,7 +3174,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 6→8 lines (2 removed)",
+      "fix": "Rewrote 6\u21928 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3190,7 +3190,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 20→32 lines (3 removed) | Also: button — bouncing between Connect/Disconnect feels; v-else-if=\"isConnected\"",
+      "fix": "Rewrote 20\u219232 lines (3 removed) | Also: button \u2014 bouncing between Connect/Disconnect feels; v-else-if=\"isConnected\"",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3205,8 +3205,8 @@
       "timestamp": "2026-05-31T19:06:10.640Z",
       "error_message": "CSS fix: IDLE",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "IDLE: not connected → a real prompt, not just two empty rows. → only when we have NO identity at all (disconnected from a",
-      "fix": "Changed IDLE: not connected → a real prompt, not just two empty rows. → only when we have NO identity at all (disconnected from a",
+      "root_cause": "IDLE: not connected \u2192 a real prompt, not just two empty rows. \u2192 only when we have NO identity at all (disconnected from a",
+      "fix": "Changed IDLE: not connected \u2192 a real prompt, not just two empty rows. \u2192 only when we have NO identity at all (disconnected from a",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3222,7 +3222,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 15→19 lines (3 removed)",
+      "fix": "Rewrote 15\u219219 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3237,7 +3237,7 @@
       "timestamp": "2026-05-31T19:14:00.841Z",
       "error_message": "Missing error handling in function",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -3269,8 +3269,8 @@
       "timestamp": "2026-05-31T19:25:52.296Z",
       "error_message": "CSS fix: enabled",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "enabled: hover:bg-muted/60 disabled:opacity-60\" → hover:bg-muted disabled:opacity-60\"",
-      "fix": "Changed enabled: hover:bg-muted/60 disabled:opacity-60\" → hover:bg-muted disabled:opacity-60\"",
+      "root_cause": "enabled: hover:bg-muted/60 disabled:opacity-60\" \u2192 hover:bg-muted disabled:opacity-60\"",
+      "fix": "Changed enabled: hover:bg-muted/60 disabled:opacity-60\" \u2192 hover:bg-muted disabled:opacity-60\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3302,7 +3302,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 11→20 lines (2 removed)",
+      "fix": "Rewrote 11\u219220 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3317,8 +3317,8 @@
       "timestamp": "2026-05-31T19:32:55.169Z",
       "error_message": "CSS fix: pageUrl",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "pageUrl: props.browserMeta.pageUrl, → livePageUrl.value,",
-      "fix": "Changed pageUrl: props.browserMeta.pageUrl, → livePageUrl.value,",
+      "root_cause": "pageUrl: props.browserMeta.pageUrl, \u2192 livePageUrl.value,",
+      "fix": "Changed pageUrl: props.browserMeta.pageUrl, \u2192 livePageUrl.value,",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3333,7 +3333,7 @@
       "timestamp": "2026-05-31T19:33:48.901Z",
       "error_message": "Missing error handling in onLocationMaybeChanged",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -3382,7 +3382,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 7→11 lines (2 removed)",
+      "fix": "Rewrote 7\u219211 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3397,8 +3397,8 @@
       "timestamp": "2026-06-01T08:35:44.012Z",
       "error_message": "CSS fix: CONNECTED",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "CONNECTED: real identity + workspace. --> → real identity + workspace.",
-      "fix": "Changed CONNECTED: real identity + workspace. --> → real identity + workspace.",
+      "root_cause": "CONNECTED: real identity + workspace. --> \u2192 real identity + workspace.",
+      "fix": "Changed CONNECTED: real identity + workspace. --> \u2192 real identity + workspace.",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3429,8 +3429,8 @@
       "timestamp": "2026-06-01T09:38:08.295Z",
       "error_message": "CSS fix: people",
       "file": "apps/web/src/features/pinboards/components/SessionFilters.vue",
-      "root_cause": "people: User[] → Array<{ id: string",
-      "fix": "Changed people: User[] → Array<{ id: string",
+      "root_cause": "people: User[] \u2192 Array<{ id: string",
+      "fix": "Changed people: User[] \u2192 Array<{ id: string",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3462,7 +3462,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/pinboards/PinboardsPage.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 3→12 lines (2 removed)",
+      "fix": "Rewrote 3\u219212 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3541,7 +3541,7 @@
       "timestamp": "2026-06-01T14:28:31.522Z",
       "error_message": "Missing error handling in create",
       "file": "apps/api/src/workspace/workspace.service.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -3622,7 +3622,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/shared/composables/useAuth.ts",
       "root_cause": "4 lines replaced/restructured",
-      "fix": "Rewrote 7→4 lines (4 removed)",
+      "fix": "Rewrote 7\u21924 lines (4 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3638,7 +3638,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 19→26 lines (3 removed)",
+      "fix": "Rewrote 19\u219226 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3670,7 +3670,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/pinboards/PinboardsPage.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 7→15 lines (3 removed)",
+      "fix": "Rewrote 7\u219215 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3686,7 +3686,7 @@
       "error_message": "Null/undefined access in ",
       "file": "apps/web/src/features/issue/IssuePage.vue",
       "root_cause": "Property access on potentially null/undefined value",
-      "fix": "Added null safety (optional chaining or null check) | Also: <!-- Board chip — current board (or \"Add to board\") + dropdo; move / unassign. Hidden on the smallest viewport to keep the",
+      "fix": "Added null safety (optional chaining or null check) | Also: <!-- Board chip \u2014 current board (or \"Add to board\") + dropdo; move / unassign. Hidden on the smallest viewport to keep the",
       "tags": [
         "auto-detected",
         "null-safety",
@@ -3702,7 +3702,7 @@
       "error_message": "Wrong reference: useBoards should be isPending",
       "file": "apps/web/src/features/workspace-shell/components/AppSidebar.vue",
       "root_cause": "Used \"useBoards\" instead of \"isPending\"",
-      "fix": "Changed useBoards → isPending",
+      "fix": "Changed useBoards \u2192 isPending",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -3717,8 +3717,8 @@
       "timestamp": "2026-06-01T18:09:28.355Z",
       "error_message": "CSS fix: path",
       "file": "apps/web/src/features/workspace-shell/components/AppSidebar.vue",
-      "root_cause": "path: '/', query: { board: b.id → '/', query: { board: b.slug",
-      "fix": "Changed path: '/', query: { board: b.id → '/', query: { board: b.slug",
+      "root_cause": "path: '/', query: { board: b.id \u2192 '/', query: { board: b.slug",
+      "fix": "Changed path: '/', query: { board: b.id \u2192 '/', query: { board: b.slug",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3749,8 +3749,8 @@
       "timestamp": "2026-06-01T19:20:44.639Z",
       "error_message": "CSS fix: isPending",
       "file": "apps/web/src/features/workspace-shell/components/AppSidebar.vue",
-      "root_cause": "isPending: boardsPending, isError: boardsError → boardsPending,",
-      "fix": "Changed isPending: boardsPending, isError: boardsError → boardsPending,",
+      "root_cause": "isPending: boardsPending, isError: boardsError \u2192 boardsPending,",
+      "fix": "Changed isPending: boardsPending, isError: boardsError \u2192 boardsPending,",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3765,7 +3765,7 @@
       "timestamp": "2026-06-01T19:20:55.519Z",
       "error_message": "Missing error handling in function",
       "file": "apps/web/src/features/workspace-shell/components/AppSidebar.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -3781,7 +3781,7 @@
       "timestamp": "2026-06-02T11:54:19.925Z",
       "error_message": "Missing error handling in update",
       "file": "apps/api/src/workspace/workspace.service.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -3830,7 +3830,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/workspace/workspace.module.ts",
       "root_cause": "5 lines replaced/restructured",
-      "fix": "Rewrote 17→21 lines (5 removed)",
+      "fix": "Rewrote 17\u219221 lines (5 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -3845,7 +3845,7 @@
       "timestamp": "2026-06-02T13:32:40.190Z",
       "error_message": "Missing error handling in unknown",
       "file": "apps/api/src/auth/auth.service.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -3862,7 +3862,7 @@
       "error_message": "Wrong reference: WorkspaceMemberRow should be InviteResult",
       "file": "apps/web/src/features/workspace-shell/components/StatusBar.vue",
       "root_cause": "Used \"WorkspaceMemberRow\" instead of \"InviteResult\"",
-      "fix": "Changed WorkspaceMemberRow → InviteResult",
+      "fix": "Changed WorkspaceMemberRow \u2192 InviteResult",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -3877,8 +3877,8 @@
       "timestamp": "2026-06-02T13:34:44.768Z",
       "error_message": "CSS fix: onSuccess",
       "file": "apps/web/src/features/workspace-shell/components/StatusBar.vue",
-      "root_cause": "onSuccess: (m: WorkspaceMemberRow) => { → (res: InviteResult) => {",
-      "fix": "Changed onSuccess: (m: WorkspaceMemberRow) => { → (res: InviteResult) => {",
+      "root_cause": "onSuccess: (m: WorkspaceMemberRow) => { \u2192 (res: InviteResult) => {",
+      "fix": "Changed onSuccess: (m: WorkspaceMemberRow) => { \u2192 (res: InviteResult) => {",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -3941,7 +3941,7 @@
       "timestamp": "2026-06-02T15:33:24.140Z",
       "error_message": "Missing error handling in confirmRevoke",
       "file": "apps/web/src/features/settings/components/MembersSection.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -3957,7 +3957,7 @@
       "timestamp": "2026-06-02T15:34:33.414Z",
       "error_message": "Missing error handling in unknown",
       "file": "HANDOFF_WEB_INTEGRATION.md",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -4006,7 +4006,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/pinboards/PinboardsPage.vue",
       "root_cause": "4 lines replaced/restructured",
-      "fix": "Rewrote 35→42 lines (4 removed)",
+      "fix": "Rewrote 35\u219242 lines (4 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4022,7 +4022,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/settings/components/WorkspaceSection.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 5→14 lines (2 removed)",
+      "fix": "Rewrote 5\u219214 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4038,7 +4038,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/settings/components/MembersSection.vue",
       "root_cause": "4 lines replaced/restructured",
-      "fix": "Rewrote 8→26 lines (4 removed)",
+      "fix": "Rewrote 8\u219226 lines (4 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4069,8 +4069,8 @@
       "timestamp": "2026-06-02T19:17:14.262Z",
       "error_message": "CSS fix: counts",
       "file": "apps/web/src/features/pinboards/components/SessionFilters.vue",
-      "root_cause": "counts: { all: number → {",
-      "fix": "Changed counts: { all: number → {",
+      "root_cause": "counts: { all: number \u2192 {",
+      "fix": "Changed counts: { all: number \u2192 {",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -4149,8 +4149,8 @@
       "timestamp": "2026-06-02T20:24:14.427Z",
       "error_message": "CSS fix: hover",
       "file": "apps/web/src/features/workspace-shell/components/AppSidebar.vue",
-      "root_cause": "hover: bg-sidebar-accent hover:text-foreground' → bg-muted/60 hover:text-foreground\"",
-      "fix": "Changed hover: bg-sidebar-accent hover:text-foreground' → bg-muted/60 hover:text-foreground\"",
+      "root_cause": "hover: bg-sidebar-accent hover:text-foreground' \u2192 bg-muted/60 hover:text-foreground\"",
+      "fix": "Changed hover: bg-sidebar-accent hover:text-foreground' \u2192 bg-muted/60 hover:text-foreground\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -4182,7 +4182,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/prisma/schema.prisma",
       "root_cause": "4 lines replaced/restructured",
-      "fix": "Rewrote 6→7 lines (4 removed)",
+      "fix": "Rewrote 6\u21927 lines (4 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4229,8 +4229,8 @@
       "timestamp": "2026-06-03T00:24:05.560Z",
       "error_message": "CSS fix: hover",
       "file": "apps/web/src/features/workspace-shell/components/AppSidebar.vue",
-      "root_cause": "hover: scale-110 disabled:cursor-not-allowed disabled:opacity-50\" → scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50\"",
-      "fix": "Changed hover: scale-110 disabled:cursor-not-allowed disabled:opacity-50\" → scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50\"",
+      "root_cause": "hover: scale-110 disabled:cursor-not-allowed disabled:opacity-50\" \u2192 scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50\"",
+      "fix": "Changed hover: scale-110 disabled:cursor-not-allowed disabled:opacity-50\" \u2192 scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -4245,8 +4245,8 @@
       "timestamp": "2026-06-03T00:25:00.891Z",
       "error_message": "CSS fix: hover",
       "file": "apps/web/src/features/issue/components/PinDetail.vue",
-      "root_cause": "hover: bg-foreground/10 hover:text-foreground group-hover:opacity-100\" → bg-foreground/10 hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover:opacity-100\"",
-      "fix": "Changed hover: bg-foreground/10 hover:text-foreground group-hover:opacity-100\" → bg-foreground/10 hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover:opacity-100\"",
+      "root_cause": "hover: bg-foreground/10 hover:text-foreground group-hover:opacity-100\" \u2192 bg-foreground/10 hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover:opacity-100\"",
+      "fix": "Changed hover: bg-foreground/10 hover:text-foreground group-hover:opacity-100\" \u2192 bg-foreground/10 hover:text-foreground focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-hover:opacity-100\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -4262,7 +4262,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/issue/composables/useIssue.ts",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 11→16 lines (2 removed)",
+      "fix": "Rewrote 11\u219216 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4278,7 +4278,7 @@
       "error_message": "Significant refactor of ",
       "file": "HANDOFF_WEB_INTEGRATION.md",
       "root_cause": "11 lines replaced/restructured",
-      "fix": "Rewrote 23→39 lines (11 removed)",
+      "fix": "Rewrote 23\u219239 lines (11 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4294,7 +4294,7 @@
       "error_message": "Significant refactor of ",
       "file": "HANDOFF_WEB_INTEGRATION.md",
       "root_cause": "5 lines replaced/restructured",
-      "fix": "Rewrote 12→18 lines (5 removed)",
+      "fix": "Rewrote 12\u219218 lines (5 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4310,7 +4310,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/test/anchor.test.ts",
       "root_cause": "8 lines replaced/restructured",
-      "fix": "Rewrote 41→70 lines (8 removed)",
+      "fix": "Rewrote 41\u219270 lines (8 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4325,8 +4325,8 @@
       "timestamp": "2026-06-03T12:38:47.549Z",
       "error_message": "CSS fix: pin",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "pin: Pin): { x: number → Pin,",
-      "fix": "Changed pin: Pin): { x: number → Pin,",
+      "root_cause": "pin: Pin): { x: number \u2192 Pin,",
+      "fix": "Changed pin: Pin): { x: number \u2192 Pin,",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -4390,7 +4390,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 20→42 lines (3 removed)",
+      "fix": "Rewrote 20\u219242 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4437,7 +4437,7 @@
       "timestamp": "2026-06-03T14:55:19.200Z",
       "error_message": "Missing error handling in unknown",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -4476,7 +4476,7 @@
       "error_message": "Wrong operator: ?? should be &&",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "Used \"??\" instead of \"&&\"",
-      "fix": "Changed operator ?? → &&",
+      "fix": "Changed operator ?? \u2192 &&",
       "tags": [
         "auto-detected",
         "operator-fix",
@@ -4492,7 +4492,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 25→32 lines (6 removed) | Also: before +; sel +",
+      "fix": "Rewrote 25\u219232 lines (6 removed) | Also: before +; sel +",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4563,7 +4563,7 @@
       "timestamp": "2026-06-03T15:46:38.125Z",
       "error_message": "Cmd/Ctrl+Z in the pin composer description textarea does not undo changes made via the Bold/Italic/Link toolbar buttons.",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "wrapSelection() and confirmLink() mutated description.value directly. A direct v-model mutation bypasses the textarea native edit pipeline, so the change is never added to the browser undo stack — Cmd+Z then jumps over the toolbar action.",
+      "root_cause": "wrapSelection() and confirmLink() mutated description.value directly. A direct v-model mutation bypasses the textarea native edit pipeline, so the change is never added to the browser undo stack \u2014 Cmd+Z then jumps over the toolbar action.",
       "fix": "Route the replacement through document.execCommand(\"insertText\", false, replacement) after focusing the textarea and setSelectionRange(). execCommand goes through the native edit pipeline so the change IS undoable. Keep a direct-mutation fallback for older engines/unfocused state.",
       "tags": [
         "extension",
@@ -4584,7 +4584,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "5 lines replaced/restructured",
-      "fix": "Rewrote 13→17 lines (5 removed)",
+      "fix": "Rewrote 13\u219217 lines (5 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4599,8 +4599,8 @@
       "timestamp": "2026-06-03T16:09:56.343Z",
       "error_message": "CSS fix: banner",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "banner: pins aren't persisting. Shown for \"disconnected\" → pins aren't persisting. Only shown while an",
-      "fix": "Changed banner: pins aren't persisting. Shown for \"disconnected\" → pins aren't persisting. Only shown while an",
+      "root_cause": "banner: pins aren't persisting. Shown for \"disconnected\" \u2192 pins aren't persisting. Only shown while an",
+      "fix": "Changed banner: pins aren't persisting. Shown for \"disconnected\" \u2192 pins aren't persisting. Only shown while an",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -4631,7 +4631,7 @@
       "timestamp": "2026-06-03T16:10:50.327Z",
       "error_message": "Missing error handling in collectBrowserMetaFromPage",
       "file": "apps/extension/src/entrypoints/content.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -4648,7 +4648,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/content.ts",
       "root_cause": "7 lines replaced/restructured",
-      "fix": "Rewrote 11→4 lines (7 removed)",
+      "fix": "Rewrote 11\u21924 lines (7 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4679,8 +4679,8 @@
       "timestamp": "2026-06-03T16:34:16.838Z",
       "error_message": "CSS fix: pinlay",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
-      "root_cause": "pinlay: start-annotation\")) → hide-pins\"))",
-      "fix": "Changed pinlay: start-annotation\")) → hide-pins\"))",
+      "root_cause": "pinlay: start-annotation\")) \u2192 hide-pins\"))",
+      "fix": "Changed pinlay: start-annotation\")) \u2192 hide-pins\"))",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -4727,8 +4727,8 @@
       "timestamp": "2026-06-03T16:35:51.549Z",
       "error_message": "CSS fix: group-hover",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "group-hover: translate-x-0.5\" → text-foreground\"",
-      "fix": "Changed group-hover: translate-x-0.5\" → text-foreground\"",
+      "root_cause": "group-hover: translate-x-0.5\" \u2192 text-foreground\"",
+      "fix": "Changed group-hover: translate-x-0.5\" \u2192 text-foreground\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -4743,8 +4743,8 @@
       "timestamp": "2026-06-03T16:37:21.434Z",
       "error_message": "CSS fix: icon",
       "file": "apps/extension/src/components/launcher/LauncherItem.vue",
-      "root_cause": "icon: \"annotate\" | \"check\" | \"close\" | \"list\" → \"annotate\" | \"check\" | \"close\" | \"list\" | \"eye\" | \"eye-off\"",
-      "fix": "Changed icon: \"annotate\" | \"check\" | \"close\" | \"list\" → \"annotate\" | \"check\" | \"close\" | \"list\" | \"eye\" | \"eye-off\"",
+      "root_cause": "icon: \"annotate\" | \"check\" | \"close\" | \"list\" \u2192 \"annotate\" | \"check\" | \"close\" | \"list\" | \"eye\" | \"eye-off\"",
+      "fix": "Changed icon: \"annotate\" | \"check\" | \"close\" | \"list\" \u2192 \"annotate\" | \"check\" | \"close\" | \"list\" | \"eye\" | \"eye-off\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -4760,7 +4760,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 8→6 lines (6 removed) | Also: // Idle menu = Drop a pin + user/workspace chips +; // Annotation menu = Start / Cancel / View pins / ",
+      "fix": "Rewrote 8\u21926 lines (6 removed) | Also: // Idle menu = Drop a pin + user/workspace chips +; // Annotation menu = Start / Cancel / View pins / ",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4792,7 +4792,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 9→20 lines (3 removed)",
+      "fix": "Rewrote 9\u219220 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4807,7 +4807,7 @@
       "timestamp": "2026-06-04T17:33:08.298Z",
       "error_message": "Missing error handling in unknown",
       "file": "apps/extension/src/entrypoints/content.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -4855,8 +4855,8 @@
       "timestamp": "2026-06-04T17:35:03.467Z",
       "error_message": "CSS fix: type",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "type: next ? \"VIEW_PINS\" : \"HIDE_PINS\", → \"START_ANNOTATION\"",
-      "fix": "Changed type: next ? \"VIEW_PINS\" : \"HIDE_PINS\", → \"START_ANNOTATION\"",
+      "root_cause": "type: next ? \"VIEW_PINS\" : \"HIDE_PINS\", \u2192 \"START_ANNOTATION\"",
+      "fix": "Changed type: next ? \"VIEW_PINS\" : \"HIDE_PINS\", \u2192 \"START_ANNOTATION\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -4888,7 +4888,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
       "root_cause": "60 lines replaced/restructured",
-      "fix": "Rewrote 79→14 lines (60 removed)",
+      "fix": "Rewrote 79\u219214 lines (60 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4904,7 +4904,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
       "root_cause": "9 lines replaced/restructured",
-      "fix": "Rewrote 12→5 lines (9 removed)",
+      "fix": "Rewrote 12\u21925 lines (9 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4920,7 +4920,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
       "root_cause": "21 lines replaced/restructured",
-      "fix": "Rewrote 27→8 lines (21 removed)",
+      "fix": "Rewrote 27\u21928 lines (21 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -4935,7 +4935,7 @@
       "timestamp": "2026-06-04T20:45:25.922Z",
       "error_message": "Missing error handling in function",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -4951,7 +4951,7 @@
       "timestamp": "2026-06-04T20:45:46.531Z",
       "error_message": "Missing await",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "Async call without await — returned Promise instead of value",
+      "root_cause": "Async call without await \u2014 returned Promise instead of value",
       "fix": "Added await to async call",
       "tags": [
         "auto-detected",
@@ -4999,7 +4999,7 @@
       "timestamp": "2026-06-04T21:08:01.559Z",
       "error_message": "Missing error handling in function",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -5064,7 +5064,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/content.ts",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 7→14 lines (2 removed) | Also: const { normalizeUrl } = await import(\"@pinlay/sha; const pins = await api.getPagePins(normalizeUrl(lo",
+      "fix": "Rewrote 7\u219214 lines (2 removed) | Also: const { normalizeUrl } = await import(\"@pinlay/sha; const pins = await api.getPagePins(normalizeUrl(lo",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5079,7 +5079,7 @@
       "timestamp": "2026-06-05T08:57:02.443Z",
       "error_message": "Missing error handling in displayPath",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -5095,7 +5095,7 @@
       "timestamp": "2026-06-05T08:57:26.599Z",
       "error_message": "Missing await",
       "file": "apps/extension/src/entrypoints/content.ts",
-      "root_cause": "Async call without await — returned Promise instead of value",
+      "root_cause": "Async call without await \u2014 returned Promise instead of value",
       "fix": "Added await to async call",
       "tags": [
         "auto-detected",
@@ -5111,8 +5111,8 @@
       "timestamp": "2026-06-05T08:58:06.572Z",
       "error_message": "CSS fix: last",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "last: border-b-0\" → border-b-0 hover:bg-muted/30\"",
-      "fix": "Changed last: border-b-0\" → border-b-0 hover:bg-muted/30\"",
+      "root_cause": "last: border-b-0\" \u2192 border-b-0 hover:bg-muted/30\"",
+      "fix": "Changed last: border-b-0\" \u2192 border-b-0 hover:bg-muted/30\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -5127,7 +5127,7 @@
       "timestamp": "2026-06-05T09:00:22.075Z",
       "error_message": "Missing error handling in displayRowPath",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -5159,7 +5159,7 @@
       "timestamp": "2026-06-05T17:13:25.719Z",
       "error_message": "Missing await",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "Async call without await — returned Promise instead of value",
+      "root_cause": "Async call without await \u2014 returned Promise instead of value",
       "fix": "Added await to async call",
       "tags": [
         "auto-detected",
@@ -5191,7 +5191,7 @@
       "timestamp": "2026-06-05T17:14:02.988Z",
       "error_message": "Missing error handling in sortCurrentFirst",
       "file": "apps/extension/src/entrypoints/content.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -5208,7 +5208,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
       "root_cause": "13 lines replaced/restructured",
-      "fix": "Rewrote 18→33 lines (13 removed) | Also: () =>; (description.value.trim().length > 0 || images.val | Also: // ── Markdown editor helpers ────────────────────; const commentEl = ref<HTMLTextAreaElement | null>(",
+      "fix": "Rewrote 18\u219233 lines (13 removed) | Also: () =>; (description.value.trim().length > 0 || images.val | Also: // \u2500\u2500 Markdown editor helpers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500; const commentEl = ref<HTMLTextAreaElement | null>(",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5223,8 +5223,8 @@
       "timestamp": "2026-06-05T18:10:24.295Z",
       "error_message": "CSS fix: comment",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "comment: description.value.trim(), → htmlToMarkdown(description.value),",
-      "fix": "Changed comment: description.value.trim(), → htmlToMarkdown(description.value),",
+      "root_cause": "comment: description.value.trim(), \u2192 htmlToMarkdown(description.value),",
+      "fix": "Changed comment: description.value.trim(), \u2192 htmlToMarkdown(description.value),",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -5303,7 +5303,7 @@
       "timestamp": "2026-06-05T18:26:05.668Z",
       "error_message": "Missing error handling in confirmLink",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -5320,7 +5320,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 15→18 lines (3 removed)",
+      "fix": "Rewrote 15\u219218 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5336,7 +5336,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
       "root_cause": "12 lines replaced/restructured",
-      "fix": "Rewrote 12→3 lines (12 removed) | Also: <!-- Title + description (derived from the comment; Rendered via v-html so the composer's markdown (Bo",
+      "fix": "Rewrote 12\u21923 lines (12 removed) | Also: <!-- Title + description (derived from the comment; Rendered via v-html so the composer's markdown (Bo",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5351,7 +5351,7 @@
       "timestamp": "2026-06-05T19:30:21.774Z",
       "error_message": "Missing error handling in unknown",
       "file": "apps/api/src/annotation/annotation.service.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -5367,8 +5367,8 @@
       "timestamp": "2026-06-05T19:56:25.760Z",
       "error_message": "CSS fix: IDLE, Icon, hover",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "IDLE: only when we have NO identity at all (disconnected from a → not connected (or offline cold-start). Renders as the; Icon: name=\"conn === 'offline' ? 'refresh-cw' : 'log-in'\" → name=\"conn === 'offline' ? 'cloud-off' : 'plug'\"; hover: bg-primary-hover\" → bg-muted/50\"",
-      "fix": "Changed IDLE: only when we have NO identity at all (disconnected from a → not connected (or offline cold-start). Renders as the; Icon: name=\"conn === 'offline' ? 'refresh-cw' : 'log-in'\" → name=\"conn === 'offline' ? 'cloud-off' : 'plug'\"; hover: bg-primary-hover\" → bg-muted/50\"",
+      "root_cause": "IDLE: only when we have NO identity at all (disconnected from a \u2192 not connected (or offline cold-start). Renders as the; Icon: name=\"conn === 'offline' ? 'refresh-cw' : 'log-in'\" \u2192 name=\"conn === 'offline' ? 'cloud-off' : 'plug'\"; hover: bg-primary-hover\" \u2192 bg-muted/50\"",
+      "fix": "Changed IDLE: only when we have NO identity at all (disconnected from a \u2192 not connected (or offline cold-start). Renders as the; Icon: name=\"conn === 'offline' ? 'refresh-cw' : 'log-in'\" \u2192 name=\"conn === 'offline' ? 'cloud-off' : 'plug'\"; hover: bg-primary-hover\" \u2192 bg-muted/50\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -5384,7 +5384,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 4→6 lines (2 removed) | Also: <!-- Not-connected: a centered help link (the Conn; the hero button above, no need to repeat it down h | Also: function onLearnMore() {; chrome.tabs.create({ url: `${WEB_APP_URL}/` });",
+      "fix": "Rewrote 4\u21926 lines (2 removed) | Also: <!-- Not-connected: a centered help link (the Conn; the hero button above, no need to repeat it down h | Also: function onLearnMore() {; chrome.tabs.create({ url: `${WEB_APP_URL}/` });",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5415,7 +5415,7 @@
       "timestamp": "2026-06-05T20:10:13.260Z",
       "error_message": "Missing error handling in function",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -5447,8 +5447,8 @@
       "timestamp": "2026-06-05T20:30:02.680Z",
       "error_message": "CSS fix: severity, issueType",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "severity: \"medium\", → lastTemplateDefaults.value.severity,; issueType: \"visual\" as PinType, → lastTemplateDefaults.value.issueType,",
-      "fix": "Changed severity: \"medium\", → lastTemplateDefaults.value.severity,; issueType: \"visual\" as PinType, → lastTemplateDefaults.value.issueType,",
+      "root_cause": "severity: \"medium\", \u2192 lastTemplateDefaults.value.severity,; issueType: \"visual\" as PinType, \u2192 lastTemplateDefaults.value.issueType,",
+      "fix": "Changed severity: \"medium\", \u2192 lastTemplateDefaults.value.severity,; issueType: \"visual\" as PinType, \u2192 lastTemplateDefaults.value.issueType,",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -5464,7 +5464,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 12→5 lines (6 removed)",
+      "fix": "Rewrote 12\u21925 lines (6 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5479,8 +5479,8 @@
       "timestamp": "2026-06-05T20:35:40.726Z",
       "error_message": "CSS fix: severity, issueType",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "severity: lastTemplateDefaults.value.severity, → \"medium\",; issueType: lastTemplateDefaults.value.issueType, → \"visual\" as PinType,",
-      "fix": "Changed severity: lastTemplateDefaults.value.severity, → \"medium\",; issueType: lastTemplateDefaults.value.issueType, → \"visual\" as PinType,",
+      "root_cause": "severity: lastTemplateDefaults.value.severity, \u2192 \"medium\",; issueType: lastTemplateDefaults.value.issueType, \u2192 \"visual\" as PinType,",
+      "fix": "Changed severity: lastTemplateDefaults.value.severity, \u2192 \"medium\",; issueType: lastTemplateDefaults.value.issueType, \u2192 \"visual\" as PinType,",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -5527,7 +5527,7 @@
       "timestamp": "2026-06-05T21:11:36.047Z",
       "error_message": "Missing error handling in function",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -5543,7 +5543,7 @@
       "timestamp": "2026-06-05T21:18:05.587Z",
       "error_message": "Missing await",
       "file": "apps/api/src/issues/issues.controller.ts",
-      "root_cause": "Async call without await — returned Promise instead of value",
+      "root_cause": "Async call without await \u2014 returned Promise instead of value",
       "fix": "Added await to async call",
       "tags": [
         "auto-detected",
@@ -5607,8 +5607,8 @@
       "timestamp": "2026-06-05T21:52:58.032Z",
       "error_message": "CSS fix: md",
       "file": "apps/web/src/features/issue/IssuePage.vue",
-      "root_cause": "md: hidden\" title=\"More\"> → hidden\" />",
-      "fix": "Changed md: hidden\" title=\"More\"> → hidden\" />",
+      "root_cause": "md: hidden\" title=\"More\"> \u2192 hidden\" />",
+      "fix": "Changed md: hidden\" title=\"More\"> \u2192 hidden\" />",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -5639,7 +5639,7 @@
       "timestamp": "2026-06-07T09:41:50.599Z",
       "error_message": "Missing await",
       "file": "apps/web/src/App.vue",
-      "root_cause": "Async call without await — returned Promise instead of value",
+      "root_cause": "Async call without await \u2014 returned Promise instead of value",
       "fix": "Added await to async call",
       "tags": [
         "auto-detected",
@@ -5671,7 +5671,7 @@
       "timestamp": "2026-06-07T09:43:13.298Z",
       "error_message": "Missing await",
       "file": "apps/web/src/features/issue/IssuePage.vue",
-      "root_cause": "Async call without await — returned Promise instead of value",
+      "root_cause": "Async call without await \u2014 returned Promise instead of value",
       "fix": "Added await to async call",
       "tags": [
         "auto-detected",
@@ -5687,7 +5687,7 @@
       "timestamp": "2026-06-07T09:44:08.655Z",
       "error_message": "Missing await",
       "file": "apps/web/src/features/issue/components/PinDetail.vue",
-      "root_cause": "Async call without await — returned Promise instead of value",
+      "root_cause": "Async call without await \u2014 returned Promise instead of value",
       "fix": "Added await to async call",
       "tags": [
         "auto-detected",
@@ -5736,7 +5736,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/mail/mail.service.ts",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 20→38 lines (3 removed)",
+      "fix": "Rewrote 20\u219238 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5783,7 +5783,7 @@
       "timestamp": "2026-07-08T14:43:33.340Z",
       "error_message": "Missing await",
       "file": "HANDOFF_WEB_INTEGRATION.md",
-      "root_cause": "Async call without await — returned Promise instead of value",
+      "root_cause": "Async call without await \u2014 returned Promise instead of value",
       "fix": "Added await to async call",
       "tags": [
         "auto-detected",
@@ -5816,7 +5816,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/storage/local-upload.controller.ts",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 7→4 lines (2 removed)",
+      "fix": "Rewrote 7\u21924 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5831,7 +5831,7 @@
       "timestamp": "2026-07-08T15:59:12.447Z",
       "error_message": "Missing await",
       "file": "apps/api/src/main.ts",
-      "root_cause": "Async call without await — returned Promise instead of value",
+      "root_cause": "Async call without await \u2014 returned Promise instead of value",
       "fix": "Added await to async call",
       "tags": [
         "auto-detected",
@@ -5847,7 +5847,7 @@
       "timestamp": "2026-07-08T16:11:00.392Z",
       "error_message": "Missing error handling in avatarUploadUrl",
       "file": "apps/api/src/auth/auth.controller.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -5879,7 +5879,7 @@
       "timestamp": "2026-07-08T16:33:12.731Z",
       "error_message": "Missing error handling in save",
       "file": "apps/web/src/features/settings/components/ProfileSection.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -5896,7 +5896,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/settings/components/ProfileSection.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 12→41 lines (3 removed)",
+      "fix": "Rewrote 12\u219241 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5911,8 +5911,8 @@
       "timestamp": "2026-07-08T16:34:23.395Z",
       "error_message": "CSS fix: hue",
       "file": "apps/web/src/shared/components/UserAvatar.vue",
-      "root_cause": "hue: 262, size: 24 → 262, size: 24, avatarUrl: null",
-      "fix": "Changed hue: 262, size: 24 → 262, size: 24, avatarUrl: null",
+      "root_cause": "hue: 262, size: 24 \u2192 262, size: 24, avatarUrl: null",
+      "fix": "Changed hue: 262, size: 24 \u2192 262, size: 24, avatarUrl: null",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -5928,7 +5928,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/main.ts",
       "root_cause": "43 lines replaced/restructured",
-      "fix": "Rewrote 47→4 lines (43 removed)",
+      "fix": "Rewrote 47\u21924 lines (43 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5960,7 +5960,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/config/env.ts",
       "root_cause": "29 lines replaced/restructured",
-      "fix": "Rewrote 51→29 lines (29 removed)",
+      "fix": "Rewrote 51\u219229 lines (29 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -5975,7 +5975,7 @@
       "timestamp": "2026-07-09T13:09:44.972Z",
       "error_message": "Missing await",
       "file": "apps/api/src/storage/storage.service.ts",
-      "root_cause": "Async call without await — returned Promise instead of value",
+      "root_cause": "Async call without await \u2014 returned Promise instead of value",
       "fix": "Added await to async call",
       "tags": [
         "auto-detected",
@@ -6007,7 +6007,7 @@
       "timestamp": "2026-07-09T13:12:26.948Z",
       "error_message": "Missing error handling in createFromBuffer",
       "file": "apps/api/src/attachments/attachments.service.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -6056,7 +6056,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/lib/api.ts",
       "root_cause": "43 lines replaced/restructured",
-      "fix": "Rewrote 67→26 lines (43 removed)",
+      "fix": "Rewrote 67\u219226 lines (43 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6072,7 +6072,7 @@
       "error_message": "Significant refactor of ",
       "file": "HANDOFF_WEB_INTEGRATION.md",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 5→12 lines (2 removed) | Also: - **CORS policy** must allow `PUT` + `Content-Type; - Bucket → Object → responses should return `Cross",
+      "fix": "Rewrote 5\u219212 lines (2 removed) | Also: - **CORS policy** must allow `PUT` + `Content-Type; - Bucket \u2192 Object \u2192 responses should return `Cross",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6104,7 +6104,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/api/src/issues/issues.module.ts",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 12→14 lines (2 removed)",
+      "fix": "Rewrote 12\u219214 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6136,7 +6136,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/pins/PinsPage.vue",
       "root_cause": "11 lines replaced/restructured",
-      "fix": "Rewrote 17→5 lines (11 removed)",
+      "fix": "Rewrote 17\u21925 lines (11 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6168,7 +6168,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/workspace-shell/AppLayout.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 3→6 lines (2 removed)",
+      "fix": "Rewrote 3\u21926 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6199,8 +6199,8 @@
       "timestamp": "2026-07-11T20:56:42.786Z",
       "error_message": "CSS fix: SECTIONS",
       "file": "apps/web/src/features/settings/SettingsPage.vue",
-      "root_cause": "SECTIONS: SectionId[] = [ → SectionId[] = [\"profile\", \"team\", \"danger\"]",
-      "fix": "Changed SECTIONS: SectionId[] = [ → SectionId[] = [\"profile\", \"team\", \"danger\"]",
+      "root_cause": "SECTIONS: SectionId[] = [ \u2192 SectionId[] = [\"profile\", \"team\", \"danger\"]",
+      "fix": "Changed SECTIONS: SectionId[] = [ \u2192 SectionId[] = [\"profile\", \"team\", \"danger\"]",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6232,7 +6232,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/settings/SettingsPage.vue",
       "root_cause": "4 lines replaced/restructured",
-      "fix": "Rewrote 14→11 lines (4 removed)",
+      "fix": "Rewrote 14\u219211 lines (4 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6247,7 +6247,7 @@
       "timestamp": "2026-07-11T21:02:41.784Z",
       "error_message": "Missing error handling in dispatchRegionResult",
       "file": "apps/extension/src/entrypoints/content.ts",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -6279,8 +6279,8 @@
       "timestamp": "2026-07-11T21:06:55.140Z",
       "error_message": "CSS fix: pinlay",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "pinlay: capture-region\")) → capture-viewport\"))",
-      "fix": "Changed pinlay: capture-region\")) → capture-viewport\"))",
+      "root_cause": "pinlay: capture-region\")) \u2192 capture-viewport\"))",
+      "fix": "Changed pinlay: capture-region\")) \u2192 capture-viewport\"))",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6296,7 +6296,7 @@
       "error_message": "Wrong operator: === should be ||",
       "file": "apps/extension/src/components/annotation/AnnotationOverlay.vue",
       "root_cause": "Used \"===\" instead of \"||\"",
-      "fix": "Changed operator === → ||",
+      "fix": "Changed operator === \u2192 ||",
       "tags": [
         "auto-detected",
         "operator-fix",
@@ -6328,7 +6328,7 @@
       "error_message": "Significant refactor of ",
       "file": "packages/design/src/tokens.css",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 6→7 lines (6 removed)",
+      "fix": "Rewrote 6\u21927 lines (6 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6344,7 +6344,7 @@
       "error_message": "Significant refactor of ",
       "file": "packages/design/src/components/ui/button/index.ts",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 17→25 lines (2 removed)",
+      "fix": "Rewrote 17\u219225 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6359,8 +6359,8 @@
       "timestamp": "2026-07-11T21:32:19.530Z",
       "error_message": "CSS fix: file, focus-visible",
       "file": "packages/design/src/components/ui/input/Input.vue",
-      "root_cause": "file: text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', → text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground h-9 w-full min-w-0 rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-1 text-base transition-[color,box-shadow,background-color] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',; focus-visible: border-ring', → border-ring focus-visible:bg-background dark:focus-visible:bg-input/20',",
-      "fix": "Changed file: text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', → text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground h-9 w-full min-w-0 rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-1 text-base transition-[color,box-shadow,background-color] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',; focus-visible: border-ring', → border-ring focus-visible:bg-background dark:focus-visible:bg-input/20',",
+      "root_cause": "file: text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', \u2192 text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground h-9 w-full min-w-0 rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-1 text-base transition-[color,box-shadow,background-color] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',; focus-visible: border-ring', \u2192 border-ring focus-visible:bg-background dark:focus-visible:bg-input/20',",
+      "fix": "Changed file: text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', \u2192 text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground h-9 w-full min-w-0 rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-1 text-base transition-[color,box-shadow,background-color] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',; focus-visible: border-ring', \u2192 border-ring focus-visible:bg-background dark:focus-visible:bg-input/20',",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6375,8 +6375,8 @@
       "timestamp": "2026-07-11T21:32:23.455Z",
       "error_message": "CSS fix: placeholder",
       "file": "packages/design/src/components/ui/textarea/Textarea.vue",
-      "root_cause": "placeholder: text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\" → text-muted-foreground focus-visible:border-ring focus-visible:bg-background dark:focus-visible:bg-input/20 focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex field-sizing-content min-h-16 w-full rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-2 text-base transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\"",
-      "fix": "Changed placeholder: text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\" → text-muted-foreground focus-visible:border-ring focus-visible:bg-background dark:focus-visible:bg-input/20 focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex field-sizing-content min-h-16 w-full rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-2 text-base transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\"",
+      "root_cause": "placeholder: text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\" \u2192 text-muted-foreground focus-visible:border-ring focus-visible:bg-background dark:focus-visible:bg-input/20 focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex field-sizing-content min-h-16 w-full rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-2 text-base transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\"",
+      "fix": "Changed placeholder: text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\" \u2192 text-muted-foreground focus-visible:border-ring focus-visible:bg-background dark:focus-visible:bg-input/20 focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex field-sizing-content min-h-16 w-full rounded-lg border border-transparent bg-muted/60 dark:bg-input/40 px-3 py-2 text-base transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm', props.class)\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6392,7 +6392,7 @@
       "error_message": "Wrong reference: div should be compact",
       "file": "apps/web/src/features/workspace-shell/components/AppNavbar.vue",
       "root_cause": "Used \"div\" instead of \"compact\"",
-      "fix": "Changed div → compact",
+      "fix": "Changed div \u2192 compact",
       "tags": [
         "auto-detected",
         "wrong-reference",
@@ -6458,7 +6458,7 @@
       "error_message": "Significant refactor of ",
       "file": "packages/design/src/components/ui/tabs/TabsList.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 10→11 lines (2 removed)",
+      "fix": "Rewrote 10\u219211 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6473,8 +6473,8 @@
       "timestamp": "2026-07-12T14:01:44.808Z",
       "error_message": "CSS fix: focus",
       "file": "packages/design/src/components/ui/dropdown-menu/DropdownMenuItem.vue",
-      "root_cause": "focus: bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\" → bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex min-h-9 cursor-default items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\"",
-      "fix": "Changed focus: bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\" → bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex min-h-9 cursor-default items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\"",
+      "root_cause": "focus: bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\" \u2192 bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex min-h-9 cursor-default items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\"",
+      "fix": "Changed focus: bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\" \u2192 bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*=\\'text-\\'])]:text-muted-foreground relative flex min-h-9 cursor-default items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', props.class)\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6521,8 +6521,8 @@
       "timestamp": "2026-07-12T14:03:07.789Z",
       "error_message": "CSS fix: _svg",
       "file": "packages/design/src/components/ui/select/SelectTrigger.vue",
-      "root_cause": "_svg: not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', → not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-muted/60 hover:bg-muted dark:bg-input/40 dark:hover:bg-input/60 flex w-fit items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4',",
-      "fix": "Changed _svg: not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', → not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-muted/60 hover:bg-muted dark:bg-input/40 dark:hover:bg-input/60 flex w-fit items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4',",
+      "root_cause": "_svg: not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', \u2192 not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-muted/60 hover:bg-muted dark:bg-input/40 dark:hover:bg-input/60 flex w-fit items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4',",
+      "fix": "Changed _svg: not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4', \u2192 not([class*=\\'text-\\'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-muted/60 hover:bg-muted dark:bg-input/40 dark:hover:bg-input/60 flex w-fit items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow,background-color] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\\'size-\\'])]:size-4',",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6537,8 +6537,8 @@
       "timestamp": "2026-07-12T14:03:27.451Z",
       "error_message": "CSS fix: --font-sans, --font-mono",
       "file": "packages/design/src/tokens.css",
-      "root_cause": "--font-sans: \"Geist\", ui-sans-serif, system-ui, -apple-system, sans-serif → -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui,; --font-mono: \"Geist Mono\", ui-monospace, \"SF Mono\", Menlo, monospace → ui-monospace, \"SF Mono\", \"Geist Mono\", Menlo, Consolas,",
-      "fix": "Changed --font-sans: \"Geist\", ui-sans-serif, system-ui, -apple-system, sans-serif → -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui,; --font-mono: \"Geist Mono\", ui-monospace, \"SF Mono\", Menlo, monospace → ui-monospace, \"SF Mono\", \"Geist Mono\", Menlo, Consolas,",
+      "root_cause": "--font-sans: \"Geist\", ui-sans-serif, system-ui, -apple-system, sans-serif \u2192 -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui,; --font-mono: \"Geist Mono\", ui-monospace, \"SF Mono\", Menlo, monospace \u2192 ui-monospace, \"SF Mono\", \"Geist Mono\", Menlo, Consolas,",
+      "fix": "Changed --font-sans: \"Geist\", ui-sans-serif, system-ui, -apple-system, sans-serif \u2192 -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui,; --font-mono: \"Geist Mono\", ui-monospace, \"SF Mono\", Menlo, monospace \u2192 ui-monospace, \"SF Mono\", \"Geist Mono\", Menlo, Consolas,",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6554,7 +6554,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/shared/components/PinPill.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 7→7 lines (2 removed)",
+      "fix": "Rewrote 7\u21927 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6570,7 +6570,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/index.html",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 9→5 lines (6 removed) | Also: <link rel=\"preconnect\" href=\"https://fonts.googlea; <link rel=\"preconnect\" href=\"https://fonts.gstatic",
+      "fix": "Rewrote 9\u21925 lines (6 removed) | Also: <link rel=\"preconnect\" href=\"https://fonts.googlea; <link rel=\"preconnect\" href=\"https://fonts.gstatic",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6586,7 +6586,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/pins/PinsPage.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 9→10 lines (2 removed)",
+      "fix": "Rewrote 9\u219210 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6617,8 +6617,8 @@
       "timestamp": "2026-07-12T14:18:38.679Z",
       "error_message": "CSS fix: Brand",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "Brand: size=\"20\" /> → size=\"18\" class=\"shrink-0 text-primary\" />",
-      "fix": "Changed Brand: size=\"20\" /> → size=\"18\" class=\"shrink-0 text-primary\" />",
+      "root_cause": "Brand: size=\"20\" /> \u2192 size=\"18\" class=\"shrink-0 text-primary\" />",
+      "fix": "Changed Brand: size=\"20\" /> \u2192 size=\"18\" class=\"shrink-0 text-primary\" />",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6633,8 +6633,8 @@
       "timestamp": "2026-07-12T14:21:01.072Z",
       "error_message": "CSS fix: hover, focus-within",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "hover: bg-card hover:text-foreground\" → bg-muted hover:text-foreground\"; focus-within: ring-1 focus-within:ring-ring\"> → border-ring focus-within:bg-background\">",
-      "fix": "Changed hover: bg-card hover:text-foreground\" → bg-muted hover:text-foreground\"; focus-within: ring-1 focus-within:ring-ring\"> → border-ring focus-within:bg-background\">",
+      "root_cause": "hover: bg-card hover:text-foreground\" \u2192 bg-muted hover:text-foreground\"; focus-within: ring-1 focus-within:ring-ring\"> \u2192 border-ring focus-within:bg-background\">",
+      "fix": "Changed hover: bg-card hover:text-foreground\" \u2192 bg-muted hover:text-foreground\"; focus-within: ring-1 focus-within:ring-ring\"> \u2192 border-ring focus-within:bg-background\">",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6682,7 +6682,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/shared/lib/api.ts",
       "root_cause": "37 lines replaced/restructured",
-      "fix": "Rewrote 44→8 lines (37 removed) | Also: /** Workspace-scoped grouping of issues. */; export interface Board {",
+      "fix": "Rewrote 44\u21928 lines (37 removed) | Also: /** Workspace-scoped grouping of issues. */; export interface Board {",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6698,7 +6698,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/pins/PinDetailPage.vue",
       "root_cause": "3 lines replaced/restructured",
-      "fix": "Rewrote 12→15 lines (3 removed)",
+      "fix": "Rewrote 12\u219215 lines (3 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6729,8 +6729,8 @@
       "timestamp": "2026-07-12T14:56:16.572Z",
       "error_message": "CSS fix: Favicon",
       "file": "apps/web/src/features/pins/PinsPage.vue",
-      "root_cause": "Favicon: label=\"(hostPath(pin.pageUrl).host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\" → label=\"(session.host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\"",
-      "fix": "Changed Favicon: label=\"(hostPath(pin.pageUrl).host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\" → label=\"(session.host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\"",
+      "root_cause": "Favicon: label=\"(hostPath(pin.pageUrl).host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\" \u2192 label=\"(session.host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\"",
+      "fix": "Changed Favicon: label=\"(hostPath(pin.pageUrl).host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\" \u2192 label=\"(session.host.replace(/^www\\./, '')[0] ?? '?').toUpperCase()\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6761,8 +6761,8 @@
       "timestamp": "2026-07-12T18:48:34.776Z",
       "error_message": "CSS fix: control",
       "file": "packages/design/src/components/ui/tabs/TabsList.vue",
-      "root_cause": "control: recessed muted track, raised thumb (below). → recessed pill track, raised pill thumb (below).",
-      "fix": "Changed control: recessed muted track, raised thumb (below). → recessed pill track, raised pill thumb (below).",
+      "root_cause": "control: recessed muted track, raised thumb (below). \u2192 recessed pill track, raised pill thumb (below).",
+      "fix": "Changed control: recessed muted track, raised thumb (below). \u2192 recessed pill track, raised pill thumb (below).",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6777,8 +6777,8 @@
       "timestamp": "2026-07-12T18:49:21.626Z",
       "error_message": "CSS fix: id, actor, name",
       "file": "apps/web/src/features/pins/components/ActivityThread.vue",
-      "root_cause": "id: props.pin.author?.id ?? props.pin.assignee.id, → `${props.pin.id; actor: { → { id: actor.id, name: actor.name, avatarUrl: actor.avatarUrl; name: props.pin.author?.name ?? props.pin.assignee.name, → props.pin.author.name,",
-      "fix": "Changed id: props.pin.author?.id ?? props.pin.assignee.id, → `${props.pin.id; actor: { → { id: actor.id, name: actor.name, avatarUrl: actor.avatarUrl; name: props.pin.author?.name ?? props.pin.assignee.name, → props.pin.author.name,",
+      "root_cause": "id: props.pin.author?.id ?? props.pin.assignee.id, \u2192 `${props.pin.id; actor: { \u2192 { id: actor.id, name: actor.name, avatarUrl: actor.avatarUrl; name: props.pin.author?.name ?? props.pin.assignee.name, \u2192 props.pin.author.name,",
+      "fix": "Changed id: props.pin.author?.id ?? props.pin.assignee.id, \u2192 `${props.pin.id; actor: { \u2192 { id: actor.id, name: actor.name, avatarUrl: actor.avatarUrl; name: props.pin.author?.name ?? props.pin.assignee.name, \u2192 props.pin.author.name,",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6793,7 +6793,7 @@
       "timestamp": "2026-07-12T18:51:24.959Z",
       "error_message": "Missing error handling in unknown",
       "file": "apps/web/src/features/pins/components/ScreenshotViewer.vue",
-      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
       "fix": "Added try/catch block",
       "tags": [
         "auto-detected",
@@ -6825,8 +6825,8 @@
       "timestamp": "2026-07-12T18:52:22.625Z",
       "error_message": "CSS fix: ScreenshotViewer",
       "file": "apps/web/src/features/pins/PinDetailPage.vue",
-      "root_cause": "ScreenshotViewer: pin=\"pin\" /> → pin=\"pin\" :page-url=\"pin.pageUrl\" />",
-      "fix": "Changed ScreenshotViewer: pin=\"pin\" /> → pin=\"pin\" :page-url=\"pin.pageUrl\" />",
+      "root_cause": "ScreenshotViewer: pin=\"pin\" /> \u2192 pin=\"pin\" :page-url=\"pin.pageUrl\" />",
+      "fix": "Changed ScreenshotViewer: pin=\"pin\" /> \u2192 pin=\"pin\" :page-url=\"pin.pageUrl\" />",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6841,8 +6841,8 @@
       "timestamp": "2026-07-12T18:52:58.890Z",
       "error_message": "CSS fix: hover",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
-      "root_cause": "hover: bg-muted\" → bg-muted active:scale-95\"",
-      "fix": "Changed hover: bg-muted\" → bg-muted active:scale-95\"",
+      "root_cause": "hover: bg-muted\" \u2192 bg-muted active:scale-95\"",
+      "fix": "Changed hover: bg-muted\" \u2192 bg-muted active:scale-95\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6858,7 +6858,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/web/src/features/pins/PinDetailPage.vue",
       "root_cause": "2 lines replaced/restructured",
-      "fix": "Rewrote 6→8 lines (2 removed)",
+      "fix": "Rewrote 6\u21928 lines (2 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6890,7 +6890,7 @@
       "error_message": "Significant refactor of ",
       "file": "packages/design/src/components/ui/button/index.ts",
       "root_cause": "6 lines replaced/restructured",
-      "fix": "Rewrote 8→11 lines (6 removed)",
+      "fix": "Rewrote 8\u219211 lines (6 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -6937,8 +6937,8 @@
       "timestamp": "2026-07-13T07:56:13.929Z",
       "error_message": "CSS fix: disabled",
       "file": "packages/design/src/components/ui/select/SelectTrigger.vue",
-      "root_cause": "disabled: cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 → cursor-not-allowed disabled:opacity-50 data-[size=default]:h-10 data-[size=sm]:h-9",
-      "fix": "Changed disabled: cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 → cursor-not-allowed disabled:opacity-50 data-[size=default]:h-10 data-[size=sm]:h-9",
+      "root_cause": "disabled: cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 \u2192 cursor-not-allowed disabled:opacity-50 data-[size=default]:h-10 data-[size=sm]:h-9",
+      "fix": "Changed disabled: cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 \u2192 cursor-not-allowed disabled:opacity-50 data-[size=default]:h-10 data-[size=sm]:h-9",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6953,8 +6953,8 @@
       "timestamp": "2026-07-13T07:57:14.356Z",
       "error_message": "CSS fix: focus-visible, dark",
       "file": "packages/design/src/components/ui/switch/Switch.vue",
-      "root_cause": "focus-visible: border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50', → border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-6 w-10 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',; dark: data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0')\" → data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-5 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-out data-[state=checked]:translate-x-[18px] data-[state=unchecked]:translate-x-0.5')\"",
-      "fix": "Changed focus-visible: border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50', → border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-6 w-10 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',; dark: data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0')\" → data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-5 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-out data-[state=checked]:translate-x-[18px] data-[state=unchecked]:translate-x-0.5')\"",
+      "root_cause": "focus-visible: border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50', \u2192 border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-6 w-10 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',; dark: data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0')\" \u2192 data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-5 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-out data-[state=checked]:translate-x-[18px] data-[state=unchecked]:translate-x-0.5')\"",
+      "fix": "Changed focus-visible: border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50', \u2192 border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-6 w-10 shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50',; dark: data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-4 rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0')\" \u2192 data-[state=unchecked]:bg-foreground dark:data-[state=checked]:bg-primary-foreground pointer-events-none block size-5 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-out data-[state=checked]:translate-x-[18px] data-[state=unchecked]:translate-x-0.5')\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -6970,7 +6970,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
       "root_cause": "4 lines replaced/restructured",
-      "fix": "Rewrote 10→10 lines (4 removed)",
+      "fix": "Rewrote 10\u219210 lines (4 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -7001,8 +7001,8 @@
       "timestamp": "2026-07-13T08:05:46.118Z",
       "error_message": "CSS fix: hover",
       "file": "apps/extension/src/entrypoints/popup/App.vue",
-      "root_cause": "hover: text-foreground\" → bg-destructive/10 hover:text-destructive\"",
-      "fix": "Changed hover: text-foreground\" → bg-destructive/10 hover:text-destructive\"",
+      "root_cause": "hover: text-foreground\" \u2192 bg-destructive/10 hover:text-destructive\"",
+      "fix": "Changed hover: text-foreground\" \u2192 bg-destructive/10 hover:text-destructive\"",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -7034,7 +7034,7 @@
       "error_message": "Significant refactor of ",
       "file": "apps/extension/src/components/annotation/AnnotationPinComposer.vue",
       "root_cause": "9 lines replaced/restructured",
-      "fix": "Rewrote 14→4 lines (9 removed)",
+      "fix": "Rewrote 14\u21924 lines (9 removed)",
       "tags": [
         "auto-detected",
         "refactor",
@@ -7049,8 +7049,8 @@
       "timestamp": "2026-07-13T08:15:09.820Z",
       "error_message": "CSS fix: backgroundColor, borderColor, boxShadow",
       "file": "apps/extension/src/components/launcher/FloatingLauncher.vue",
-      "root_cause": "backgroundColor: \"#ffffff\", → \"rgba(255,255,255,0.85)\",; borderColor: \"var(--border)\", → \"rgba(0,0,0,0.06)\",; boxShadow: \"0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08)\", → \"0 2px 8px rgba(0,0,0,0.08), 0 10px 28px rgba(0,0,0,0.12)\",",
-      "fix": "Changed backgroundColor: \"#ffffff\", → \"rgba(255,255,255,0.85)\",; borderColor: \"var(--border)\", → \"rgba(0,0,0,0.06)\",; boxShadow: \"0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08)\", → \"0 2px 8px rgba(0,0,0,0.08), 0 10px 28px rgba(0,0,0,0.12)\",",
+      "root_cause": "backgroundColor: \"#ffffff\", \u2192 \"rgba(255,255,255,0.85)\",; borderColor: \"var(--border)\", \u2192 \"rgba(0,0,0,0.06)\",; boxShadow: \"0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08)\", \u2192 \"0 2px 8px rgba(0,0,0,0.08), 0 10px 28px rgba(0,0,0,0.12)\",",
+      "fix": "Changed backgroundColor: \"#ffffff\", \u2192 \"rgba(255,255,255,0.85)\",; borderColor: \"var(--border)\", \u2192 \"rgba(0,0,0,0.06)\",; boxShadow: \"0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08)\", \u2192 \"0 2px 8px rgba(0,0,0,0.08), 0 10px 28px rgba(0,0,0,0.12)\",",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -7065,8 +7065,8 @@
       "timestamp": "2026-07-13T08:17:00.083Z",
       "error_message": "CSS fix: hover",
       "file": "apps/extension/src/components/annotation/AnnotationPin.vue",
-      "root_cause": "hover: scale-110', → scale-110 active:scale-95',",
-      "fix": "Changed hover: scale-110', → scale-110 active:scale-95',",
+      "root_cause": "hover: scale-110', \u2192 scale-110 active:scale-95',",
+      "fix": "Changed hover: scale-110', \u2192 scale-110 active:scale-95',",
       "tags": [
         "auto-detected",
         "style-fix",
@@ -7091,6 +7091,488 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-13T08:19:36.437Z"
+    },
+    {
+      "id": "bug-441",
+      "timestamp": "2026-07-13T12:14:19.132Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue",
+      "root_cause": "Had \"flex size-5 items-center justify-center rounded b",
+      "fix": "Changed to \"flex size-5 items-center justify-center rounded-f",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-07-13T12:14:21.196Z"
+    },
+    {
+      "id": "bug-442",
+      "timestamp": "2026-07-13T12:14:27.406Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Had \"flex h-6 w-6 shrink-0 items-center justify-center",
+      "fix": "Changed to \"flex h-6 w-6 shrink-0 items-center justify-center",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T12:14:27.406Z"
+    },
+    {
+      "id": "bug-443",
+      "timestamp": "2026-07-13T12:14:43.711Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "5 lines replaced/restructured",
+      "fix": "Rewrote 12\u219216 lines (5 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T12:14:43.711Z"
+    },
+    {
+      "id": "bug-444",
+      "timestamp": "2026-07-13T12:15:15.056Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T12:15:15.056Z"
+    },
+    {
+      "id": "bug-445",
+      "timestamp": "2026-07-13T12:15:43.234Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/popup/main.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T12:15:43.234Z"
+    },
+    {
+      "id": "bug-446",
+      "timestamp": "2026-07-13T12:16:15.978Z",
+      "error_message": "CSS fix: img",
+      "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "root_cause": "img: src=\"primaryAttachment.dataUrl\" \u2192 src=\"a.dataUrl\"",
+      "fix": "Changed img: src=\"primaryAttachment.dataUrl\" \u2192 src=\"a.dataUrl\"",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T12:16:15.978Z"
+    },
+    {
+      "id": "bug-447",
+      "timestamp": "2026-07-13T17:28:19.360Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/App.vue",
+      "root_cause": "Had \"4000\"",
+      "fix": "Changed to \"60000\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T17:28:19.360Z"
+    },
+    {
+      "id": "bug-448",
+      "timestamp": "2026-07-13T20:17:12.877Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/App.vue",
+      "root_cause": "Had \"60000\"",
+      "fix": "Changed to \"4000\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T20:17:12.877Z"
+    },
+    {
+      "id": "bug-449",
+      "timestamp": "2026-07-13T22:08:12.097178+00:00",
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T22:08:12.097178+00:00",
+      "error_message": "Toast UI shows solid green rich-colors banner with floating close X instead of frosted iOS capsule",
+      "file": "apps/web/src/App.vue",
+      "root_cause": "vue-sonner `rich-colors` + `close-button` props override the custom .pl-toast styles; sonner's [data-styled] rules also tie specificity with [data-sonner-toast].pl-toast and load later, beating radius/bg/padding",
+      "fix": "Removed rich-colors and close-button props; prefixed all toast CSS rules with [data-sonner-toaster] to win specificity",
+      "tags": [
+        "toast",
+        "vue-sonner",
+        "css-specificity",
+        "web"
+      ]
+    },
+    {
+      "id": "bug-450",
+      "timestamp": "2026-07-13T22:08:12.097178+00:00",
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T22:08:12.097178+00:00",
+      "error_message": "Extension popup window height doesn't shrink when returning from Pins sub-view; sub-view can appear blank/clipped",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "syncPopupHeight deferred the body-height write through requestAnimationFrame, which Chrome throttles inside extension popups, and only pinned <body> (Chrome sizes the popup off <html>); height sync also relied solely on ResizeObserver delivery which is tied to render frames",
+      "fix": "Made syncPopupHeight synchronous, pinned both documentElement and body, and added watch(view) -> nextTick sync so main<->pins swaps resize deterministically; verified in a browser harness with stubbed chrome APIs (heights 481<->379)",
+      "tags": [
+        "extension",
+        "popup",
+        "resize",
+        "chrome-quirk",
+        "rAF-throttling"
+      ]
+    },
+    {
+      "id": "bug-451",
+      "timestamp": "2026-07-13T22:08:12.097178+00:00",
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T22:08:12.097178+00:00",
+      "error_message": "Pins sub-view shows nothing while page probe in flight ('I don't know if it's loading')",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Sub-view had no loading state; with an empty list + pinsLoading it rendered only the empty-state text (or nothing meaningful) during fetch",
+      "fix": "Added 3-row skeleton when pinsLoading && list empty; also reset popupVisibleCount in openPinsView as the pagination comment already promised",
+      "tags": [
+        "extension",
+        "popup",
+        "loading-state"
+      ]
+    },
+    {
+      "id": "bug-452",
+      "timestamp": "2026-07-13T22:08:12.097178+00:00",
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T22:08:12.097178+00:00",
+      "error_message": "Pin detail popover screenshot too large; second attachment hidden behind +N badge",
+      "file": "apps/extension/src/components/annotation/AnnotationPinDetail.vue",
+      "root_cause": "Attachment area rendered one full-width aspect-16/10 hero (~190px tall in a 300px popover) with extra shots collapsed into a +N badge",
+      "fix": "Single attachment renders h-24 capped preview; multiple render a 2-col grid of up to 4 thumbs (each opens lightbox at its index), +N overlay on 4th when >4; removed unused primaryAttachment computed",
+      "tags": [
+        "extension",
+        "pin-detail",
+        "attachments",
+        "ui"
+      ]
+    },
+    {
+      "id": "bug-453",
+      "timestamp": "2026-07-13T22:08:12.097178+00:00",
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T22:08:12.097178+00:00",
+      "error_message": "Anonymous minified Vue render error in popup.html (chunks/popup-*.js) impossible to attribute",
+      "file": "apps/extension/src/entrypoints/popup/main.ts",
+      "root_cause": "No app-level errorHandler, so chrome://extensions only records Vue-internal frames (logError/handleError/renderComponentRoot); could not reproduce the throw in a chrome-stubbed harness with realistic data",
+      "fix": "Added app.config.errorHandler logging component name + lifecycle phase; hardened ws.plan/memberCount with fallbacks in the workspace switcher render",
+      "tags": [
+        "extension",
+        "popup",
+        "error-handling",
+        "vue"
+      ]
+    },
+    {
+      "id": "bug-454",
+      "timestamp": "2026-07-13T22:08:12.097178+00:00",
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T22:08:12.097178+00:00",
+      "error_message": "Workspace dropdown avatars square (rounded/rounded-md) while rest of app uses circles",
+      "file": "apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue",
+      "root_cause": "Dropdown item and wide-trigger avatar spans used rounded/rounded-md from an earlier design pass",
+      "fix": "rounded-full on web switcher item + wide trigger and on extension popup switcher item",
+      "tags": [
+        "web",
+        "extension",
+        "avatar",
+        "uniformity"
+      ]
+    },
+    {
+      "id": "bug-455",
+      "timestamp": "2026-07-13T22:24:58.699Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/features/pins/PinsPage.vue",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 10\u219217 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T22:24:58.699Z"
+    },
+    {
+      "id": "bug-456",
+      "timestamp": "2026-07-13T22:26:55.581Z",
+      "error_message": "Missing error handling in syncPopupHeight",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T22:26:55.581Z"
+    },
+    {
+      "id": "bug-457",
+      "timestamp": "2026-07-13T23:22:28.672Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/popup-harness/chrome-stub.js",
+      "root_cause": "Code path had no error handling \u2014 exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "js"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T23:22:28.672Z"
+    },
+    {
+      "id": "bug-458",
+      "timestamp": "2026-07-13T23:24:48.612Z",
+      "error_message": "Function not marked async",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Function uses await but wasn't declared async",
+      "fix": "Added async modifier",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T23:24:48.612Z"
+    },
+    {
+      "id": "bug-459",
+      "timestamp": "2026-07-13T23:32:28.091625+00:00",
+      "error_message": "Popup window still too tall \u2014 height inherited from the document container, and the absolute workspace dropdown was invisible to the ResizeObserver",
+      "file": "apps/extension/src/entrypoints/popup/{index.html,App.vue}",
+      "root_cause": "Chrome sizes the popup window off the document's SCROLL size: absolute overflow (workspace dropdown, mid-transition content) inflated it and it never shrank; the dropdown also grows async when the workspace list arrives, which resizes nothing observable",
+      "fix": "overflow:hidden on html+body (pinned heights become the single size authority); syncPopupHeight uses max(offsetHeight, scrollHeight+8); watch([switcherOpen, workspaces, workspacesLoading]) syncs the dropdown lifecycle. Verified connected against real API via harness proxy: 358 -> 393 (open) -> 358 (closed)",
+      "tags": [
+        "extension",
+        "popup",
+        "resize",
+        "dropdown",
+        "chrome-quirk"
+      ],
+      "related_bugs": [
+        "bug-450"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T23:32:28.091625+00:00"
+    },
+    {
+      "id": "bug-460",
+      "timestamp": "2026-07-13T23:35:22.959Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/shared/components/Favicon.vue",
+      "root_cause": "Had \"inline-flex shrink-0 items-center justify-center ",
+      "fix": "Changed to \"inline-flex shrink-0 items-center justify-center ",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T23:35:22.959Z"
+    },
+    {
+      "id": "bug-461",
+      "timestamp": "2026-07-13T23:49:18.245Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/shared/lib/query-client.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-13T23:49:18.245Z"
+    },
+    {
+      "id": "bug-462",
+      "timestamp": "2026-07-14T00:00:53.996875+00:00",
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-14T00:00:53.996875+00:00",
+      "error_message": "Pins page shows eternal skeleton with no Try again when the inbox query fails",
+      "file": "apps/web/src/shared/lib/query-client.ts + apps/web/src/features/pins/PinsPage.vue",
+      "root_cause": "Two layers: (1) PinsPage had no isError branch at all; (2) TanStack default networkMode 'online' PAUSES a failing query (status stays 'pending', fetchStatus 'paused') when the browser looks offline, so isError never fires anywhere in the app",
+      "fix": "networkMode 'always' on queries+mutations in the shared query client; added error card with Try again (query.refetch) on PinsPage; verified by sabotaging fetch: 3 attempts -> error card -> restore -> Try again recovers",
+      "tags": [
+        "web",
+        "tanstack-query",
+        "networkMode",
+        "error-state",
+        "pins"
+      ]
+    },
+    {
+      "id": "bug-463",
+      "timestamp": "2026-07-14T00:00:53.996875+00:00",
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-14T00:00:53.996875+00:00",
+      "error_message": "Session header favicon square, not iOS-styled",
+      "file": "apps/web/src/shared/components/Favicon.vue",
+      "root_cause": "Favicon used rounded (4px) from pre-uniformity pass",
+      "fix": "rounded-full + bumped to 18px in the session header",
+      "tags": [
+        "web",
+        "favicon",
+        "uniformity"
+      ]
+    },
+    {
+      "id": "bug-464",
+      "timestamp": "2026-07-14T08:47:07.949Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-14T08:47:07.950Z"
+    },
+    {
+      "id": "bug-465",
+      "timestamp": "2026-07-14T08:47:12.020Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 5\u219212 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-14T08:47:12.020Z"
+    },
+    {
+      "id": "bug-466",
+      "timestamp": "2026-07-14T08:57:17.131493+00:00",
+      "error_message": "[pinlay popup] error in <App> during render: TypeError: k.value.filter is not a function (popup blanks when opening pins view)",
+      "file": "apps/extension/src/entrypoints/popup/App.vue",
+      "root_cause": "popupPinList.value assigned a non-array: a STALE content script (tab open since before an extension update) answers GET_PAGE_PIN_STATE with an older response shape, and that shape also got persisted into pl_pin_cache_v1; filteredPinList computed then throws in render, aborting the patch (the original blank-screen bug \u2014 errorHandler added earlier finally identified it)",
+      "fix": "Coerce defensively at both ingestion points: readPinCache rejects entries where pins isn't an array / counts.all isn't a number; fetchPinState uses Array.isArray(res.pins) and validates res.counts",
+      "tags": [
+        "extension",
+        "popup",
+        "stale-content-script",
+        "render-error",
+        "defensive-coding"
+      ],
+      "related_bugs": [
+        "bug-453"
+      ],
+      "occurrences": 1,
+      "last_seen": "2026-07-14T08:57:17.131493+00:00"
+    },
+    {
+      "id": "bug-467",
+      "timestamp": "2026-07-14T09:18:45.161Z",
+      "error_message": "Wrong return value",
+      "file": "apps/web/src/app/router.ts",
+      "root_cause": "Was returning: { name: \"login\", query: { redirect: to.fullPath } ",
+      "fix": "Now returns: { name: \"landing\" };",
+      "tags": [
+        "auto-detected",
+        "return-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-14T09:18:45.161Z"
+    },
+    {
+      "id": "bug-468",
+      "timestamp": "2026-07-14T09:28:24.233Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/features/landing/LandingPage.vue",
+      "root_cause": "Had \"absolute top-10 z-20 w-64 cursor-default rounded-",
+      "fix": "Changed to \"absolute top-10 z-20 w-64 cursor-default rounded-",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-14T09:28:24.233Z"
+    },
+    {
+      "id": "bug-469",
+      "timestamp": "2026-07-14T11:27:15",
+      "error_message": "bg-status-resolved / text-status-resolved utilities rendered transparent (resolved pin showed a blank white circle) on landing/auth pages",
+      "file": "apps/web/src/assets/main.css",
+      "root_cause": "The @theme inline block mapped --color-sev-* but never the --status-* tokens, so Tailwind v4 never generated bg/text/border-status-* utilities; previous usages all went through var(--status-resolved) directly and masked the gap.",
+      "fix": "Added --color-status-{open,progress,resolved,stale} mappings to the @theme inline block in apps/web/src/assets/main.css.",
+      "tags": [
+        "tailwind-v4",
+        "theme-tokens",
+        "status-colors",
+        "landing",
+        "auth"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-14T11:27:15"
     }
   ]
 }

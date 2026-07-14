@@ -83,6 +83,12 @@ async function readPinCache(url: string): Promise<PinCacheEntry | null> {
     const entry = r[key] as PinCacheEntry | undefined;
     if (!entry) return null;
     if (Date.now() - entry.ts > PIN_CACHE_MAX_AGE_MS) return null;
+    // Shape check — entries written by older builds (or a stale content
+    // script's response persisted here) must never poison the reactive
+    // state: `pins.filter is not a function` blanks the whole popup.
+    if (!Array.isArray(entry.pins) || typeof entry.counts?.all !== "number") {
+      return null;
+    }
     return entry;
   } catch {
     return null;
@@ -268,7 +274,6 @@ onUnmounted(() => {
   document.removeEventListener("pointerdown", onDocPointerDown);
   document.removeEventListener("keydown", onDocKeydown);
   popupSizeObserver?.disconnect();
-  if (popupResizeFrame) cancelAnimationFrame(popupResizeFrame);
 });
 
 onMounted(async () => {
@@ -428,8 +433,15 @@ async function fetchPinState() {
     if (res?.ok) {
       pagePinCount.value = res.viewablePinCount ?? 0;
       pageViewing.value = !!res.viewing;
-      pageCounts.value = res.counts ?? { open: 0, resolved: 0, all: 0 };
-      popupPinList.value = res.pins ?? [];
+      // A STALE content script (tab open since before an extension update)
+      // can answer with an older response shape — coerce, never trust.
+      // A non-array here threw `pins.filter is not a function` in render
+      // and blanked the popup.
+      pageCounts.value =
+        typeof res.counts?.all === "number"
+          ? res.counts
+          : { open: 0, resolved: 0, all: 0 };
+      popupPinList.value = Array.isArray(res.pins) ? res.pins : [];
       // Persist for stale-while-revalidate on the next popup open.
       if (activeTabUrl.value) {
         void writePinCache(activeTabUrl.value, {
@@ -481,6 +493,7 @@ async function toggleViewPins() {
 
 // Pins sub-view navigation.
 function openPinsView() {
+  popupVisibleCount.value = POPUP_PIN_PAGE_SIZE;
   view.value = "pins";
 }
 function closePinsView() {
@@ -499,15 +512,23 @@ function closePinsView() {
 // reflows.
 const popupRootEl = ref<HTMLDivElement | null>(null);
 let popupSizeObserver: ResizeObserver | null = null;
-let popupResizeFrame = 0;
+// Synchronous on purpose: rAF is aggressively throttled inside extension
+// popups, so a deferred write can land seconds late (or never) and the
+// window stays stuck at the previous view's height. ResizeObserver already
+// batches per layout pass, so writing inline is safe. Pin BOTH <html> and
+// <body> — Chrome sizes the popup window off the document element.
 function syncPopupHeight() {
   const el = popupRootEl.value;
   if (!el) return;
-  if (popupResizeFrame) cancelAnimationFrame(popupResizeFrame);
-  popupResizeFrame = requestAnimationFrame(() => {
-    const h = el.offsetHeight;
-    if (h > 0) document.body.style.height = `${h}px`;
-  });
+  // scrollHeight catches absolutely-positioned overflow (the workspace
+  // dropdown) that doesn't change the root's own box — html/body clamp
+  // overflow, so anything not measured here would be clipped.
+  const base = el.offsetHeight;
+  const h = el.scrollHeight > base ? el.scrollHeight + 8 : base;
+  if (h > 0) {
+    document.documentElement.style.height = `${h}px`;
+    document.body.style.height = `${h}px`;
+  }
 }
 watch(popupRootEl, (el) => {
   popupSizeObserver?.disconnect();
@@ -517,6 +538,18 @@ watch(popupRootEl, (el) => {
   popupSizeObserver.observe(el);
   // Run once now so the initial render sizes the popup to actual content
   // (the popup's initial paint can land taller than the eventual content).
+  void nextTick(() => syncPopupHeight());
+});
+// View swaps are the one transition that MUST resize correctly (main ↔ pins
+// differ by ~100px). Don't rely on ResizeObserver delivery for it — sync
+// right after the DOM settles.
+watch(view, () => {
+  void nextTick(() => syncPopupHeight());
+});
+// The dropdown is absolute — opening/closing it (or its async workspace list
+// arriving) never resizes the root, so the ResizeObserver won't fire. Sync
+// explicitly on each state that changes the dropdown's height.
+watch([switcherOpen, workspaces, workspacesLoading], () => {
   void nextTick(() => syncPopupHeight());
 });
 
@@ -697,8 +730,26 @@ function onConnect() {
 
       <!-- Pin rows — infinite scroll via the sentinel below. -->
       <div class="max-h-[360px] overflow-y-auto">
+        <!-- Skeleton rows while the page probe is still in flight — the
+             sub-view must never sit blank with no signal. -->
+        <div
+          v-if="pinsLoading && filteredPinList.length === 0"
+          aria-busy="true"
+        >
+          <div
+            v-for="i in 3"
+            :key="i"
+            class="flex items-start gap-3 border-b border-border px-3 py-2.5 last:border-b-0"
+          >
+            <span class="mt-0.5 h-6 w-6 shrink-0 animate-pulse rounded-full bg-muted" />
+            <span class="flex min-w-0 flex-1 flex-col gap-1.5 pt-1">
+              <span class="h-2.5 w-40 animate-pulse rounded bg-muted" />
+              <span class="h-2 w-16 animate-pulse rounded bg-muted/70" />
+            </span>
+          </div>
+        </div>
         <p
-          v-if="filteredPinList.length === 0"
+          v-else-if="filteredPinList.length === 0"
           class="px-3 py-10 text-center text-[12px] text-muted-foreground"
         >
           No {{ pinFilter === "all" ? "" : pinFilter + " " }}pins on this page.
@@ -1141,7 +1192,7 @@ function onConnect() {
                 @click="chooseWorkspace(ws)"
               >
                 <span
-                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded text-[10px] font-semibold uppercase"
+                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold uppercase"
                   :class="
                     ws.id === workspace?.id
                       ? 'bg-primary text-primary-foreground'
@@ -1160,10 +1211,11 @@ function onConnect() {
                     class="truncate text-[10px] leading-tight text-muted-foreground"
                   >
                     {{
-                      ws.plan.charAt(0).toUpperCase() + ws.plan.slice(1)
+                      (ws.plan ?? "free").charAt(0).toUpperCase() +
+                      (ws.plan ?? "free").slice(1)
                     }}
-                    · {{ ws.memberCount }} member{{
-                      ws.memberCount === 1 ? "" : "s"
+                    · {{ ws.memberCount ?? 1 }} member{{
+                      (ws.memberCount ?? 1) === 1 ? "" : "s"
                     }}
                   </span>
                 </span>

@@ -1,13 +1,22 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-13T08:23:00.315Z
-> Files: 266 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-14T11:54:59.347Z
+> Files: 271 tracked | Anatomy hits: 0 | Misses: 0
+
+## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/popup-harness/
+
+- `chrome-stub.js` — Harness: stub the chrome.* extension APIs so the built popup runs in a (~1524 tok)
+- `serve.py` — Static server + /api proxy so the popup harness is same-origin with the API. (~510 tok)
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
 
 - `clear-pins.ts` — Targeted clear: wipe every pin-related row so the storage refactor gets a (~290 tok)
 - `env-check.ts` (~66 tok)
 - `wake-db.ts` — p: main (~132 tok)
+
+## ../../../.cursor/projects/Users-apple-Documents-code-pinlay/assets/
+
+- `Screenshot_2026-07-14_at_11.39.04_AM-ce1200c7-117d-4e27-9e35-4f02ce054a89.png` (~11492 tok)
 
 ## ./
 
@@ -215,7 +224,7 @@
 - `AnnotationOverlay.vue` — Vue component (~13243 tok)
 - `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1192 tok)
 - `AnnotationPinComposer.vue` — Vue component (~10008 tok)
-- `AnnotationPinDetail.vue` — Vue component (~6737 tok)
+- `AnnotationPinDetail.vue` — Vue component (~6885 tok)
 
 ## apps/extension/src/components/capture/
 
@@ -242,9 +251,9 @@
 
 ## apps/extension/src/entrypoints/popup/
 
-- `App.vue` — Resolve identity + workspace in one pass. Distinguishes 401 (not connected) (~12238 tok)
-- `index.html` — pinlay (~138 tok)
-- `main.ts` (~47 tok)
+- `App.vue` — Resolve identity + workspace in (~12936 tok)
+- `index.html` — pinlay (~248 tok)
+- `main.ts` — Declares app (~154 tok)
 
 ## apps/extension/src/lib/
 
@@ -266,7 +275,7 @@
 - `package.json` — Node.js package manifest (~181 tok)
 - `package.json` — Node.js package manifest (~181 tok)
 - `vercel.json` (~78 tok)
-- `vite.config.ts` (~195 tok)
+- `vite.config.ts` (~256 tok)
 
 ## apps/web/ — `@pinlay/app` (the dashboard)
 
@@ -287,24 +296,24 @@
 
 ## apps/web/src/
 
-- `App.vue` — Vue: setup (~886 tok)
+- `App.vue` — Vue: setup (~880 tok)
 - `main.ts` (~197 tok)
 
 ## apps/web/src/app/
 
-- `router.ts` — Exports router (~1048 tok)
+- `router.ts` — Exports router (~1250 tok)
 
 ## apps/web/src/assets/
 
-- `main.css` — Styles: 9 rules, 45 vars (~1109 tok)
+- `main.css` — Styles: 9 rules, 49 vars (~1211 tok)
 
 ## apps/web/src/features/auth/
 
 - `AcceptInviteView.vue` — Public invite-accept page reached from an invite link (~2827 tok)
-- `AuthLayout.vue` — Vue: setup (~648 tok)
+- `AuthLayout.vue` — Auth shell (2026-07-14 v2) — the product demos itself. (~1775 tok)
 - `ConnectExtensionView.vue` — Vue: login, setup (~1240 tok)
-- `LoginView.vue` — Vue: signup, setup (~886 tok)
-- `SignupView.vue` — Vue: login, setup (~1079 tok)
+- `LoginView.vue` — Vue: signup, setup (~901 tok)
+- `SignupView.vue` — Vue: login, setup (~1034 tok)
 
 ## apps/web/src/features/dashboard/
 
@@ -341,6 +350,11 @@
 
 - `useIssue.ts` — Replace the selected pin's labels[]. Caller passes the full new list — (~1293 tok)
 
+## apps/web/src/features/landing/
+
+- `DemoPin.vue` — A live demo pin — marker + thread popover — anchored to a real element of (~897 tok)
+- `LandingPage.vue` — Landing page (2026-07-14, v2) — the product demos itself, dressed up. (~7446 tok)
+
 ## apps/web/src/features/pinboards/
 
 - `PinboardsPage.vue` — Vue: setup (~1970 tok)
@@ -361,7 +375,7 @@
 ## apps/web/src/features/pins/
 
 - `PinDetailPage.vue` — Pin detail — /p/:pinId. The dashboard's only detail surface after the (~4203 tok)
-- `PinsPage.vue` — The Pin Inbox — the dashboard's home (v2, 2026-07-10 iOS pass). (~4110 tok)
+- `PinsPage.vue` — The Pin Inbox — the dashboard's home (v2, 2026-07-10 iOS pass). (~4572 tok)
 - `SessionRedirect.vue` — Legacy /s/:id → /p/:pinId shim. Old links (extension "Open in dashboard", (~259 tok)
 
 ## apps/web/src/features/pins/components/
@@ -403,7 +417,7 @@
 - `AppNavbar.vue` — The app's single chrome element (2026-07-10 shell redesign): a frosted, (~1267 tok)
 - `AppSidebar.vue` — Sidebar — deliberately tiny. Two destinations (Pins, Settings) plus the (~1834 tok)
 - `StatusBar.vue` — Vue: settings, setup (~2749 tok)
-- `WorkspaceSwitcher.vue` — Navbar pill: initial + name + chevron, no plan line, quiet surface. (~2529 tok)
+- `WorkspaceSwitcher.vue` — Navbar pill: initial + name + chevron, no plan line, quiet surface. (~2531 tok)
 
 ## apps/web/src/pages/
 
@@ -414,7 +428,7 @@
 
 - `ConfirmDialog.vue` — Vue: setup (~623 tok)
 - `DetailsList.vue` — REUSABLE. Fetch ONE record by id via TanStack Query; owns loading/error+retry/empty/refetching. Slots: #default="{ data, refetch, isFetching }", #loading, #error, #empty. Use for issue/pin/workspace detail. (~1204 tok)
-- `Favicon.vue` — Vue: setup (~164 tok)
+- `Favicon.vue` — Vue: setup (~166 tok)
 - `PageHeader.vue` — Vue: setup (~244 tok)
 - `PinPill.vue` — Vue: setup (~128 tok)
 - `QueryList.vue` — REUSABLE. THE list primitive (TanStack Query). Owns loading/error+retry/empty/refetch/pagination. mode=load-more|infinite|paged. Slots: #default/#item/#loading/#error/#empty/#load-more/#pagination. Defaults to API page shape {items,total,limit,offset}. Use for ALL lists (issues, pins, members) — don't hand-roll loading/error. (~3810 tok)
@@ -441,7 +455,7 @@
 - `extension-bridge.ts` — Web → extension token handoff. (~508 tok)
 - `format.ts` — Compact relative time, e.g. "5m ago", "3h ago", "2d ago". (~198 tok)
 - `issue-display.ts` — Stable deterministic hue (0–359) derived from any string identifier. (~74 tok)
-- `query-client.ts` — Shared TanStack Query QueryClient (no-retry-4xx, retry network/5xx 2×). Registered via VueQueryPlugin in main.ts. (~302 tok)
+- `query-client.ts` — Shared TanStack Query client. (~554 tok)
 - `severity.ts` — The highest-priority severity present (drives the card's left bar). (~204 tok)
 - `toast.ts` — Thin wrapper over vue-sonner so the rest of the app imports one path. (~362 tok)
 

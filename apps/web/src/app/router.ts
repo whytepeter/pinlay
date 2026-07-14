@@ -4,6 +4,15 @@ import { useAuth } from "@/shared/composables/useAuth";
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
+    // ── Public marketing routes (no app shell) ─────────────────────────────
+    {
+      // The landing page. Signed-out visitors hitting `/` are sent here
+      // (see guard below); signed-in users hitting it are bounced to the app.
+      path: "/welcome",
+      name: "landing",
+      component: () => import("@/features/landing/LandingPage.vue"),
+      meta: { public: true },
+    },
     // ── Public auth routes (no app shell) ──────────────────────────────────
     {
       path: "/login",
@@ -94,9 +103,18 @@ router.beforeEach((to) => {
   const isPublic = to.meta.public === true;
 
   if (!isAuthenticated.value && !isPublic) {
+    // The bare app root greets signed-out visitors with the landing page;
+    // deep links (a shared /p/:id, /connect-extension) still go through
+    // login so the redirect survives.
+    if (to.name === "pins" && to.fullPath === "/") {
+      return { name: "landing" };
+    }
     return { name: "login", query: { redirect: to.fullPath } };
   }
-  if (isAuthenticated.value && (to.name === "login" || to.name === "signup")) {
+  if (
+    isAuthenticated.value &&
+    (to.name === "login" || to.name === "signup" || to.name === "landing")
+  ) {
     const r = to.query.redirect;
     const target = Array.isArray(r) ? r[0] : r;
     return typeof target === "string" && target.startsWith("/")

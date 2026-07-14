@@ -169,7 +169,7 @@ function submitCreate() {
         :class="collapsed ? 'justify-center' : ''"
       >
         <span
-          class="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary text-[11px] font-bold text-primary-foreground"
+          class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground"
           >{{ placeholderName.charAt(0).toUpperCase() }}</span
         >
         <span v-show="!collapsed" class="min-w-0 flex-1 whitespace-nowrap">
@@ -222,7 +222,7 @@ function submitCreate() {
           @select="(e: Event) => { e.preventDefault(); chooseWorkspace(w); }"
         >
           <span
-            class="flex size-5 items-center justify-center rounded bg-primary text-[10px] font-bold text-primary-foreground"
+            class="flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground"
             >{{ w.name.charAt(0).toUpperCase() }}</span
           >
           <span class="min-w-0 flex-1 truncate">{{ w.name }}</span>

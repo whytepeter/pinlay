@@ -16,7 +16,7 @@ const style = computed(() => ({
 
 <template>
   <span
-    class="inline-flex shrink-0 items-center justify-center rounded font-mono font-bold text-white"
+    class="inline-flex shrink-0 items-center justify-center rounded-full font-mono font-bold text-white"
     :style="style"
     >{{ label }}</span
   >

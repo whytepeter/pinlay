@@ -2752,3 +2752,138 @@
 | 09:20 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | 9→10 lines | ~43 |
 | 09:23 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | removed 16 lines | ~22 |
 | 2026-07-12 (4) | Uniformity round 3 (user feedback: controls too small, popup/launcher not iOS, screenshots tiny, editor links invisible). DESIGN PKG: Button base → rounded-full pill + sizes up a notch (sm h-9/36, default h-10/40, lg h-11/44, icons 9/10/11); Input h-10 px-3.5; SelectTrigger h-10/h-9; Switch → iOS 24×40 track w/ 20px shadow-sm thumb (translate-x-[18px]); NEW shared UserAvatar component in packages/design (moved from web, exported) — web imports sed'd to @pinlay/design, web copy deleted. TOAST: vue-sonner restyled to iOS banner — top-center frosted capsule (blur 20px, translucent card, rounded-full, tinted icon per type, no colored left bar). POPUP: Drop a pin → design Button lg; identity row → UserAvatar w/ me.avatarUrl (was hand-rolled blue oklch circle); footer Disconnect/Dashboard → design ghost Buttons; userInitial computed removed. COMPOSER: assignee trigger + dropdown items → UserAvatar w/ avatarUrl; attachment thumbs h-10→h-16 rounded-xl; contenteditable gains [&_a]:text-primary underline so inserted links look like links (user: "doesn't highlight that this is a link"). PIN MARKER: h-7 ring-2 deeper double shadow active:scale-95. PIN DETAIL POPOVER: attachment row (48px thumb + meta) → full-width aspect-16/10 preview w/ +N badge + eye hover; author initials circle → UserAvatar; authorInitials/authorBg removed. LAUNCHER: FAB idle → frosted white (rgba .85 + blur 12) w/ deeper shadow; menu :key="menuView" (stale-height fix on view switch); pin list max-h-300 + incremental render (20/page, @scroll near-bottom += 20, reset on view/filter change). MarkupToolbar already frosted — untouched. Verified in browser: inbox pill buttons/segmented/search all larger, host-only session title live, detail full-width screenshot. | packages/design/src/{components/{UserAvatar.vue,ui/{button,input,select,switch}}, index.ts}, apps/web/src/{App.vue, shared/components/UserAvatar.vue (deleted), features/**}, apps/extension/src/{entrypoints/popup/App.vue, components/{annotation/**, launcher/FloatingLauncher.vue}} | typecheck x2 + build; verified | ~5200 |
+| 09:56 | Session end: 24 writes across 9 files (index.ts, Input.vue, SelectTrigger.vue, Switch.vue, App.vue) | 7 reads | ~41612 tok |
+
+## Session: 2026-07-13 10:03
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 10:45 | Created ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/popup-harness/chrome-stub.js | — | ~1024 |
+| 10:49 | Edited ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/popup-harness/chrome-stub.js | inline fix | ~28 |
+| 13:13 | Edited apps/web/src/App.vue | removed 4 lines | ~3 |
+| 13:14 | Edited apps/web/src/App.vue | reduced (-10 lines) | ~20 |
+| 13:14 | Edited apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | "flex size-5 items-center " → "flex size-5 items-center " | ~35 |
+| 13:14 | Edited apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | "flex size-6 shrink-0 item" → "flex size-6 shrink-0 item" | ~37 |
+| 13:14 | Edited apps/extension/src/entrypoints/popup/App.vue | "flex h-6 w-6 shrink-0 ite" → "flex h-6 w-6 shrink-0 ite" | ~34 |
+| 13:14 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: purpose | ~187 |
+| 13:14 | Edited apps/extension/src/entrypoints/popup/App.vue | 3→2 lines | ~11 |
+| 13:15 | Edited apps/extension/src/entrypoints/popup/App.vue | modified openPinsView() | ~35 |
+| 13:15 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: last | ~254 |
+| 13:15 | Edited apps/extension/src/entrypoints/popup/App.vue | added nullish coalescing | ~82 |
+| 13:15 | Edited apps/extension/src/entrypoints/popup/main.ts | added optional chaining | ~116 |
+| 13:16 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | CSS: visible, 16 | ~487 |
+| 13:16 | Edited apps/extension/src/components/annotation/AnnotationPinDetail.vue | — | ~0 |
+| 17:56 | Edited apps/extension/src/entrypoints/popup/App.vue | expanded (+6 lines) | ~175 |
+| 18:28 | Edited apps/web/src/App.vue | "4000" → "60000" | ~6 |
+| 21:17 | Edited apps/web/src/App.vue | "60000" → "4000" | ~6 |
+| 18:40 | Fix round: toast de-greened (rich-colors/close-button removed, specificity bump), round workspace avatars (web+ext), popup height sync made synchronous html+body + watch(view), pins sub-view skeleton, pin-detail attachment grid, popup errorHandler | apps/web/src/App.vue, WorkspaceSwitcher.vue, apps/extension/src/entrypoints/popup/{App.vue,main.ts}, AnnotationPinDetail.vue | typecheck x2 + ext build; popup verified in chrome-stub harness, toast verified live | ~52000 |
+| 23:10 | Session end: 18 writes across 5 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 8 reads | ~41826 tok |
+| 23:24 | Edited apps/web/src/features/pins/PinsPage.vue | 5→8 lines | ~32 |
+| 23:24 | Edited apps/web/src/features/pins/PinsPage.vue | CSS: UserAvatar, TooltipContent | ~208 |
+| 23:26 | Edited apps/extension/src/entrypoints/popup/index.html | 2→7 lines | ~113 |
+| 23:26 | Edited apps/extension/src/entrypoints/popup/index.html | 1→4 lines | ~28 |
+| 23:26 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: 8 | ~134 |
+| 23:26 | Edited apps/extension/src/entrypoints/popup/App.vue | 3→8 lines | ~71 |
+| 00:15 | Created ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/popup-harness/serve.py | — | ~510 |
+| 00:22 | Edited ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/popup-harness/chrome-stub.js | added error handling | ~286 |
+| 00:24 | Edited apps/extension/src/entrypoints/popup/App.vue | 5→6 lines | ~87 |
+| 19:55 | Popup container height: overflow hidden html+body, scrollHeight-aware sync, dropdown watches; PinsPage avatar tooltip (design Tooltip). Harness upgraded to fully-connected (real JWT + /api proxy + API_FETCH bridge emulation); switcher verified w/ real data, no render error | apps/extension/src/entrypoints/popup/{index.html,App.vue}, apps/web/src/features/pins/PinsPage.vue | typecheck x2 + build; verified in browser both | ~30000 |
+| 00:33 | Session end: 27 writes across 8 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 10 reads | ~47591 tok |
+| 00:35 | Edited apps/web/src/features/pins/PinsPage.vue | 5→5 lines | ~53 |
+| 00:35 | Edited apps/web/src/shared/components/Favicon.vue | "inline-flex shrink-0 item" → "inline-flex shrink-0 item" | ~28 |
+| 00:35 | Edited apps/web/src/features/pins/PinsPage.vue | expanded (+17 lines) | ~268 |
+| 00:35 | Edited apps/web/src/features/pins/PinsPage.vue | expanded (+26 lines) | ~242 |
+| 00:41 | Edited apps/web/src/shared/lib/query-client.ts | expanded (+11 lines) | ~314 |
+| 00:49 | Edited apps/web/src/shared/lib/query-client.ts | added 1 condition(s) | ~104 |
+| 20:40 | Pins page: error card + Try again, refresh button, circular 18px Favicon; ROOT CAUSE of missing error UI = TanStack networkMode 'online' pausing failed queries as pending — set networkMode 'always' (queries+mutations) in query-client; exposed __plQueryClient in DEV | apps/web/src/{features/pins/PinsPage.vue, shared/components/Favicon.vue, shared/lib/query-client.ts} | typecheck; verified: sabotaged fetch -> error card -> Try again recovers | ~25000 |
+| 01:01 | Session end: 33 writes across 10 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 13 reads | ~50262 tok |
+| 09:47 | Edited apps/extension/src/entrypoints/popup/App.vue | added optional chaining | ~130 |
+| 09:47 | Edited apps/extension/src/entrypoints/popup/App.vue | CSS: counts, pins | ~153 |
+| 10:00 | Created apps/web/src/features/auth/AuthLayout.vue | — | ~1061 |
+| 10:00 | Edited apps/web/src/features/auth/SignupView.vue | 5→4 lines | ~28 |
+| 10:00 | Edited apps/web/src/features/auth/SignupView.vue | 6→8 lines | ~84 |
+| 10:00 | Edited apps/web/src/features/auth/SignupView.vue | removed 14 lines | ~8 |
+| 10:00 | Edited apps/web/src/features/auth/SignupView.vue | 10→12 lines | ~94 |
+| 10:01 | Edited apps/web/src/features/auth/LoginView.vue | 10→12 lines | ~94 |
+| 21:20 | POPUP BUG SOLVED via errorHandler: TypeError pins.filter — stale content script returns old GET_PAGE_PIN_STATE shape; hardened readPinCache + fetchPinState with Array.isArray/shape checks. AUTH REDESIGN: split-screen killed → centered frosted card on dot-grid canvas, decorative review pins w/ comment capsules, pin-shaped brand mark; signup trimmed to 3 fields (workspace name defaults server-side) | apps/extension/src/entrypoints/popup/App.vue, apps/web/src/features/auth/{AuthLayout,LoginView,SignupView}.vue | typecheck x2 + ext build; auth verified light/dark/mobile | ~28000 |
+| 10:12 | Session end: 41 writes across 13 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 16 reads | ~55167 tok |
+| 10:18 | Edited apps/web/src/app/router.ts | expanded (+9 lines) | ~142 |
+| 10:18 | Edited apps/web/src/app/router.ts | added 1 condition(s) | ~146 |
+| 10:20 | Created apps/web/src/features/landing/LandingPage.vue | — | ~3557 |
+| 10:22 | Edited apps/web/src/features/landing/LandingPage.vue | 5→2 lines | ~19 |
+| 10:28 | Edited apps/web/src/features/landing/LandingPage.vue | "absolute top-10 z-20 w-64" → "absolute top-10 z-20 w-64" | ~60 |
+| 11:08 | Created apps/web/src/features/landing/DemoPin.vue | — | ~897 |
+| 11:08 | Created apps/web/src/features/landing/DemoPin.vue | — | ~897 |
+| 11:11 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5475 |
+| 11:11 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5475 |
+| 11:11 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5505 |
+| 11:11 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5505 |
+| 11:11 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5537 |
+| 11:11 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5537 |
+| 11:11 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5469 |
+| 11:11 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5469 |
+| 11:12 | Created apps/web/src/features/auth/AuthLayout.vue | — | ~1603 |
+| 11:12 | Created apps/web/src/features/auth/AuthLayout.vue | — | ~1603 |
+| 11:16 | Created apps/web/src/assets/main.css | — | ~1163 |
+| 11:16 | Created apps/web/src/assets/main.css | — | ~1163 |
+| 11:27 | Landing v2 (Lumio-inspired): gradient hero panel, faux-browser interactive pin demo, eyebrows, step cards w/ mini-visuals, stats, gradient CTA | apps/web/src/features/landing/{LandingPage,DemoPin}.vue | verified light+dark in browser | ~6500 |
+| 11:27 | Auth shell v2: brand aurora wash, back-to-landing chip, avatar comment capsules incl. one resolved | apps/web/src/features/auth/AuthLayout.vue | verified login+signup light+dark | ~1800 |
+| 11:27 | Fixed missing --color-status-* Tailwind mappings (bug-469) | apps/web/src/assets/main.css | bg/text-status-* utilities now generate | ~120 |
+| 11:47 | Hero + CTA gradients now full-bleed (content stays contained); browser mock upsized to max-w-4xl with realistic chrome (nav arrows, wide URL field, avatar) and richer mock page (acme nav, badge, CTA pair, social proof, analytics bar-chart card) | apps/web/src/features/landing/LandingPage.vue | verified light+dark | ~2600 |
+| 11:47 | Vite polling watcher baked into config (fsevents misses agent writes) | apps/web/vite.config.ts | HMR reliable now | ~90 |
+| 12:00 | Smooth scroll (html, reduced-motion-guarded) + v-reveal scroll animations (IO + scroll-listener fallback, staggered) + bar-chart grow + card hover lift + drifting auth aurora (26s loop) | main.css, LandingPage.vue, AuthLayout.vue | verified: 15/15 reveals fire, aurora transform moving | ~2200 |
+| 12:56 | Hero mock widened (max-w-5xl) + straddles gradient edge (-mb-28/sm:-mb-60 + flow-root on container so the negative margin doesn't collapse through; 210px overlap measured) | LandingPage.vue | verified visually | ~900 |
+| 11:29 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5452 |
+| 11:29 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5452 |
+| 11:30 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5444 |
+| 11:30 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5444 |
+| 11:30 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5443 |
+| 11:30 | Created apps/web/src/features/landing/LandingPage.vue | — | ~5443 |
+| 11:34 | Created apps/web/vite.config.ts | — | ~256 |
+| 11:34 | Created apps/web/vite.config.ts | — | ~256 |
+| 11:40 | Session end: 57 writes across 18 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 27 reads | ~112978 tok |
+| 11:40 | Session end: 57 writes across 18 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 27 reads | ~112978 tok |
+| 11:40 | Created ../../../.cursor/projects/Users-apple-Documents-code-pinlay/assets/Screenshot_2026-07-14_at_11.39.04_AM-ce1200c7-117d-4e27-9e35-4f02ce054a89.png | — | ~0 |
+| 11:40 | Created ../../../.cursor/projects/Users-apple-Documents-code-pinlay/assets/Screenshot_2026-07-14_at_11.39.04_AM-ce1200c7-117d-4e27-9e35-4f02ce054a89.png | — | ~0 |
+| 11:42 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6516 |
+| 11:42 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6516 |
+| 11:43 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6519 |
+| 11:43 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6519 |
+| 11:49 | Created apps/web/src/assets/main.css | — | ~1211 |
+| 11:49 | Created apps/web/src/assets/main.css | — | ~1211 |
+| 11:50 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6768 |
+| 11:50 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6768 |
+| 11:50 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6792 |
+| 11:50 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6792 |
+| 11:50 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6799 |
+| 11:50 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6799 |
+| 11:51 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6811 |
+| 11:51 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6811 |
+| 11:51 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6814 |
+| 11:51 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6814 |
+| 11:51 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6867 |
+| 11:51 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6867 |
+| 11:52 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6869 |
+| 11:52 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6869 |
+| 11:52 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6891 |
+| 11:52 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6891 |
+| 11:52 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6894 |
+| 11:52 | Created apps/web/src/features/landing/LandingPage.vue | — | ~6894 |
+| 11:52 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7196 |
+| 11:52 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7196 |
+| 11:53 | Created apps/web/src/features/auth/AuthLayout.vue | — | ~1606 |
+| 11:53 | Created apps/web/src/features/auth/AuthLayout.vue | — | ~1606 |
+| 11:53 | Created apps/web/src/features/auth/AuthLayout.vue | — | ~1775 |
+| 11:53 | Created apps/web/src/features/auth/AuthLayout.vue | — | ~1775 |
+| 11:55 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7375 |
+| 11:55 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7375 |
+| 12:47 | Session end: 75 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 31 reads | ~220670 tok |
+| 12:47 | Session end: 75 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 31 reads | ~220670 tok |
+| 12:49 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7416 |
+| 12:49 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7416 |
+| 12:49 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7384 |
+| 12:49 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7384 |
+| 12:54 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7446 |
+| 12:54 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7446 |
+| 12:57 | Session end: 78 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 33 reads | ~244505 tok |
+| 12:57 | Session end: 78 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 33 reads | ~244505 tok |

@@ -12,6 +12,12 @@ export default defineConfig({
     },
   },
   server: {
+    // fsevents misses some file writes on this machine (edits made by
+    // external tools never trigger HMR); polling is the reliable fallback.
+    watch: {
+      usePolling: true,
+      interval: 300,
+    },
     proxy: {
       // The API mounts every route under `/api` (NestJS setGlobalPrefix), so
       // forward the prefix as-is — do NOT strip it.

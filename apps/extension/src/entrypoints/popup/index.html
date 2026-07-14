@@ -1,5 +1,10 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<!-- overflow:hidden on html+body: Chrome sizes the popup window off the
+     document's SCROLL size, so any overflow (mid-transition content, absolute
+     dropdowns) inflates the container and the window never shrinks back.
+     Clamping overflow makes the pinned heights from syncPopupHeight the
+     single source of truth for the popup's size. -->
+<html lang="en" data-theme="light" style="overflow: hidden">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,7 +12,10 @@
     <!-- Fonts are system-first (SF Pro / Segoe / Roboto) since the 2026-07-12
          iOS pass — no webfont download, popup opens instantly. -->
   </head>
-  <body class="w-[320px] bg-background text-foreground antialiased">
+  <body
+    class="w-[320px] bg-background text-foreground antialiased"
+    style="overflow: hidden"
+  >
     <div id="app"></div>
     <script type="module" src="./main.ts"></script>
   </body>

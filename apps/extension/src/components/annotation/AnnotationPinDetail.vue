@@ -239,32 +239,47 @@
           v-html="renderedComment"
         />
 
-        <!-- Attachments — full-width preview (the old 48px thumb+meta row
-             hid the actual screenshot). Tap anywhere to open the lightbox. -->
-        <button
-          v-if="primaryAttachment"
-          type="button"
-          class="group relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-border/60 bg-muted/40"
-          title="Preview screenshot"
-          @click="openPreview(0)"
+        <!-- Attachments — every screenshot is visible: a single capped-height
+             preview for one attachment, a 2-up thumbnail grid for more (the
+             old full-width 16:10 hero dominated the popover, and the "+N"
+             badge hid the extra shots). Tap any thumb to open the lightbox
+             at that image. -->
+        <div
+          v-if="renderedAttachments.length"
+          :class="renderedAttachments.length > 1 ? 'grid grid-cols-2 gap-1.5' : ''"
         >
-          <img
-            :src="primaryAttachment.dataUrl"
-            alt=""
-            class="aspect-[16/10] w-full object-cover"
-          />
-          <span
-            v-if="attachments && attachments.length > 1"
-            class="absolute bottom-1.5 right-1.5 rounded-full bg-foreground/80 px-2 py-0.5 text-[10px] font-semibold text-card"
+          <button
+            v-for="(a, i) in renderedAttachments.slice(0, 4)"
+            :key="i"
+            type="button"
+            class="group relative block w-full cursor-zoom-in overflow-hidden rounded-lg border border-border/60 bg-muted/40"
+            title="Preview screenshot"
+            @click="openPreview(i)"
           >
-            +{{ attachments.length - 1 }}
-          </span>
-          <span
-            class="pointer-events-none absolute inset-0 flex items-center justify-center bg-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
-          >
-            <Icon name="eye" :size="18" :stroke-width="2" class="text-card" />
-          </span>
-        </button>
+            <img
+              :src="a.dataUrl"
+              alt=""
+              :class="
+                renderedAttachments.length > 1
+                  ? 'aspect-[16/10] w-full object-cover'
+                  : 'h-24 w-full object-cover'
+              "
+            />
+            <!-- Overflow count sits on the last visible thumb (5+ shots). -->
+            <span
+              v-if="i === 3 && renderedAttachments.length > 4"
+              class="absolute inset-0 flex items-center justify-center bg-foreground/55 text-[12px] font-semibold text-card"
+            >
+              +{{ renderedAttachments.length - 4 }}
+            </span>
+            <span
+              v-else
+              class="pointer-events-none absolute inset-0 flex items-center justify-center bg-foreground/40 opacity-0 transition-opacity group-hover:opacity-100"
+            >
+              <Icon name="eye" :size="16" :stroke-width="2" class="text-card" />
+            </span>
+          </button>
+        </div>
 
         <!-- Author + relative time -->
         <div v-if="author" class="flex items-center gap-1.5">
@@ -549,9 +564,6 @@ function renderAttachment(a: PinAttachment): RenderedAttachment {
 }
 const renderedAttachments = computed<RenderedAttachment[]>(
   () => props.attachments?.map(renderAttachment) ?? [],
-);
-const primaryAttachment = computed<RenderedAttachment | null>(
-  () => renderedAttachments.value[0] ?? null,
 );
 
 function formatBytes(bytes: number): string {

@@ -21,6 +21,9 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@pinlay/design";
 import type { InboxPin, InboxState } from "@/shared/lib/api";
 import { timeAgo } from "@/shared/lib/format";
@@ -205,6 +208,23 @@ function toggleResolve(pin: InboxPin) {
           class="h-9 rounded-full pl-9 text-base sm:text-sm"
         />
       </div>
+
+      <!-- manual refresh — pins arrive from the extension while this tab sits
+           open, so give the user a way to pull without a full reload -->
+      <Button
+        variant="outline"
+        size="icon-sm"
+        class="shrink-0 rounded-full"
+        aria-label="Refresh pins"
+        :disabled="query.isRefetching.value"
+        @click="query.refetch()"
+      >
+        <Icon
+          name="refresh-cw"
+          :size="14"
+          :class="query.isRefetching.value ? 'animate-spin' : ''"
+        />
+      </Button>
     </div>
 
     <!-- loading -->
@@ -221,6 +241,32 @@ function toggleResolve(pin: InboxPin) {
           <Skeleton class="h-3 w-2/5" />
         </div>
       </div>
+    </div>
+
+    <!-- error → same Try again surface as every other query in the app -->
+    <div
+      v-else-if="query.isError.value"
+      class="flex flex-col items-center gap-3 rounded-2xl border border-dashed px-6 py-12 text-center"
+    >
+      <Icon name="cloud-off" :size="20" class="text-muted-foreground" />
+      <p class="text-sm text-muted-foreground">
+        Couldn't load your pins. Check your connection and try again.
+      </p>
+      <Button
+        variant="outline"
+        size="sm"
+        class="rounded-full"
+        :disabled="query.isRefetching.value"
+        @click="query.refetch()"
+      >
+        <Icon
+          v-if="query.isRefetching.value"
+          name="loader-circle"
+          :size="14"
+          class="animate-spin"
+        />
+        Try again
+      </Button>
     </div>
 
     <!-- blank workspace → onboarding IS the empty state -->
@@ -287,7 +333,7 @@ function toggleResolve(pin: InboxPin) {
               <Favicon
                 :label="(session.host.replace(/^www\./, '')[0] ?? '?').toUpperCase()"
                 :hue="hashHue(session.host)"
-                :size="16"
+                :size="18"
               />
               <span class="min-w-0 flex-1 truncate text-[13px] font-medium text-foreground">
                 {{ session.title }}
@@ -354,15 +400,22 @@ function toggleResolve(pin: InboxPin) {
               </span>
 
               <!-- reporter — hidden on narrow screens so the Resolve action
-                   keeps breathing room -->
-              <UserAvatar
-                v-if="pin.author"
-                :name="pin.author.name"
-                :avatar-url="pin.author.avatarUrl"
-                :hue="hashHue(pin.author.id)"
-                :size="24"
-                class="hidden shrink-0 sm:block"
-              />
+                   keeps breathing room. Name on hover (the avatar alone is
+                   ambiguous once a workspace has more than one member). -->
+              <Tooltip v-if="pin.author">
+                <TooltipTrigger as-child>
+                  <UserAvatar
+                    :name="pin.author.name"
+                    :avatar-url="pin.author.avatarUrl"
+                    :hue="hashHue(pin.author.id)"
+                    :size="24"
+                    class="hidden shrink-0 sm:block"
+                  />
+                </TooltipTrigger>
+                <TooltipContent :side-offset="6">
+                  {{ pin.author.name }}
+                </TooltipContent>
+              </Tooltip>
 
               <!-- Labeled resolve action — @click.prevent.stop so tapping it
                    never follows the row link. -->
