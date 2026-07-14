@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-14T11:54:59.347Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-14T23:40:08.884Z
 > Files: 271 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/popup-harness/
@@ -352,8 +352,8 @@
 
 ## apps/web/src/features/landing/
 
-- `DemoPin.vue` — A live demo pin — marker + thread popover — anchored to a real element of (~897 tok)
-- `LandingPage.vue` — Landing page (2026-07-14, v2) — the product demos itself, dressed up. (~7446 tok)
+- `DemoPin.vue` — A live demo pin — marker + thread popover — anchored to a real element of (~1091 tok)
+- `LandingPage.vue` — Landing page (2026-07-14, v2) — the product demos itself, dressed up. (~8263 tok)
 
 ## apps/web/src/features/pinboards/
 

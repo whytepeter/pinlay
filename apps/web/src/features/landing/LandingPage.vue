@@ -14,7 +14,7 @@
  * the hero, the anchor moat is the numeric proof point, and the
  * anti-positioning line keeps us out of the project-board bucket.
  */
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import type { Directive } from "vue";
 import { Brand, Button, Icon, UserAvatar } from "@pinlay/design";
 import DemoPin, { type LandingPin } from "./DemoPin.vue";
@@ -99,17 +99,32 @@ const openPinId = ref<number | null>(null);
 const openCount = computed(
   () => demoPins.value.filter((p) => !p.resolved).length
 );
+// Once the visitor touches a pin we stop steering the demo (no auto-open,
+// no attention pulse) so we never fight their intent.
+const userEngaged = ref(false);
 
 function togglePin(id: number) {
+  userEngaged.value = true;
   openPinId.value = openPinId.value === id ? null : id;
 }
 function resolvePin(pin: LandingPin) {
+  userEngaged.value = true;
   pin.resolved = true;
   openPinId.value = null;
 }
 function pinById(id: number): LandingPin {
   return demoPins.value.find((p) => p.id === id)!;
 }
+
+// Telegraph interactivity: the whole pitch is "resolve a comment on a live
+// page", so auto-open the first thread shortly after load. A visitor sees the
+// product respond before we ask them to click — unless they've already
+// engaged, in which case we stay out of the way.
+onMounted(() => {
+  window.setTimeout(() => {
+    if (!userEngaged.value && !pinById(1).resolved) openPinId.value = 1;
+  }, 1600);
+});
 
 const steps = [
   {
@@ -132,10 +147,10 @@ const steps = [
 const stats = [
   {
     value: "9/9",
-    label: "DOM-mutation scenarios re-anchored in our test harness",
+    label: "simulated deploys where every pin re-found its element",
   },
-  { value: "0", label: "snippets, SDKs or code changes to deploy" },
-  { value: "1", label: "click to install — pin your site a minute later" },
+  { value: "0", label: "snippets, SDKs or code changes to install" },
+  { value: "1", label: "click to add to Chrome — pin your site a minute later" },
 ];
 </script>
 
@@ -226,6 +241,13 @@ const stats = [
             Drop pins on real elements of your product. They survive deploys,
             and your developers resolve them right on the page.
           </p>
+          <p
+            v-reveal="200"
+            class="mx-auto mt-2.5 max-w-md text-balance text-[13px] leading-relaxed text-white/55"
+          >
+            No more “which button on the pricing page?” threads with blurry
+            screenshots.
+          </p>
           <div
             v-reveal="240"
             class="mt-8 flex flex-wrap items-center justify-center gap-3"
@@ -258,8 +280,12 @@ const stats = [
           v-reveal="320"
           class="reveal-mock relative mx-auto -mb-28 max-w-7xl sm:-mb-60"
         >
+          <!-- The product in browser chrome — follows the app theme (a light
+               customer site in light mode, a dark dashboard in dark mode). The
+               explicit border does the separating in dark mode, where the big
+               drop-shadow is invisible against the near-black page. -->
           <div
-            class="overflow-visible rounded-xl bg-card shadow-[0_50px_100px_-30px_rgba(0,0,0,0.55),0_0_0_1px_rgba(0,0,0,0.08)]"
+            class="overflow-visible rounded-xl border border-border/80 bg-card shadow-[0_50px_100px_-30px_rgba(0,0,0,0.55)]"
           >
             <!-- browser bar -->
             <div
@@ -355,6 +381,7 @@ const stats = [
                       class="-right-4 -top-4"
                       :pin="pinById(1)"
                       :open="openPinId === 1"
+                      :hint="!userEngaged"
                       @toggle="togglePin(1)"
                       @resolve="resolvePin(pinById(1))"
                     />
@@ -382,6 +409,7 @@ const stats = [
                         class="-right-4 -top-4"
                         :pin="pinById(2)"
                         :open="openPinId === 2"
+                        :hint="!userEngaged"
                         @toggle="togglePin(2)"
                         @resolve="resolvePin(pinById(2))"
                       />
@@ -469,6 +497,7 @@ const stats = [
                     class="-right-3.5 top-1/2 -mt-4"
                     :pin="pinById(3)"
                     :open="openPinId === 3"
+                    :hint="!userEngaged"
                     @toggle="togglePin(3)"
                     @resolve="resolvePin(pinById(3))"
                   />

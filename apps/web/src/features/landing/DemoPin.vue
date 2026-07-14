@@ -20,6 +20,8 @@ export interface LandingPin {
 defineProps<{
   pin: LandingPin;
   open: boolean;
+  /** Show the attention pulse (until the visitor engages with any pin). */
+  hint?: boolean;
 }>();
 
 defineEmits<{
@@ -35,8 +37,15 @@ defineEmits<{
     :aria-label="pin.resolved ? 'Resolved pin' : `Open pin ${pin.id}`"
     @click.stop="$emit('toggle')"
   >
+    <!-- attention pulse — expanding ring behind the marker, signalling
+         "this is clickable". Stops the moment the visitor engages. -->
     <span
-      class="flex size-8 items-center justify-center rounded-full text-[13px] font-semibold ring-[3px] ring-card transition-all"
+      v-if="hint && !pin.resolved && !open"
+      class="pin-ping pointer-events-none absolute inset-0 rounded-full bg-primary/60"
+      aria-hidden="true"
+    />
+    <span
+      class="relative z-10 flex size-8 items-center justify-center rounded-full text-[13px] font-semibold ring-[3px] ring-card transition-all"
       :class="
         pin.resolved
           ? 'bg-status-resolved text-white shadow-[0_4px_14px_color-mix(in_oklab,var(--status-resolved)_45%,transparent)]'
@@ -77,6 +86,22 @@ defineEmits<{
 </template>
 
 <style scoped>
+/* Attention pulse — a Tailwind-ping-style expanding, fading ring. */
+.pin-ping {
+  animation: pin-ping 1.9s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes pin-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
 /* Idle bob so the pins read as alive without stealing focus. */
 .demo-pin {
   animation: demo-pin-float 6s ease-in-out infinite;
@@ -91,7 +116,8 @@ defineEmits<{
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .demo-pin {
+  .demo-pin,
+  .pin-ping {
     animation: none;
   }
 }

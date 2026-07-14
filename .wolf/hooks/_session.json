@@ -68,8 +68,8 @@
       "first_read": "2026-07-13T23:45:04.016Z"
     },
     "/Users/apple/Documents/code/pinlay/apps/web/src/features/auth/AuthLayout.vue": {
-      "count": 3,
-      "tokens": 1061,
+      "count": 4,
+      "tokens": 1775,
       "first_read": "2026-07-14T08:58:45.674Z"
     },
     "/Users/apple/Documents/code/pinlay/apps/web/src/features/auth/LoginView.vue": {
@@ -88,8 +88,8 @@
       "first_read": "2026-07-14T09:17:56.592Z"
     },
     "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/LandingPage.vue": {
-      "count": 2,
-      "tokens": 3550,
+      "count": 7,
+      "tokens": 8270,
       "first_read": "2026-07-14T09:52:50.259Z"
     },
     "/Users/apple/Documents/code/pinlay/packages/design/src/tokens.css": {
@@ -113,8 +113,8 @@
       "first_read": "2026-07-14T10:03:53.058Z"
     },
     "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/DemoPin.vue": {
-      "count": 1,
-      "tokens": 0,
+      "count": 2,
+      "tokens": 897,
       "first_read": "2026-07-14T10:08:29.226Z"
     },
     "/Users/apple/.cursor/projects/Users-apple-Documents-code-pinlay/terminals/434706.txt": {
@@ -636,6 +636,84 @@
       "action": "create",
       "tokens": 7977,
       "at": "2026-07-14T11:54:59.369Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/LandingPage.vue",
+      "action": "edit",
+      "tokens": 25,
+      "at": "2026-07-14T21:41:55.848Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/LandingPage.vue",
+      "action": "edit",
+      "tokens": 298,
+      "at": "2026-07-14T21:42:12.877Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/DemoPin.vue",
+      "action": "edit",
+      "tokens": 43,
+      "at": "2026-07-14T21:42:30.753Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/DemoPin.vue",
+      "action": "edit",
+      "tokens": 145,
+      "at": "2026-07-14T21:42:51.750Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/DemoPin.vue",
+      "action": "edit",
+      "tokens": 121,
+      "at": "2026-07-14T21:43:10.642Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/DemoPin.vue",
+      "action": "edit",
+      "tokens": 28,
+      "at": "2026-07-14T21:43:27.325Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/LandingPage.vue",
+      "action": "edit",
+      "tokens": 94,
+      "at": "2026-07-14T21:43:47.353Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/LandingPage.vue",
+      "action": "edit",
+      "tokens": 98,
+      "at": "2026-07-14T21:44:05.560Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/LandingPage.vue",
+      "action": "edit",
+      "tokens": 92,
+      "at": "2026-07-14T21:44:19.552Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/LandingPage.vue",
+      "action": "edit",
+      "tokens": 168,
+      "at": "2026-07-14T21:45:09.050Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/LandingPage.vue",
+      "action": "edit",
+      "tokens": 76,
+      "at": "2026-07-14T21:45:28.158Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/LandingPage.vue",
+      "action": "edit",
+      "tokens": 140,
+      "at": "2026-07-14T21:46:21.072Z"
+    },
+    {
+      "file": "/Users/apple/Documents/code/pinlay/apps/web/src/features/landing/LandingPage.vue",
+      "action": "edit",
+      "tokens": 132,
+      "at": "2026-07-14T23:40:08.899Z"
     }
   ],
   "edit_counts": {
@@ -654,15 +732,15 @@
     "apps/web/src/features/auth/SignupView.vue": 4,
     "apps/web/src/features/auth/LoginView.vue": 1,
     "apps/web/src/app/router.ts": 2,
-    "apps/web/src/features/landing/LandingPage.vue": 27,
-    "apps/web/src/features/landing/DemoPin.vue": 1,
+    "apps/web/src/features/landing/LandingPage.vue": 36,
+    "apps/web/src/features/landing/DemoPin.vue": 5,
     "apps/web/src/assets/main.css": 2,
     "apps/web/vite.config.ts": 1,
     "../../../.cursor/projects/Users-apple-Documents-code-pinlay/assets/Screenshot_2026-07-14_at_11.39.04_AM-ce1200c7-117d-4e27-9e35-4f02ce054a89.png": 1
   },
   "anatomy_hits": 22,
   "anatomy_misses": 11,
-  "repeated_reads_warned": 14,
+  "repeated_reads_warned": 21,
   "cerebrum_warnings": 0,
-  "stop_count": 9
+  "stop_count": 13
 }

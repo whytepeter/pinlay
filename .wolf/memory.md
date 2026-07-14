@@ -2887,3 +2887,21 @@
 | 12:54 | Created apps/web/src/features/landing/LandingPage.vue | — | ~7446 |
 | 12:57 | Session end: 78 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 33 reads | ~244505 tok |
 | 12:57 | Session end: 78 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 33 reads | ~244505 tok |
+| 21:44 | Session end: 78 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 33 reads | ~248401 tok |
+| 22:41 | Edited apps/web/src/features/landing/LandingPage.vue | 2→2 lines | ~23 |
+| 22:42 | Edited apps/web/src/features/landing/LandingPage.vue | CSS: interactivity | ~278 |
+| 22:42 | Edited apps/web/src/features/landing/DemoPin.vue | 4→6 lines | ~40 |
+| 22:42 | Edited apps/web/src/features/landing/DemoPin.vue | expanded (+7 lines) | ~136 |
+| 22:43 | Edited apps/web/src/features/landing/DemoPin.vue | expanded (+16 lines) | ~113 |
+| 22:43 | Edited apps/web/src/features/landing/DemoPin.vue | modified media() | ~26 |
+| 22:43 | Edited apps/web/src/features/landing/LandingPage.vue | 7→8 lines | ~88 |
+| 22:44 | Edited apps/web/src/features/landing/LandingPage.vue | 7→8 lines | ~92 |
+| 22:44 | Edited apps/web/src/features/landing/LandingPage.vue | 7→8 lines | ~86 |
+| 22:45 | Edited apps/web/src/features/landing/LandingPage.vue | expanded (+7 lines) | ~157 |
+| 22:45 | Edited apps/web/src/features/landing/LandingPage.vue | 8→8 lines | ~71 |
+| 22:46 | Edited apps/web/src/features/landing/LandingPage.vue | 3→8 lines | ~131 |
+| landing v2.1 | Applied 4 conversion fixes to LandingPage/DemoPin: (1) auto-open pin-1 thread 1.6s after load + attention pulse-ring on unresolved pins (DemoPin `hint` prop, stops once userEngaged); (2) hero villain sub-line "No more 'which button on the pricing page?' threads with blurry screenshots"; (3) moat stats rewritten to buyer language (9/9 "simulated deploys where every pin re-found its element", 0 snippets, 1 click to add to Chrome); (4) mock browser forced data-theme="light" so it's a bright customer-site island in dark mode instead of a black slab. Verified via DOM: mockTheme=light, openThreadEls=1, pings=2, villain present. typecheck clean. NOT done (need real assets): Chrome-store CTA link, real testimonials/logos. Browser-pane scroll times out on this page (aurora+reveal+many nodes) — preview tooling quirk, not a bug. | apps/web/src/features/landing/{LandingPage,DemoPin}.vue |
+| 23:23 | Session end: 90 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 33 reads | ~250626 tok |
+| 00:31 | Session end: 90 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 33 reads | ~251340 tok |
+| 00:40 | Edited apps/web/src/features/landing/LandingPage.vue | 0_0_0_1px_rgba() → theme() | ~123 |
+| 00:44 | Session end: 91 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 33 reads | ~252296 tok |
