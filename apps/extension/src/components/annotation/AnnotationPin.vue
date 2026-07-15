@@ -18,18 +18,11 @@
   `position: fixed`); the parent recomputes positions on scroll/resize.
 -->
 <template>
+  <!-- Outer = positioned hit target. Owns the centering transform ONLY, so it
+       never fights the inner span's hover / press / drop-in transforms. -->
   <button
     type="button"
-    :class="[
-      // iOS map-pin feel: slightly larger tap target, thick white ring,
-      // deeper soft shadow, springy press.
-      'pointer-events-auto absolute z-[2147483645] -translate-x-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold text-white shadow-[0_1px_3px_rgba(0,0,0,0.2),0_6px_16px_rgba(0,0,0,0.25)] ring-2 transition-transform duration-150 ease-out hover:scale-110 active:scale-95',
-      pinBg,
-      resolved && 'opacity-55',
-      stale
-        ? 'ring-status-stale opacity-75 outline outline-2 outline-dashed outline-status-stale outline-offset-1'
-        : 'ring-white',
-    ]"
+    class="group pointer-events-auto absolute z-[2147483645] flex h-[30px] w-[30px] -translate-x-1/2 -translate-y-1/2 items-center justify-center border-0 bg-transparent p-0"
     :style="{ left: pageX + 'px', top: pageY + 'px' }"
     :aria-label="
       stale
@@ -40,38 +33,65 @@
     "
     @click.stop="$emit('open')"
   >
-    {{ index }}
-    <!-- Resolved checkmark badge — small overlay so severity colour still
-         reads clearly underneath. -->
+    <!-- Inner = the glossy iOS pin. Severity colour + white ring + layered
+         shadow (.pinlay-marker) + convex gloss + springy hover/press. -->
     <span
-      v-if="resolved && !stale"
-      class="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-status-resolved ring-1 ring-white"
+      :class="[
+        'pinlay-marker relative flex h-full w-full items-center justify-center rounded-full text-[12px] font-semibold leading-none tabular-nums text-white transition-transform duration-150 ease-out [text-shadow:0_1px_2px_rgba(0,0,0,0.35)] group-hover:scale-110 group-active:scale-90',
+        pinBg,
+        resolved && 'opacity-60',
+        stale
+          ? 'ring-2 ring-status-stale outline outline-2 outline-dashed outline-status-stale outline-offset-2'
+          : 'ring-2 ring-white',
+      ]"
     >
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="3.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="h-2 w-2 text-white"
+      <!-- Convex gloss: light sheen up top fading to a faint shade at the
+           bottom, so the flat disc reads as a rounded iOS pin. -->
+      <span
+        class="pointer-events-none absolute inset-0 rounded-full"
+        style="
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.42) 0%,
+            rgba(255, 255, 255, 0.06) 46%,
+            rgba(0, 0, 0, 0.1) 100%
+          );
+        "
+      />
+      <span class="relative">{{ index }}</span>
+
+      <!-- Resolved checkmark badge — sits on the marker so severity colour
+           still reads clearly underneath. -->
+      <span
+        v-if="resolved && !stale"
+        class="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-status-resolved shadow-sm ring-2 ring-white"
       >
-        <polyline points="20 6 9 17 4 12" />
-      </svg>
-    </span>
-    <span
-      v-if="stale"
-      class="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-status-stale ring-1 ring-white"
-    >
-      <span class="h-1 w-1 rounded-full bg-card" />
-    </span>
-    <!-- Yellow health band: re-found heuristically, may have moved. -->
-    <span
-      v-if="moved"
-      class="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-sev-medium ring-1 ring-white"
-      title="Re-found by content — this pin may have moved"
-    >
-      <span class="h-1 w-1 rounded-full bg-white" />
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-2 w-2 text-white"
+        >
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+      </span>
+      <span
+        v-if="stale"
+        class="absolute -right-0.5 -top-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-status-stale ring-2 ring-white"
+      >
+        <span class="h-1 w-1 rounded-full bg-card" />
+      </span>
+      <!-- Yellow health band: re-found heuristically, may have moved. -->
+      <span
+        v-if="moved"
+        class="absolute -bottom-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-sev-medium ring-2 ring-white"
+        title="Re-found by content — this pin may have moved"
+      >
+        <span class="h-1 w-1 rounded-full bg-white" />
+      </span>
     </span>
   </button>
 </template>

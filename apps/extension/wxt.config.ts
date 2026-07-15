@@ -14,11 +14,11 @@ export default defineConfig({
   vite: () => ({
     plugins: [tailwindcss()],
   }),
-  manifest: {
+  manifest: ({ mode }) => ({
     name: "pinlay",
     description:
       "Drop pins on any live web page; triage and ship in your dashboard.",
-    version: "0.0.1",
+    version: "1.0.0",
     permissions: ["tabs", "activeTab", "storage", "scripting"],
     host_permissions: ["<all_urls>"],
     action: {
@@ -36,11 +36,14 @@ export default defineConfig({
       },
     },
     externally_connectable: {
-      matches: [
-        "http://localhost:5173/*",
-        "http://localhost:4173/*",
-        "https://*.pinlay.app/*",
-      ],
+      matches:
+        mode === "development"
+          ? [
+              "http://localhost:5173/*",
+              "http://localhost:4173/*",
+              "https://*.pinlay.app/*",
+            ]
+          : ["https://*.pinlay.app/*"],
     },
     web_accessible_resources: [
       {
@@ -48,5 +51,5 @@ export default defineConfig({
         matches: ["<all_urls>"],
       },
     ],
-  },
+  }),
 });

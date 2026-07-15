@@ -1,12 +1,20 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-14T23:40:08.884Z
-> Files: 271 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-15T23:40:07.503Z
+> Files: 275 tracked | Anatomy hits: 0 | Misses: 0
+
+## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/marker-harness/
+
+- `index.html` — html: marker (~1367 tok)
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/popup-harness/
 
 - `chrome-stub.js` — Harness: stub the chrome.* extension APIs so the built popup runs in a (~1524 tok)
 - `serve.py` — Static server + /api proxy so the popup harness is same-origin with the API. (~510 tok)
+
+## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/switch-check/
+
+- `index.html` — Declares html (~409 tok)
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
 
@@ -21,9 +29,11 @@
 ## ./
 
 - `.gitignore` — Git ignore rules (~144 tok)
+- `DEPLOYMENT.md` — Deployment (~1053 tok)
 - `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~5697 tok)
 - `HANDOFF.md` — pinlay — Handoff (~4508 tok)
 - `package.json` — Node.js package manifest (~299 tok)
+- `railway.json` — Railway deploy config for apps/api (Nixpacks build + migrate-on-start, /api/health check) (~141 tok)
 - `ROADMAP.md` — pinlay — Product Roadmap (~2776 tok)
 
 ## ./ (root)
@@ -45,7 +55,7 @@
 ## apps/api/
 
 - `nest-cli.json` (~99 tok)
-- `package.json` — Node.js package manifest (~351 tok)
+- `package.json` — Node.js package manifest (~421 tok)
 - `tsconfig.build.json` (~34 tok)
 - `tsconfig.json` — TypeScript configuration (~197 tok)
 
@@ -209,7 +219,7 @@
 - `package.json` — Node.js package manifest (~258 tok)
 - `tsconfig.json` — TypeScript configuration (~77 tok)
 - `vitest.config.ts` — /*.test.ts"], (~46 tok)
-- `wxt.config.ts` — pinlay extension — WXT + Vue 3 + Tailwind v4. (~420 tok)
+- `wxt.config.ts` — pinlay extension — WXT + Vue 3 + Tailwind v4. (~454 tok)
 
 ## apps/extension/public/
 
@@ -217,12 +227,12 @@
 
 ## apps/extension/src/assets/
 
-- `style.css` — Styles: 5 rules, 32 vars (~685 tok)
+- `style.css` — Styles: 8 rules, 32 vars (~950 tok)
 
 ## apps/extension/src/components/annotation/
 
 - `AnnotationOverlay.vue` — Vue component (~13243 tok)
-- `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1192 tok)
+- `AnnotationPin.vue` — "draft" = composer still open; "submitted" = pin persisted. (~1440 tok)
 - `AnnotationPinComposer.vue` — Vue component (~10008 tok)
 - `AnnotationPinDetail.vue` — Vue component (~6885 tok)
 
@@ -271,6 +281,7 @@
 
 ## apps/web/
 
+- `.env.example` — documents VITE_API_URL (unset in dev → /api proxy; set to Railway API URL on Vercel) (~120 tok)
 - `index.html` — pinlay (~307 tok)
 - `package.json` — Node.js package manifest (~181 tok)
 - `package.json` — Node.js package manifest (~181 tok)
@@ -522,7 +533,7 @@
 
 ## packages/design/src/components/ui/switch/
 
-- `Switch.vue` — Vue: setup (~423 tok)
+- `Switch.vue` — Vue: setup (~422 tok)
 
 ## packages/design/src/components/ui/tabs/
 

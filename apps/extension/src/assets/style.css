@@ -52,3 +52,34 @@
    this stylesheet is injected there too — so any `body { background: … }`
    rule paints var(--background) over the whole viewport on the host page.
    The popup sets its own background via index.html (<body class="bg-background">). */
+
+/* ── On-page comment markers (AnnotationPin) ─────────────────────────────
+   iOS-style glossy pin: a soft, layered ambient shadow plus a springy
+   drop-in when the marker mounts. Both live on the INNER visual span (not
+   the positioned hit button) so the button's centering transform is never
+   overridden. `backwards` fill means the animated transform is released once
+   the drop-in finishes, leaving hover/press scale utilities free to work. */
+.pinlay-marker {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.18),
+    0 4px 10px -1px rgba(0, 0, 0, 0.2),
+    0 10px 24px -5px rgba(0, 0, 0, 0.18);
+  animation: pinlay-marker-in 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+@keyframes pinlay-marker-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pinlay-marker {
+    animation: none;
+  }
+}

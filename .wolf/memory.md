@@ -2905,3 +2905,37 @@
 | 00:31 | Session end: 90 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 33 reads | ~251340 tok |
 | 00:40 | Edited apps/web/src/features/landing/LandingPage.vue | 0_0_0_1px_rgba() → theme() | ~123 |
 | 00:44 | Session end: 91 writes across 19 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 33 reads | ~252296 tok |
+| 08:18 | Edited apps/extension/src/assets/style.css | modified media() | ~368 |
+| 08:18 | Edited apps/extension/src/components/annotation/AnnotationPin.vue | expanded (+20 lines) | ~831 |
+| 14:27 | Created ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/marker-harness/index.html | — | ~1367 |
+| ext pins | iOS-polished on-page markers (AnnotationPin.vue + assets/style.css). Split into positioned hit-button (centering translate only) + inner visual span so transforms never conflict. Inner span: severity bg + ring-2 white + NEW convex gloss (linear-gradient white-top→faint-shade), layered soft shadow + springy drop-in (.pinlay-marker class + pinlay-marker-in keyframe, cubic-bezier overshoot, backwards fill so hover/press scale still work after), text-shadow on number for legibility on light severities, group-hover:scale-110 group-active:scale-90. Badges (resolved check/stale/moved) bumped to ring-2 white. Verified in static harness w/ built content.css: glossy pins, all states, light + dark page bg. typecheck + build clean; classes present in content.css. | apps/extension/src/components/annotation/AnnotationPin.vue, apps/extension/src/assets/style.css |
+| 14:31 | Session end: 94 writes across 21 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 34 reads | ~256211 tok |
+| 14:48 | Session end: 94 writes across 21 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 34 reads | ~256211 tok |
+| 14:53 | Edited packages/design/src/components/ui/switch/Switch.vue | inline fix | ~82 |
+| 15:16 | Created ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/switch-check/index.html | — | ~409 |
+| 15:20 | Session end: 96 writes across 22 files (chrome-stub.js, App.vue, WorkspaceSwitcher.vue, main.ts, AnnotationPinDetail.vue) | 35 reads | ~257159 tok |
+
+## Session: 2026-07-15 23:18
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-15 23:19
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-15 23:58
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 23:59 | Edited apps/extension/wxt.config.ts | "0.0.1" → "1.0.0" | ~6 |
+| 23:59 | Edited apps/extension/wxt.config.ts | 7→9 lines | ~72 |
+| 00:01 | Edited apps/extension/wxt.config.ts | 48→49 lines | ~376 |
+| 00:01 | Edited apps/extension/package.json | 2→2 lines | ~15 |
+| 00:32 | Session end: 4 writes across 2 files (wxt.config.ts, package.json) | 1 reads | ~768 tok |
+| 00:38 | Edited apps/api/package.json | 2→3 lines | ~36 |
+| 00:38 | Created railway.json | — | ~141 |
+| 00:40 | Created DEPLOYMENT.md | — | ~1124 |
+| 00:20 | Prepared api+web for deployment (Railway/Vercel) | railway.json, DEPLOYMENT.md, apps/web/.env.example, apps/api/package.json, apps/api/.env.example | verified shared+api+web builds green, prisma generate + CLI resolve | ~1400 |
+| 00:41 | Session end: 7 writes across 4 files (wxt.config.ts, package.json, railway.json, DEPLOYMENT.md) | 3 reads | ~3713 tok |
