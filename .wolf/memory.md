@@ -3006,3 +3006,20 @@
 | 10:09 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
 | 10:10 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
 | 10:12 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:16 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:20 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:21 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:28 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:30 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:32 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:35 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:39 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:41 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:44 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:46 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:49 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:53 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 10:54 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 11:03 | Set up SSH auth for personal GitHub (ed25519 + keychain + ~/.ssh/config); converted pinlay remote to SSH; purged 6 stale Keychain creds; flagged 2 exposed PATs for revocation | ~/.ssh/config, .git/config | verified: ssh -T = "Hi whytepeter!" | ~3000 |
+| 11:04 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 11:08 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
