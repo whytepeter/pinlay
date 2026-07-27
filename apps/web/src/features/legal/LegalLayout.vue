@@ -81,7 +81,7 @@ defineProps<{
 
     <footer class="border-t border-border/60">
       <div
-        class="mx-auto flex max-w-3xl flex-wrap items-center gap-x-5 gap-y-2 px-5 py-6 text-[12px] text-muted-foreground sm:px-8"
+        class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-2 px-5 py-6 text-[12px] text-muted-foreground sm:px-8"
       >
         <span class="flex items-center gap-1.5">
           <Brand :size="13" class="text-primary" /> pinlay ·
