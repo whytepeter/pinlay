@@ -211,7 +211,7 @@ const wsHue = computed(() =>
             {{ invite.workspace.name }}
           </p>
           <p class="truncate text-xs text-muted-foreground">
-            pinlay.app/{{ invite.workspace.slug }}
+            pinlay.io/{{ invite.workspace.slug }}
           </p>
         </div>
         <span

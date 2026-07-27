@@ -35,15 +35,20 @@ export default defineConfig({
         description: "Drop a pin on this page",
       },
     },
+    // The dashboard origins allowed to message the extension. `pinlay.io` is
+    // the intended permanent home (not yet registered as of 2026-07-27); the
+    // vercel.app entry is the live deployment and must stay until the custom
+    // domain is serving traffic.
     externally_connectable: {
       matches:
         mode === "development"
           ? [
               "http://localhost:5173/*",
               "http://localhost:4173/*",
-              "https://*.pinlay.app/*",
+              "https://*.pinlay.io/*",
+              "https://pinlay-web.vercel.app/*",
             ]
-          : ["https://*.pinlay.app/*"],
+          : ["https://*.pinlay.io/*", "https://pinlay-web.vercel.app/*"],
     },
     web_accessible_resources: [
       {

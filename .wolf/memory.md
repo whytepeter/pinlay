@@ -2939,3 +2939,58 @@
 | 00:40 | Created DEPLOYMENT.md | — | ~1124 |
 | 00:20 | Prepared api+web for deployment (Railway/Vercel) | railway.json, DEPLOYMENT.md, apps/web/.env.example, apps/api/package.json, apps/api/.env.example | verified shared+api+web builds green, prisma generate + CLI resolve | ~1400 |
 | 00:41 | Session end: 7 writes across 4 files (wxt.config.ts, package.json, railway.json, DEPLOYMENT.md) | 3 reads | ~3713 tok |
+
+## Session: 2026-07-16 09:14
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-26 00:20
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-26 00:21
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 00:23 | Created DEPLOYMENT.md | — | ~4118 |
+| 00:25 | Expanded DEPLOYMENT.md into full API→Extension→Web guide (env var tables, R2/Neon setup, CWS submission steps, rollback) | DEPLOYMENT.md | done | ~3900 |
+| 00:26 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 12 reads | ~9081 tok |
+| 00:32 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 12 reads | ~9081 tok |
+| 00:41 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 12 reads | ~9081 tok |
+| 00:43 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 12 reads | ~9081 tok |
+| 00:46 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 12 reads | ~9081 tok |
+| 00:49 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 12 reads | ~9081 tok |
+| 00:52 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 12 reads | ~9081 tok |
+| 00:55 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 12 reads | ~9081 tok |
+| 00:57 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 13 reads | ~10421 tok |
+| 00:59 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 13 reads | ~10421 tok |
+| 00:59 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 13 reads | ~10421 tok |
+| 01:00 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 13 reads | ~10421 tok |
+| 01:01 | Session end: 1 writes across 1 files (DEPLOYMENT.md) | 13 reads | ~10421 tok |
+| 01:03 | Edited apps/extension/wxt.config.ts | 10→11 lines | ~102 |
+| 01:04 | Deployed API (Railway) + web (Vercel); verified health+CORS; added pinlay-web.vercel.app to extension externally_connectable | wxt.config.ts | done | ~800 |
+| 01:05 | Session end: 2 writes across 2 files (DEPLOYMENT.md, wxt.config.ts) | 15 reads | ~12591 tok |
+| 01:07 | Session end: 2 writes across 2 files (DEPLOYMENT.md, wxt.config.ts) | 15 reads | ~12591 tok |
+| 01:08 | Built prod extension zip w/ Railway+Vercel URLs; verified manifest drops localhost, no localhost fallback leaked | .output/pinlayextension-1.0.0-chrome.zip | done | ~600 |
+| 01:09 | Session end: 2 writes across 2 files (DEPLOYMENT.md, wxt.config.ts) | 15 reads | ~12591 tok |
+| 01:19 | Created apps/web/src/features/legal/legal-meta.ts | — | ~564 |
+| 01:19 | Created apps/web/src/features/legal/LegalLayout.vue | — | ~1007 |
+| 01:20 | Created apps/web/src/features/legal/PrivacyView.vue | — | ~2360 |
+| 01:21 | Created apps/web/src/features/legal/TermsView.vue | — | ~1867 |
+| 01:21 | Edited apps/web/src/app/router.ts | expanded (+16 lines) | ~189 |
+| 01:21 | Edited apps/web/src/features/landing/LandingPage.vue | expanded (+8 lines) | ~120 |
+| 01:23 | Edited apps/web/src/features/legal/LegalLayout.vue | "text-[15px] leading-relax" → "text-[15px] leading-relax" | ~114 |
+| 01:24 | Edited apps/web/src/features/legal/legal-meta.ts | expanded (+13 lines) | ~179 |
+| 01:24 | Edited apps/web/src/features/legal/PrivacyView.vue | 1→6 lines | ~25 |
+| 01:24 | Edited apps/web/src/features/legal/PrivacyView.vue | 4→4 lines | ~52 |
+| 01:24 | Edited apps/web/src/features/legal/TermsView.vue | inline fix | ~18 |
+| 01:24 | Edited apps/web/src/features/legal/TermsView.vue | 3→3 lines | ~47 |
+| 01:24 | Edited apps/web/src/features/legal/TermsView.vue | "mailto:${CONTACT_EMAIL}" → "mailto:${LEGAL_EMAIL}" | ~17 |
+| 01:24 | Edited apps/extension/wxt.config.ts | 11→15 lines | ~178 |
+| 01:25 | Edited apps/web/src/features/settings/components/WorkspaceSection.vue | 2→2 lines | ~12 |
+| 01:25 | Edited apps/web/src/features/auth/AcceptInviteView.vue | inline fix | ~14 |
+| 01:25 | Edited DEPLOYMENT.md | expanded (+17 lines) | ~230 |
+| 01:25 | Edited DEPLOYMENT.md | expanded (+6 lines) | ~183 |
+| 01:28 | Session end: 20 writes across 10 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 19 reads | ~31728 tok |

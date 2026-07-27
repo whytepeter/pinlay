@@ -140,7 +140,7 @@ function reset() {
             <span
               class="flex items-center bg-muted px-3 font-mono text-xs text-muted-foreground"
             >
-              pinlay.app/
+              pinlay.io/
             </span>
             <Input
               id="ws-slug"

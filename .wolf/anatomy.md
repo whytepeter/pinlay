@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-15T23:40:07.503Z
-> Files: 275 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-27T00:25:52.224Z
+> Files: 280 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/marker-harness/
 
@@ -29,7 +29,7 @@
 ## ./
 
 - `.gitignore` — Git ignore rules (~144 tok)
-- `DEPLOYMENT.md` — Deployment (~1053 tok)
+- `DEPLOYMENT.md` — Deployment (~4144 tok)
 - `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~5697 tok)
 - `HANDOFF.md` — pinlay — Handoff (~4508 tok)
 - `package.json` — Node.js package manifest (~299 tok)
@@ -219,7 +219,7 @@
 - `package.json` — Node.js package manifest (~258 tok)
 - `tsconfig.json` — TypeScript configuration (~77 tok)
 - `vitest.config.ts` — /*.test.ts"], (~46 tok)
-- `wxt.config.ts` — pinlay extension — WXT + Vue 3 + Tailwind v4. (~454 tok)
+- `wxt.config.ts` — pinlay extension — WXT + Vue 3 + Tailwind v4. (~554 tok)
 
 ## apps/extension/public/
 
@@ -312,7 +312,7 @@
 
 ## apps/web/src/app/
 
-- `router.ts` — Exports router (~1250 tok)
+- `router.ts` — Exports router (~1416 tok)
 
 ## apps/web/src/assets/
 
@@ -364,7 +364,14 @@
 ## apps/web/src/features/landing/
 
 - `DemoPin.vue` — A live demo pin — marker + thread popover — anchored to a real element of (~1091 tok)
-- `LandingPage.vue` — Landing page (2026-07-14, v2) — the product demos itself, dressed up. (~8263 tok)
+- `LandingPage.vue` — Landing page (2026-07-14, v2) — the product demos itself, dressed up. (~8345 tok)
+
+## apps/web/src/features/legal/
+
+- `legal-meta.ts` — Single source of truth for the facts the legal pages assert. (~711 tok)
+- `LegalLayout.vue` — Shared chrome for the public legal pages (/privacy, /terms). (~1031 tok)
+- `PrivacyView.vue` — Privacy Policy — /privacy. Public route. (~2367 tok)
+- `TermsView.vue` — Terms of Service — /terms. Public route. (~1870 tok)
 
 ## apps/web/src/features/pinboards/
 

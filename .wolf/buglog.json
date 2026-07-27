@@ -7669,6 +7669,153 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-15T23:01:54.871Z"
+    },
+    {
+      "id": "bug-476",
+      "timestamp": "2026-07-27T01:04:24.807380",
+      "error_message": "extension manifest externally_connectable listed only https://*.pinlay.app/* but the deployed dashboard is https://pinlay-web.vercel.app — the pattern could never match the real origin",
+      "file": "apps/extension/wxt.config.ts",
+      "root_cause": "externally_connectable was hardcoded to the intended-but-unowned pinlay.app domain during scaffold; production deploy landed on a vercel.app subdomain instead",
+      "fix": "added https://pinlay-web.vercel.app/* to both the development and production externally_connectable matches arrays",
+      "tags": [
+        "extension",
+        "manifest",
+        "deployment",
+        "externally_connectable",
+        "cors",
+        "vercel"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-27T01:04:24.807380"
+    },
+    {
+      "id": "bug-477",
+      "timestamp": "2026-07-27T00:21:34.836Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/app/router.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-27T00:21:34.836Z"
+    },
+    {
+      "id": "bug-478",
+      "timestamp": "2026-07-27T00:23:20.849Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/features/legal/LegalLayout.vue",
+      "root_cause": "Had \"text-[15px] leading-relaxed text-foreground [&_a]",
+      "fix": "Changed to \"text-[15px] leading-relaxed text-foreground [&_a]",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-27T00:23:20.849Z"
+    },
+    {
+      "id": "bug-479",
+      "timestamp": "2026-07-27T00:24:17.394Z",
+      "error_message": "CSS fix: a",
+      "file": "apps/web/src/features/legal/PrivacyView.vue",
+      "root_cause": "a: href=\"`mailto:${CONTACT_EMAIL → href=\"`mailto:${SECURITY_EMAIL",
+      "fix": "Changed a: href=\"`mailto:${CONTACT_EMAIL → href=\"`mailto:${SECURITY_EMAIL",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-27T00:24:17.394Z"
+    },
+    {
+      "id": "bug-480",
+      "timestamp": "2026-07-27T00:24:41.999Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/features/legal/TermsView.vue",
+      "root_cause": "Had `mailto:${CONTACT_EMAIL}`",
+      "fix": "Changed to `mailto:${SECURITY_EMAIL}`",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-07-27T00:24:49.739Z"
+    },
+    {
+      "id": "bug-481",
+      "timestamp": "2026-07-27T00:24:57.395Z",
+      "error_message": "Type error",
+      "file": "apps/extension/wxt.config.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-27T00:24:57.395Z"
+    },
+    {
+      "id": "bug-482",
+      "timestamp": "2026-07-27T00:25:17.391Z",
+      "error_message": "Wrong reference: app should be io",
+      "file": "apps/web/src/features/settings/components/WorkspaceSection.vue",
+      "root_cause": "Used \"app\" instead of \"io\"",
+      "fix": "Changed app → io",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-27T00:25:17.391Z"
+    },
+    {
+      "id": "bug-483",
+      "timestamp": "2026-07-27T00:25:23.230Z",
+      "error_message": "Wrong reference: app should be io",
+      "file": "apps/web/src/features/auth/AcceptInviteView.vue",
+      "root_cause": "Used \"app\" instead of \"io\"",
+      "fix": "Changed app → io",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "vue"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-27T00:25:23.230Z"
+    },
+    {
+      "id": "bug-484",
+      "timestamp": "2026-07-27T00:25:52.242Z",
+      "error_message": "Significant refactor of ",
+      "file": "DEPLOYMENT.md",
+      "root_cause": "5 lines replaced/restructured",
+      "fix": "Rewrote 5→11 lines (5 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-27T00:25:52.242Z"
     }
   ]
 }

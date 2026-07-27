@@ -710,9 +710,17 @@ const stats = [
           <Brand :size="13" class="text-primary" /> pinlay ·
           {{ new Date().getFullYear() }}
         </span>
-        <RouterLink :to="{ name: 'login' }" class="hover:text-foreground">
-          Sign in
-        </RouterLink>
+        <div class="flex items-center gap-5">
+          <RouterLink :to="{ name: 'privacy' }" class="hover:text-foreground">
+            Privacy
+          </RouterLink>
+          <RouterLink :to="{ name: 'terms' }" class="hover:text-foreground">
+            Terms
+          </RouterLink>
+          <RouterLink :to="{ name: 'login' }" class="hover:text-foreground">
+            Sign in
+          </RouterLink>
+        </div>
       </div>
     </footer>
   </div>

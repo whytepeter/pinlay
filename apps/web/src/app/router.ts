@@ -13,6 +13,22 @@ export const router = createRouter({
       component: () => import("@/features/landing/LandingPage.vue"),
       meta: { public: true },
     },
+    // ── Public legal routes (no app shell) ─────────────────────────────────
+    // Required for the Chrome Web Store listing (the extension requests
+    // <all_urls>, which mandates a published privacy policy). Must stay
+    // public — reviewers read them signed out.
+    {
+      path: "/privacy",
+      name: "privacy",
+      component: () => import("@/features/legal/PrivacyView.vue"),
+      meta: { public: true },
+    },
+    {
+      path: "/terms",
+      name: "terms",
+      component: () => import("@/features/legal/TermsView.vue"),
+      meta: { public: true },
+    },
     // ── Public auth routes (no app shell) ──────────────────────────────────
     {
       path: "/login",
