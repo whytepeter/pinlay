@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-27T00:25:52.224Z
-> Files: 280 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-27T00:54:52.466Z
+> Files: 282 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/marker-harness/
 
@@ -15,6 +15,11 @@
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/switch-check/
 
 - `index.html` — Declares html (~409 tok)
+
+## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/6957653b-c5db-408d-bc8e-b7e85842011a/scratchpad/
+
+- `cws-listing.md` — Chrome Web Store listing copy — pinlay (~1671 tok)
+- `shoot.mjs` — Capture 1280x800 Chrome Web Store screenshots by driving headless Chrome (~640 tok)
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/71e601eb-c5a2-42d1-bc09-a3f79d8d238d/scratchpad/
 

@@ -21,9 +21,7 @@ defineProps<{
 <template>
   <div class="min-h-dvh bg-background">
     <nav class="border-b border-border/60">
-      <div
-        class="mx-auto flex max-w-3xl items-center gap-3 px-5 py-4 sm:px-8"
-      >
+      <div class="mx-auto flex max-w-6xl items-center gap-3 px-5 py-4 sm:px-8">
         <RouterLink
           :to="{ name: 'landing' }"
           class="flex items-center gap-2 text-[15px] font-semibold tracking-tight text-foreground"
@@ -56,7 +54,7 @@ defineProps<{
       </div>
     </nav>
 
-    <main class="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
+    <main class="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
       <header class="mb-10">
         <h1
           class="text-[32px] font-semibold leading-tight tracking-tight text-foreground sm:text-[40px]"

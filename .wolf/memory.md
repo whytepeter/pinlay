@@ -2994,3 +2994,11 @@
 | 01:25 | Edited DEPLOYMENT.md | expanded (+17 lines) | ~230 |
 | 01:25 | Edited DEPLOYMENT.md | expanded (+6 lines) | ~183 |
 | 01:28 | Session end: 20 writes across 10 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 19 reads | ~31728 tok |
+| 01:33 | Added /privacy + /terms (LegalLayout+legal-meta), swapped pinlay.app→pinlay.io across manifest+UI+docs, committed 8f8927e | apps/web/src/features/legal/*, wxt.config.ts, DEPLOYMENT.md | committed to main | ~4500 |
+| 01:34 | Session end: 20 writes across 10 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 19 reads | ~31728 tok |
+| 01:36 | Session end: 20 writes across 10 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 19 reads | ~31728 tok |
+| 01:38 | Created ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/6957653b-c5db-408d-bc8e-b7e85842011a/scratchpad/cws-listing.md | — | ~1782 |
+| 01:39 | Session end: 21 writes across 11 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 19 reads | ~33638 tok |
+| 01:54 | Created ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/6957653b-c5db-408d-bc8e-b7e85842011a/scratchpad/shoot.mjs | — | ~640 |
+| 01:56 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 02:01 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
