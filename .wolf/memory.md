@@ -3023,3 +3023,72 @@
 | 11:03 | Set up SSH auth for personal GitHub (ed25519 + keychain + ~/.ssh/config); converted pinlay remote to SSH; purged 6 stale Keychain creds; flagged 2 exposed PATs for revocation | ~/.ssh/config, .git/config | verified: ssh -T = "Hi whytepeter!" | ~3000 |
 | 11:04 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
 | 11:08 | Session end: 22 writes across 12 files (DEPLOYMENT.md, wxt.config.ts, legal-meta.ts, LegalLayout.vue, PrivacyView.vue) | 22 reads | ~34324 tok |
+| 11:49 | Created GITHUB_SSH_SETUP.md | — | ~2880 |
+
+## Session: 2026-07-27 18:06
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-27 18:28
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-28 14:25
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-29 14:40
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-29 14:40
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-29 15:34
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-29 15:34
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 17:03 | Created apps/api/prisma/migrations/20260729140000_feedback/migration.sql | — | ~367 |
+| 17:03 | Created apps/api/src/feedback/dto/create-feedback.dto.ts | — | ~263 |
+| 17:03 | Created apps/api/src/feedback/feedback.service.ts | — | ~609 |
+| 17:04 | Created apps/api/src/feedback/feedback.controller.ts | — | ~362 |
+| 17:11 | Created apps/api/src/feedback/feedback.module.ts | — | ~167 |
+| 17:11 | Edited apps/api/src/app.module.ts | added 1 import(s) | ~50 |
+| 17:11 | Edited apps/api/src/app.module.ts | 3→4 lines | ~18 |
+| 17:12 | Edited apps/api/src/mail/mail.service.ts | expanded (+8 lines) | ~68 |
+| 17:12 | Edited apps/api/src/mail/mail.service.ts | added 1 condition(s) | ~283 |
+| 17:12 | Edited apps/api/src/mail/mail.service.ts | 6→8 lines | ~54 |
+| 17:12 | Edited apps/api/src/mail/mail.service.ts | 5→6 lines | ~52 |
+| 17:13 | Edited apps/api/src/mail/mail.service.ts | modified extractEmail() | ~84 |
+| 20:27 | Edited apps/api/src/config/env.ts | 3→5 lines | ~55 |
+| 20:28 | Edited apps/api/src/config/env.ts | 1→2 lines | ~38 |
+| 20:28 | Edited apps/api/src/mail/mail.service.ts | modified shell() | ~302 |
+| 20:29 | Edited apps/api/src/mail/mail.service.ts | 5→6 lines | ~63 |
+| 20:31 | Edited apps/web/src/shared/lib/api.ts | expanded (+21 lines) | ~188 |
+| 20:35 | Created apps/web/src/features/feedback/FeedbackDialog.vue | — | ~1088 |
+| 20:35 | Edited apps/web/src/features/workspace-shell/components/AppNavbar.vue | added 1 import(s) | ~76 |
+| 20:36 | Edited apps/web/src/features/workspace-shell/components/AppNavbar.vue | 1→2 lines | ~19 |
+| 20:37 | Edited apps/web/src/features/workspace-shell/components/AppNavbar.vue | 4→7 lines | ~96 |
+| 20:38 | Edited apps/web/src/features/workspace-shell/components/AppNavbar.vue | CSS: first | ~83 |
+| 20:38 | Edited apps/web/src/features/workspace-shell/components/AppNavbar.vue | CSS: v-model | ~27 |
+
+## Session: 2026-07-30 14:37
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-30 14:37
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|

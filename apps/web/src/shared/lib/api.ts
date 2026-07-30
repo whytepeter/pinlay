@@ -481,7 +481,28 @@ export const apiClient = {
         ),
     },
   },
+
+  /**
+   * Product feedback about pinlay itself. Write-only — the API exposes no GET
+   * (these are messages to the pinlay team, not workspace content).
+   */
+  feedback: {
+    create: (input: CreateFeedbackInput) =>
+      request<{ id: string; createdAt: string }>("/feedback", {
+        method: "POST",
+        body: JSON.stringify(input),
+      }),
+  },
 };
+
+export type FeedbackKind = "bug" | "idea" | "question" | "other";
+
+export interface CreateFeedbackInput {
+  message: string;
+  kind?: FeedbackKind;
+  /** Route the user was on, so a vague report is still actionable. */
+  path?: string;
+}
 
 export interface UpdatePinInput {
   status?: Status;

@@ -24,6 +24,7 @@ import { useAuth } from "@/shared/composables/useAuth";
 import { useTheme } from "@/shared/composables/useTheme";
 import { UserAvatar } from "@pinlay/design";
 import WorkspaceSwitcher from "./WorkspaceSwitcher.vue";
+import FeedbackDialog from "@/features/feedback/FeedbackDialog.vue";
 
 const router = useRouter();
 const { user, logout } = useAuth();
@@ -32,6 +33,7 @@ const { mode, cycle } = useTheme();
 const themeIcon = { light: "sun", dark: "moon", system: "monitor" } as const;
 
 const accountMenuOpen = ref(false);
+const feedbackOpen = ref(false);
 const displayName = computed(
   () => user.value?.name || user.value?.email || "Account",
 );
@@ -39,6 +41,14 @@ const displayName = computed(
 function go(path: string) {
   accountMenuOpen.value = false;
   void router.push(path);
+}
+
+// Close the menu first: Reka's DropdownMenu restores focus to its trigger on
+// close, which would steal focus from the dialog's autofocused textarea if
+// both transitioned in the same tick.
+function openFeedback() {
+  accountMenuOpen.value = false;
+  feedbackOpen.value = true;
 }
 
 async function onLogout() {
@@ -118,6 +128,9 @@ async function onLogout() {
             <DropdownMenuItem @select="go('/connect-extension')">
               <Icon name="puzzle" :size="15" /> Install extension
             </DropdownMenuItem>
+            <DropdownMenuItem @select="openFeedback">
+              <Icon name="message-square" :size="15" /> Send feedback
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               class="text-destructive focus:text-destructive"
@@ -129,5 +142,7 @@ async function onLogout() {
         </DropdownMenu>
       </div>
     </div>
+
+    <FeedbackDialog v-model:open="feedbackOpen" />
   </header>
 </template>

@@ -10,6 +10,7 @@ import { AnnotationModule } from "./annotation/annotation.module";
 import { AttachmentsModule } from "./attachments/attachments.module";
 import { IssuesModule } from "./issues/issues.module";
 import { BoardsModule } from "./boards/boards.module";
+import { FeedbackModule } from "./feedback/feedback.module";
 import { StorageModule } from "./storage/storage.module";
 
 @Module({
@@ -36,6 +37,7 @@ import { StorageModule } from "./storage/storage.module";
     AttachmentsModule,
     IssuesModule,
     BoardsModule,
+    FeedbackModule,
     StorageModule,
   ],
   providers: [

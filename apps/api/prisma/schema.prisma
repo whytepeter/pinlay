@@ -75,11 +75,12 @@ model User {
   updatedAt    DateTime @updatedAt
 
   memberships    WorkspaceMember[]
-  authoredPins   Pin[]        @relation("PinAuthor")
-  assignedPins   Pin[]        @relation("PinAssignee")
-  authoredIssues Issue[]      @relation("IssueAuthor")
-  sentInvites    Invite[]     @relation("InviteAuthor")
-  pinComments    PinComment[] @relation("PinCommentAuthor")
+  authoredPins   Pin[]             @relation("PinAuthor")
+  assignedPins   Pin[]             @relation("PinAssignee")
+  authoredIssues Issue[]           @relation("IssueAuthor")
+  sentInvites    Invite[]          @relation("InviteAuthor")
+  pinComments    PinComment[]      @relation("PinCommentAuthor")
+  feedback       Feedback[]        @relation("FeedbackAuthor")
 }
 
 model Workspace {
@@ -101,10 +102,8 @@ model Workspace {
  * Pending workspace invite. Created when an admin invites an email that
  * doesn't yet correspond to a pinlay account. On signup with a matching
  * email, AuthService converts pending invites → WorkspaceMember rows.
- *
  * A short opaque `token` powers a future accept-by-link flow (when email is
  * wired); for now its uniqueness lets resend regenerate without colliding.
- *
  * Uniqueness: at most one PENDING invite per (workspaceId, email). Accepted
  * + revoked rows are retained for audit so re-inviting after a revoke
  * creates a new pending row alongside the historic one.
@@ -209,11 +208,11 @@ model Issue {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  session   Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  author    User      @relation("IssueAuthor", fields: [authorId], references: [id])
-  board     Board?    @relation(fields: [boardId], references: [id], onDelete: SetNull)
-  pins      Pin[]
+  workspace   Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  session     Session      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  author      User         @relation("IssueAuthor", fields: [authorId], references: [id])
+  board       Board?       @relation(fields: [boardId], references: [id], onDelete: SetNull)
+  pins        Pin[]
   attachments Attachment[]
 
   @@index([workspaceId])
@@ -240,10 +239,10 @@ model Pin {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  session     Session         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  issue       Issue?          @relation(fields: [issueId], references: [id], onDelete: SetNull)
-  author      User            @relation("PinAuthor", fields: [authorId], references: [id])
-  assignee    User?           @relation("PinAssignee", fields: [assigneeId], references: [id])
+  session     Session      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  issue       Issue?       @relation(fields: [issueId], references: [id], onDelete: SetNull)
+  author      User         @relation("PinAuthor", fields: [authorId], references: [id])
+  assignee    User?        @relation("PinAssignee", fields: [assigneeId], references: [id])
   attachments Attachment[]
   comments    PinComment[]
 
@@ -293,4 +292,43 @@ model Attachment {
 
   @@index([pinId])
   @@index([issueId])
+}
+
+// ── Product feedback ────────────────────────────────────────────────────────
+// In-app feedback about pinlay itself (not pins — those are feedback about a
+// *customer's* site). Rows are written first and the notification email is
+// fired best-effort afterwards, so a mail outage can never lose a submission.
+// Deliberately NOT workspace-scoped: this is a message to the pinlay team, and
+// keeping it outside workspace reads means no member can browse others' notes.
+enum FeedbackKind {
+  bug
+  idea
+  question
+  other
+}
+
+model Feedback {
+  id      String       @id @default(cuid())
+  kind    FeedbackKind @default(other)
+  message String
+
+  // Denormalised on purpose: if the user later deletes their account we still
+  // want the report readable, and `userId` goes null rather than cascading the
+  // row away.
+  userId      String?
+  email       String?
+  name        String?
+  workspaceId String?
+
+  // Context captured client-side — which page they were on and what browser.
+  // Makes a vague "it's broken" actionable without a follow-up round trip.
+  path      String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  user User? @relation("FeedbackAuthor", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([userId])
 }

@@ -7816,6 +7816,54 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-27T00:25:52.242Z"
+    },
+    {
+      "id": "bug-485",
+      "timestamp": "2026-07-29T16:11:45.423Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/api/src/app.module.ts",
+      "root_cause": "Had \"./storage/storage.module\"",
+      "fix": "Changed to \"./feedback/feedback.module\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-29T16:11:45.423Z"
+    },
+    {
+      "id": "bug-486",
+      "timestamp": "2026-07-29T16:12:31.031Z",
+      "error_message": "Missing await",
+      "file": "apps/api/src/mail/mail.service.ts",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-29T16:12:31.031Z"
+    },
+    {
+      "id": "bug-487",
+      "timestamp": "2026-07-29T19:28:51.889Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/api/src/mail/mail.service.ts",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 15→27 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-29T19:28:51.889Z"
     }
   ]
 }

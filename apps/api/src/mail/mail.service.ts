@@ -29,6 +29,8 @@ interface SendArgs {
   subject: string;
   html: string;
   text: string;
+  /** Sets Resend's `reply_to` — used so feedback replies reach the submitter. */
+  replyTo?: string;
 }
 
 interface ResendAttachment {
@@ -49,6 +51,14 @@ interface WelcomePayload {
   name: string;
   workspaceName: string;
   dashboardUrl: string;
+}
+
+interface FeedbackPayload {
+  kind: string;
+  message: string;
+  fromName: string;
+  fromEmail: string;
+  path: string | null;
 }
 
 @Injectable()
@@ -79,6 +89,33 @@ export class MailService {
       subject: `Welcome to pinlay — let's drop your first pin`,
       html: welcomeHtml(p),
       text: welcomeText(p),
+    });
+  }
+
+  /**
+   * Notify the team that someone filed feedback.
+   *
+   * Recipient is `MAIL_FEEDBACK_TO`, falling back to the address inside
+   * `MAIL_FROM`. That fallback is deliberate: while no sending domain is
+   * verified, Resend only permits delivery to the account owner's own
+   * address, and `MAIL_FROM` is the one address guaranteed to satisfy that.
+   *
+   * `replyTo` is set to the submitter so hitting Reply in your mail client
+   * answers the user directly.
+   */
+  async sendFeedbackNotification(p: FeedbackPayload): Promise<void> {
+    const cfg = env();
+    const to = cfg.mailFeedbackTo || extractEmail(cfg.mailFrom);
+    if (!to) {
+      this.logger.warn("Feedback notification skipped: no recipient resolved");
+      return;
+    }
+    await this.send({
+      to,
+      subject: `[pinlay ${p.kind}] from ${p.fromName}`,
+      html: feedbackHtml(p),
+      text: feedbackText(p),
+      replyTo: p.fromEmail,
     });
   }
 
@@ -113,6 +150,7 @@ export class MailService {
           subject: args.subject,
           html: args.html,
           text: args.text,
+          ...(args.replyTo && { reply_to: args.replyTo }),
           attachments,
         }),
       });
@@ -137,6 +175,13 @@ export class MailService {
 // every client renders consistently and we don't risk a CSP-stripped CTA.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** Pull `a@b.c` out of either `a@b.c` or `Name <a@b.c>`. */
+function extractEmail(from: string): string | null {
+  const m = from.match(/<([^>]+)>/);
+  const candidate = (m ? m[1] : from).trim();
+  return candidate.includes("@") ? candidate : null;
+}
+
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")
@@ -146,7 +191,19 @@ function escapeHtml(s: string): string {
     .replace(/'/g, "&#39;");
 }
 
-function shell(title: string, bodyHtml: string): string {
+const INVITE_FOOTER =
+  "You're receiving this because you were invited to a pinlay workspace. If this wasn't expected, you can safely ignore this email.";
+
+/**
+ * `footer` defaults to the invite disclaimer since most templates are
+ * invite-shaped. Internal mail (e.g. feedback notifications) passes its own —
+ * telling yourself you've "been invited to a workspace" would be nonsense.
+ */
+function shell(
+  title: string,
+  bodyHtml: string,
+  footer: string = INVITE_FOOTER,
+): string {
   return `<!doctype html>
 <html>
 <head><meta charset="utf-8"><title>${escapeHtml(title)}</title></head>
@@ -155,7 +212,7 @@ function shell(title: string, bodyHtml: string): string {
 ${bodyHtml}
 <hr style="border:0;border-top:1px solid #e4e4e7;margin:32px 0 16px;">
 <p style="color:#9ca3af;font-size:12px;line-height:1.5;margin:0;">
-You're receiving this because you were invited to a pinlay workspace. If this wasn't expected, you can safely ignore this email.
+${escapeHtml(footer)}
 </p>
 </div>
 </body>
@@ -288,4 +345,34 @@ The previous link is no longer valid — use the one below:
 ${p.inviteUrl}
 
 Expires in 7 days.`;
+}
+
+// Feedback notification — internal, so no brand chrome or CTA. Optimised for
+// scanning in an inbox: the message first, metadata after.
+function feedbackHtml(p: FeedbackPayload): string {
+  return shell(
+    `Feedback from ${p.fromName}`,
+    `
+<p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#7c3aed;font-weight:600;">${escapeHtml(p.kind)}</p>
+<h1 style="font-size:18px;line-height:1.3;margin:0 0 20px;font-weight:600;">
+  Feedback from ${escapeHtml(p.fromName)}
+</h1>
+<div style="background:#f4f4f5;border-radius:8px;padding:16px;margin:0 0 20px;white-space:pre-wrap;line-height:1.6;color:#111827;">${escapeHtml(p.message)}</div>
+<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="font-size:13px;color:#6b7280;">
+  <tr><td style="padding:2px 12px 2px 0;">From</td><td><a href="mailto:${escapeHtml(p.fromEmail)}" style="color:#7c3aed;">${escapeHtml(p.fromEmail)}</a></td></tr>
+  ${p.path ? `<tr><td style="padding:2px 12px 2px 0;">Page</td><td style="font-family:monospace;">${escapeHtml(p.path)}</td></tr>` : ""}
+</table>
+<p style="color:#9ca3af;font-size:12px;line-height:1.5;margin:20px 0 0;">
+  Reply to this email to answer ${escapeHtml(p.fromName)} directly.
+</p>`,
+    "Sent by pinlay because a user submitted in-app feedback.",
+  );
+}
+
+function feedbackText(p: FeedbackPayload): string {
+  return `[${p.kind}] Feedback from ${p.fromName} <${p.fromEmail}>
+${p.path ? `Page: ${p.path}\n` : ""}
+${p.message}
+
+Reply to this email to answer them directly.`;
 }

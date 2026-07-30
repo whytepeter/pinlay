@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-27T00:54:52.466Z
-> Files: 282 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-29T19:38:51.693Z
+> Files: 289 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/marker-harness/
 
@@ -35,6 +35,7 @@
 
 - `.gitignore` — Git ignore rules (~144 tok)
 - `DEPLOYMENT.md` — Deployment (~4144 tok)
+- `GITHUB_SSH_SETUP.md` — GitHub SSH Setup (macOS, multiple accounts) (~2700 tok)
 - `HANDOFF_WEB_INTEGRATION.md` — Handoff — Web App Integration (~5697 tok)
 - `HANDOFF.md` — pinlay — Handoff (~4508 tok)
 - `package.json` — Node.js package manifest (~299 tok)
@@ -81,13 +82,17 @@
 
 - `migration.sql` — Threaded discussion attached to a single pin. Workspace scoping is (~283 tok)
 
+## apps/api/prisma/migrations/20260729140000_feedback/
+
+- `migration.sql` — In-app product feedback about pinlay itself (distinct from Pins, which are (~367 tok)
+
 ## apps/api/scripts/
 
 - `backfill-issues.ts` — One-off backfill: create an Issue row for every Session that has Pins but (~510 tok)
 
 ## apps/api/src/
 
-- `app.module.ts` — Exports AppModule (~434 tok)
+- `app.module.ts` — Exports AppModule (~457 tok)
 - `main.ts` — Declares bootstrap (~685 tok)
 
 ## apps/api/src/annotation/
@@ -148,7 +153,7 @@
 
 ## apps/api/src/config/
 
-- `env.ts` — Validated environment access. (~1564 tok)
+- `env.ts` — Validated environment access. (~1613 tok)
 
 ## apps/api/src/dashboard/
 
@@ -160,6 +165,16 @@
 ## apps/api/src/dashboard/dto/
 
 - `list-sessions.dto.ts` — Query params for GET /api/sessions — all optional filters. (~164 tok)
+
+## apps/api/src/feedback/
+
+- `feedback.controller.ts` — Feedback about pinlay itself. Write-only by design — there is deliberately (~362 tok)
+- `feedback.module.ts` — Product feedback: users reporting bugs / ideas about pinlay itself. (~167 tok)
+- `feedback.service.ts` — Product feedback — users telling the pinlay team something. (~609 tok)
+
+## apps/api/src/feedback/dto/
+
+- `create-feedback.dto.ts` — Mirrors the Prisma `FeedbackKind` enum. (~263 tok)
 
 ## apps/api/src/health/
 
@@ -184,7 +199,7 @@
 ## apps/api/src/mail/
 
 - `mail.module.ts` — Exports MailModule (~52 tok)
-- `mail.service.ts` — Transactional email — thin wrapper around Resend's HTTP API. No SDK, (~3073 tok)
+- `mail.service.ts` — Transactional email — thin wrapper around Resend's HTTP API. No SDK, (~4028 tok)
 
 ## apps/api/src/prisma/
 
@@ -335,6 +350,10 @@
 
 - `DashboardPage.vue` — Vue: setup (~187 tok)
 
+## apps/web/src/features/feedback/
+
+- `FeedbackDialog.vue` — "Send feedback" — feedback about pinlay itself, opened from the navbar (~1088 tok)
+
 ## apps/web/src/features/integrations/
 
 - `IntegrationsPage.vue` — Vue: setup (~843 tok)
@@ -437,7 +456,7 @@
 
 ## apps/web/src/features/workspace-shell/components/
 
-- `AppNavbar.vue` — The app's single chrome element (2026-07-10 shell redesign): a frosted, (~1267 tok)
+- `AppNavbar.vue` — The app's single chrome element (2026-07-10 shell redesign): a frosted, (~1421 tok)
 - `AppSidebar.vue` — Sidebar — deliberately tiny. Two destinations (Pins, Settings) plus the (~1834 tok)
 - `StatusBar.vue` — Vue: settings, setup (~2749 tok)
 - `WorkspaceSwitcher.vue` — Navbar pill: initial + name + chevron, no plan line, quiet surface. (~2531 tok)
@@ -472,7 +491,7 @@
 
 ## apps/web/src/shared/lib/
 
-- `api.ts` — Web API client. (~3748 tok)
+- `api.ts` — Web API client. (~3919 tok)
 - `confirm.ts` — Promise-based confirm dialog with optional async action. (~1341 tok)
 - `data.ts` — Mock-first seed data (SESSIONS/PEOPLE/getPins). STILL the source for PinboardsPage/useSessions/useIssue — NOT yet swapped to apiClient. (~2413 tok)
 - `extension-bridge.ts` — Web → extension token handoff. (~508 tok)

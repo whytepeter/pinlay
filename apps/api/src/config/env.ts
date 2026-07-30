@@ -50,6 +50,8 @@ export interface AppEnv {
   mailProvider: MailProvider;
   mailApiKey: string | null;
   mailFrom: string;
+  /** Where in-app feedback notifications land. Null → fall back to mailFrom. */
+  mailFeedbackTo: string | null;
 
   /** Object storage config for attachments + avatars. */
   storage: StorageConfig;
@@ -139,6 +141,7 @@ export function validateEnv(
     mailProvider,
     mailApiKey,
     mailFrom: raw.MAIL_FROM?.trim() || "pinlay <onboarding@resend.dev>",
+    mailFeedbackTo: raw.MAIL_FEEDBACK_TO?.trim() || null,
     storage,
   };
 }
