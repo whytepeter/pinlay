@@ -3092,3 +3092,41 @@
 
 | Time | Action | File(s) | Outcome | ~Tokens |
 |------|--------|---------|---------|--------|
+
+## Session: 2026-07-31 08:50
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-07-31 08:50
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-08-13 18:36
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-08-13 18:36
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-08-13 18:36
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-08-13 20:40
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-08-13 20:40
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 20:45 | Edited apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | CSS: removeQueries | ~344 |
+| 21:00 | Reproduced + verified workspace-switch stale-pins bug via live api+web dev servers (seeded marker pin, switched Dev workspace ↔ Glown Inc) | apps/web/src/features/workspace-shell/components/WorkspaceSwitcher.vue | Fixed: removeQueries → resetQueries; confirmed instant refetch both directions, no hard refresh | ~900 |
+| 21:01 | Logged bug-489 (removeQueries vs resetQueries stale-cache gotcha) | .wolf/buglog.json | Logged | ~250 |

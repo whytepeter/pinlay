@@ -3,13 +3,13 @@
   "created_at": "2026-05-24T17:26:01.008Z",
   "lifetime": {
     "total_tokens_estimated": 8275272,
-    "total_reads": 2404,
+    "total_reads": 2405,
     "total_writes": 7215,
-    "total_sessions": 169,
-    "anatomy_hits": 1911,
+    "total_sessions": 176,
+    "anatomy_hits": 1912,
     "anatomy_misses": 402,
     "repeated_reads_blocked": 959,
-    "estimated_savings_vs_bare_cli": 5258286
+    "estimated_savings_vs_bare_cli": 5258486
   },
   "sessions": [
     {
@@ -55651,6 +55651,28 @@
         "writes_count": 0,
         "repeated_reads_blocked": 0,
         "anatomy_lookups": 0
+      }
+    },
+    {
+      "id": "session-2026-08-13-1836",
+      "started": "2026-08-13T17:36:50.131Z",
+      "ended": "2026-08-13T17:45:18.553Z",
+      "reads": [
+        {
+          "file": "/Users/apple/Documents/code/pinlay/HANDOFF.md",
+          "tokens_estimated": 0,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [],
+      "totals": {
+        "input_tokens_estimated": 0,
+        "output_tokens_estimated": 0,
+        "reads_count": 1,
+        "writes_count": 0,
+        "repeated_reads_blocked": 0,
+        "anatomy_lookups": 1
       }
     }
   ],

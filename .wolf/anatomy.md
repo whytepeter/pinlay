@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-29T19:38:51.693Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-08-13T19:45:20.506Z
 > Files: 289 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../private/tmp/claude-502/-Users-apple-Documents-code-pinlay/0c4e18db-28ca-4cc9-8a2a-2a280f974567/scratchpad/marker-harness/
@@ -459,7 +459,7 @@
 - `AppNavbar.vue` — The app's single chrome element (2026-07-10 shell redesign): a frosted, (~1421 tok)
 - `AppSidebar.vue` — Sidebar — deliberately tiny. Two destinations (Pins, Settings) plus the (~1834 tok)
 - `StatusBar.vue` — Vue: settings, setup (~2749 tok)
-- `WorkspaceSwitcher.vue` — Navbar pill: initial + name + chevron, no plan line, quiet surface. (~2531 tok)
+- `WorkspaceSwitcher.vue` — Navbar pill: initial + name + chevron, no plan line, quiet surface. (~2645 tok)
 
 ## apps/web/src/pages/
 

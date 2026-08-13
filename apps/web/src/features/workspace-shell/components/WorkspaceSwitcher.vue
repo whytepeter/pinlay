@@ -69,11 +69,18 @@ const switchingTo = ref<string | null>(null);
  */
 async function adoptWorkspace(token: string, workspace: Workspace) {
   auth.setToken(token, { id: workspace.id, role: workspace.role });
-  // Drop every cached query EXCEPT ['workspaces'] — the rest are keyed on
+  // Reset every cached query EXCEPT ['workspaces'] — the rest are keyed on
   // the previous workspace's JWT and would leak stale data. We deliberately
   // keep the workspaces observer alive so the seeded setQueryData below
   // propagates to the dropdown without a refetch round-trip.
-  queryClient.removeQueries({
+  //
+  // Must be resetQueries, not removeQueries: removeQueries only deletes the
+  // cache entry — an already-mounted observer (e.g. the Pin Inbox's
+  // useInfiniteQuery, still rendered behind this dropdown) keeps showing its
+  // last data until something re-triggers it, so switching workspace looked
+  // like a no-op until a hard refresh. resetQueries clears the data AND
+  // refetches active queries immediately.
+  await queryClient.resetQueries({
     predicate: (q) => {
       const root = Array.isArray(q.queryKey) ? q.queryKey[0] : q.queryKey;
       return root !== "workspaces";
